@@ -8,6 +8,8 @@ class GameInfo {
     required this.icon,
     required this.color,
     required this.builder,
+    this.emoji,
+    this.featured = false,
   });
 
   final String id;
@@ -16,4 +18,10 @@ class GameInfo {
   final IconData icon;
   final Color color;
   final WidgetBuilder builder;
+
+  /// Optional emoji shown on the home card instead of [icon].
+  final String? emoji;
+
+  /// Featured games get a wide banner card at the top of the home screen.
+  final bool featured;
 }
