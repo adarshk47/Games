@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../core/game_info.dart';
+import 'arrow_maze/arrow_maze_screen.dart';
 import 'arrows/arrows_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
-import 'cat_game/cat_game_screen.dart';
 import 'focus_color/focus_color_screen.dart';
 import 'game_2048/game_2048_screen.dart';
+import 'maze_escape/maze_escape_screen.dart';
 import 'memory_boost/memory_boost_screen.dart';
 import 'mom_memory/mom_memory_screen.dart';
 import 'sudoku/sudoku_screen.dart';
@@ -32,13 +33,22 @@ final List<GameInfo> games = [
     builder: (_) => const ArrowsScreen(),
   ),
   GameInfo(
-    id: 'cat_game',
-    title: 'Cat & Fish',
-    subtitle: 'Billi ko machhli tak pahunchao',
-    icon: Icons.pets,
-    emoji: '🐱',
+    id: 'maze_escape',
+    title: 'Maze Escape',
+    subtitle: 'Bhool-bhulaiya se sahi raasta dhoondo',
+    icon: Icons.route_rounded,
+    emoji: '🧭',
     color: const Color(0xFFFFC857),
-    builder: (_) => const CatGameScreen(),
+    builder: (_) => const MazeEscapeScreen(),
+  ),
+  GameInfo(
+    id: 'arrow_maze',
+    title: 'Arrow Maze',
+    subtitle: 'Lambe arrows ko bahar nikalo',
+    icon: Icons.alt_route_rounded,
+    emoji: '➰',
+    color: const Color(0xFF7C9CFF),
+    builder: (_) => const ArrowMazeScreen(),
   ),
   GameInfo(
     id: 'sudoku',

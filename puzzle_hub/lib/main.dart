@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'core/account/auth_screens.dart';
+import 'core/rewards.dart';
 import 'core/storage.dart';
 import 'core/theme.dart';
 import 'home/home_screen.dart';
@@ -18,9 +20,11 @@ class PuzzleHubApp extends StatelessWidget {
     return MaterialApp(
       title: 'Puzzle Hub',
       debugShowCheckedModeBanner: false,
-      theme: buildTheme(Brightness.light),
+      navigatorKey: Rewards.navKey,
+      theme: buildTheme(Brightness.dark),
       darkTheme: buildTheme(Brightness.dark),
-      home: const HomeScreen(),
+      themeMode: ThemeMode.dark,
+      home: const AuthGate(home: HomeScreen()),
     );
   }
 }

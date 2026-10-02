@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../core/account/account_service.dart';
 import '../core/game_info.dart';
+import '../core/rewards.dart';
 import '../core/ui/ui.dart';
 import '../games/registry.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  void _openProfile(BuildContext context) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
 
   void _open(BuildContext context, GameInfo g) =>
       Navigator.of(context).push(PageRouteBuilder(
@@ -34,6 +40,28 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(22, 18, 22, 6),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Expanded(
+                      child: Text(
+                        AccountService.I.justRegistered
+                            ? 'Welcome, ${AccountService.I.name}! 🎉'
+                            : 'Welcome back, ${AccountService.I.name} 👋',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Pal.textDim, fontSize: 15, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    CoinPill(onTap: () => _openProfile(context)),
+                    const SizedBox(width: 10),
+                    GlassCard(
+                      blur: 0,
+                      radius: 18,
+                      padding: const EdgeInsets.all(9),
+                      onTap: () => _openProfile(context),
+                      child: const Icon(Icons.person_rounded, color: Pal.text, size: 22),
+                    ),
+                  ]).animate().fadeIn(duration: 400.ms),
+                  const SizedBox(height: 10),
                   ShaderMask(
                     shaderCallback: (r) => const LinearGradient(colors: [Pal.gold, Color(0xFFFF8FB8), Color(0xFFB794FF)]).createShader(r),
                     child: const Text('Puzzle Hub',
