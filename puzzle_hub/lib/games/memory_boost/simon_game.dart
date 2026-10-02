@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/simon_logic.dart';
@@ -91,7 +92,15 @@ class _SimonScreenState extends State<SimonScreen> {
     HapticFeedback.heavyImpact();
     setState(() => phase = _Phase.over);
     final streak = logic.streak;
+    final prevBest = Storage.getInt(simonBestKey);
     final newBest = Storage.setBest(simonBestKey, streak);
+    Rewards.onGameEnd('memory_boost', score: streak, won: streak >= 5);
+    const milestones = {5: 1, 10: 2, 15: 3, 20: 3};
+    milestones.forEach((m, st) {
+      if (streak >= m && prevBest < m) {
+        Rewards.onLevelComplete('memory_boost', 'simon-$m', stars: st);
+      }
+    });
     final choice = await showResultDialog(
       context,
       title: 'Game over',

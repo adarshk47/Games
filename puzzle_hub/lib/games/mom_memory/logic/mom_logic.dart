@@ -1,7 +1,20 @@
 import 'dart:math';
 
 // ---------- Baby Items Match ----------
-const babyEmojis = ['🍼', '🧸', '👶', '🧷', '🛁', '🧦', '🎀', '🐥', '🌙', '🧺', '🦆', '🍪'];
+const babyEmojis = [
+  '🍼',
+  '🧸',
+  '👶',
+  '🧷',
+  '🛁',
+  '🧦',
+  '🎀',
+  '🐥',
+  '🌙',
+  '🧺',
+  '🦆',
+  '🍪',
+];
 
 class MatchLevel {
   const MatchLevel(this.label, this.rows, this.cols);
@@ -10,12 +23,18 @@ class MatchLevel {
   int get pairs => rows * cols ~/ 2;
 }
 
-const matchLevels = [MatchLevel('Aasaan', 3, 4), MatchLevel('Madhyam', 4, 4), MatchLevel('Thoda alag', 4, 5)];
+const matchLevels = [
+  MatchLevel('Aasaan', 3, 4),
+  MatchLevel('Madhyam', 4, 4),
+  MatchLevel('Thoda alag', 4, 5),
+];
 
 /// Shuffled deck of emoji indices, each appearing exactly twice.
 List<int> generateMatchDeck(int pairs, Random rng) {
   final ids = List.generate(babyEmojis.length, (i) => i)..shuffle(rng);
-  final deck = [for (final i in ids.take(pairs)) ...[i, i]]..shuffle(rng);
+  final deck = [
+    for (final i in ids.take(pairs)) ...[i, i],
+  ]..shuffle(rng);
   return deck;
 }
 
@@ -85,7 +104,10 @@ BagRound buildBagRound(BagLevel lv, Random rng) {
 ({int correct, int wrong}) scoreBag(Iterable<int> picked, Iterable<int> shown) {
   final s = shown.toSet();
   final p = picked.toSet();
-  return (correct: p.where(s.contains).length, wrong: p.where((x) => !s.contains(x)).length);
+  return (
+    correct: p.where(s.contains).length,
+    wrong: p.where((x) => !s.contains(x)).length,
+  );
 }
 
 int bagStars(int correct, int total) {
@@ -101,7 +123,9 @@ const lullabyPads = 6;
 
 List<int> extendPattern(List<int> seq, Random rng) {
   var n = rng.nextInt(lullabyPads);
-  if (seq.isNotEmpty && n == seq.last) n = (n + 1 + rng.nextInt(lullabyPads - 1)) % lullabyPads;
+  if (seq.isNotEmpty && n == seq.last) {
+    n = (n + 1 + rng.nextInt(lullabyPads - 1)) % lullabyPads;
+  }
   return [...seq, n];
 }
 
@@ -109,7 +133,9 @@ enum TapResult { wrong, right, complete }
 
 /// [index] is the position the player is about to tap.
 TapResult checkTap(List<int> seq, int index, int pad) {
-  if (index < 0 || index >= seq.length || seq[index] != pad) return TapResult.wrong;
+  if (index < 0 || index >= seq.length || seq[index] != pad) {
+    return TapResult.wrong;
+  }
   return index == seq.length - 1 ? TapResult.complete : TapResult.right;
 }
 
@@ -121,9 +147,16 @@ const breathCycleSec = inhaleSec + holdSec + exhaleSec;
 
 ({BreathPhase phase, double progress}) breathAt(double seconds) {
   final t = seconds % breathCycleSec;
-  if (t < inhaleSec) return (phase: BreathPhase.inhale, progress: t / inhaleSec);
-  if (t < inhaleSec + holdSec) return (phase: BreathPhase.hold, progress: (t - inhaleSec) / holdSec);
-  return (phase: BreathPhase.exhale, progress: (t - inhaleSec - holdSec) / exhaleSec);
+  if (t < inhaleSec) {
+    return (phase: BreathPhase.inhale, progress: t / inhaleSec);
+  }
+  if (t < inhaleSec + holdSec) {
+    return (phase: BreathPhase.hold, progress: (t - inhaleSec) / holdSec);
+  }
+  return (
+    phase: BreathPhase.exhale,
+    progress: (t - inhaleSec - holdSec) / exhaleSec,
+  );
 }
 
 /// Circle scale 0..1 across the cycle (0 = small, 1 = full).
@@ -173,4 +206,5 @@ int nextStreak(String? lastDay, int streak, DateTime today) {
   return lastDay == dayKey(y) ? streak + 1 : 1;
 }
 
-const mmFootnote = 'Sirf manoranjan aur halki dimaagi kasrat ke liye, medical salah nahi.';
+const mmFootnote =
+    'Sirf manoranjan aur halki dimaagi kasrat ke liye, medical salah nahi.';

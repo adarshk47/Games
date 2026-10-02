@@ -45,36 +45,56 @@ void main() {
   });
 
   test('difficulty progression', () {
-    expect(colorsForLevel(1), 3);
-    expect(colorsForLevel(100), 12);
+    expect(colorsForLevel(BsDifficulty.easy, 1), 3);
+    expect(colorsForLevel(BsDifficulty.easy, 100), 5);
+    expect(colorsForLevel(BsDifficulty.medium, 1), 6);
+    expect(colorsForLevel(BsDifficulty.medium, 100), 9);
+    expect(colorsForLevel(BsDifficulty.hard, 1), 10);
+    expect(colorsForLevel(BsDifficulty.hard, 100), 14);
   });
 
-  test('generated levels are valid and solvable', () {
-    for (final level in [1, 2, 4, 7, 10, 20, 31, 60]) {
-      final s = generateLevel(level);
-      final counts = <int, int>{};
-      for (final t in s.tubes) {
-        expect(t.length <= kTubeCapacity, isTrue);
-        for (final c in t) {
-          counts[c] = (counts[c] ?? 0) + 1;
+  test('every level of every difficulty is valid and solvable by its solution', () {
+    for (final d in BsDifficulty.values) {
+      for (var level = 1; level <= 60; level++) {
+        final g = generateLevelWithSolution(d, level);
+        final s = g.state;
+        final counts = <int, int>{};
+        for (final t in s.tubes) {
+          expect(t.length <= kTubeCapacity, isTrue);
+          for (final c in t) {
+            counts[c] = (counts[c] ?? 0) + 1;
+          }
         }
-      }
-      expect(counts.length, colorsForLevel(level));
-      expect(counts.values.every((v) => v == kTubeCapacity), isTrue);
-      expect(s.isSolved, isFalse);
-      if (level <= 10) {
-        final sol = solve(s, maxNodes: 500000);
-        expect(sol, isNotNull, reason: 'level $level');
+        expect(counts.length, colorsForLevel(d, level));
+        expect(counts.values.every((v) => v == kTubeCapacity), isTrue);
+        expect(s.tubes.length, counts.length + emptyTubesForLevel(d, level));
+        expect(s.isSolved, isFalse);
         final play = s.clone();
-        for (final m in sol!) {
-          expect(play.pour(m[0], m[1]) > 0, isTrue);
+        for (final m in g.solution) {
+          expect(play.pour(m[0], m[1]) > 0, isTrue, reason: '${d.id} L$level');
         }
-        expect(play.isSolved, isTrue);
+        expect(play.isSolved, isTrue, reason: '${d.id} L$level');
       }
     }
   });
 
-  test('generation is deterministic', () {
-    expect(generateLevel(5).key, generateLevel(5).key);
+  test('solver agrees on early levels', () {
+    for (final d in [BsDifficulty.easy, BsDifficulty.medium]) {
+      for (final level in [1, 5, 9]) {
+        final sol = solve(generateLevel(d, level), maxNodes: 300000);
+        expect(sol, isNotNull, reason: '${d.id} L$level');
+      }
+    }
+  });
+
+  test('stars by par', () {
+    final par = parMoves(BsDifficulty.easy, 1);
+    expect(starsFor(BsDifficulty.easy, 1, par), 3);
+    expect(starsFor(BsDifficulty.easy, 1, par * 2), 1);
+  });
+
+  test('generation is deterministic and differs per difficulty', () {
+    expect(generateLevel(BsDifficulty.easy, 5).key, generateLevel(BsDifficulty.easy, 5).key);
+    expect(generateLevel(BsDifficulty.easy, 5).key, isNot(generateLevel(BsDifficulty.hard, 5).key));
   });
 }

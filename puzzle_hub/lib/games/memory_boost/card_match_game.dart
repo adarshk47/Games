@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/card_deck.dart';
@@ -174,6 +175,7 @@ class _CardBoardState extends State<_CardBoard> {
     timer?.cancel();
     HapticFeedback.heavyImpact();
     final stars = starsFor(moves, lv.pairs);
+    Rewards.onLevelComplete('memory_boost', 'cards-L${widget.level + 1}', stars: stars);
     Storage.setBest(cardStarsKey(widget.level), stars);
     final prev = Storage.getInt(cardMovesKey(widget.level));
     final newBest = prev == 0 || moves < prev;

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/game_2048_logic.dart';
@@ -31,6 +32,8 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   int _floatSerial = 0;
   int _floatPts = 0;
   bool _dialogOpen = false;
+  final Set<String> _paid = {};
+  bool _overReported = false;
   Offset _drag = Offset.zero;
   bool _swiped = false;
   final _focus = FocusNode();
@@ -53,6 +56,33 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     if (_g.size != size) _g = Game2048(size)..reset();
     _best = Storage.getInt(_bestKey(size));
     _ghosts = [];
+    _resetRewardGuards();
+  }
+
+  /// Milestones already present in a resumed game must not pay out again.
+  void _resetRewardGuards() {
+    _paid.clear();
+    _overReported = false;
+    final m = _g.maxTile;
+    if (m >= 512) _paid.add('512');
+    if (m >= 1024) _paid.add('1024');
+    if (_g.keepGoing || m >= _g.target) _paid.add('target');
+  }
+
+  void _awardMilestones() {
+    final n = _g.size, m = _g.maxTile;
+    void pay(String id, String key, int stars) {
+      if (_paid.add(id)) Rewards.onLevelComplete('game_2048', key, stars: stars, score: _g.score);
+    }
+    if (m >= 512) pay('512', 'size$n-512', 1);
+    if (m >= 1024) pay('1024', 'size$n-1024', 2);
+    if (m >= _g.target) pay('target', 'size$n-${_g.target}', 3);
+  }
+
+  void _reportOver() {
+    if (_overReported) return;
+    _overReported = true;
+    Rewards.onGameEnd('game_2048', score: _g.score, won: false);
   }
 
   void _save() {
@@ -74,6 +104,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     setState(() {
       _g = Game2048(_g.size)..reset();
       _ghosts = [];
+      _resetRewardGuards();
     });
     _save();
   }
@@ -104,6 +135,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       }
     });
     _save();
+    _awardMilestones();
     if (!_g.keepGoing && _g.reachedTarget) {
       _showWin();
     } else if (!_g.hasMoves) {
@@ -131,6 +163,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   }
 
   void _showOver() {
+    _reportOver();
     _dialogOpen = true;
     showPremiumDialog(
       context,

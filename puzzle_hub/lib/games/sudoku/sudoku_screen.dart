@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/sudoku_logic.dart';
@@ -233,6 +234,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     final g = _g!;
     if (_over) {
       _save();
+      Rewards.onGameEnd('sudoku', won: false);
       WidgetsBinding.instance.addPostFrameCallback((_) => _showEnd(false));
     } else if (g.solved) {
       setState(() => _won = true);
@@ -244,19 +246,25 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
       }
       if (g.daily) Storage.setInt(_dailyKey(DateTime.now()), g.elapsed);
       _save();
+      Rewards.onLevelComplete('sudoku', g.daily ? 'daily-${dailySeed(DateTime.now())}' : g.difficulty.name,
+          stars: _starsFor(g));
       WidgetsBinding.instance.addPostFrameCallback((_) => _showEnd(true, newBest: newBest));
     } else {
       _save();
     }
   }
 
-  void _showEnd(bool win, {bool newBest = false}) {
-    if (!mounted) return;
-    final g = _g!;
+  int _starsFor(_Game g) {
     var stars = 3;
     if (g.mistakes > 0) stars--;
     if (g.hints > 1) stars--;
-    if (stars < 1) stars = 1;
+    return stars < 1 ? 1 : stars;
+  }
+
+  void _showEnd(bool win, {bool newBest = false}) {
+    if (!mounted) return;
+    final g = _g!;
+    final stars = _starsFor(g);
     showPremiumDialog(
       context,
       title: win ? 'Solved!' : 'Game over',

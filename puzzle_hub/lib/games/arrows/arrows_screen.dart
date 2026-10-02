@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrows_logic.dart';
 import 'progress.dart';
@@ -192,11 +193,19 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
     });
     if (board.isCleared) {
       over = true;
-      ArrowsProgress.complete(level, lives.clamp(1, 3));
-      Future.delayed(const Duration(milliseconds: 600), _showWin);
+      final stars = lives.clamp(1, 3);
+      ArrowsProgress.complete(level, stars);
+      Rewards.onLevelComplete('arrows', 'L$level', stars: stars);
+      final a = attempt, l = level;
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (attempt == a && level == l) _showWin();
+      });
     } else if (lives <= 0) {
       over = true;
-      Future.delayed(const Duration(milliseconds: 450), _showLose);
+      final a = attempt;
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (attempt == a) _showLose();
+      });
     }
   }
 
@@ -271,11 +280,17 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
                     for (var i = 0; i < maxLives; i++)
                       _Heart(alive: i < lives),
                   ]),
-                  Text('Moves $moves  |  Left ${board.remaining}',
-                      style: const TextStyle(
-                          color: Pal.text,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14)),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text('Moves $moves  |  Left ${board.remaining}',
+                          maxLines: 1,
+                          style: const TextStyle(
+                              color: Pal.text,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14)),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -285,7 +300,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: LayoutBuilder(builder: (context, box) {
-                  final side = box.biggest.shortestSide;
+                  final side = math.max(1.0, box.biggest.shortestSide);
                   final cell = side / n;
                   return SizedBox(
                     key: ValueKey('board_${level}_$attempt'),
@@ -481,7 +496,8 @@ class _ArrowTileState extends State<_ArrowTile> with TickerProviderStateMixin {
                   ((_shake.value * 6).floor().isEven ? 1 : -1)
               : 0.0;
           final flash = shaking ? (1 - _shake.value) : 0.0;
-          final cellSize = context.size?.width ?? 40;
+          return LayoutBuilder(builder: (context, box) {
+          final cellSize = box.maxWidth.isFinite ? box.maxWidth : 40.0;
           return Stack(
             clipBehavior: Clip.none,
             children: [
@@ -518,6 +534,7 @@ class _ArrowTileState extends State<_ArrowTile> with TickerProviderStateMixin {
               ),
             ],
           );
+          });
         },
       ),
     );

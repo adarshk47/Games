@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/focus_common.dart';
@@ -189,6 +190,10 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     setState(() => _phase = _Phase.over);
     final isBest = Storage.setBest(info.key, _score);
     final stars = starsFor(info.mode, _score);
+    Rewards.onGameEnd('focus_color', score: _score, won: stars >= 1);
+    if (stars >= 1) {
+      Rewards.onLevelComplete('focus_color', '${info.mode.name}-star$stars', stars: stars, score: _score);
+    }
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     final unit = info.mode == FocusMode.odd ? 'found' : 'pts';

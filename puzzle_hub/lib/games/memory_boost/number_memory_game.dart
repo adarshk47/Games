@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/number_logic.dart';
@@ -93,7 +94,15 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   }
 
   Future<void> _gameOver() async {
+    final prevBest = Storage.getInt(numberBestKey(maxLives));
     final newBest = Storage.setBest(numberBestKey(maxLives), reached);
+    Rewards.onGameEnd('memory_boost', score: reached);
+    const milestones = {5: 1, 7: 2, 9: 3, 12: 3};
+    milestones.forEach((n, st) {
+      if (reached >= n && prevBest < n) {
+        Rewards.onLevelComplete('memory_boost', 'number-$n', stars: st);
+      }
+    });
     final choice = await showResultDialog(
       context,
       title: 'Game over',

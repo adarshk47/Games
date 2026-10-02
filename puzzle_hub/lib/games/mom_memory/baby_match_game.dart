@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/mom_logic.dart';
@@ -82,19 +83,31 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
     final stars = matchStars(_moves, lv.pairs);
     Storage.setBest('mom.match.stars.$_level', stars);
     final prev = Storage.getInt('mom.match.moves.$_level');
-    if (prev == 0 || _moves < prev) Storage.setInt('mom.match.moves.$_level', _moves);
+    if (prev == 0 || _moves < prev) {
+      Storage.setInt('mom.match.moves.$_level', _moves);
+    }
     recordPlay();
+    Rewards.onLevelComplete('mom_memory', 'match-L${_level + 1}', stars: stars);
     final next = _level + 1 < matchLevels.length;
-    mmDialog(context,
-        title: pick(praise),
-        message: '$_moves chaal mein sab jodi mil gayi. Aaram se khelne ke liye shukriya!',
-        emoji: '🧸',
-        stars: stars,
-        actions: [
-          DialogAction('Phir se', () => _start(_level)),
-          if (next) DialogAction('Agla level', () => _start(_level + 1), primary: true),
-          if (!next) DialogAction('Menu', () => Navigator.of(context).maybePop(), primary: true),
-        ]);
+    mmDialog(
+      context,
+      title: pick(praise),
+      message:
+          '$_moves chaal mein sab jodi mil gayi. Aaram se khelne ke liye shukriya!',
+      emoji: '🧸',
+      stars: stars,
+      actions: [
+        DialogAction('Phir se', () => _start(_level)),
+        if (next)
+          DialogAction('Agla level', () => _start(_level + 1), primary: true),
+        if (!next)
+          DialogAction(
+            'Menu',
+            () => Navigator.of(context).maybePop(),
+            primary: true,
+          ),
+      ],
+    );
   }
 
   @override
@@ -102,90 +115,131 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
     final lv = matchLevels[_level];
     return MmPage(
       title: 'Baby Items Match',
-      actions: [BarAction(icon: Icons.refresh_rounded, tooltip: 'Naya', onTap: () => _start(_level))],
-      body: Column(children: [
-        const SizedBox(height: 6),
-        SizedBox(
-          height: 40,
-          child: ListView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 16), children: [
-            for (var i = 0; i < matchLevels.length; i++)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: GestureDetector(
-                  onTap: () => _start(i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: i == _level ? Mm.rose.withValues(alpha: 0.85) : Pal.glass,
-                      border: Border.all(color: Pal.glassBorder),
-                    ),
-                    child: Row(children: [
-                      Text(matchLevels[i].label,
-                          style: TextStyle(color: i == _level ? Mm.ink : Pal.text, fontWeight: FontWeight.w800)),
-                      const SizedBox(width: 6),
-                      StarRow(stars: Storage.getInt('mom.match.stars.$i'), size: 12),
-                    ]),
-                  ),
-                ),
-              ),
-          ]),
+      actions: [
+        BarAction(
+          icon: Icons.refresh_rounded,
+          tooltip: 'Naya',
+          onTap: () => _start(_level),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Text('Chaal: $_moves   •   ${_done.length ~/ 2}/${lv.pairs} jodi',
-              style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700)),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: LayoutBuilder(builder: (_, c) {
-              const gap = 10.0;
-              final w = (c.maxWidth - gap * (lv.cols - 1)) / lv.cols;
-              final h = (c.maxHeight - gap * (lv.rows - 1)) / lv.rows;
-              final s = math.min(w, h).clamp(40.0, 110.0);
-              return Center(
-                child: SizedBox(
-                  width: s * lv.cols + gap * (lv.cols - 1),
-                  height: s * lv.rows + gap * (lv.rows - 1),
-                  child: GridView.count(
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: lv.cols,
-                    mainAxisSpacing: gap,
-                    crossAxisSpacing: gap,
-                    children: [
-                      for (var i = 0; i < _deck.length; i++)
-                        _CardTile(
-                          key: ValueKey('$_level-$i-${_deck[i]}'),
-                          emoji: babyEmojis[_deck[i]],
-                          color: Mm.pads[_deck[i] % Mm.pads.length],
-                          up: _up.contains(i) || _done.contains(i),
-                          matched: _done.contains(i),
-                          size: s,
-                          onTap: () => _tap(i),
+      ],
+      body: Column(
+        children: [
+          const SizedBox(height: 6),
+          SizedBox(
+            height: 40,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                for (var i = 0; i < matchLevels.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => _start(i),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: i == _level
+                              ? Mm.rose.withValues(alpha: 0.85)
+                              : Pal.glass,
+                          border: Border.all(color: Pal.glassBorder),
                         ),
-                    ],
+                        child: Row(
+                          children: [
+                            Text(
+                              matchLevels[i].label,
+                              style: TextStyle(
+                                color: i == _level ? Mm.ink : Pal.text,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            StarRow(
+                              stars: Storage.getInt('mom.match.stars.$i'),
+                              size: 12,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              );
-            }),
+              ],
+            ),
           ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 4),
-          child: Text('Aaram se, koi jaldi nahi 🌸', style: TextStyle(color: Pal.textDim, fontSize: 13)),
-        ),
-        const MmFootnote(),
-      ]),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              'Chaal: $_moves   •   ${_done.length ~/ 2}/${lv.pairs} jodi',
+              style: const TextStyle(
+                color: Pal.textDim,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: LayoutBuilder(
+                builder: (_, c) {
+                  const gap = 10.0;
+                  final w = (c.maxWidth - gap * (lv.cols - 1)) / lv.cols;
+                  final h = (c.maxHeight - gap * (lv.rows - 1)) / lv.rows;
+                  final s = math.min(w, h).clamp(40.0, 110.0);
+                  return Center(
+                    child: SizedBox(
+                      width: s * lv.cols + gap * (lv.cols - 1),
+                      height: s * lv.rows + gap * (lv.rows - 1),
+                      child: GridView.count(
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: lv.cols,
+                        mainAxisSpacing: gap,
+                        crossAxisSpacing: gap,
+                        children: [
+                          for (var i = 0; i < _deck.length; i++)
+                            _CardTile(
+                              key: ValueKey('$_level-$i-${_deck[i]}'),
+                              emoji: babyEmojis[_deck[i]],
+                              color: Mm.pads[_deck[i] % Mm.pads.length],
+                              up: _up.contains(i) || _done.contains(i),
+                              matched: _done.contains(i),
+                              size: s,
+                              onTap: () => _tap(i),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 4),
+            child: Text(
+              'Aaram se, koi jaldi nahi 🌸',
+              style: TextStyle(color: Pal.textDim, fontSize: 13),
+            ),
+          ),
+          const MmFootnote(),
+        ],
+      ),
     );
   }
 }
 
 class _CardTile extends StatelessWidget {
-  const _CardTile(
-      {super.key, required this.emoji, required this.color, required this.up, required this.matched, required this.size, required this.onTap});
+  const _CardTile({
+    super.key,
+    required this.emoji,
+    required this.color,
+    required this.up,
+    required this.matched,
+    required this.size,
+    required this.onTap,
+  });
   final String emoji;
   final Color color;
   final bool up, matched;
@@ -218,14 +272,23 @@ class _CardTile extends StatelessWidget {
                       child: AnimatedScale(
                         scale: matched ? 1.08 : 1,
                         duration: const Duration(milliseconds: 300),
-                        child: Text(emoji, style: TextStyle(fontSize: size * 0.5)),
+                        child: Text(
+                          emoji,
+                          style: TextStyle(fontSize: size * 0.5),
+                        ),
                       ),
                     ),
                   )
                 : PastelTile(
                     color: Mm.lavender,
                     dim: true,
-                    child: Text('✿', style: TextStyle(fontSize: size * 0.4, color: Colors.white.withValues(alpha: 0.7))),
+                    child: Text(
+                      '✿',
+                      style: TextStyle(
+                        fontSize: size * 0.4,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
                   ),
           );
         },
