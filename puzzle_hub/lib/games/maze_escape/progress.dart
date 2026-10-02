@@ -5,7 +5,7 @@ import 'logic/levels.dart';
 
 enum MazeMode { labyrinth, fork }
 
-/// Storage helpers. Keys: `maze.lab.stars.N`, `maze.fork.stars.N`.
+/// Storage helpers. Keys: `maze.<lab|fork>.<tier>.stars.N`, `maze.lastTier`.
 class MazeProgress {
   MazeProgress._();
 
@@ -13,30 +13,39 @@ class MazeProgress {
   static final ValueNotifier<int> tick = ValueNotifier<int>(0);
 
   static String _p(MazeMode m) => m == MazeMode.labyrinth ? 'lab' : 'fork';
-  static String key(MazeMode m, int level) => 'maze.${_p(m)}.stars.$level';
+  static String key(MazeMode m, MazeTier t, int level) => 'maze.${_p(m)}.${t.name}.stars.$level';
 
-  static int stars(MazeMode m, int level) => Storage.getInt(key(m, level));
+  static int stars(MazeMode m, MazeTier t, int level) => Storage.getInt(key(m, t, level));
 
-  static bool unlocked(MazeMode m, int level) => level <= 1 || stars(m, level - 1) > 0;
+  static bool unlocked(MazeMode m, MazeTier t, int level) => level <= 1 || stars(m, t, level - 1) > 0;
 
-  static int totalStars(MazeMode m) {
-    var t = 0;
+  static int totalStars(MazeMode m, MazeTier t) {
+    var s = 0;
     for (var l = 1; l <= kLevelCount; l++) {
-      t += stars(m, l);
+      s += stars(m, t, l);
     }
-    return t;
+    return s;
   }
 
-  static int completed(MazeMode m) {
-    var t = 0;
+  static int completed(MazeMode m, MazeTier t) {
+    var n = 0;
     for (var l = 1; l <= kLevelCount; l++) {
-      if (stars(m, l) > 0) t++;
+      if (stars(m, t, l) > 0) n++;
     }
-    return t;
+    return n;
   }
 
-  static void save(MazeMode m, int level, int stars) {
-    if (stars > MazeProgress.stars(m, level)) Storage.setInt(key(m, level), stars);
+  static void save(MazeMode m, MazeTier t, int level, int stars) {
+    if (stars > MazeProgress.stars(m, t, level)) Storage.setInt(key(m, t, level), stars);
     tick.value++;
   }
+
+  static const _kLast = 'maze.lastTier';
+
+  static MazeTier get lastTier {
+    final i = Storage.getInt(_kLast);
+    return MazeTier.values[i.clamp(0, MazeTier.values.length - 1)];
+  }
+
+  static set lastTier(MazeTier t) => Storage.setInt(_kLast, t.index);
 }

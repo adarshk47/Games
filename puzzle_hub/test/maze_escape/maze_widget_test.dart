@@ -4,6 +4,7 @@ import 'package:puzzle_hub/core/storage.dart';
 import 'package:puzzle_hub/games/maze_escape/fork_game.dart';
 import 'package:puzzle_hub/games/maze_escape/labyrinth_game.dart';
 import 'package:puzzle_hub/games/maze_escape/maze_escape_screen.dart';
+import 'package:puzzle_hub/games/maze_escape/logic/levels.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -18,7 +19,7 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Labyrinth'), findsOneWidget);
 
-    await tester.pumpWidget(const MaterialApp(home: LabyrinthGame(level: 9)));
+    await tester.pumpWidget(const MaterialApp(home: LabyrinthGame(tier: MazeTier.hard, level: 9)));
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.byIcon(Icons.keyboard_arrow_down_rounded));
     await tester.tap(find.byIcon(Icons.keyboard_arrow_right_rounded));
@@ -26,7 +27,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.flashlight_on_rounded));
     await tester.pump(const Duration(seconds: 1));
 
-    await tester.pumpWidget(const MaterialApp(home: ForkGame(level: 8)));
+    await tester.pumpWidget(const MaterialApp(home: ForkGame(tier: MazeTier.extreme, level: 8)));
     await tester.pump(const Duration(seconds: 1));
     await tester.tap(find.byIcon(Icons.flashlight_on_rounded));
     await tester.pump(const Duration(seconds: 1));

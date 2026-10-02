@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+import '../../core/audio.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/mom_logic.dart';
@@ -38,7 +38,10 @@ const gentle = [
   'Gehri saans lijiye',
 ];
 
-void softTap() => HapticFeedback.selectionClick();
+void softTap() {
+  AppAudio.play(Sound.tap);
+  AppAudio.haptic();
+}
 
 /// Records a gentle daily visit; returns the current streak.
 int recordPlay([DateTime? now]) {

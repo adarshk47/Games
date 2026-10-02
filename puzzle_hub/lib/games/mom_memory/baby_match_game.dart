@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -50,12 +51,16 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
 
   void _tap(int i) {
     if (_lock || _up.contains(i) || _done.contains(i)) return;
-    softTap();
+    AppAudio.play(Sound.flip);
+    AppAudio.haptic();
     setState(() => _up.add(i));
     if (_up.length < 2) return;
     _moves++;
     final a = _up.first, b = _up.last;
     if (_deck[a] == _deck[b]) {
+      Future<void>.delayed(const Duration(milliseconds: 250), () {
+        if (mounted) AppAudio.play(Sound.success);
+      });
       _t = Timer(const Duration(milliseconds: 450), () {
         if (!mounted) return;
         setState(() {
@@ -68,6 +73,9 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
       _lock = true;
     } else {
       _lock = true;
+      Future<void>.delayed(const Duration(milliseconds: 350), () {
+        if (mounted) AppAudio.play(Sound.pop);
+      });
       _t = Timer(const Duration(milliseconds: 1100), () {
         if (!mounted) return;
         setState(() {

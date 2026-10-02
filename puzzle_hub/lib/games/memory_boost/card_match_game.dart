@@ -2,17 +2,15 @@ import 'dart:async';
 import 'dart:math' show pi;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/card_deck.dart';
+import 'logic/mb_tiers.dart';
 import 'mb_widgets.dart';
-
-String cardStarsKey(int level) => 'memory.cards.stars.$level';
-String cardMovesKey(int level) => 'memory.cards.moves.$level';
 
 class CardMatchScreen extends StatefulWidget {
   const CardMatchScreen({super.key});
@@ -21,33 +19,63 @@ class CardMatchScreen extends StatefulWidget {
 }
 
 class _CardMatchScreenState extends State<CardMatchScreen> {
+  Tier? _tier;
   int? _level;
 
   @override
   Widget build(BuildContext context) {
+    final t = _tier;
+    final lv = _level;
     return GameScaffold(
       tint: mbTint,
-      title: _level == null ? 'Card Match' : 'Level ${_level! + 1} (${cardLevels[_level!].label})',
-      onBack: _level == null ? null : () => setState(() => _level = null),
-      body: _level == null
-          ? _picker()
-          : _CardBoard(
-              key: ValueKey(_level),
-              level: _level!,
-              onExit: () => setState(() => _level = null),
-              onNext: (l) => setState(() => _level = l),
-            ),
+      title: t == null
+          ? 'Card Match'
+          : lv == null
+              ? 'Card Match - ${t.label}'
+              : '${t.label} - Level ${lv + 1} (${cardTierParams[t]!.levels[lv].label})',
+      onBack: t == null ? null : () => setState(() => lv == null ? _tier = null : _level = null),
+      body: t == null
+          ? TierChooser(
+              game: 'card',
+              heading: 'Flip pairs of cards and find every match. Pick a difficulty.',
+              descriptions: const {
+                Tier.easy: '2x2 to 4x4. Mismatches stay visible a long time.',
+                Tier.medium: '2x2 to 6x6. Balanced flip-back time.',
+                Tier.hard: '3x4 to 5x6. Cards flip back fast.',
+                Tier.extreme: '5x6 and 6x6. Short peek, very fast flip-back, time limit.',
+              },
+              bestText: (t) => 'Stars ${_tierStars(t)}/${cardTierParams[t]!.levels.length * 3}',
+              onSelect: (t) => setState(() => _tier = t),
+            )
+          : lv == null
+              ? _picker(t)
+              : _CardBoard(
+                  key: ValueKey('${t.key}$lv'),
+                  tier: t,
+                  level: lv,
+                  onExit: () => setState(() => _level = null),
+                  onNext: (l) => setState(() => _level = l),
+                ),
     );
   }
 
-  Widget _picker() {
+  int _tierStars(Tier t) {
+    var n = 0;
+    for (var i = 0; i < cardTierParams[t]!.levels.length; i++) {
+      n += Storage.getInt(cardStarsKey(t, i));
+    }
+    return n;
+  }
+
+  Widget _picker(Tier tier) {
+    final levels = cardTierParams[tier]!.levels;
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      itemCount: cardLevels.length,
+      itemCount: levels.length,
       itemBuilder: (c, i) {
-        final stars = Storage.getInt(cardStarsKey(i));
-        final moves = Storage.getInt(cardMovesKey(i));
-        final col = Pal.accents[(i + 4) % Pal.accents.length];
+        final stars = Storage.getInt(cardStarsKey(tier, i));
+        final moves = Storage.getInt(cardMovesKey(tier, i));
+        final col = tierColor(tier);
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: GlassCard(
@@ -76,7 +104,7 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${cardLevels[i].label} grid',
+                  Text('${levels[i].label} grid',
                       style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 17)),
                   const SizedBox(height: 2),
                   Text(moves == 0 ? 'Not played yet' : 'Best: $moves moves',
@@ -93,16 +121,21 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
 }
 
 class _CardBoard extends StatefulWidget {
+  final Tier tier;
   final int level;
   final VoidCallback onExit;
   final ValueChanged<int> onNext;
-  const _CardBoard({super.key, required this.level, required this.onExit, required this.onNext});
+  const _CardBoard({super.key, required this.tier, required this.level, required this.onExit, required this.onNext});
   @override
   State<_CardBoard> createState() => _CardBoardState();
 }
 
 class _CardBoardState extends State<_CardBoard> {
-  late final CardLevel lv = cardLevels[widget.level];
+  late final CardTierParams params = cardTierParams[widget.tier]!;
+  late final CardLevel lv = params.levels[widget.level];
+  late final int? limit = params.timeLimit(widget.level);
+  int gen = 0;
+  bool over = false;
   late List<int> deck;
   final Set<int> up = {};
   final Set<int> matched = {};
@@ -127,20 +160,74 @@ class _CardBoardState extends State<_CardBoard> {
     moves = 0;
     seconds = 0;
     timer?.cancel();
+    over = false;
+    final my = ++gen;
+    if (params.peekMs > 0) {
+      busy = true;
+      up.addAll(List.generate(deck.length, (i) => i));
+      Future.delayed(Duration(milliseconds: params.peekMs), () {
+        if (!mounted || my != gen) return;
+        setState(() {
+          up.clear();
+          busy = false;
+        });
+        _startTimer();
+      });
+    } else {
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() => seconds++);
+      if (!mounted) return;
+      setState(() => seconds++);
+      if (limit != null && seconds >= limit! && !over) _timeUp();
     });
+  }
+
+  Future<void> _timeUp() async {
+    over = true;
+    timer?.cancel();
+    gen++;
+    AppAudio.play(Sound.fail);
+    AppAudio.haptic(true);
+    Rewards.onGameEnd('memory_boost', score: _tierStarTotal());
+    final choice = await showResultDialog(
+      context,
+      title: "Time is up!",
+      emoji: '⏰',
+      color: Pal.danger,
+      message: '${matched.length ~/ 2}/${lv.pairs} pairs found',
+    );
+    if (!mounted) return;
+    if (choice == DialogChoice.retry) {
+      setState(_start);
+    } else {
+      widget.onExit();
+    }
+  }
+
+  int _tierStarTotal() {
+    var n = 0;
+    for (var i = 0; i < params.levels.length; i++) {
+      n += Storage.getInt(cardStarsKey(widget.tier, i));
+    }
+    return n;
   }
 
   @override
   void dispose() {
+    gen++;
     timer?.cancel();
     super.dispose();
   }
 
   Future<void> _tap(int i) async {
-    if (busy || up.contains(i) || matched.contains(i)) return;
-    HapticFeedback.selectionClick();
+    if (busy || over || up.contains(i) || matched.contains(i)) return;
+    AppAudio.play(Sound.flip);
+    AppAudio.haptic();
     setState(() => up.add(i));
     if (first == null) {
       first = i;
@@ -150,10 +237,11 @@ class _CardBoardState extends State<_CardBoard> {
     first = null;
     setState(() => moves++);
     if (isMatch(deck, a, i)) {
-      HapticFeedback.lightImpact();
       busy = true;
       await Future.delayed(const Duration(milliseconds: 400));
-      if (!mounted) return;
+      if (!mounted || over) return;
+      AppAudio.play(Sound.success);
+      AppAudio.haptic();
       setState(() {
         up.removeAll([a, i]);
         matched.addAll([a, i]);
@@ -162,8 +250,12 @@ class _CardBoardState extends State<_CardBoard> {
       if (matched.length == deck.length) _won();
     } else {
       busy = true;
-      await Future.delayed(const Duration(milliseconds: 800));
-      if (!mounted) return;
+      final soundAt = params.flipBackMs < 500 ? params.flipBackMs ~/ 2 : 380;
+      await Future.delayed(Duration(milliseconds: soundAt));
+      if (!mounted || over) return;
+      AppAudio.play(Sound.fail, volume: 0.35);
+      await Future.delayed(Duration(milliseconds: params.flipBackMs - soundAt));
+      if (!mounted || over) return;
       setState(() {
         up.removeAll([a, i]);
         busy = false;
@@ -173,16 +265,18 @@ class _CardBoardState extends State<_CardBoard> {
 
   Future<void> _won() async {
     timer?.cancel();
-    HapticFeedback.heavyImpact();
+    over = true;
+    AppAudio.haptic(true);
     final stars = starsFor(moves, lv.pairs);
-    Rewards.onLevelComplete('memory_boost', 'cards-L${widget.level + 1}', stars: stars);
-    Storage.setBest(cardStarsKey(widget.level), stars);
-    final prev = Storage.getInt(cardMovesKey(widget.level));
+    Storage.setBest(cardStarsKey(widget.tier, widget.level), stars);
+    Rewards.onLevelComplete('memory_boost', cardRewardKey(widget.tier, widget.level),
+        stars: stars, score: _tierStarTotal());
+    final prev = Storage.getInt(cardMovesKey(widget.tier, widget.level));
     final newBest = prev == 0 || moves < prev;
-    if (newBest) Storage.setInt(cardMovesKey(widget.level), moves);
+    if (newBest) Storage.setInt(cardMovesKey(widget.tier, widget.level), moves);
     await Future.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
-    final hasNext = widget.level + 1 < cardLevels.length;
+    final hasNext = widget.level + 1 < params.levels.length;
     final choice = await showResultDialog(
       context,
       title: 'Level complete!',
@@ -210,7 +304,8 @@ class _CardBoardState extends State<_CardBoard> {
         padding: const EdgeInsets.all(12),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           StatChip(Icons.touch_app_rounded, '$moves moves'),
-          StatChip(Icons.timer_rounded, fmtTime(seconds), color: Pal.gold),
+          StatChip(Icons.timer_rounded, fmtTime(limit == null ? seconds : (limit! - seconds).clamp(0, limit!)),
+              color: limit != null && limit! - seconds <= 10 ? Pal.danger : Pal.gold),
           StatChip(Icons.check_circle_rounded, '${matched.length ~/ 2}/${lv.pairs}', color: Pal.success),
         ]),
       ),

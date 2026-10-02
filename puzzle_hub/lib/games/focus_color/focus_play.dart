@@ -2,13 +2,14 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/focus_common.dart';
+import 'logic/focus_difficulty.dart';
 import 'logic/odd_logic.dart';
 import 'logic/rule_logic.dart';
 import 'logic/stroop_logic.dart';
@@ -16,31 +17,35 @@ import 'logic/stroop_logic.dart';
 const focusTint = Color(0xFF5EEAD4);
 
 class FocusModeInfo {
-  const FocusModeInfo(this.mode, this.title, this.blurb, this.icon, this.color, this.seconds, this.key);
+  const FocusModeInfo(this.mode, this.title, this.blurb, this.icon, this.color);
   final FocusMode mode;
   final String title;
   final String blurb;
   final IconData icon;
   final Color color;
-  final int seconds;
-  final String key;
-  int get best => Storage.getInt(key);
+
+  /// Best score for a tier (medium also honours the pre-difficulty legacy key).
+  int bestFor(FocusTier t) {
+    final v = Storage.getInt(focusBestKey(mode, t));
+    return t == FocusTier.medium ? max(v, Storage.getInt('focus.${mode.name}.best')) : v;
+  }
 }
 
 const focusModes = <FocusModeInfo>[
-  FocusModeInfo(FocusMode.stroop, 'Color vs Word', 'Tap the INK color, not the word. 60s, 3 lives.',
-      Icons.palette_rounded, Color(0xFFFF6FB5), 60, 'focus.stroop.best'),
-  FocusModeInfo(FocusMode.odd, 'Odd One Out', 'Spot the tile with a different shade. Grid grows, shade fades. 30s.',
-      Icons.grid_view_rounded, Color(0xFF4DA8FF), 30, 'focus.odd.best'),
-  FocusModeInfo(FocusMode.rule, 'Match Rule', 'Same color or same shape? The rule keeps flipping. 30s.',
-      Icons.rule_rounded, Color(0xFFFFC857), 30, 'focus.rule.best'),
+  FocusModeInfo(FocusMode.stroop, 'Color vs Word', 'Tap the INK color, not the word. Beat the clock.',
+      Icons.palette_rounded, Color(0xFFFF6FB5)),
+  FocusModeInfo(FocusMode.odd, 'Odd One Out', 'Spot the tile with a different shade. Grid grows, shade fades.',
+      Icons.grid_view_rounded, Color(0xFF4DA8FF)),
+  FocusModeInfo(FocusMode.rule, 'Match Rule', 'Same color or same shape? The rule keeps flipping.',
+      Icons.rule_rounded, Color(0xFFFFC857)),
 ];
 
 enum _Phase { countdown, playing, over }
 
 class FocusPlayScreen extends StatefulWidget {
-  const FocusPlayScreen({super.key, required this.info});
+  const FocusPlayScreen({super.key, required this.info, required this.tier});
   final FocusModeInfo info;
+  final FocusTier tier;
   @override
   State<FocusPlayScreen> createState() => _FocusPlayScreenState();
 }
@@ -56,6 +61,10 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   Timer? _cd;
 
   FocusModeInfo get info => widget.info;
+  FocusTier get tier => widget.tier;
+  late final FocusParams _p = focusParams(widget.info.mode, widget.tier);
+  String get _bestKey => focusBestKey(info.mode, tier);
+  DateTime _lastOk = DateTime.fromMillisecondsSinceEpoch(0);
   _Phase _phase = _Phase.countdown;
   int _count = 3;
   int _score = 0, _streak = 0, _bestStreak = 0, _solved = 0, _wrong = 0, _lives = 3;
@@ -67,14 +76,14 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   RuleRound? _rr;
   int _round = 0; // bumps per new round for transitions
 
-  double get _total => info.seconds.toDouble();
+  double get _total => _p.seconds.toDouble();
 
   @override
   void initState() {
     super.initState();
-    _t = AnimationController(vsync: this, duration: Duration(seconds: info.seconds))
+    _t = AnimationController(vsync: this, duration: Duration(seconds: _p.seconds))
       ..addStatusListener((s) {
-        if (s == AnimationStatus.completed) _finish();
+        if (s == AnimationStatus.completed) _finish(timeUp: true);
       });
     _shake = AnimationController(vsync: this, duration: 380.ms);
     _flash = AnimationController(vsync: this, duration: 450.ms);
@@ -92,21 +101,22 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
 
   void _begin() {
     _cd?.cancel();
-    _stroopGen = StroopGenerator(_rng);
-    _oddGen = OddGenerator(_rng);
-    _ruleGen = RuleGenerator(_rng);
+    _stroopGen = StroopGenerator(_rng, _p);
+    _oddGen = OddGenerator(_rng, _p);
+    _ruleGen = RuleGenerator(_rng, _p);
     _t.reset();
     setState(() {
       _phase = _Phase.countdown;
       _count = 3;
       _score = _streak = _bestStreak = _solved = _wrong = 0;
-      _lives = 3;
+      _lives = _p.lives;
       _burstText = '';
     });
+    AppAudio.play(Sound.tap);
     _cd = Timer.periodic(const Duration(milliseconds: 800), (tm) {
       if (!mounted) return;
       if (_count > 1) {
-        HapticFeedback.selectionClick();
+        AppAudio.play(Sound.tap);
         setState(() => _count--);
       } else {
         tm.cancel();
@@ -133,7 +143,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     final v = (_t.value + seconds / _total).clamp(0.0, 1.0);
     _t.value = v;
     if (v >= 1) {
-      _finish();
+      _finish(timeUp: true);
     } else {
       _t.forward();
     }
@@ -142,7 +152,9 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   void _answer(bool ok) {
     if (_phase != _Phase.playing) return;
     if (ok) {
-      HapticFeedback.lightImpact();
+      final now = DateTime.now();
+      final spammy = now.difference(_lastOk).inMilliseconds < 450;
+      _lastOk = now;
       final before = comboMultiplier(_streak);
       _score += info.mode == FocusMode.odd ? 1 : pointsFor(_streak);
       _streak++;
@@ -154,45 +166,47 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
       if (after > before) {
         _burst++;
         _burstText = 'COMBO x$after';
-      } else if (info.mode == FocusMode.stroop && _streak % 8 == 0) {
-        _burst++;
-        _burstText = '+2s';
-        _adjustTime(-2);
+        AppAudio.play(Sound.coin);
+      } else {
+        AppAudio.play(spammy ? Sound.pop : Sound.success);
+        if (info.mode == FocusMode.stroop && _p.bonusEvery > 0 && _streak % _p.bonusEvery == 0) {
+          _burst++;
+          _burstText = '+${_p.bonusSeconds}s';
+          _adjustTime(-_p.bonusSeconds.toDouble());
+        }
       }
+      AppAudio.haptic();
       _nextRound();
       setState(() {});
     } else {
-      HapticFeedback.heavyImpact();
+      AppAudio.play(Sound.fail);
+      AppAudio.haptic(true);
       _wrong++;
       _streak = 0;
       _flashColor = Pal.danger;
       _flash.forward(from: 0);
       _shake.forward(from: 0);
-      if (info.mode == FocusMode.stroop) {
-        _lives--;
-        _nextRound();
-        setState(() {});
-        if (_lives <= 0) _finish();
-      } else {
-        setState(() {});
-        _adjustTime(2);
-        if (info.mode == FocusMode.rule) {
-          _nextRound();
-          setState(() {});
-        }
+      if (_p.lives > 0) _lives--;
+      if (info.mode != FocusMode.odd) _nextRound();
+      setState(() {});
+      if (_p.lives > 0 && _lives <= 0) {
+        _finish();
+        return;
       }
+      if (_p.wrongPenalty > 0) _adjustTime(_p.wrongPenalty);
     }
   }
 
-  Future<void> _finish() async {
+  Future<void> _finish({bool timeUp = false}) async {
     if (_phase == _Phase.over) return;
     _t.stop();
+    if (timeUp) AppAudio.play(Sound.fail);
     setState(() => _phase = _Phase.over);
-    final isBest = Storage.setBest(info.key, _score);
-    final stars = starsFor(info.mode, _score);
+    final isBest = Storage.setBest(_bestKey, _score);
+    final stars = focusStars(info.mode, tier, _score);
     Rewards.onGameEnd('focus_color', score: _score, won: stars >= 1);
     if (stars >= 1) {
-      Rewards.onLevelComplete('focus_color', '${info.mode.name}-star$stars', stars: stars, score: _score);
+      Rewards.onLevelComplete('focus_color', '${info.mode.name}-${tier.name}-star$stars', stars: stars, score: _score);
     }
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
@@ -203,7 +217,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
       emoji: isBest && _score > 0 ? '🏆' : (stars == 0 ? '🎯' : '🧠'),
       stars: stars,
       color: info.color,
-      message: 'Score: $_score $unit\nBest streak: $_bestStreak   Mistakes: $_wrong\nBest: ${max(info.best, _score)}',
+      message: 'Score: $_score $unit\nBest streak: $_bestStreak   Mistakes: $_wrong\nBest (${tier.label}): ${max(info.bestFor(tier), _score)}',
       actions: [
         DialogAction('Menu', () {
           if (mounted) Navigator.of(context).maybePop();
@@ -220,7 +234,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: info.title,
+      title: '${info.title} - ${tier.label}',
       tint: focusTint,
       body: Stack(children: [
         Column(children: [
@@ -282,7 +296,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
         _ring(),
         const SizedBox(width: 10),
         Expanded(
-          child: info.mode == FocusMode.stroop
+          child: _p.lives > 0
               ? GlassCard(
                   blur: 0,
                   radius: 18,
@@ -291,7 +305,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
                     const Text('LIVES', style: TextStyle(color: Pal.textDim, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1)),
                     const SizedBox(height: 2),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      for (var i = 0; i < 3; i++)
+                      for (var i = 0; i < _p.lives; i++)
                         Icon(i < _lives ? Icons.favorite_rounded : Icons.heart_broken_rounded,
                             size: 20, color: i < _lives ? Pal.danger : Pal.textDim),
                     ]),
@@ -398,7 +412,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
               width: (MediaQuery.of(context).size.width - 32 - 12) / 2,
               child: Pressable(
                 onTap: () => _answer(r.isCorrect(c)),
-                child: _glossy(c.label),
+                child: _glossy(c.label, h: r.options.length > 6 ? 50 : 62, font: r.options.length > 6 ? 16 : 18),
               ),
             ),
         ],

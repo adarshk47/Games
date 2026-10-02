@@ -34,13 +34,42 @@ class _Snap {
   final int nextId;
 }
 
+/// Difficulty tiers.
+enum Tier2048 {
+  easy('Easy', 5, 5, 2048, 0, 0.10),
+  medium('Medium', 4, 3, 2048, 0, 0.10),
+  hard('Hard', 4, 1, 1024, 2, 0.25),
+  extreme('Extreme', 4, 0, 256, 3, 0.30);
+
+  const Tier2048(this.label, this.size, this.undos, this.target, this.stones, this.fourChance);
+  final String label;
+  final int size;
+  final int undos;
+  final int target;
+  final int stones;
+  final double fourChance;
+}
+
 /// Pure 2048 engine with stable tile ids (for animation), undo and JSON save.
 class Game2048 {
-  Game2048(this.size, {Random? rng, this.maxUndos = 3}) : rng = rng ?? Random() {
+  Game2048(this.size,
+      {Random? rng, this.maxUndos = 3, this.stoneCount = 0, this.fourChance = 0.1, int? target, this.tier = Tier2048.medium})
+      : rng = rng ?? Random(),
+        _target = target ?? 2048 {
     undosLeft = maxUndos;
   }
 
+  factory Game2048.forTier(Tier2048 t, {Random? rng}) => Game2048(t.size,
+      rng: rng, maxUndos: t.undos, stoneCount: t.stones, fourChance: t.fourChance, target: t.target, tier: t);
+
+  final Tier2048 tier;
   final int size;
+  final int stoneCount;
+  final double fourChance;
+  final int _target;
+
+  /// Immovable blocked cells (index = r * size + c).
+  Set<int> stones = {};
   final Random rng;
   final int maxUndos;
   List<Tile> tiles = [];
@@ -50,7 +79,8 @@ class Game2048 {
   bool keepGoing = false;
   final List<_Snap> _history = [];
 
-  int get target => size == 3 ? 256 : 2048;
+  int get target => _target;
+  bool isStone(int r, int c) => stones.contains(r * size + c);
   bool get canUndo => undosLeft > 0 && _history.isNotEmpty;
   int get maxTile => tiles.fold(0, (m, t) => t.value > m ? t.value : m);
   bool get reachedTarget => maxTile >= target;
@@ -62,6 +92,10 @@ class Game2048 {
     undosLeft = maxUndos;
     keepGoing = false;
     _history.clear();
+    stones = {};
+    while (stones.length < stoneCount) {
+      stones.add(rng.nextInt(size * size));
+    }
     spawn();
     spawn();
   }
@@ -73,11 +107,11 @@ class Game2048 {
     return null;
   }
 
-  int nextSpawnValue() => rng.nextDouble() < 0.9 ? 2 : 4;
+  int nextSpawnValue() => rng.nextDouble() < fourChance ? 4 : 2;
 
   Tile? spawn() {
     final taken = {for (final t in tiles) t.r * size + t.c};
-    final free = [for (var i = 0; i < size * size; i++) if (!taken.contains(i)) i];
+    final free = [for (var i = 0; i < size * size; i++) if (!taken.contains(i) && !stones.contains(i)) i];
     if (free.isEmpty) return null;
     final i = free[rng.nextInt(free.length)];
     final t = Tile(nextId++, nextSpawnValue(), i ~/ size, i % size);
@@ -109,7 +143,13 @@ class Game2048 {
       final line = _line(d, i);
       Tile? last;
       var pos = 0;
-      for (final cell in line) {
+      for (var k = 0; k < line.length; k++) {
+        final cell = line[k];
+        if (stones.contains(cell[0] * size + cell[1])) {
+          last = null;
+          pos = k + 1;
+          continue;
+        }
         final t = grid[cell[0] * size + cell[1]];
         if (t == null) continue;
         if (last != null && last.value == t.value && !merged.contains(last.id)) {
@@ -140,7 +180,7 @@ class Game2048 {
   }
 
   bool get hasMoves {
-    if (tiles.length < size * size) return true;
+    if (tiles.length < size * size - stones.length) return true;
     for (final t in tiles) {
       for (final o in [tileAt(t.r + 1, t.c), tileAt(t.r, t.c + 1)]) {
         if (o != null && o.value == t.value) return true;
@@ -161,6 +201,8 @@ class Game2048 {
 
   String toJsonString() => jsonEncode({
         'size': size,
+        'tier': tier.index,
+        'stones': stones.toList(),
         'score': score,
         'nextId': nextId,
         'undos': undosLeft,
@@ -172,14 +214,17 @@ class Game2048 {
     if (s == null) return null;
     try {
       final m = jsonDecode(s) as Map<String, dynamic>;
-      final g = Game2048(m['size'] as int, rng: rng);
+      final t = Tier2048.values[m['tier'] as int];
+      if (t.size != m['size']) return null;
+      final g = Game2048.forTier(t, rng: rng);
+      g.stones = {for (final x in m['stones'] as List) x as int};
       g.score = m['score'] as int;
       g.nextId = m['nextId'] as int;
       g.undosLeft = m['undos'] as int;
       g.keepGoing = m['keep'] as bool;
       g.tiles = [for (final t in m['tiles'] as List) Tile.fromJson(t as List)];
       for (final t in g.tiles) {
-        if (t.r < 0 || t.c < 0 || t.r >= g.size || t.c >= g.size) return null;
+        if (t.r < 0 || t.c < 0 || t.r >= g.size || t.c >= g.size || g.isStone(t.r, t.c)) return null;
       }
       return g.tiles.isEmpty ? null : g;
     } catch (_) {

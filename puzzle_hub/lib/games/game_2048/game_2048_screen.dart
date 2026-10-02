@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -13,9 +14,9 @@ import 'logic/game_2048_logic.dart';
 const _tint = Color(0xFFFB923C);
 const _slideMs = 120;
 
-String _bestKey(int n) => 'g2048.best.$n';
-String _saveKey(int n) => 'g2048.save.$n';
-const _sizeKey = 'g2048.size';
+String _bestKey(Tier2048 t) => 'g2048.${t.name}.best';
+String _saveKey(Tier2048 t) => 'g2048.${t.name}.save';
+const _tierKey = 'g2048.tier';
 
 class Game2048Screen extends StatefulWidget {
   const Game2048Screen({super.key});
@@ -41,7 +42,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   @override
   void initState() {
     super.initState();
-    _load(Storage.getInt(_sizeKey, 4).clamp(3, 5));
+    _load(Tier2048.values[Storage.getInt(_tierKey, Tier2048.medium.index).clamp(0, Tier2048.values.length - 1)]);
   }
 
   @override
@@ -51,10 +52,10 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     super.dispose();
   }
 
-  void _load(int size) {
-    _g = Game2048.fromJsonString(Storage.getString(_saveKey(size))) ?? (Game2048(size)..reset());
-    if (_g.size != size) _g = Game2048(size)..reset();
-    _best = Storage.getInt(_bestKey(size));
+  void _load(Tier2048 t) {
+    final saved = Game2048.fromJsonString(Storage.getString(_saveKey(t)));
+    _g = (saved != null && saved.tier == t) ? saved : (Game2048.forTier(t)..reset());
+    _best = Storage.getInt(_bestKey(t));
     _ghosts = [];
     _resetRewardGuards();
   }
@@ -70,13 +71,13 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   }
 
   void _awardMilestones() {
-    final n = _g.size, m = _g.maxTile;
-    void pay(String id, String key, int stars) {
-      if (_paid.add(id)) Rewards.onLevelComplete('game_2048', key, stars: stars, score: _g.score);
+    final n = _g.size, m = _g.maxTile, t = _g.tier.name;
+    void pay(String id, int v, int stars) {
+      if (_paid.add(id)) Rewards.onLevelComplete('game_2048', 'size$n/tier-$t-$v', stars: stars, score: _g.score);
     }
-    if (m >= 512) pay('512', 'size$n-512', 1);
-    if (m >= 1024) pay('1024', 'size$n-1024', 2);
-    if (m >= _g.target) pay('target', 'size$n-${_g.target}', 3);
+    if (m >= _g.target) pay('target', _g.target, 3);
+    if (m >= 512 && _g.target != 512) pay('512', 512, 1);
+    if (m >= 1024 && _g.target != 1024) pay('1024', 1024, 2);
   }
 
   void _reportOver() {
@@ -87,22 +88,24 @@ class _Game2048ScreenState extends State<Game2048Screen> {
 
   void _save() {
     if (_g.hasMoves) {
-      Storage.setString(_saveKey(_g.size), _g.toJsonString());
+      Storage.setString(_saveKey(_g.tier), _g.toJsonString());
     } else {
-      Storage.setString(_saveKey(_g.size), '');
+      Storage.setString(_saveKey(_g.tier), '');
     }
   }
 
-  void _setSize(int n) {
-    if (n == _g.size) return;
+  void _setTier(Tier2048 t) {
+    if (t == _g.tier) return;
+    AppAudio.play(Sound.tap);
     _save();
-    Storage.setInt(_sizeKey, n);
-    setState(() => _load(n));
+    Storage.setInt(_tierKey, t.index);
+    setState(() => _load(t));
   }
 
   void _restart() {
+    AppAudio.play(Sound.tap);
     setState(() {
-      _g = Game2048(_g.size)..reset();
+      _g = Game2048.forTier(_g.tier)..reset();
       _ghosts = [];
       _resetRewardGuards();
     });
@@ -111,7 +114,8 @@ class _Game2048ScreenState extends State<Game2048Screen> {
 
   void _undo() {
     if (_g.undo()) {
-      HapticFeedback.selectionClick();
+      AppAudio.play(Sound.tap);
+      AppAudio.haptic();
       setState(() => _ghosts = []);
       _save();
     }
@@ -121,12 +125,18 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     if (_dialogOpen) return;
     final res = _g.move(d);
     if (res == null) return;
-    HapticFeedback.lightImpact();
+    AppAudio.haptic();
+    if (res.merged.isNotEmpty) {
+      final big = _g.tiles.any((t) => res.merged.contains(t.id) && t.value >= 128);
+      AppAudio.play(big ? Sound.success : Sound.pop);
+    } else {
+      AppAudio.play(Sound.slide);
+    }
     _ghostTimer?.cancel();
     _ghostTimer = Timer(const Duration(milliseconds: _slideMs + 20), () {
       if (mounted) setState(() => _ghosts = []);
     });
-    if (Storage.setBest(_bestKey(_g.size), _g.score)) _best = _g.score;
+    if (Storage.setBest(_bestKey(_g.tier), _g.score)) _best = _g.score;
     setState(() {
       _ghosts = res.removed;
       if (res.gained > 0) {
@@ -163,6 +173,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   }
 
   void _showOver() {
+    AppAudio.play(Sound.fail);
     _reportOver();
     _dialogOpen = true;
     showPremiumDialog(
@@ -227,17 +238,8 @@ class _Game2048ScreenState extends State<Game2048Screen> {
               Expanded(child: _ScorePill(label: 'BEST', value: math.max(_best, _g.score))),
             ]),
             const SizedBox(height: 14),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              for (final n in const [3, 4, 5])
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: _SizeChip(label: '${n}x$n', selected: _g.size == n, onTap: () => _setSize(n)),
-                ),
-              const SizedBox(width: 10),
-              Icon(Icons.undo_rounded, size: 16, color: Pal.textDim.withValues(alpha: 0.9)),
-              const SizedBox(width: 4),
-              Text('${_g.undosLeft}', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800)),
-            ]),
+            _TierSelector(selected: _g.tier, undosLeft: _g.undosLeft, onSelect: _setTier),
+            const SizedBox(height: 8),
             Expanded(
               child: Center(
                 child: LayoutBuilder(builder: (context, c) {
@@ -267,28 +269,77 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   }
 }
 
-class _SizeChip extends StatelessWidget {
-  const _SizeChip({required this.label, required this.selected, required this.onTap});
-  final String label;
+class _TierSelector extends StatelessWidget {
+  const _TierSelector({required this.selected, required this.undosLeft, required this.onSelect});
+  final Tier2048 selected;
+  final int undosLeft;
+  final ValueChanged<Tier2048> onSelect;
+
+  static const _colors = {
+    Tier2048.easy: Color(0xFF4ADE80),
+    Tier2048.medium: Color(0xFF60A5FA),
+    Tier2048.hard: Color(0xFFFB923C),
+    Tier2048.extreme: Color(0xFFFF4D6D),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      for (final t in Tier2048.values)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: _TierCard(
+              tier: t,
+              color: _colors[t]!,
+              selected: t == selected,
+              undosLeft: t == selected ? undosLeft : null,
+              onTap: () => onSelect(t),
+            ),
+          ),
+        ),
+    ]);
+  }
+}
+
+class _TierCard extends StatelessWidget {
+  const _TierCard({required this.tier, required this.color, required this.selected, required this.onTap, this.undosLeft});
+  final Tier2048 tier;
+  final Color color;
   final bool selected;
+  final int? undosLeft;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Pressable(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: 200.ms,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-          decoration: BoxDecoration(
-            gradient: selected ? Pal.accent(_tint) : null,
-            color: selected ? null : Pal.glass,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: selected ? Colors.white.withValues(alpha: 0.4) : Pal.glassBorder),
-          ),
-          child: Text(label,
-              style: TextStyle(color: selected ? Colors.white : Pal.textDim, fontWeight: FontWeight.w800, fontSize: 13)),
+  Widget build(BuildContext context) {
+    final dim = selected ? Colors.white.withValues(alpha: 0.9) : Pal.textDim;
+    final undoTxt = undosLeft != null ? '$undosLeft/${tier.undos}' : '${tier.undos}';
+    final small = TextStyle(color: dim, fontSize: 10, fontWeight: FontWeight.w700, height: 1.25);
+    return Pressable(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: 200.ms,
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: selected ? Pal.accent(color) : null,
+          color: selected ? null : Pal.glass,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: selected ? Colors.white.withValues(alpha: 0.45) : Pal.glassBorder),
+          boxShadow: selected ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 14, spreadRadius: -3)] : null,
         ),
-      );
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(tier.label,
+              maxLines: 1,
+              style: TextStyle(color: selected ? Colors.white : Pal.text, fontWeight: FontWeight.w900, fontSize: 13)),
+          const SizedBox(height: 3),
+          Text('${tier.size}x${tier.size} \u2192 ${tier.target}', maxLines: 1, style: small),
+          Text('$undoTxt undo${tier.undos == 1 ? '' : 's'}', maxLines: 1, style: small),
+          Text(tier.stones > 0 ? '${tier.stones} stones' : 'no stones', maxLines: 1, style: small),
+          Text('${(tier.fourChance * 100).round()}% fours', maxLines: 1, style: small),
+        ]),
+      ),
+    );
+  }
 }
 
 class _ScorePill extends StatelessWidget {
@@ -363,6 +414,21 @@ class _Board extends StatelessWidget {
                 decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(radius)),
               ),
             ),
+        for (final i in game.stones)
+          Positioned(
+            left: pos(i % n),
+            top: pos(i ~/ n),
+            width: cell,
+            height: cell,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2547),
+                borderRadius: BorderRadius.circular(radius),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+              ),
+              child: Icon(Icons.lock_rounded, color: Colors.white.withValues(alpha: 0.35), size: cell * 0.4),
+            ),
+          ),
         for (final t in [...ghosts, ...game.tiles])
           AnimatedPositioned(
             key: ValueKey(t.id),

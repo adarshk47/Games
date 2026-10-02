@@ -28,11 +28,15 @@ class SimonLogic {
     return _pos == sequence.length ? SequenceResult.complete : SequenceResult.correct;
   }
 
+  /// Restart input from the first step (used after a forgiven mistake).
+  void restartInput() => _pos = 0;
+
   void reset() {
     sequence.clear();
     _pos = 0;
   }
 
   /// Milliseconds each pad is lit; shrinks slowly with sequence length.
-  static int stepMillis(int length) => max(220, 600 - (length - 1) * 20);
+  static int stepMillis(int length, {int base = 600, int min = 220, int decay = 20}) =>
+      max(min, base - (length - 1) * decay);
 }

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -68,9 +69,10 @@ class _MissingItemGameState extends State<MissingItemGame>
 
   Future<void> _choose(int poolIdx) async {
     if (!_revealed || _solved || _wrong.contains(poolIdx)) return;
-    softTap();
+    AppAudio.haptic();
     _tries++;
     if (poolIdx == _round.answer) {
+      AppAudio.play(Sound.success);
       _solved = true;
       _stars = triesToStars(_tries);
       setState(() {});
@@ -87,6 +89,7 @@ class _MissingItemGameState extends State<MissingItemGame>
       await Future<void>.delayed(const Duration(milliseconds: 1200));
       if (mounted) setState(() => _phase = _Phase.result);
     } else {
+      AppAudio.play(Sound.pop);
       setState(() => _wrong.add(poolIdx));
     }
   }

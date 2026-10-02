@@ -1,13 +1,18 @@
 import 'dart:math';
 
-/// The six ink colors / words used by Color vs Word.
+import 'focus_common.dart';
+import 'focus_difficulty.dart';
+
+/// The ink colors / words used by Color vs Word (first N are used per tier).
 enum StroopColor {
   red('RED', 0xFFFF4D5E),
   blue('BLUE', 0xFF4D8DFF),
   green('GREEN', 0xFF34D399),
   yellow('YELLOW', 0xFFFFD84D),
   purple('PURPLE', 0xFFB66BFF),
-  orange('ORANGE', 0xFFFF9140);
+  orange('ORANGE', 0xFFFF9140),
+  pink('PINK', 0xFFFF6FB5), // close to red / purple
+  cyan('CYAN', 0xFF2DD4EF); // close to blue / green
 
   const StroopColor(this.label, this.argb);
   final String label;
@@ -23,14 +28,20 @@ class StroopRound {
 }
 
 class StroopGenerator {
-  StroopGenerator([Random? rng]) : _rng = rng ?? Random();
+  StroopGenerator([Random? rng, FocusParams? params])
+      : _rng = rng ?? Random(),
+        params = params ?? focusParams(FocusMode.stroop, FocusTier.medium);
   final Random _rng;
+  final FocusParams params;
 
-  /// Number of answer buttons grows from 4 to 6 with rounds solved.
-  static int optionCount(int solved) => solved < 10 ? 4 : (solved < 20 ? 5 : 6);
+  /// Number of answer buttons grows with rounds solved, capped by the tier.
+  static int optionCountFor(FocusParams p, int solved) =>
+      (p.stroopMinOptions + solved ~/ p.stroopOptionStep).clamp(p.stroopMinOptions, min(p.stroopMaxOptions, p.stroopPool));
+
+  int optionCount(int solved) => optionCountFor(params, solved);
 
   StroopRound next(int solved) {
-    final all = StroopColor.values;
+    final all = StroopColor.values.take(params.stroopPool).toList();
     final ink = all[_rng.nextInt(all.length)];
     StroopColor word;
     do {

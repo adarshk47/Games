@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -49,7 +50,8 @@ class _LullabyGameState extends State<LullabyGame> {
     for (final p in _seq) {
       if (!mounted || id != _run) return;
       setState(() => _lit = p);
-      softTap();
+      AppAudio.play(Sound.pop);
+      AppAudio.haptic();
       await _wait(700);
       if (!mounted || id != _run) return;
       setState(() => _lit = -1);
@@ -64,7 +66,8 @@ class _LullabyGameState extends State<LullabyGame> {
 
   Future<void> _tap(int pad) async {
     if (!_listening) return;
-    softTap();
+    AppAudio.play(Sound.pop);
+    AppAudio.haptic();
     setState(() => _lit = pad);
     Future.delayed(const Duration(milliseconds: 280), () {
       if (mounted && _listening) setState(() => _lit = -1);
@@ -79,6 +82,9 @@ class _LullabyGameState extends State<LullabyGame> {
       setState(() => _input++);
     } else {
       _listening = false;
+      Future<void>.delayed(const Duration(milliseconds: 200), () {
+        if (mounted) AppAudio.play(Sound.success);
+      });
       final len = _seq.length;
       Storage.setBest('mom.lullaby.best', len);
       recordPlay();

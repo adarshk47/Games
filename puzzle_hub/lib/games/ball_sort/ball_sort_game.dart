@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -28,6 +29,12 @@ const _palette = <Color>[
   Color(0xFF1A237E), // navy
   Color(0xFFF5F5F5), // white
   Color(0xFFD500F9), // magenta
+  Color(0xFF26A69A), // teal
+  Color(0xFFFFCC80), // peach
+  Color(0xFF81D4FA), // sky
+  Color(0xFF8B0000), // maroon
+  Color(0xFF827717), // olive
+  Color(0xFFB39DDB), // lavender
 ];
 
 const _shapes = <IconData>[
@@ -47,6 +54,10 @@ const _shapes = <IconData>[
   Icons.eco,
   Icons.cloud,
   Icons.pentagon,
+  Icons.star_border,
+  Icons.ac_unit,
+  Icons.wb_sunny,
+  Icons.park,
 ];
 
 class BallSortGame extends StatefulWidget {
@@ -78,7 +89,7 @@ class _BallSortGameState extends State<BallSortGame> {
   void initState() {
     super.initState();
     _unlocked = Storage.getInt(bsKey(_diff, 'unlocked'), 1);
-    _markers = Storage.getBool(_kMarkersKey, _diff == BsDifficulty.hard);
+    _markers = Storage.getBool(_kMarkersKey, _diff == BsDifficulty.hard || _diff == BsDifficulty.extreme);
     _load(widget.level.clamp(1, _unlocked));
   }
 
@@ -107,10 +118,14 @@ class _BallSortGameState extends State<BallSortGame> {
     _won = false;
   }
 
-  void _restart() => setState(() => _load(_level));
+  void _restart() {
+    AppAudio.play(Sound.tap);
+    setState(() => _load(_level));
+  }
 
   void _undo() {
     if (_history.isEmpty) return;
+    AppAudio.play(Sound.tap);
     setState(() {
       _state = _history.removeLast();
       _selected = null;
@@ -121,6 +136,7 @@ class _BallSortGameState extends State<BallSortGame> {
 
   void _addTube() {
     if (!_state.canAddTube) return;
+    AppAudio.play(Sound.tap);
     setState(() {
       _history.add(_state.clone());
       _state.addTube();
@@ -132,9 +148,13 @@ class _BallSortGameState extends State<BallSortGame> {
     setState(() {
       final sel = _selected;
       if (sel == null) {
-        if (_state.tubes[i].isNotEmpty) _selected = i;
+        if (_state.tubes[i].isNotEmpty) {
+          _selected = i;
+          AppAudio.play(Sound.tap);
+        }
       } else if (sel == i) {
         _selected = null;
+        AppAudio.play(Sound.tap);
       } else if (_state.canPour(sel, i)) {
         final srcPos = _tubePos(sel);
         final dstPos = _tubePos(i);
@@ -144,8 +164,15 @@ class _BallSortGameState extends State<BallSortGame> {
         _lastDest = i;
         _moveSerial++;
         _selected = null;
+        final dt = _state.tubes[i];
+        final done = dt.length == _state.capacity && dt.every((c) => c == dt.first);
+        AppAudio.play(done ? Sound.success : Sound.pop);
         if (_state.isSolved) _onWin();
       } else {
+        if (_state.tubes[i].isNotEmpty) {
+          AppAudio.play(Sound.fail);
+          AppAudio.haptic();
+        }
         _selected = _state.tubes[i].isNotEmpty ? i : null;
       }
     });

@@ -40,25 +40,66 @@ void main() {
     expect(p.last, m.exit);
   });
 
-  test('fork path has exactly one correct option per fork', () {
-    for (var level = 1; level <= kLevelCount; level++) {
-      final l = ForkLevel.of(level);
-      final f = ForkPath.generate(l.seed, l.forks, l.options);
-      expect(f.forkCount, l.forks);
-      for (var i = 0; i < f.forkCount; i++) {
-        expect([for (var o = 0; o < l.options; o++) if (f.isCorrect(i, o)) o].length, 1);
-        expect(f.correct[i], inInclusiveRange(0, l.options - 1));
+  test('every labyrinth level of every tier has a unique route', () {
+    for (final t in MazeTier.values) {
+      for (var level = 1; level <= kLevelCount; level++) {
+        final l = LabLevel.of(t, level);
+        final m = Maze.generate(l.seed, l.size, l.size);
+        expect(m.reachableCount(), m.cellCount, reason: '${t.name} L$level');
+        expect(m.edgeCount, m.cellCount - 1, reason: '${t.name} L$level');
+        final p = m.solve();
+        expect(p.first, m.start);
+        expect(p.last, m.exit);
+        expect(p.length, greaterThan(1));
+        if (l.limited) expect(l.moveLimit(m.optimalMoves), greaterThan(m.optimalMoves));
       }
     }
   });
 
-  test('level scaling', () {
-    expect(LabLevel.of(1).size, 7);
-    expect(LabLevel.of(kLevelCount).size, 21);
-    expect(ForkLevel.of(1).forks, 3);
-    expect(ForkLevel.of(kLevelCount).forks, 8);
-    expect(ForkLevel.of(1).options, 3);
-    expect(ForkLevel.of(kLevelCount).options, 5);
+  test('every fork level of every tier has exactly one correct option per fork', () {
+    for (final t in MazeTier.values) {
+      for (var level = 1; level <= kLevelCount; level++) {
+        final l = ForkLevel.of(t, level);
+        final f = ForkPath.generate(l.seed, l.forks, l.options);
+        expect(f.forkCount, l.forks);
+        for (var i = 0; i < f.forkCount; i++) {
+          expect([for (var o = 0; o < l.options; o++) if (f.isCorrect(i, o)) o].length, 1, reason: '${t.name} L$level fork $i');
+          expect(f.correct[i], inInclusiveRange(0, l.options - 1));
+        }
+      }
+    }
+  });
+
+  test('tier scaling', () {
+    expect(LabLevel.of(MazeTier.easy, 1).size, 7);
+    expect(LabLevel.of(MazeTier.easy, kLevelCount).size, 11);
+    expect(LabLevel.of(MazeTier.easy, kLevelCount).fogRadius, 0);
+    expect(LabLevel.of(MazeTier.easy, 1).torches, 3);
+    expect(LabLevel.of(MazeTier.medium, kLevelCount).size, 15);
+    expect(LabLevel.of(MazeTier.hard, kLevelCount).size, 19);
+    expect(LabLevel.of(MazeTier.hard, 5).fogRadius, 3);
+    expect(LabLevel.of(MazeTier.hard, 5).torches, 2);
+    expect(LabLevel.of(MazeTier.hard, 5).limited, isTrue);
+    expect(LabLevel.of(MazeTier.extreme, kLevelCount).size, 25);
+    expect(LabLevel.of(MazeTier.extreme, 5).fogRadius, 2);
+    expect(LabLevel.of(MazeTier.extreme, 5).torches, 1);
+    expect(LabLevel.of(MazeTier.extreme, 5).limitFactor, lessThan(LabLevel.of(MazeTier.hard, 5).limitFactor));
+
+    expect(ForkLevel.of(MazeTier.easy, 1).options, 3);
+    expect(ForkLevel.of(MazeTier.easy, 1).forks, 3);
+    expect(ForkLevel.of(MazeTier.easy, kLevelCount).forks, 4);
+    expect(ForkLevel.of(MazeTier.easy, 5).resetOnWrong, isFalse);
+    expect(ForkLevel.of(MazeTier.medium, kLevelCount).options, 4);
+    expect(ForkLevel.of(MazeTier.hard, 1).options, 4);
+    expect(ForkLevel.of(MazeTier.hard, kLevelCount).options, 5);
+    expect(ForkLevel.of(MazeTier.hard, 5).resetOnWrong, isTrue);
+    expect(ForkLevel.of(MazeTier.hard, 5).resetFrom, greaterThan(0));
+    expect(ForkLevel.of(MazeTier.extreme, 1).options, 5);
+    expect(ForkLevel.of(MazeTier.extreme, kLevelCount).options, 6);
+    expect(ForkLevel.of(MazeTier.extreme, 1).forks, 6);
+    expect(ForkLevel.of(MazeTier.extreme, kLevelCount).forks, 10);
+    expect(ForkLevel.of(MazeTier.extreme, 5).resetFrom, 0);
+    expect(ForkLevel.of(MazeTier.extreme, 5).lanterns, 1);
   });
 
   test('stars', () {

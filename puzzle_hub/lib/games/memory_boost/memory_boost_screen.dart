@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'card_match_game.dart';
-import 'logic/card_deck.dart';
+import 'logic/mb_tiers.dart';
 import 'mb_widgets.dart';
 import 'number_memory_game.dart';
 import 'simon_game.dart';
@@ -23,19 +23,23 @@ class _MemoryBoostScreenState extends State<MemoryBoostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var cardStars = 0;
-    for (var i = 0; i < cardLevels.length; i++) {
-      cardStars += Storage.getInt(cardStarsKey(i));
+    var cardStars = 0, cardMax = 0, simonBest = 0, numBest = 0;
+    for (final t in Tier.values) {
+      final n = cardTierParams[t]!.levels.length;
+      cardMax += n * 3;
+      for (var i = 0; i < n; i++) {
+        cardStars += Storage.getInt(cardStarsKey(t, i));
+      }
+      simonBest = simonBest > Storage.getInt(simonBestKeyFor(t)) ? simonBest : Storage.getInt(simonBestKeyFor(t));
+      numBest = numBest > Storage.getInt(numberBestKeyFor(t)) ? numBest : Storage.getInt(numberBestKeyFor(t));
     }
-    final numBest = Storage.getInt(numberBestKey(3));
-    final numBest1 = Storage.getInt(numberBestKey(1));
     final cards = <_Hero>[
-      _Hero(Icons.grid_view_rounded, Pal.accents[4], 'Card Match', 'Flip pairs of cards. 2x2 up to 6x6.',
-          'Stars $cardStars/${cardLevels.length * 3}', () => _open(const CardMatchScreen())),
+      _Hero(Icons.grid_view_rounded, Pal.accents[4], 'Card Match', 'Flip pairs of cards. Easy to Extreme.',
+          'Stars $cardStars/$cardMax', () => _open(const CardMatchScreen())),
       _Hero(Icons.lightbulb_rounded, Pal.accents[1], 'Simon Sequence', 'Repeat the growing light pattern.',
-          'Best streak ${Storage.getInt(simonBestKey)}', () => _open(const SimonScreen())),
+          'Best streak $simonBest', () => _open(const SimonScreen())),
       _Hero(Icons.pin_rounded, Pal.accents[3], 'Number Memory', 'Remember the number, one more digit each round.',
-          'Best level $numBest  |  sudden death $numBest1', () => _open(const NumberMemoryScreen())),
+          'Best round $numBest', () => _open(const NumberMemoryScreen())),
     ];
     return GameScaffold(
       title: 'Brain Gym',

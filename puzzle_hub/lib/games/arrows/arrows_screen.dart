@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrows_logic.dart';
@@ -10,6 +11,34 @@ import 'progress.dart';
 
 const _arrowsColor = Color(0xFFFF7A59);
 
+Route<void> _fadeRoute(Widget page) => PageRouteBuilder<void>(
+      transitionDuration: const Duration(milliseconds: 380),
+      pageBuilder: (_, _, _) => page,
+      transitionsBuilder: (_, a, _, child) => FadeTransition(
+        opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
+        child: ScaleTransition(
+          scale: Tween(begin: 0.94, end: 1.0)
+              .animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
+          child: child,
+        ),
+      ),
+    );
+
+const _tierColors = {
+  ArrowsTier.easy: Color(0xFF4ADE80),
+  ArrowsTier.medium: Color(0xFF38BDF8),
+  ArrowsTier.hard: Color(0xFFFF9F43),
+  ArrowsTier.extreme: Color(0xFFFF4D6D),
+};
+
+const _tierIcons = {
+  ArrowsTier.easy: Icons.spa_rounded,
+  ArrowsTier.medium: Icons.bolt_rounded,
+  ArrowsTier.hard: Icons.whatshot_rounded,
+  ArrowsTier.extreme: Icons.local_fire_department_rounded,
+};
+
+/// Difficulty selection screen (entry point of the game).
 class ArrowsScreen extends StatefulWidget {
   const ArrowsScreen({super.key});
 
@@ -18,29 +47,180 @@ class ArrowsScreen extends StatefulWidget {
 }
 
 class _ArrowsScreenState extends State<ArrowsScreen> {
-  Future<void> _open(int level) async {
-    await Navigator.of(context).push(
-      PageRouteBuilder<void>(
-        transitionDuration: const Duration(milliseconds: 380),
-        pageBuilder: (_, _, _) => ArrowsGamePage(level: level),
-        transitionsBuilder: (_, a, _, child) => FadeTransition(
-          opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
-          child: ScaleTransition(
-            scale: Tween(begin: 0.94, end: 1.0)
-                .animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
-            child: child,
-          ),
-        ),
-      ),
-    );
+  Future<void> _open(ArrowsTier tier) async {
+    AppAudio.play(Sound.tap);
+    await ArrowsProgress.setLastTier(tier);
+    if (!mounted) return;
+    setState(() {});
+    await Navigator.of(context).push(_fadeRoute(ArrowsLevelsPage(tier: tier)));
     if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final last = ArrowsProgress.lastTier;
     return GameScaffold(
       title: 'Arrows',
       tint: _arrowsColor,
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 4, bottom: 12),
+            child: Text('Choose difficulty',
+                style: TextStyle(
+                    color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
+          ),
+          for (final (i, t) in ArrowsTier.values.indexed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: _TierCard(
+                tier: t,
+                last: t == last,
+                onTap: () => _open(t),
+              )
+                  .animate(delay: (i * 90).ms)
+                  .fadeIn(duration: 350.ms)
+                  .slideY(begin: 0.15, end: 0, curve: Curves.easeOutCubic),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TierCard extends StatelessWidget {
+  const _TierCard({required this.tier, required this.last, required this.onTap});
+  final ArrowsTier tier;
+  final bool last;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _tierColors[tier]!;
+    final done = ArrowsProgress.completed(tier);
+    final stars = ArrowsProgress.totalStars(tier);
+    final frac = done / ArrowsLevels.count;
+    final lo = ArrowsLevels.sizeFor(tier, 1);
+    final hi = ArrowsLevels.sizeFor(tier, ArrowsLevels.count);
+    return GlassCard(
+      key: ValueKey('tier_${tier.id}'),
+      onTap: onTap,
+      glow: color,
+      blur: 0,
+      radius: 26,
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [color.withValues(alpha: 0.34), color.withValues(alpha: 0.08)],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: Pal.accent(color),
+              boxShadow: [
+                BoxShadow(
+                    color: color.withValues(alpha: 0.6),
+                    blurRadius: 18,
+                    spreadRadius: -2)
+              ],
+            ),
+            child: Icon(_tierIcons[tier], color: Colors.white, size: 30),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Flexible(
+                    child: Text(tier.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Pal.text,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900)),
+                  ),
+                  if (last) ...[
+                    const SizedBox(width: 8),
+                    const Icon(Icons.history_rounded,
+                        color: Pal.textDim, size: 16),
+                  ],
+                ]),
+                const SizedBox(height: 2),
+                Text(
+                    '${lo}x$lo - ${hi}x$hi  |  ${tier.lives} '
+                    '${tier.lives == 1 ? 'life' : 'lives'}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Pal.textDim, fontSize: 13)),
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: frac,
+                    minHeight: 8,
+                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    valueColor: AlwaysStoppedAnimation(color),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('$done / ${ArrowsLevels.count}',
+                        style: const TextStyle(
+                            color: Pal.text,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700)),
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.star_rounded, color: Pal.gold, size: 16),
+                      const SizedBox(width: 2),
+                      Text('$stars / ${ArrowsLevels.count * 3}',
+                          style: const TextStyle(
+                              color: Pal.text,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700)),
+                    ]),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Level grid for one difficulty tier.
+class ArrowsLevelsPage extends StatefulWidget {
+  const ArrowsLevelsPage({super.key, required this.tier});
+  final ArrowsTier tier;
+
+  @override
+  State<ArrowsLevelsPage> createState() => _ArrowsLevelsPageState();
+}
+
+class _ArrowsLevelsPageState extends State<ArrowsLevelsPage> {
+  Future<void> _open(int level) async {
+    await Navigator.of(context)
+        .push(_fadeRoute(ArrowsGamePage(tier: widget.tier, level: level)));
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tier = widget.tier;
+    return GameScaffold(
+      title: 'Arrows - ${tier.label}',
+      tint: _tierColors[tier],
       body: GridView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -48,13 +228,14 @@ class _ArrowsScreenState extends State<ArrowsScreen> {
         itemCount: ArrowsLevels.count,
         itemBuilder: (context, i) {
           final level = i + 1;
-          final unlocked = ArrowsProgress.isUnlocked(level);
-          final done = ArrowsProgress.isDone(level);
+          final unlocked = ArrowsProgress.isUnlocked(tier, level);
+          final done = ArrowsProgress.isDone(tier, level);
           return _LevelTile(
             level: level,
+            color: _tierColors[tier]!,
             unlocked: unlocked,
             done: done,
-            stars: ArrowsProgress.stars(level),
+            stars: ArrowsProgress.stars(tier, level),
             onTap: () => _open(level),
           )
               .animate(delay: (math.min(i, 24) * 30).ms)
@@ -73,11 +254,13 @@ class _ArrowsScreenState extends State<ArrowsScreen> {
 class _LevelTile extends StatelessWidget {
   const _LevelTile(
       {required this.level,
+      required this.color,
       required this.unlocked,
       required this.done,
       required this.stars,
       required this.onTap});
   final int level, stars;
+  final Color color;
   final bool unlocked, done;
   final VoidCallback onTap;
 
@@ -86,13 +269,13 @@ class _LevelTile extends StatelessWidget {
     final br = BorderRadius.circular(20);
     final Gradient gradient = unlocked
         ? (done
-            ? Pal.accent(_arrowsColor)
+            ? Pal.accent(color)
             : LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _arrowsColor.withValues(alpha: 0.38),
-                  _arrowsColor.withValues(alpha: 0.12),
+                  color.withValues(alpha: 0.38),
+                  color.withValues(alpha: 0.12),
                 ],
               ))
         : const LinearGradient(
@@ -109,7 +292,7 @@ class _LevelTile extends StatelessWidget {
         boxShadow: unlocked
             ? [
                 BoxShadow(
-                    color: _arrowsColor.withValues(alpha: done ? 0.5 : 0.28),
+                    color: color.withValues(alpha: done ? 0.5 : 0.28),
                     blurRadius: done ? 18 : 12,
                     spreadRadius: -2)
               ]
@@ -140,7 +323,8 @@ class _LevelTile extends StatelessWidget {
 }
 
 class ArrowsGamePage extends StatefulWidget {
-  const ArrowsGamePage({super.key, required this.level});
+  const ArrowsGamePage({super.key, required this.tier, required this.level});
+  final ArrowsTier tier;
   final int level;
 
   @override
@@ -148,13 +332,14 @@ class ArrowsGamePage extends StatefulWidget {
 }
 
 class _ArrowsGamePageState extends State<ArrowsGamePage> {
-  static const maxLives = 3;
+  ArrowsTier get tier => widget.tier;
+  int get maxLives => tier.lives;
   late int level = widget.level;
   late ArrowsBoard board;
   late List<ArrowPiece> all;
   final Set<int> removed = {};
   final Map<int, int> shakes = {};
-  int lives = maxLives;
+  late int lives = maxLives;
   int moves = 0;
   int? hinted;
   bool over = false;
@@ -167,7 +352,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
   }
 
   void _load() {
-    board = ArrowsLevels.generate(level);
+    board = ArrowsLevels.generate(tier, level);
     all = board.pieces;
     removed.clear();
     shakes.clear();
@@ -178,6 +363,8 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
     attempt++;
   }
 
+  int get _stars => (3 - (maxLives - lives)).clamp(1, 3);
+
   void _tap(ArrowPiece p) {
     if (over || removed.contains(p.id)) return;
     final res = board.tap(p.r, p.c);
@@ -186,22 +373,27 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
       if (res == true) {
         removed.add(p.id);
         moves++;
+        AppAudio.play(Sound.slide);
       } else if (res == false) {
+        AppAudio.play(Sound.fail);
+        AppAudio.haptic(true);
         shakes[p.id] = (shakes[p.id] ?? 0) + 1;
         lives--;
       }
     });
     if (board.isCleared) {
       over = true;
-      final stars = lives.clamp(1, 3);
-      ArrowsProgress.complete(level, stars);
-      Rewards.onLevelComplete('arrows', 'L$level', stars: stars);
+      final stars = _stars;
+      ArrowsProgress.complete(tier, level, stars);
+      Rewards.onLevelComplete('arrows', '${tier.id}-L$level',
+          stars: stars);
       final a = attempt, l = level;
       Future.delayed(const Duration(milliseconds: 600), () {
         if (attempt == a && level == l) _showWin();
       });
     } else if (lives <= 0) {
       over = true;
+      AppAudio.play(Sound.fail);
       final a = attempt;
       Future.delayed(const Duration(milliseconds: 450), () {
         if (attempt == a) _showLose();
@@ -212,7 +404,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
   void _showWin() {
     if (!mounted) return;
     final hasNext = level < ArrowsLevels.count;
-    final stars = lives.clamp(1, 3);
+    final stars = _stars;
     showPremiumDialog(
       context,
       title: 'Level cleared!',
@@ -252,13 +444,18 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
   Widget build(BuildContext context) {
     final n = board.size;
     return GameScaffold(
-      title: 'Level $level',
-      tint: _arrowsColor,
+      title: '${tier.label} - Level $level',
+      tint: _tierColors[tier],
       actions: [
         BarAction(
             icon: Icons.lightbulb_rounded,
             tooltip: 'Hint',
-            onTap: over ? null : () => setState(() => hinted = board.hint()?.id)),
+            onTap: over
+                ? null
+                : () {
+                    AppAudio.play(Sound.pop);
+                    setState(() => hinted = board.hint()?.id);
+                  }),
         BarAction(
             icon: Icons.refresh_rounded,
             tooltip: 'Restart',
@@ -303,7 +500,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
                   final side = math.max(1.0, box.biggest.shortestSide);
                   final cell = side / n;
                   return SizedBox(
-                    key: ValueKey('board_${level}_$attempt'),
+                    key: ValueKey('board_${tier.id}_${level}_$attempt'),
                     width: side,
                     height: side,
                     child: Stack(
@@ -334,7 +531,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
                         ),
                         for (final p in all)
                           Positioned(
-                            key: ValueKey('${level}_${attempt}_${p.id}'),
+                            key: ValueKey('${tier.id}_${level}_${attempt}_${p.id}'),
                             left: p.c * cell,
                             top: p.r * cell,
                             width: cell,
@@ -351,7 +548,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
                       ],
                     ),
                   )
-                      .animate(key: ValueKey('anim_${level}_$attempt'))
+                      .animate(key: ValueKey('anim_${tier.id}_${level}_$attempt'))
                       .fadeIn(duration: 350.ms)
                       .scale(
                           begin: const Offset(0.92, 0.92),

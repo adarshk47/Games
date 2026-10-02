@@ -15,10 +15,10 @@ Future<void> _setup(WidgetTester t, Size size, Widget home) async {
   await t.pump(const Duration(seconds: 1));
 }
 
-Future<void> _playLevel(WidgetTester t, int level) async {
-  final board = ArrowsLevels.generate(level);
+Future<void> _playLevel(WidgetTester t, ArrowsTier tier, int level) async {
+  final board = ArrowsLevels.generate(tier, level);
   final n = board.size;
-  final boardFinder = find.byKey(ValueKey('board_${level}_1'), skipOffstage: false);
+  final boardFinder = find.byKey(ValueKey('board_${tier.id}_${level}_1'), skipOffstage: false);
   expect(boardFinder, findsOneWidget);
   final rect = t.getRect(boardFinder);
   final cell = rect.width / n;
@@ -47,13 +47,22 @@ void main() {
   for (final size in const [Size(360, 640), Size(800, 1280), Size(320, 480)]) {
     testWidgets('level list + play + win at $size', (t) async {
       await _setup(t, size, const ArrowsScreen());
+      expect(find.text('Easy'), findsOneWidget);
+      await t.drag(find.byType(ListView), const Offset(0, -600));
+      await t.pump(const Duration(seconds: 1));
+      expect(find.text('Extreme'), findsOneWidget);
+      await t.drag(find.byType(ListView), const Offset(0, 600));
+      await t.pump(const Duration(seconds: 1));
+      await t.tap(find.text('Easy'));
+      await t.pump(const Duration(seconds: 1));
+      await t.pump(const Duration(seconds: 1));
       await t.tap(find.text('1'));
       await t.pump(const Duration(seconds: 1));
-      await _playLevel(t, 1);
+      await _playLevel(t, ArrowsTier.easy, 1);
       expect(find.text('Level cleared!'), findsOneWidget);
       await t.tap(find.text('Next level'));
       await t.pump(const Duration(seconds: 1));
-      expect(find.text('Level 2'), findsOneWidget);
+      expect(find.text('Easy - Level 2'), findsOneWidget);
       await t.pump(const Duration(seconds: 1));
       await t.tap(find.byIcon(Icons.refresh_rounded));
       await t.pump(const Duration(seconds: 1));
@@ -63,10 +72,10 @@ void main() {
   }
 
   testWidgets('lose all lives then retry', (t) async {
-    await _setup(t, const Size(360, 640), const ArrowsGamePage(level: 20));
-    final board = ArrowsLevels.generate(20);
+    await _setup(t, const Size(360, 640), const ArrowsGamePage(tier: ArrowsTier.easy, level: 20));
+    final board = ArrowsLevels.generate(ArrowsTier.easy, 20);
     final blocked = board.pieces.firstWhere((p) => !board.canRemove(p));
-    final rect = t.getRect(find.byKey(const ValueKey('board_20_1')));
+    final rect = t.getRect(find.byKey(const ValueKey('board_easy_20_1')));
     final cell = rect.width / board.size;
     for (var i = 0; i < 3; i++) {
       await t.tapAt(rect.topLeft +
@@ -82,13 +91,34 @@ void main() {
     await t.pump(const Duration(seconds: 3));
   });
 
-  testWidgets('every level builds and is fully playable', (t) async {
-    for (var l = 1; l <= ArrowsLevels.count; l++) {
-      await _setup(t, const Size(360, 640), ArrowsGamePage(level: l));
-      await _playLevel(t, l);
-      await t.pump(const Duration(seconds: 1));
-      await t.pumpWidget(const SizedBox());
-      await t.pump(const Duration(seconds: 3));
-    }
+  testWidgets('extreme: one life, single block loses; hard small screen',
+      (t) async {
+    await _setup(t, const Size(320, 480),
+        const ArrowsGamePage(tier: ArrowsTier.extreme, level: 30));
+    final board = ArrowsLevels.generate(ArrowsTier.extreme, 30);
+    final blocked = board.pieces.firstWhere((p) => !board.canRemove(p));
+    final rect = t.getRect(find.byKey(const ValueKey('board_extreme_30_1')));
+    final cell = rect.width / board.size;
+    await t.tapAt(rect.topLeft +
+        Offset((blocked.c + .5) * cell, (blocked.r + .5) * cell));
+    await t.pump(const Duration(seconds: 1));
+    await t.pump(const Duration(seconds: 1));
+    expect(find.text('Out of lives'), findsOneWidget);
+    await t.pumpWidget(const SizedBox());
+    await t.pump(const Duration(seconds: 3));
   });
+
+  for (final tier in ArrowsTier.values) {
+    testWidgets('every ${tier.id} level builds and is fully playable',
+        (t) async {
+      for (var l = 1; l <= ArrowsLevels.count; l++) {
+        await _setup(t, const Size(360, 640),
+            ArrowsGamePage(tier: tier, level: l));
+        await _playLevel(t, tier, l);
+        await t.pump(const Duration(seconds: 1));
+        await t.pumpWidget(const SizedBox());
+        await t.pump(const Duration(seconds: 3));
+      }
+    });
+  }
 }

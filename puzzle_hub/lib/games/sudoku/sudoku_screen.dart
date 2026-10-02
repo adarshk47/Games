@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -15,11 +16,20 @@ import 'logic/sudoku_logic.dart';
 const _saveKey = 'sudoku.save';
 String _bestKey(Difficulty d) => 'sudoku.best.${d.name}';
 String _dailyKey(DateTime d) => 'sudoku.daily.${dailySeed(d)}';
-const _maxMistakes = 3;
-const _maxHints = 3;
 
 String fmtTime(int s) =>
     '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
+
+Difficulty _diffFromSave(Object? d) {
+  if (d is int) return Difficulty.values[d.clamp(0, Difficulty.values.length - 1)];
+  return difficultyFromName('$d');
+}
+
+int _bestFor(Difficulty d) {
+  final v = _bestFor(d);
+  if (v > 0 || d != Difficulty.extreme) return v;
+  return Storage.getInt('sudoku.best.expert');
+}
 
 class _Game {
   final Difficulty difficulty;
@@ -34,6 +44,9 @@ class _Game {
       {List<int>? cur, List<int>? notes, this.mistakes = 0, this.hints = 0, this.elapsed = 0})
       : cur = cur ?? List<int>.from(puzzle),
         notes = notes ?? List<int>.filled(81, 0);
+
+  int get maxHints => difficulty.maxHints;
+  int get maxMistakes => difficulty.maxMistakes; // 0 = unlimited
 
   bool get solved {
     for (var i = 0; i < 81; i++) {
@@ -58,7 +71,7 @@ class _Game {
     try {
       final j = jsonDecode(s) as Map<String, dynamic>;
       List<int> l(String k) => (j[k] as List).cast<int>();
-      return _Game(Difficulty.values[j['d'] as int], j['daily'] as bool, l('p'), l('s'),
+      return _Game(_diffFromSave(j['d']), j['daily'] as bool, l('p'), l('s'),
           cur: l('c'), notes: l('n'), mistakes: j['m'] as int, hints: j['h'] as int, elapsed: j['t'] as int);
     } catch (_) {
       return null;
@@ -159,6 +172,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     setState(() {
       _snapshot();
       if (_notesMode) {
+        AppAudio.play(Sound.tap);
         g.notes[_sel] ^= 1 << v;
       } else {
         g.cur[_sel] = v;
@@ -166,8 +180,11 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
         if (v != g.solution[_sel]) {
           g.mistakes++;
           _mistakeFx(_sel);
-          if (g.mistakes >= _maxMistakes) _over = true;
+          AppAudio.play(Sound.fail);
+          AppAudio.haptic(true);
+          if (g.maxMistakes > 0 && g.mistakes >= g.maxMistakes) _over = true;
         } else {
+          AppAudio.play(Sound.pop);
           _clearPeerNotes(_sel, v);
         }
       }
@@ -190,6 +207,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     if (!_active || _sel < 0) return;
     final g = _g!;
     if (g.puzzle[_sel] != 0 || g.cur[_sel] == g.solution[_sel]) return;
+    AppAudio.play(Sound.tap);
     setState(() {
       _snapshot();
       g.cur[_sel] = 0;
@@ -201,6 +219,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
   void _undo() {
     final g = _g;
     if (!_active || g == null || g.undo.isEmpty) return;
+    AppAudio.play(Sound.tap);
     setState(() {
       final s = g.undo.removeLast();
       g.cur = s[0];
@@ -211,13 +230,14 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
 
   void _hint() {
     final g = _g;
-    if (!_active || g == null || g.hints >= _maxHints) return;
+    if (!_active || g == null || g.hints >= g.maxHints) return;
     var i = _sel;
     if (i < 0 || g.cur[i] == g.solution[i]) {
       i = List.generate(81, (k) => k).firstWhere((k) => g.cur[k] != g.solution[k], orElse: () => -1);
     }
     if (i < 0) return;
     final cell = i;
+    AppAudio.play(Sound.pop);
     setState(() {
       _snapshot();
       g.cur[cell] = g.solution[cell];
@@ -233,13 +253,14 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
   void _afterMove() {
     final g = _g!;
     if (_over) {
+      AppAudio.play(Sound.fail);
       _save();
       Rewards.onGameEnd('sudoku', won: false);
       WidgetsBinding.instance.addPostFrameCallback((_) => _showEnd(false));
     } else if (g.solved) {
       setState(() => _won = true);
       var newBest = false;
-      final prev = Storage.getInt(_bestKey(g.difficulty));
+      final prev = _bestFor(g.difficulty);
       if (!g.daily && (prev == 0 || g.elapsed < prev)) {
         Storage.setInt(_bestKey(g.difficulty), g.elapsed);
         newBest = true;
@@ -273,7 +294,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
       stars: win ? stars : null,
       message: win
           ? 'Time ${fmtTime(g.elapsed)}${newBest ? '\nNew best time!' : ''}'
-          : 'You made $_maxMistakes mistakes.',
+          : 'You made ${g.maxMistakes} mistakes.',
       actions: [
         DialogAction('Menu', () => setState(() => _g = null)),
         DialogAction('New game', () => _newGame(g.difficulty), primary: true),
@@ -305,6 +326,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
   void _celebrate(int i) {
     final cells = _completedUnits(i);
     if (cells.isEmpty) return;
+    AppAudio.play(Sound.success);
     _pulseCells = cells;
     _pulseOrigin = i;
     _pulse.forward(from: 0);
@@ -384,7 +406,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     Difficulty.easy: Color(0xFF2EE6A8),
     Difficulty.medium: Color(0xFFFFC857),
     Difficulty.hard: Color(0xFFFF7A59),
-    Difficulty.expert: Color(0xFFFF6FB5),
+    Difficulty.extreme: Color(0xFFFF6FB5),
   };
 
   Widget _hero({
@@ -473,7 +495,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
 
   Widget _difficultyCard(Difficulty d) {
     final color = _diffColors[d]!;
-    final best = Storage.getInt(_bestKey(d));
+    final best = _bestFor(d);
     final level = d.index + 1;
     return GlassCard(
       blur: 0,
@@ -490,7 +512,11 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(d.label, style: const TextStyle(color: Pal.text, fontSize: 18, fontWeight: FontWeight.w800)),
-            const SizedBox(height: 6),
+            const SizedBox(height: 2),
+            Text(
+                '${d.maxHints} ${d.maxHints == 1 ? 'hint' : 'hints'} · ${d.maxMistakes == 0 ? 'unlimited mistakes' : '${d.maxMistakes} mistakes'}',
+                style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+            const SizedBox(height: 4),
             Row(children: [
               Icon(Icons.timer_outlined, size: 14, color: best > 0 ? color : Pal.textDim),
               const SizedBox(width: 4),
@@ -547,7 +573,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
               Row(mainAxisSize: MainAxisSize.min, children: [
                 const Icon(Icons.lightbulb_rounded, size: 18, color: Pal.gold),
                 const SizedBox(width: 4),
-                Text('${_maxHints - g.hints}',
+                Text('${g.maxHints - g.hints}',
                     style: const TextStyle(color: Pal.text, fontSize: 16, fontWeight: FontWeight.w800)),
               ]),
             ],
@@ -586,9 +612,12 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
               _tool(Icons.undo_rounded, 'Undo', _undo),
               _tool(Icons.backspace_rounded, 'Erase', _erase),
               _tool(Icons.edit_rounded, _notesMode ? 'Notes on' : 'Notes',
-                  () => setState(() => _notesMode = !_notesMode),
+                  () {
+                    AppAudio.play(Sound.tap);
+                    setState(() => _notesMode = !_notesMode);
+                  },
                   highlight: _notesMode),
-              _tool(Icons.lightbulb_rounded, 'Hint', _hint, badge: _maxHints - g.hints),
+              _tool(Icons.lightbulb_rounded, 'Hint', _hint, badge: g.maxHints - g.hints),
             ],
           ),
         ),
@@ -611,15 +640,23 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
   }
 
   Widget _hearts(_Game g) {
+    if (g.maxMistakes == 0) {
+      return Row(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.favorite_rounded, size: 22, color: Pal.danger),
+        const SizedBox(width: 4),
+        Text('${g.mistakes} · no limit',
+            style: const TextStyle(color: Pal.text, fontSize: 14, fontWeight: FontWeight.w800)),
+      ]);
+    }
     return Row(mainAxisSize: MainAxisSize.min, children: [
-      for (var k = 0; k < _maxMistakes; k++)
+      for (var k = 0; k < g.maxMistakes; k++)
         Padding(
           padding: const EdgeInsets.only(right: 3),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 350),
             switchInCurve: Curves.elasticOut,
             transitionBuilder: (c, a) => ScaleTransition(scale: a, child: c),
-            child: k < _maxMistakes - g.mistakes
+            child: k < g.maxMistakes - g.mistakes
                 ? const Icon(Icons.favorite_rounded, key: ValueKey('on'), size: 24, color: Pal.danger)
                 : Icon(Icons.favorite_border_rounded,
                     key: const ValueKey('off'), size: 24, color: Colors.white.withValues(alpha: 0.3)),

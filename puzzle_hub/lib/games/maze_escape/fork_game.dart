@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/fork_path.dart';
@@ -17,8 +17,9 @@ const _optionEmoji = ['🚪', '🛤️', '🌲', '⛰️', '🕳️'];
 
 /// Fork Path mode: a chain of junctions, only one trail is right at each.
 class ForkGame extends StatefulWidget {
-  const ForkGame({super.key, required this.level});
+  const ForkGame({super.key, required this.level, this.tier = MazeTier.easy});
   final int level;
+  final MazeTier tier;
 
   @override
   State<ForkGame> createState() => _ForkGameState();
@@ -52,7 +53,7 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
   }
 
   void _setup() {
-    cfg = ForkLevel.of(widget.level);
+    cfg = ForkLevel.of(widget.tier, widget.level);
     path = ForkPath.generate(cfg.seed, cfg.forks, cfg.options);
     fork = 0;
     tried = List.generate(cfg.forks, (_) => <int>{});
@@ -90,6 +91,7 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
   Future<void> _choose(int i) async {
     if (_busy || _done || tried[fork].contains(i)) return;
     _busy = true;
+    AppAudio.play(Sound.slide, volume: 0.6);
     setState(() {
       _selected = i;
       _hintOpt = null;
@@ -98,7 +100,8 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
     await _go.forward(from: 0);
     if (!mounted) return;
     if (path.isCorrect(fork, i)) {
-      HapticFeedback.selectionClick();
+      AppAudio.play(Sound.success);
+      AppAudio.haptic();
       setState(() => _say('Sahi raasta!', Pal.success));
       await Future<void>.delayed(const Duration(milliseconds: 550));
       if (!mounted) return;
@@ -120,7 +123,8 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
     } else {
       tried[fork].add(i);
       wrong++;
-      HapticFeedback.mediumImpact();
+      AppAudio.play(Sound.fail);
+      AppAudio.haptic(true);
       setState(() {
         _deadEnd = i;
         _say('Dead end!  Wapas jao...');
@@ -129,7 +133,7 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
       if (!mounted) return;
       await _go.reverse();
       if (!mounted) return;
-      if (cfg.resetOnWrong && fork > 0) {
+      if (fork > 0 && fork >= cfg.resetFrom) {
         setState(() {
           _deadEnd = null;
           _selected = null;
@@ -154,6 +158,7 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
 
   void _lantern() {
     if (_busy || _done || lanternsLeft <= 0) return;
+    AppAudio.play(Sound.pop);
     setState(() {
       lanternsLeft--;
       usedHint = true;
@@ -170,8 +175,8 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
   Future<void> _win() async {
     _done = true;
     final stars = forkStars(wrong, cfg.forks, usedHint: usedHint);
-    MazeProgress.save(MazeMode.fork, widget.level, stars);
-    Rewards.onLevelComplete('maze_escape', 'fork-L${widget.level}', stars: stars);
+    MazeProgress.save(MazeMode.fork, widget.tier, widget.level, stars);
+    Rewards.onLevelComplete('maze_escape', 'fork-${widget.tier.name}-L${widget.level}', stars: stars);
     await Future<void>.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     showPremiumDialog(
@@ -184,7 +189,7 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
         DialogAction('Levels', () => Navigator.of(context).maybePop()),
         DialogAction('Replay', _restart),
         if (widget.level < kLevelCount)
-          DialogAction('Next', () => openMazeLevel(context, MazeMode.fork, widget.level + 1, replace: true), primary: true),
+          DialogAction('Next', () => openMazeLevel(context, MazeMode.fork, widget.tier, widget.level + 1, replace: true), primary: true),
       ],
     );
   }
@@ -192,7 +197,7 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Fork Path ${widget.level}',
+      title: 'Fork Path ${widget.tier.label} ${widget.level}',
       tint: _kGreen,
       actions: [
         BarAction(icon: Icons.flashlight_on_rounded, tooltip: 'Lantern', onTap: lanternsLeft > 0 && !_busy && !_done ? _lantern : null),
@@ -281,7 +286,8 @@ class _ForkGameState extends State<ForkGame> with SingleTickerProviderStateMixin
         chip('Fork ${min(fork + 1, cfg.forks)} / ${cfg.forks}'),
         chip('Wrong turns $wrong', color: wrong > 0 ? Pal.danger : Pal.text),
         chip('🔦 $lanternsLeft'),
-        if (cfg.resetOnWrong) chip('Wrong turn = back to start', color: Pal.gold),
+        if (cfg.resetOnWrong)
+          chip(cfg.resetFrom == 0 ? 'Wrong turn = back to start' : 'Wrong turn from fork ${cfg.resetFrom + 1} = back to start', color: Pal.gold),
       ]),
     );
   }

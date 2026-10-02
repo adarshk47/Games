@@ -28,6 +28,16 @@ void main() {
     }
   });
 
+  test('every tier generates a unique-solution puzzle', () {
+    expect(Difficulty.values.map((d) => d.label), ['Easy', 'Medium', 'Hard', 'Extreme']);
+    for (final d in Difficulty.values) {
+      final p = generatePuzzle(d, seed: 7);
+      expect(countSolutions(p.puzzle), 1, reason: d.name);
+      expect(solve(p.puzzle), p.solution, reason: d.name);
+    }
+    expect(difficultyFromName('expert'), Difficulty.extreme);
+  });
+
   test('seeded generation is deterministic', () {
     final a = generatePuzzle(Difficulty.medium, seed: dailySeed(DateTime(2026, 1, 2)));
     final b = generatePuzzle(Difficulty.medium, seed: dailySeed(DateTime(2026, 1, 2)));

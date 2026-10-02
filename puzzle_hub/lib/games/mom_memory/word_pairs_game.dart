@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -54,10 +55,11 @@ class _WordPairsGameState extends State<WordPairsGame>
 
   Future<void> _answer(int pos) async {
     if (_chosen != null) return;
-    softTap();
+    AppAudio.haptic();
     final qn = _round.questions[_q];
     setState(() => _chosen = pos);
     if (pos == qn.answerOption) _correct++;
+    AppAudio.play(pos == qn.answerOption ? Sound.success : Sound.pop);
     await Future<void>.delayed(const Duration(milliseconds: 1100));
     if (!mounted) return;
     if (_q + 1 < _round.questions.length) {

@@ -79,20 +79,41 @@ class ArrowsBoard {
   }
 }
 
+enum ArrowsTier {
+  easy('easy', 'Easy', 3, 4, 6, 0.45, 0.60),
+  medium('medium', 'Medium', 3, 5, 7, 0.50, 0.70),
+  hard('hard', 'Hard', 2, 7, 9, 0.60, 0.80),
+  extreme('extreme', 'Extreme', 1, 9, 12, 0.75, 0.90);
+
+  const ArrowsTier(this.id, this.label, this.lives, this.minSize, this.maxSize,
+      this.minDensity, this.maxDensity);
+  final String id, label;
+  final int lives, minSize, maxSize;
+  final double minDensity, maxDensity;
+
+  static ArrowsTier fromId(String? id) =>
+      values.firstWhere((t) => t.id == id, orElse: () => ArrowsTier.easy);
+}
+
 class ArrowsLevels {
-  static const int count = 40;
+  /// Levels per tier.
+  static const int count = 30;
 
-  static int sizeFor(int level) => min(9, 4 + (level - 1) ~/ 6);
+  static int sizeFor(ArrowsTier t, int level) {
+    final span = t.maxSize - t.minSize;
+    return t.minSize + ((level - 1) * (span + 1)) ~/ count;
+  }
 
-  static double densityFor(int level) => min(0.8, 0.45 + 0.01 * (level - 1));
+  static double densityFor(ArrowsTier t, int level) =>
+      t.minDensity + (t.maxDensity - t.minDensity) * (level - 1) / (count - 1);
 
   /// Deterministic and always solvable. Arrows are placed one at a time and
   /// each new arrow must have a clear path among those already placed, so the
   /// reverse placement order is a valid clearing order.
-  static ArrowsBoard generate(int level) {
-    final n = sizeFor(level);
-    final rng = Random(level * 7919 + 13);
-    final target = max(4, (n * n * densityFor(level)).round());
+  static ArrowsBoard generate(ArrowsTier tier, int level) {
+    final n = sizeFor(tier, level);
+    final rng = Random(level * 7919 + 13 + tier.index * 100003);
+    final target = max(4, (n * n * densityFor(tier, level)).round());
     final cells = <(int, int)>[
       for (var r = 0; r < n; r++)
         for (var c = 0; c < n; c++) (r, c)

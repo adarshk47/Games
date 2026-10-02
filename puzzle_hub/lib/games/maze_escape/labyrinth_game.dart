@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/levels.dart';
@@ -13,8 +13,9 @@ import 'progress.dart';
 
 /// Labyrinth mode: swipe the explorer through a perfect maze to the exit.
 class LabyrinthGame extends StatefulWidget {
-  const LabyrinthGame({super.key, required this.level});
+  const LabyrinthGame({super.key, required this.level, this.tier = MazeTier.easy});
   final int level;
+  final MazeTier tier;
 
   @override
   State<LabyrinthGame> createState() => _LabyrinthGameState();
@@ -50,7 +51,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   }
 
   void _setup() {
-    cfg = LabLevel.of(widget.level);
+    cfg = LabLevel.of(widget.tier, widget.level);
     maze = Maze.generate(cfg.seed, cfg.size, cfg.size);
     optimal = maze.optimalMoves;
     limit = cfg.moveLimit(optimal);
@@ -102,7 +103,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   Future<void> _slide(int dir) async {
     if (_walking || _done) return;
     if (!maze.canMove(_cur, dir)) {
-      HapticFeedback.lightImpact();
+      AppAudio.haptic();
       return;
     }
     var steps = <int>[];
@@ -117,7 +118,9 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     }
     if (limit > 0 && steps.length > limit - moves) steps = steps.sublist(0, limit - moves);
     _walking = true;
+    var stepNo = 0;
     for (final next in steps) {
+      if (stepNo++ % 2 == 0) AppAudio.play(Sound.slide, volume: 0.5);
       final from = Offset(maze.xOf(_cur).toDouble(), maze.yOf(_cur).toDouble());
       final to = Offset(maze.xOf(next).toDouble(), maze.yOf(next).toDouble());
       void l() => _pos.value = Offset.lerp(from, to, _stepCtl.value)!;
@@ -137,7 +140,8 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     _walking = false;
     if (maze.isDeadEnd(_cur)) {
       _deadEnds.add(_cur);
-      HapticFeedback.selectionClick();
+      AppAudio.play(Sound.fail, volume: 0.5);
+      AppAudio.haptic();
     }
     if (_cur == maze.exit) {
       _win();
@@ -150,6 +154,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
 
   void _useTorch() {
     if (_done || torchesLeft <= 0 || _hintCtl.isAnimating) return;
+    AppAudio.play(Sound.pop);
     setState(() {
       torchesLeft--;
       torchesUsed++;
@@ -161,8 +166,8 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   Future<void> _win() async {
     _done = true;
     final stars = labStars(moves, optimal, torchesUsed: torchesUsed);
-    MazeProgress.save(MazeMode.labyrinth, widget.level, stars);
-    Rewards.onLevelComplete('maze_escape', 'labyrinth-L${widget.level}', stars: stars);
+    MazeProgress.save(MazeMode.labyrinth, widget.tier, widget.level, stars);
+    Rewards.onLevelComplete('maze_escape', 'labyrinth-${widget.tier.name}-L${widget.level}', stars: stars);
     setState(() {});
     await Future<void>.delayed(const Duration(milliseconds: 450));
     if (!mounted) return;
@@ -176,13 +181,15 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
       actions: [
         DialogAction('Levels', () => Navigator.of(context).maybePop()),
         DialogAction('Replay', _restart),
-        if (hasNext) DialogAction('Next', () => openMazeLevel(context, MazeMode.labyrinth, widget.level + 1, replace: true), primary: true),
+        if (hasNext) DialogAction('Next', () => openMazeLevel(context, MazeMode.labyrinth, widget.tier, widget.level + 1, replace: true), primary: true),
       ],
     );
   }
 
   Future<void> _lose() async {
     _done = true;
+    AppAudio.play(Sound.fail);
+    AppAudio.haptic(true);
     setState(() {});
     await Future<void>.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
@@ -202,7 +209,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Labyrinth ${widget.level}',
+      title: 'Labyrinth ${widget.tier.label} ${widget.level}',
       tint: const Color(0xFF7C5CFF),
       actions: [
         BarAction(icon: Icons.flashlight_on_rounded, tooltip: 'Torch', onTap: torchesLeft > 0 && !_done ? _useTorch : null),

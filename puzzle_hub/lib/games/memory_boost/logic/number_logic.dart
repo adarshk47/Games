@@ -16,4 +16,4 @@ Duration displayDuration(int digits) => Duration(milliseconds: 800 + 700 * digit
 bool isCorrectAnswer(String number, String answer) => number == answer.trim();
 
 /// Digits for a given level (level 1 = 1 digit).
-int digitsForLevel(int level) => level;
+int digitsForLevel(int level, [int start = 1]) => start + level - 1;

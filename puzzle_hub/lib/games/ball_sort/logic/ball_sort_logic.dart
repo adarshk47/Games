@@ -6,7 +6,8 @@ const int kMaxExtraTubes = 2;
 enum BsDifficulty {
   easy('easy', 'Easy'),
   medium('medium', 'Medium'),
-  hard('hard', 'Hard');
+  hard('hard', 'Hard'),
+  extreme('extreme', 'Extreme');
 
   const BsDifficulty(this.id, this.label);
   final String id;
@@ -17,7 +18,7 @@ enum BsDifficulty {
 }
 
 /// Number of colors for a level (1-based).
-/// Easy 3-5, Medium 6-9, Hard 10-14.
+/// Easy 3-5, Medium 6-9, Hard 10-14, Extreme 15-20.
 int colorsForLevel(BsDifficulty d, int level) {
   final l = max(1, level) - 1;
   switch (d) {
@@ -27,23 +28,28 @@ int colorsForLevel(BsDifficulty d, int level) {
       return min(9, 6 + l ~/ 4);
     case BsDifficulty.hard:
       return min(14, 10 + l ~/ 3);
+    case BsDifficulty.extreme:
+      return min(20, 15 + l ~/ 3);
   }
 }
 
 /// Number of empty tubes for a level.
-int emptyTubesForLevel(BsDifficulty d, int level) => 2;
+/// Extreme starts with two spare tubes, then drops to a single one.
+int emptyTubesForLevel(BsDifficulty d, int level) =>
+    d == BsDifficulty.extreme && level > 4 ? 1 : 2;
 
 /// Target move count for 3 stars.
 int parMoves(BsDifficulty d, int level) {
   final c = colorsForLevel(d, level);
-  return (c * 2.6).round() + 2;
+  final perColor = d == BsDifficulty.extreme ? 3.7 : 3.3;
+  return (c * perColor).round() + 3;
 }
 
 /// 1..3 stars from the number of moves used.
 int starsFor(BsDifficulty d, int level, int moves) {
   final par = parMoves(d, level);
   if (moves <= par) return 3;
-  if (moves <= par * 1.6) return 2;
+  if (moves <= par * 1.7) return 2;
   return 1;
 }
 

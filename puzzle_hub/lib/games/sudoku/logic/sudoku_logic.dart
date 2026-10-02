@@ -1,6 +1,6 @@
 import 'dart:math';
 
-enum Difficulty { easy, medium, hard, expert }
+enum Difficulty { easy, medium, hard, extreme }
 
 extension DifficultyX on Difficulty {
   String get label => name[0].toUpperCase() + name.substring(1);
@@ -10,8 +10,37 @@ extension DifficultyX on Difficulty {
         Difficulty.easy => 40,
         Difficulty.medium => 34,
         Difficulty.hard => 29,
-        Difficulty.expert => 25,
+        Difficulty.extreme => 23,
       };
+
+  /// Hints allowed per game.
+  int get maxHints => switch (this) {
+        Difficulty.easy => 5,
+        Difficulty.medium => 3,
+        Difficulty.hard => 2,
+        Difficulty.extreme => 1,
+      };
+
+  /// Mistakes allowed before game over; 0 = unlimited.
+  int get maxMistakes => switch (this) {
+        Difficulty.easy => 0,
+        Difficulty.medium => 5,
+        Difficulty.hard => 4,
+        Difficulty.extreme => 3,
+      };
+
+  /// Generation time budget.
+  Duration get budget => switch (this) {
+        Difficulty.extreme => const Duration(milliseconds: 3500),
+        Difficulty.hard => const Duration(milliseconds: 1500),
+        _ => const Duration(milliseconds: 800),
+      };
+}
+
+/// Maps a saved difficulty name (incl. legacy 'expert') to a [Difficulty].
+Difficulty difficultyFromName(String n) {
+  if (n == 'expert') return Difficulty.extreme;
+  return Difficulty.values.firstWhere((d) => d.name == n, orElse: () => Difficulty.medium);
 }
 
 class SudokuPuzzle {
@@ -157,23 +186,33 @@ bool isValidSolvedGrid(List<int> g) {
   return true;
 }
 
-SudokuPuzzle generatePuzzle(Difficulty d, {int? seed}) {
+SudokuPuzzle generatePuzzle(Difficulty d, {int? seed, Duration? budget}) {
   final rng = Random(seed);
   final solution = generateFullGrid(rng);
-  final puzzle = List<int>.from(solution);
-  final order = List<int>.generate(81, (i) => i)..shuffle(rng);
-  var clues = 81;
-  for (final i in order) {
-    if (clues <= d.clues) break;
-    final old = puzzle[i];
-    puzzle[i] = 0;
-    if (countSolutions(puzzle) != 1) {
-      puzzle[i] = old;
-    } else {
-      clues--;
+  final deadline = DateTime.now().add(budget ?? d.budget);
+  List<int>? best;
+  var bestClues = 82;
+  do {
+    final puzzle = List<int>.from(solution);
+    final order = List<int>.generate(81, (i) => i)..shuffle(rng);
+    var clues = 81;
+    for (final i in order) {
+      if (clues <= d.clues) break;
+      final old = puzzle[i];
+      puzzle[i] = 0;
+      if (countSolutions(puzzle) != 1) {
+        puzzle[i] = old;
+      } else {
+        clues--;
+      }
+      if (best != null && DateTime.now().isAfter(deadline)) break;
     }
-  }
-  return SudokuPuzzle(puzzle, solution);
+    if (clues < bestClues) {
+      bestClues = clues;
+      best = puzzle;
+    }
+  } while (bestClues > d.clues && DateTime.now().isBefore(deadline));
+  return SudokuPuzzle(best!, solution);
 }
 
 /// Top-level entry usable with `compute`: [args] = [difficultyIndex, seed or -1].

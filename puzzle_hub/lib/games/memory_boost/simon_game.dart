@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
+import 'logic/mb_tiers.dart';
 import 'logic/simon_logic.dart';
 import 'mb_widgets.dart';
-
-const simonBestKey = 'memory.simon.best';
 
 enum _Phase { idle, watching, input, over }
 
@@ -19,14 +18,62 @@ class SimonScreen extends StatefulWidget {
 }
 
 class _SimonScreenState extends State<SimonScreen> {
-  static const _colors = [Color(0xFFFF4D6D), Color(0xFF2EE6A8), Color(0xFF4DA8FF), Color(0xFFFFD369)];
+  Tier? tier;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = tier;
+    if (t != null) {
+      return _SimonGame(key: ValueKey(t), tier: t, onBack: () => setState(() => tier = null));
+    }
+    return GameScaffold(
+      title: 'Simon Sequence',
+      tint: mbTint,
+      body: TierChooser(
+        game: 'simon',
+        heading: 'Watch the growing light pattern and repeat it. Pick a difficulty.',
+        descriptions: const {
+          Tier.easy: 'Slow lights, 4 pads, one forgiven mistake.',
+          Tier.medium: 'Classic speed, 4 pads.',
+          Tier.hard: 'Fast lights, 4 pads.',
+          Tier.extreme: 'Blazing speed with 6 pads.',
+        },
+        bestText: (t) => 'Best streak ${Storage.getInt(simonBestKeyFor(t))}',
+        onSelect: (t) => setState(() => tier = t),
+      ),
+    );
+  }
+}
+
+class _SimonGame extends StatefulWidget {
+  final Tier tier;
+  final VoidCallback onBack;
+  const _SimonGame({super.key, required this.tier, required this.onBack});
+  @override
+  State<_SimonGame> createState() => _SimonGameState();
+}
+
+class _SimonGameState extends State<_SimonGame> {
+  static const _colors = [
+    Color(0xFFFF4D6D),
+    Color(0xFF2EE6A8),
+    Color(0xFF4DA8FF),
+    Color(0xFFFFD369),
+    Color(0xFFB794FF),
+    Color(0xFFFF9F43),
+  ];
   static const _icons = [
     Icons.favorite_rounded,
     Icons.eco_rounded,
     Icons.water_drop_rounded,
     Icons.star_rounded,
+    Icons.diamond_rounded,
+    Icons.local_fire_department_rounded,
   ];
-  final SimonLogic logic = SimonLogic();
+  late final SimonTierParams params = simonTierParams[widget.tier]!;
+  late final SimonLogic logic = SimonLogic(pads: params.pads);
+  late int chancesLeft = params.chances;
+  String get bestKey => simonBestKeyFor(widget.tier);
   _Phase phase = _Phase.idle;
   int lit = -1;
   int pulse = 0; // bumps on every light-up to retrigger the ripple
@@ -41,15 +88,21 @@ class _SimonScreenState extends State<SimonScreen> {
 
   Future<void> _startGame() async {
     logic.reset();
+    chancesLeft = params.chances;
     await _nextRound();
   }
 
   Future<void> _nextRound() async {
     final my = ++round;
     logic.addStep();
+    await _playback(my);
+  }
+
+  Future<void> _playback(int my) async {
     setState(() => phase = _Phase.watching);
     await Future.delayed(const Duration(milliseconds: 700));
-    final ms = SimonLogic.stepMillis(logic.length);
+    if (!mounted || my != round) return;
+    final ms = SimonLogic.stepMillis(logic.length, base: params.baseMs, min: params.minMs, decay: params.decayMs);
     for (final p in List<int>.from(logic.sequence)) {
       if (!mounted || my != round) return;
       setState(() {
@@ -57,7 +110,8 @@ class _SimonScreenState extends State<SimonScreen> {
         lastPad = p;
         pulse++;
       });
-      HapticFeedback.selectionClick();
+      AppAudio.play(Sound.pop);
+      AppAudio.haptic();
       await Future.delayed(Duration(milliseconds: ms));
       if (!mounted || my != round) return;
       setState(() => lit = -1);
@@ -70,7 +124,10 @@ class _SimonScreenState extends State<SimonScreen> {
   Future<void> _tap(int pad) async {
     if (phase != _Phase.input) return;
     final res = logic.input(pad);
-    HapticFeedback.lightImpact();
+    if (res != SequenceResult.wrong) {
+      AppAudio.play(Sound.pop);
+      AppAudio.haptic();
+    }
     setState(() {
       lit = pad;
       lastPad = pad;
@@ -80,6 +137,16 @@ class _SimonScreenState extends State<SimonScreen> {
       if (mounted && phase != _Phase.watching) setState(() => lit = -1);
     });
     if (res == SequenceResult.wrong) {
+      if (chancesLeft > 1) {
+        chancesLeft--;
+        AppAudio.play(Sound.fail);
+        AppAudio.haptic(true);
+        logic.restartInput();
+        setState(() => phase = _Phase.watching);
+        await Future.delayed(const Duration(milliseconds: 700));
+        if (mounted) _playback(++round);
+        return;
+      }
       await _gameOver();
     } else if (res == SequenceResult.complete) {
       setState(() => phase = _Phase.watching);
@@ -89,16 +156,17 @@ class _SimonScreenState extends State<SimonScreen> {
   }
 
   Future<void> _gameOver() async {
-    HapticFeedback.heavyImpact();
+    AppAudio.play(Sound.fail);
+    AppAudio.haptic(true);
     setState(() => phase = _Phase.over);
     final streak = logic.streak;
-    final prevBest = Storage.getInt(simonBestKey);
-    final newBest = Storage.setBest(simonBestKey, streak);
-    Rewards.onGameEnd('memory_boost', score: streak, won: streak >= 5);
+    final prevBest = Storage.getInt(bestKey);
+    final newBest = Storage.setBest(bestKey, streak);
+    Rewards.onGameEnd('memory_boost', score: Storage.getInt(bestKey), won: streak >= 5);
     const milestones = {5: 1, 10: 2, 15: 3, 20: 3};
     milestones.forEach((m, st) {
       if (streak >= m && prevBest < m) {
-        Rewards.onLevelComplete('memory_boost', 'simon-$m', stars: st);
+        Rewards.onLevelComplete('memory_boost', simonRewardKey(widget.tier, m), stars: st);
       }
     });
     final choice = await showResultDialog(
@@ -106,7 +174,7 @@ class _SimonScreenState extends State<SimonScreen> {
       title: 'Game over',
       emoji: '💡',
       color: Pal.accents[1],
-      message: 'Streak: $streak\n${newBest && streak > 0 ? 'New best!' : 'Best: ${Storage.getInt(simonBestKey)}'}',
+      message: 'Streak: $streak\n${newBest && streak > 0 ? 'New best!' : 'Best: ${Storage.getInt(bestKey)}'}',
     );
     if (!mounted) return;
     if (choice == DialogChoice.retry) {
@@ -126,14 +194,16 @@ class _SimonScreenState extends State<SimonScreen> {
     };
     final statusColor = phase == _Phase.input ? Pal.success : (phase == _Phase.over ? Pal.danger : Pal.textDim);
     return GameScaffold(
-      title: 'Simon Sequence',
+      title: 'Simon - ${widget.tier.label}',
       tint: mbTint,
+      onBack: widget.onBack,
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.all(14),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             StatChip(Icons.local_fire_department_rounded, 'Streak ${logic.streak}', color: Pal.accents[0]),
-            StatChip(Icons.emoji_events_rounded, 'Best ${Storage.getInt(simonBestKey)}', color: Pal.gold),
+            if (params.chances > 1) StatChip(Icons.favorite_rounded, '$chancesLeft', color: Pal.danger),
+            StatChip(Icons.emoji_events_rounded, 'Best ${Storage.getInt(bestKey)}', color: Pal.gold),
           ]),
         ),
         AnimatedSwitcher(
@@ -147,16 +217,22 @@ class _SimonScreenState extends State<SimonScreen> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: AspectRatio(
-                aspectRatio: 1,
+                aspectRatio: params.pads == 6 ? 2 / 3 : 1,
                 child: LayoutBuilder(builder: (c, box) {
                   final orb = box.maxWidth * 0.3;
                   return Stack(alignment: Alignment.center, children: [
                     Column(children: [
-                      Expanded(child: Row(children: [Expanded(child: _pad(0)), const SizedBox(width: 14), Expanded(child: _pad(1))])),
-                      const SizedBox(height: 14),
-                      Expanded(child: Row(children: [Expanded(child: _pad(2)), const SizedBox(width: 14), Expanded(child: _pad(3))])),
+                      for (var r = 0; r < params.pads ~/ 2; r++) ...[
+                        if (r > 0) const SizedBox(height: 14),
+                        Expanded(
+                            child: Row(children: [
+                          Expanded(child: _pad(r * 2)),
+                          const SizedBox(width: 14),
+                          Expanded(child: _pad(r * 2 + 1)),
+                        ])),
+                      ],
                     ]),
-                    IgnorePointer(child: _orb(orb)),
+                    if (params.pads == 4) IgnorePointer(child: _orb(orb)),
                   ]);
                 }),
               ),

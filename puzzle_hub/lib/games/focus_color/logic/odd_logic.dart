@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'focus_common.dart';
+import 'focus_difficulty.dart';
+
 class OddRound {
   const OddRound({
     required this.size,
@@ -20,14 +23,21 @@ class OddRound {
 }
 
 class OddGenerator {
-  OddGenerator([Random? rng]) : _rng = rng ?? Random();
+  OddGenerator([Random? rng, FocusParams? params])
+      : _rng = rng ?? Random(),
+        params = params ?? focusParams(FocusMode.odd, FocusTier.medium);
   final Random _rng;
+  final FocusParams params;
 
-  /// Grid side: 2 at start, +1 every 3 points, max 7.
-  static int gridSize(int score) => (2 + score ~/ 3).clamp(2, 7);
+  static int gridSizeFor(FocusParams p, int score) =>
+      (p.oddStartGrid + score ~/ p.oddGridStep).clamp(p.oddStartGrid, p.oddMaxGrid);
 
-  /// Lightness difference of the odd tile: shrinks with score, floor 0.035.
-  static double difference(int score) => max(0.035, 0.22 * pow(0.93, score).toDouble());
+  /// Lightness difference of the odd tile: shrinks with score down to a floor.
+  static double differenceFor(FocusParams p, int score) =>
+      max(p.oddMinDiff, p.oddStartDiff * pow(p.oddDecay, score).toDouble());
+
+  int gridSize(int score) => gridSizeFor(params, score);
+  double difference(int score) => differenceFor(params, score);
 
   OddRound next(int score) {
     final size = gridSize(score);

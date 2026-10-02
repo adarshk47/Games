@@ -51,6 +51,10 @@ void main() {
     expect(colorsForLevel(BsDifficulty.medium, 100), 9);
     expect(colorsForLevel(BsDifficulty.hard, 1), 10);
     expect(colorsForLevel(BsDifficulty.hard, 100), 14);
+    expect(colorsForLevel(BsDifficulty.extreme, 1), 15);
+    expect(colorsForLevel(BsDifficulty.extreme, 100), 20);
+    expect(emptyTubesForLevel(BsDifficulty.extreme, 1), 2);
+    expect(emptyTubesForLevel(BsDifficulty.extreme, 30), 1);
   });
 
   test('every level of every difficulty is valid and solvable by its solution', () {

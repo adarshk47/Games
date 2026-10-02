@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'baby_match_game.dart';
@@ -21,6 +22,18 @@ class MomMemoryScreen extends StatefulWidget {
 }
 
 class _MomMemoryScreenState extends State<MomMemoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AppAudio.setMusic(MusicTrack.calm);
+  }
+
+  @override
+  void dispose() {
+    AppAudio.setMusic(MusicTrack.main);
+    super.dispose();
+  }
+
   Future<void> _open(Widget game) async {
     await Navigator.of(context).push(
       PageRouteBuilder<void>(

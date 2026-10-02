@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrow_maze_logic.dart';
@@ -10,6 +11,21 @@ import 'progress.dart';
 
 const _tint = Color(0xFF7C9CFF);
 
+Color _tierColor(MazeTier t) => switch (t) {
+      MazeTier.easy => const Color(0xFF4ADE80),
+      MazeTier.medium => const Color(0xFF7C9CFF),
+      MazeTier.hard => const Color(0xFFFFB347),
+      MazeTier.extreme => const Color(0xFFFF5C7A),
+    };
+
+IconData _tierIcon(MazeTier t) => switch (t) {
+      MazeTier.easy => Icons.spa_rounded,
+      MazeTier.medium => Icons.bolt_rounded,
+      MazeTier.hard => Icons.local_fire_department_rounded,
+      MazeTier.extreme => Icons.whatshot_rounded,
+    };
+
+/// Difficulty selection (entry point of the game).
 class ArrowMazeScreen extends StatefulWidget {
   const ArrowMazeScreen({super.key});
 
@@ -18,11 +34,12 @@ class ArrowMazeScreen extends StatefulWidget {
 }
 
 class _ArrowMazeScreenState extends State<ArrowMazeScreen> {
-  Future<void> _open(int level) async {
+  Future<void> _open(MazeTier tier) async {
+    ArrowMazeProgress.setLastTier(tier);
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 380),
-        pageBuilder: (_, _, _) => ArrowMazeGamePage(level: level),
+        pageBuilder: (_, _, _) => _LevelGridPage(tier: tier),
         transitionsBuilder: (_, a, _, child) => FadeTransition(
           opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
           child: child,
@@ -34,23 +51,188 @@ class _ArrowMazeScreenState extends State<ArrowMazeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final last = ArrowMazeProgress.lastTier;
     return GameScaffold(
       title: 'Arrow Maze',
       tint: _tint,
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(4, 0, 4, 14),
+            child: Text('Choose your challenge',
+                style: TextStyle(
+                    color: Pal.textDim,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600)),
+          ),
+          for (var i = 0; i < MazeTier.values.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: _TierCard(
+                tier: MazeTier.values[i],
+                isLast: MazeTier.values[i] == last,
+                onTap: () => _open(MazeTier.values[i]),
+              )
+                  .animate(delay: (i * 90).ms)
+                  .fadeIn(duration: 380.ms)
+                  .slideY(begin: 0.15, end: 0, curve: Curves.easeOutCubic),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TierCard extends StatelessWidget {
+  const _TierCard(
+      {required this.tier, required this.isLast, required this.onTap});
+  final MazeTier tier;
+  final bool isLast;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _tierColor(tier);
+    final done = ArrowMazeProgress.completed(tier);
+    final frac = done / tier.count;
+    return GlassCard(
+      onTap: onTap,
+      glow: color,
+      radius: 26,
+      padding: const EdgeInsets.all(18),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          color.withValues(alpha: isLast ? 0.38 : 0.28),
+          color.withValues(alpha: 0.06),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 62,
+            height: 62,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: Pal.accent(color),
+              boxShadow: [
+                BoxShadow(
+                    color: color.withValues(alpha: 0.6),
+                    blurRadius: 20,
+                    spreadRadius: -2)
+              ],
+            ),
+            child: Icon(_tierIcon(tier), color: Colors.white, size: 32),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Text(tier.label,
+                      style: const TextStyle(
+                          color: Pal.text,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900)),
+                  if (isLast) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(10),
+                        border:
+                            Border.all(color: color.withValues(alpha: 0.7)),
+                      ),
+                      child: const Text('LAST PLAYED',
+                          style: TextStyle(
+                              color: Pal.text,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6)),
+                    ),
+                  ],
+                ]),
+                const SizedBox(height: 2),
+                Text(tier.blurb,
+                    style: const TextStyle(color: Pal.textDim, fontSize: 13)),
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: frac,
+                    minHeight: 7,
+                    backgroundColor: Colors.white.withValues(alpha: 0.12),
+                    valueColor: AlwaysStoppedAnimation(color),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text('$done / ${tier.count} levels',
+                    style: const TextStyle(
+                        color: Pal.text,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.chevron_right_rounded, color: Pal.textDim),
+        ],
+      ),
+    );
+  }
+}
+
+class _LevelGridPage extends StatefulWidget {
+  const _LevelGridPage({required this.tier});
+  final MazeTier tier;
+
+  @override
+  State<_LevelGridPage> createState() => _LevelGridPageState();
+}
+
+class _LevelGridPageState extends State<_LevelGridPage> {
+  MazeTier get tier => widget.tier;
+
+  Future<void> _open(int level) async {
+    await Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 380),
+        pageBuilder: (_, _, _) => ArrowMazeGamePage(tier: tier, level: level),
+        transitionsBuilder: (_, a, _, child) => FadeTransition(
+          opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
+          child: child,
+        ),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _tierColor(tier);
+    return GameScaffold(
+      title: 'Arrow Maze - ${tier.label}',
+      tint: color,
       body: GridView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 90, mainAxisSpacing: 12, crossAxisSpacing: 12),
-        itemCount: ArrowMazeLevels.count,
+        itemCount: tier.count,
         itemBuilder: (context, i) {
           final level = i + 1;
-          final unlocked = ArrowMazeProgress.isUnlocked(level);
-          final done = ArrowMazeProgress.isDone(level);
+          final unlocked = ArrowMazeProgress.isUnlocked(tier, level);
+          final done = ArrowMazeProgress.isDone(tier, level);
           return _LevelTile(
             level: level,
+            color: color,
             unlocked: unlocked,
             done: done,
-            stars: ArrowMazeProgress.stars(level),
+            stars: ArrowMazeProgress.stars(tier, level),
             onTap: () => _open(level),
           )
               .animate(delay: (math.min(i, 24) * 30).ms)
@@ -69,11 +251,13 @@ class _ArrowMazeScreenState extends State<ArrowMazeScreen> {
 class _LevelTile extends StatelessWidget {
   const _LevelTile(
       {required this.level,
+      required this.color,
       required this.unlocked,
       required this.done,
       required this.stars,
       required this.onTap});
   final int level, stars;
+  final Color color;
   final bool unlocked, done;
   final VoidCallback onTap;
 
@@ -81,13 +265,13 @@ class _LevelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final Gradient gradient = unlocked
         ? (done
-            ? Pal.accent(_tint)
+            ? Pal.accent(color)
             : LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _tint.withValues(alpha: 0.38),
-                  _tint.withValues(alpha: 0.12),
+                  color.withValues(alpha: 0.38),
+                  color.withValues(alpha: 0.12),
                 ],
               ))
         : const LinearGradient(colors: [Color(0x14FFFFFF), Color(0x08FFFFFF)]);
@@ -102,7 +286,7 @@ class _LevelTile extends StatelessWidget {
         boxShadow: unlocked
             ? [
                 BoxShadow(
-                    color: _tint.withValues(alpha: done ? 0.5 : 0.28),
+                    color: color.withValues(alpha: done ? 0.5 : 0.28),
                     blurRadius: done ? 18 : 12,
                     spreadRadius: -2)
               ]
@@ -143,7 +327,8 @@ class _Fx {
 }
 
 class ArrowMazeGamePage extends StatefulWidget {
-  const ArrowMazeGamePage({super.key, required this.level});
+  const ArrowMazeGamePage({super.key, required this.tier, required this.level});
+  final MazeTier tier;
   final int level;
 
   @override
@@ -152,14 +337,16 @@ class ArrowMazeGamePage extends StatefulWidget {
 
 class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     with SingleTickerProviderStateMixin {
-  static const maxLives = 3;
+  late final MazeTier tier = widget.tier;
+  int get maxLives => tier.lives;
   late int level = widget.level;
   late ArrowMazeBoard board;
   final Stopwatch _clock = Stopwatch()..start();
   final List<_Fx> _fx = [];
   late final AnimationController _tick = AnimationController(
       vsync: this, duration: const Duration(milliseconds: 1000));
-  int lives = maxLives;
+  int lives = 3;
+  int hintsLeft = 0;
   int moves = 0;
   int? hinted;
   bool over = false;
@@ -180,9 +367,10 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   }
 
   void _load() {
-    board = ArrowMazeLevels.generate(level);
+    board = ArrowMazeLevels.generate(tier, level);
     _fx.clear();
     lives = maxLives;
+    hintsLeft = tier.hints;
     moves = 0;
     hinted = null;
     over = false;
@@ -222,8 +410,11 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
         final travel = _bodyLen(s) + board.rayCells(s).length + 1.0;
         final dur = (300 + travel * 38).clamp(380, 1100).round();
         _fx.add(_Fx(id, true, now, dur, travel));
+        AppAudio.play(Sound.slide);
       } else {
         lives--;
+        AppAudio.play(Sound.fail);
+        AppAudio.haptic(true);
         _fx.removeWhere((f) => f.id == id);
         _fx.add(_Fx(id, false, now, 460, 0));
       }
@@ -232,19 +423,29 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     _kick();
     if (board.isCleared) {
       over = true;
-      final stars = lives.clamp(1, 3);
-      ArrowMazeProgress.complete(level, stars);
-      Rewards.onLevelComplete('arrow_maze', 'L$level', stars: stars);
+      final stars = _stars;
+      ArrowMazeProgress.complete(tier, level, stars);
+      Rewards.onLevelComplete('arrow_maze', '${tier.key}-L$level',
+          stars: stars);
       Future.delayed(const Duration(milliseconds: 900), _showWin);
     } else if (lives <= 0) {
       over = true;
+      AppAudio.play(Sound.fail);
       Future.delayed(const Duration(milliseconds: 650), _showLose);
     }
   }
 
   void _hint() {
     if (over) return;
+    if (hintsLeft <= 0) {
+      AppAudio.haptic();
+      return;
+    }
     final h = board.hint();
+    if (h != null) {
+      hintsLeft--;
+      AppAudio.play(Sound.pop);
+    }
     setState(() {
       hinted = h?.id;
       version++;
@@ -264,17 +465,19 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     });
   }
 
+  int get _stars => (3 - (maxLives - lives)).clamp(1, 3);
+
   void _showWin() {
     if (!mounted) return;
-    final hasNext = level < ArrowMazeLevels.count;
-    final stars = lives.clamp(1, 3);
+    final hasNext = level < tier.count;
+    final stars = _stars;
     showPremiumDialog(
       context,
       title: 'Maze cleared!',
       message: 'Lives left: $lives  |  Moves: $moves',
       emoji: '🎉✨',
       stars: stars,
-      color: _tint,
+      color: _tierColor(tier),
       actions: [
         DialogAction('Levels', () => Navigator.pop(context)),
         DialogAction('Replay', () => setState(_load)),
@@ -330,8 +533,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   Widget build(BuildContext context) {
     final hidden = <int>{for (final f in _fx) f.id, ?hinted};
     return GameScaffold(
-      title: 'Level $level',
-      tint: _tint,
+      title: '${tier.label} - Level $level',
+      tint: _tierColor(tier),
       actions: [
         BarAction(
             icon: Icons.undo_rounded,
@@ -339,8 +542,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
             onTap: over || board.history.isEmpty ? null : _undo),
         BarAction(
             icon: Icons.lightbulb_rounded,
-            tooltip: 'Hint',
-            onTap: over ? null : _hint),
+            tooltip: 'Hint ($hintsLeft left)',
+            onTap: over || hintsLeft <= 0 ? null : _hint),
         BarAction(
             icon: Icons.refresh_rounded,
             tooltip: 'Restart',
@@ -362,7 +565,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                     for (var i = 0; i < maxLives; i++)
                       _Heart(alive: i < lives),
                   ]),
-                  Text('Moves $moves  |  Left ${board.remaining}',
+                  Text('Hints $hintsLeft  |  Moves $moves  |  Left ${board.remaining}',
                       style: const TextStyle(
                           color: Pal.text,
                           fontWeight: FontWeight.w700,

@@ -37,6 +37,8 @@ class _BallSortScreenState extends State<BallSortScreen> {
     BsDifficulty.medium: ('6-9 colors', 'A proper sorting workout.', Color(0xFFFFB347), Icons.bolt_rounded),
     BsDifficulty.hard:
         ('10-14 colors', 'A rainbow of tubes. Shape markers help.', Color(0xFFFF6B8A), Icons.local_fire_department_rounded),
+    BsDifficulty.extreme:
+        ('15-20 colors', 'Only 1-2 spare tubes. Pure chaos.', Color(0xFFB66DFF), Icons.whatshot_rounded),
   };
 
   @override

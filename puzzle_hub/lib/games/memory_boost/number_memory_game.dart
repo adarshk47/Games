@@ -1,16 +1,15 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
+import 'logic/mb_tiers.dart';
 import 'logic/number_logic.dart';
 import 'mb_widgets.dart';
-
-String numberBestKey(int lives) => 'memory.number.best.$lives';
 
 enum _Phase { setup, show, input, feedback }
 
@@ -23,10 +22,12 @@ class NumberMemoryScreen extends StatefulWidget {
 class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   static final _teal = Pal.accents[3];
   _Phase phase = _Phase.setup;
+  Tier tier = Tier.medium;
+  NumberTierParams get params => numberTierParams[tier]!;
   int maxLives = 3;
   int lives = 3;
-  int level = 1; // current digits
-  int reached = 0; // levels cleared
+  int level = 1; // current round (digits = startDigits + level - 1)
+  int reached = 0; // rounds cleared
   String number = '';
   String answer = '';
   bool lastOk = true;
@@ -38,9 +39,10 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
     super.dispose();
   }
 
-  void _begin(int lv) {
-    maxLives = lv;
-    lives = lv;
+  void _begin(Tier t) {
+    tier = t;
+    maxLives = params.lives;
+    lives = params.lives;
     level = 1;
     reached = 0;
     _show();
@@ -48,17 +50,18 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
 
   Future<void> _show() async {
     final my = ++token;
-    number = generateNumber(digitsForLevel(level));
+    number = generateNumber(digitsForLevel(level, params.startDigits));
     answer = '';
     setState(() => phase = _Phase.show);
-    await Future.delayed(displayDuration(number.length));
+    await Future.delayed(params.displayFor(number.length));
     if (!mounted || my != token) return;
     setState(() => phase = _Phase.input);
   }
 
   void _key(String k) {
     if (phase != _Phase.input) return;
-    HapticFeedback.selectionClick();
+    AppAudio.play(Sound.tap);
+    AppAudio.haptic();
     setState(() {
       if (k == '<') {
         if (answer.isNotEmpty) answer = answer.substring(0, answer.length - 1);
@@ -80,7 +83,13 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
         lives--;
       }
     });
-    ok ? HapticFeedback.lightImpact() : HapticFeedback.heavyImpact();
+    if (ok) {
+      AppAudio.play(Sound.success);
+      AppAudio.haptic();
+    } else {
+      AppAudio.play(Sound.fail);
+      AppAudio.haptic(true);
+    }
     await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
     if (ok) {
@@ -94,13 +103,14 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   }
 
   Future<void> _gameOver() async {
-    final prevBest = Storage.getInt(numberBestKey(maxLives));
-    final newBest = Storage.setBest(numberBestKey(maxLives), reached);
-    Rewards.onGameEnd('memory_boost', score: reached);
+    final key = numberBestKeyFor(tier);
+    final prevBest = Storage.getInt(key);
+    final newBest = Storage.setBest(key, reached);
+    Rewards.onGameEnd('memory_boost', score: Storage.getInt(key));
     const milestones = {5: 1, 7: 2, 9: 3, 12: 3};
     milestones.forEach((n, st) {
       if (reached >= n && prevBest < n) {
-        Rewards.onLevelComplete('memory_boost', 'number-$n', stars: st);
+        Rewards.onLevelComplete('memory_boost', numberRewardKey(tier, n), stars: st);
       }
     });
     final choice = await showResultDialog(
@@ -109,11 +119,11 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
       emoji: '🔢',
       color: _teal,
       message:
-          'Level reached: $reached\n${newBest && reached > 0 ? 'New best!' : 'Best: ${Storage.getInt(numberBestKey(maxLives))}'}',
+          'Rounds cleared: $reached\n${newBest && reached > 0 ? 'New best!' : 'Best: ${Storage.getInt(numberBestKeyFor(tier))}'}',
     );
     if (!mounted) return;
     if (choice == DialogChoice.retry) {
-      _begin(maxLives);
+      _begin(tier);
     } else {
       setState(() => phase = _Phase.setup);
     }
@@ -122,69 +132,30 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Number Memory',
+      title: phase == _Phase.setup ? 'Number Memory' : 'Number - ${tier.label}',
       tint: mbTint,
+      onBack: phase == _Phase.setup
+          ? null
+          : () {
+              token++;
+              setState(() => phase = _Phase.setup);
+            },
       body: phase == _Phase.setup ? _setup() : _play(),
     );
   }
 
   Widget _setup() {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: Pal.accent(_teal),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.45), width: 2),
-              boxShadow: [BoxShadow(color: _teal.withValues(alpha: 0.6), blurRadius: 32)],
-            ),
-            child: const Icon(Icons.pin_rounded, size: 52, color: Colors.white),
-          )
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scale(begin: const Offset(1, 1), end: const Offset(1.08, 1.08), duration: 1400.ms, curve: Curves.easeInOut),
-          const SizedBox(height: 20),
-          const Text('Memorize the number, then type it. Each round adds a digit.',
-              textAlign: TextAlign.center, style: TextStyle(color: Pal.textDim, fontSize: 15, height: 1.4)),
-          const SizedBox(height: 28),
-          _modeCard('Normal', '3 lives', 3, Pal.accents[3]).animate().fadeIn(delay: 100.ms).slideY(begin: 0.2, end: 0),
-          const SizedBox(height: 14),
-          _modeCard('Sudden death', '1 life', 1, Pal.accents[5]).animate().fadeIn(delay: 220.ms).slideY(begin: 0.2, end: 0),
-        ]),
-      ),
-    );
-  }
-
-  Widget _modeCard(String name, String lives, int l, Color c) {
-    return GlassCard(
-      blur: 0,
-      radius: 26,
-      glow: c,
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [c.withValues(alpha: 0.34), c.withValues(alpha: 0.06)],
-      ),
-      onTap: () => _begin(l),
-      child: Row(children: [
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(name, style: const TextStyle(color: Pal.text, fontSize: 19, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 2),
-            Text('$lives  -  best ${Storage.getInt(numberBestKey(l))}',
-                style: const TextStyle(color: Pal.textDim, fontSize: 13)),
-          ]),
-        ),
-        Row(children: [
-          for (var i = 0; i < l; i++) const Icon(Icons.favorite_rounded, color: Pal.danger, size: 20),
-        ]),
-        const SizedBox(width: 8),
-        const Icon(Icons.play_circle_fill_rounded, color: Colors.white, size: 34),
-      ]),
+    String sec(Tier t) => '${(numberTierParams[t]!.displayFor(numberTierParams[t]!.startDigits).inMilliseconds / 1000).toStringAsFixed(1)}s';
+    return TierChooser(
+      game: 'number',
+      heading: 'Memorize the number, then type it. Each round adds a digit. Pick a difficulty.',
+      descriptions: {
+        for (final t in Tier.values)
+          t: 'Starts at ${numberTierParams[t]!.startDigits} digit${numberTierParams[t]!.startDigits > 1 ? 's' : ''}, '
+              '${sec(t)} to look, ${numberTierParams[t]!.lives} ${numberTierParams[t]!.lives > 1 ? 'lives' : 'life'}.',
+      },
+      bestText: (t) => 'Best round ${Storage.getInt(numberBestKeyFor(t))}',
+      onSelect: _begin,
     );
   }
 
@@ -209,7 +180,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
     Widget center;
     switch (phase) {
       case _Phase.show:
-        final d = displayDuration(number.length);
+        final d = params.displayFor(number.length);
         center = SizedBox(
           width: 280,
           height: 280,
@@ -254,7 +225,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
       Padding(
         padding: const EdgeInsets.all(14),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          StatChip(Icons.layers_rounded, 'Level $level'),
+          StatChip(Icons.layers_rounded, 'Round $level'),
           GlassCard(
             blur: 0,
             radius: 22,
@@ -265,7 +236,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
                     color: Pal.danger, size: 19),
             ]),
           ),
-          StatChip(Icons.emoji_events_rounded, 'Best ${Storage.getInt(numberBestKey(maxLives))}', color: Pal.gold),
+          StatChip(Icons.emoji_events_rounded, 'Best ${Storage.getInt(numberBestKeyFor(tier))}', color: Pal.gold),
         ]),
       ),
       Expanded(

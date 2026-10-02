@@ -1,26 +1,46 @@
 import '../../core/storage.dart';
 import 'logic/arrow_maze_logic.dart';
 
-/// Persistent level progress (Storage keys `arrow_maze.*`).
+/// Persistent per-tier level progress (Storage keys `arrow_maze.<tier>.*`).
 class ArrowMazeProgress {
-  static int stars(int level) => Storage.getInt('arrow_maze.stars.$level');
-  static bool isDone(int level) => stars(level) > 0;
-  static bool isUnlocked(int level) => level <= 1 || isDone(level - 1);
+  static String _k(MazeTier t, String s) => 'arrow_maze.${t.key}.$s';
 
-  static int get completed {
+  static int stars(MazeTier t, int level) =>
+      Storage.getInt(_k(t, 'stars.$level'));
+  static bool isDone(MazeTier t, int level) => stars(t, level) > 0;
+  static bool isUnlocked(MazeTier t, int level) =>
+      level <= 1 || isDone(t, level - 1);
+
+  static int completed(MazeTier t) {
     var n = 0;
-    for (var l = 1; l <= ArrowMazeLevels.count; l++) {
-      if (isDone(l)) n++;
+    for (var l = 1; l <= t.count; l++) {
+      if (isDone(t, l)) n++;
     }
     return n;
   }
 
-  static void complete(int level, int stars) {
-    if (stars > ArrowMazeProgress.stars(level)) {
-      Storage.setInt('arrow_maze.stars.$level', stars);
+  /// The first level not yet completed (or the last one when all are done).
+  static int nextLevel(MazeTier t) {
+    for (var l = 1; l <= t.count; l++) {
+      if (!isDone(t, l)) return l;
     }
-    if (level > Storage.getInt('arrow_maze.best')) {
-      Storage.setInt('arrow_maze.best', level);
+    return t.count;
+  }
+
+  static void complete(MazeTier t, int level, int stars) {
+    if (stars > ArrowMazeProgress.stars(t, level)) {
+      Storage.setInt(_k(t, 'stars.$level'), stars);
+    }
+    if (level > Storage.getInt(_k(t, 'best'))) {
+      Storage.setInt(_k(t, 'best'), level);
     }
   }
+
+  static MazeTier? get lastTier {
+    final i = Storage.getInt('arrow_maze.lastTier', -1);
+    return i >= 0 && i < MazeTier.values.length ? MazeTier.values[i] : null;
+  }
+
+  static void setLastTier(MazeTier t) =>
+      Storage.setInt('arrow_maze.lastTier', t.index);
 }

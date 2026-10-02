@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/audio.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -27,6 +28,21 @@ class _BreatheGameState extends State<BreatheGame>
   int? _answer;
   late final AnimationController _c = AnimationController(vsync: this);
 
+  BreathPhase? _lastPhase;
+
+  @override
+  void initState() {
+    super.initState();
+    _c.addListener(() {
+      if (_step != _Step.breathe) return;
+      final p = breathAt(_c.value * _minutes * 60).phase;
+      if (p != _lastPhase) {
+        _lastPhase = p;
+        AppAudio.play(Sound.pop);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _c.dispose();
@@ -36,6 +52,7 @@ class _BreatheGameState extends State<BreatheGame>
   void _start(int minutes) {
     _minutes = minutes;
     _colorIdx = _rng.nextInt(breathColors.length);
+    _lastPhase = null;
     _c.duration = Duration(seconds: minutes * 60);
     setState(() => _step = _Step.breathe);
     _c.forward(from: 0).whenComplete(() {
@@ -51,7 +68,8 @@ class _BreatheGameState extends State<BreatheGame>
   }
 
   void _answerQ(int idx) {
-    softTap();
+    AppAudio.play(Sound.success);
+    AppAudio.haptic();
     Storage.setInt(
       'mom.breath.sessions',
       Storage.getInt('mom.breath.sessions') + 1,
