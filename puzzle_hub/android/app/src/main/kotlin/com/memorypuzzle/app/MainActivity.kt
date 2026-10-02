@@ -1,4 +1,4 @@
-package com.adarsh.puzzlehub.puzzle_hub
+package com.memorypuzzle.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

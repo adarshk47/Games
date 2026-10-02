@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'audio.dart';
 import 'storage.dart';
 import 'ui/palette.dart';
 
@@ -22,8 +23,9 @@ class Rewards {
   /// Call after login (and after lock/unlock) to load the user's balance.
   static void reload() => coins.value = Storage.getInt('coins');
 
-  static Future<void> addCoins(int n, {String? label}) async {
+  static Future<void> addCoins(int n, {String? label, bool playSound = true}) async {
     if (n <= 0) return;
+    if (playSound) AppAudio.play(Sound.coin);
     final v = Storage.getInt('coins') + n;
     await Storage.setInt('coins', v);
     Storage.setInt('coins.earned', Storage.getInt('coins.earned') + n);
@@ -49,7 +51,8 @@ class Rewards {
     if (first) Storage.setBool(done, true);
     final reward = first ? 10 + 5 * stars.clamp(0, 3) : 2;
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
-    addCoins(reward, label: first ? 'Level complete!' : null);
+    AppAudio.play(Sound.win);
+    addCoins(reward, label: first ? 'Level complete!' : null, playSound: false);
     return reward;
   }
 

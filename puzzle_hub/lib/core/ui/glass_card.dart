@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../audio.dart';
 import 'palette.dart';
 
 /// Frosted-glass surface. Set [blur] to 0 inside long scrolling lists / grids
@@ -82,7 +83,10 @@ class _PressableState extends State<Pressable> {
         onTapDown: (_) => setState(() => _down = true),
         onTapCancel: () => setState(() => _down = false),
         onTapUp: (_) => setState(() => _down = false),
-        onTap: widget.onTap,
+        onTap: () {
+          AppAudio.play(Sound.tap, volume: 0.5);
+          widget.onTap();
+        },
         child: AnimatedScale(
           scale: _down ? 0.96 : 1,
           duration: const Duration(milliseconds: 110),

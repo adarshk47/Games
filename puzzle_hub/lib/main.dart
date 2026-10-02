@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'core/account/auth_screens.dart';
+import 'core/audio.dart';
 import 'core/rewards.dart';
 import 'core/storage.dart';
 import 'core/theme.dart';
@@ -9,6 +10,8 @@ import 'home/home_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Storage.init();
+  await AppAudio.init();
+  AppAudio.startMusic();
   runApp(const PuzzleHubApp());
 }
 

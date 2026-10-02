@@ -4,3 +4,4 @@ export 'game_scaffold.dart';
 export 'glass_card.dart';
 export 'palette.dart';
 export 'premium_button.dart';
+export 'settings_sheet.dart';

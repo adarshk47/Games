@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import 'animated_background.dart';
 import 'glass_card.dart';
+import 'settings_sheet.dart';
 import 'palette.dart';
 
 /// Standard screen frame for every game: animated background, glass top bar
@@ -39,6 +40,7 @@ class GameScaffold extends StatelessWidget {
                       style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: 0.3)),
                 ),
                 ...?actions,
+                BarAction(icon: Icons.tune_rounded, tooltip: 'Sound & settings', onTap: () => showSettingsSheet(context)),
               ]),
             ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.3, end: 0),
             Expanded(child: body),
