@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/storage.dart';
+import '../../core/ui/ui.dart';
 import 'card_match_game.dart';
 import 'logic/card_deck.dart';
+import 'mb_widgets.dart';
 import 'number_memory_game.dart';
 import 'simon_game.dart';
 
@@ -26,54 +29,95 @@ class _MemoryBoostScreenState extends State<MemoryBoostScreen> {
     }
     final numBest = Storage.getInt(numberBestKey(3));
     final numBest1 = Storage.getInt(numberBestKey(1));
-    return Scaffold(
-      appBar: AppBar(title: const Text('Brain Gym')),
+    final cards = <_Hero>[
+      _Hero(Icons.grid_view_rounded, Pal.accents[4], 'Card Match', 'Flip pairs of cards. 2x2 up to 6x6.',
+          'Stars $cardStars/${cardLevels.length * 3}', () => _open(const CardMatchScreen())),
+      _Hero(Icons.lightbulb_rounded, Pal.accents[1], 'Simon Sequence', 'Repeat the growing light pattern.',
+          'Best streak ${Storage.getInt(simonBestKey)}', () => _open(const SimonScreen())),
+      _Hero(Icons.pin_rounded, Pal.accents[3], 'Number Memory', 'Remember the number, one more digit each round.',
+          'Best level $numBest  |  sudden death $numBest1', () => _open(const NumberMemoryScreen())),
+    ];
+    return GameScaffold(
+      title: 'Brain Gym',
+      tint: mbTint,
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          _tile(context, Icons.grid_view_rounded, Colors.purple, 'Card Match',
-              'Flip pairs of cards. 2x2 up to 6x6.', 'Stars: $cardStars/${cardLevels.length * 3}',
-              () => _open(const CardMatchScreen())),
-          _tile(context, Icons.lightbulb_rounded, Colors.orange, 'Simon Sequence',
-              'Repeat the growing light pattern.', 'Best streak: ${Storage.getInt(simonBestKey)}',
-              () => _open(const SimonScreen())),
-          _tile(context, Icons.pin_rounded, Colors.teal, 'Number Memory',
-              'Remember the number, one more digit each round.', 'Best level: $numBest (sudden death: $numBest1)',
-              () => _open(const NumberMemoryScreen())),
+          for (var i = 0; i < cards.length; i++)
+            _heroCard(cards[i])
+                .animate(delay: (120 * i).ms)
+                .fadeIn(duration: 420.ms)
+                .slideY(begin: 0.25, end: 0, duration: 520.ms, curve: Curves.easeOutCubic),
         ],
       ),
     );
   }
 
-  Widget _tile(BuildContext context, IconData icon, Color color, String title, String sub, String best, VoidCallback onTap) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(18)),
-              child: Icon(icon, color: color, size: 36),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 2),
-                Text(sub, style: Theme.of(context).textTheme.bodySmall),
-                const SizedBox(height: 6),
-                Text(best, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
-              ]),
-            ),
-            const Icon(Icons.chevron_right_rounded),
-          ]),
+  Widget _heroCard(_Hero h) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: GlassCard(
+        blur: 0,
+        radius: 28,
+        glow: h.color,
+        padding: const EdgeInsets.all(20),
+        onTap: h.onTap,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [h.color.withValues(alpha: 0.34), h.color.withValues(alpha: 0.06)],
         ),
+        child: Row(children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              gradient: Pal.accent(h.color),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+              boxShadow: [BoxShadow(color: h.color.withValues(alpha: 0.6), blurRadius: 22, spreadRadius: -2)],
+            ),
+            child: Icon(h.icon, color: Colors.white, size: 38),
+          )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(begin: const Offset(1, 1), end: const Offset(1.06, 1.06), duration: 1600.ms, curve: Curves.easeInOut),
+          const SizedBox(width: 18),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(h.title, style: const TextStyle(color: Pal.text, fontSize: 21, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 3),
+              Text(h.sub, style: const TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3)),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: h.color.withValues(alpha: 0.5)),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.emoji_events_rounded, size: 14, color: Pal.gold),
+                  const SizedBox(width: 5),
+                  Flexible(
+                    child: Text(h.best,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Pal.text, fontSize: 12, fontWeight: FontWeight.w700)),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+          const Icon(Icons.chevron_right_rounded, color: Pal.textDim, size: 28),
+        ]),
       ),
     );
   }
+}
+
+class _Hero {
+  final IconData icon;
+  final Color color;
+  final String title, sub, best;
+  final VoidCallback onTap;
+  _Hero(this.icon, this.color, this.title, this.sub, this.best, this.onTap);
 }

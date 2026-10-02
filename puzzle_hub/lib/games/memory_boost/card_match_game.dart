@@ -3,8 +3,10 @@ import 'dart:math' show pi;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/storage.dart';
+import '../../core/ui/ui.dart';
 import 'logic/card_deck.dart';
 import 'mb_widgets.dart';
 
@@ -22,11 +24,10 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_level == null ? 'Card Match' : 'Level ${_level! + 1} (${cardLevels[_level!].label})'),
-        leading: _level == null ? null : BackButton(onPressed: () => setState(() => _level = null)),
-      ),
+    return GameScaffold(
+      tint: mbTint,
+      title: _level == null ? 'Card Match' : 'Level ${_level! + 1} (${cardLevels[_level!].label})',
+      onBack: _level == null ? null : () => setState(() => _level = null),
       body: _level == null
           ? _picker()
           : _CardBoard(
@@ -40,22 +41,50 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
 
   Widget _picker() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       itemCount: cardLevels.length,
       itemBuilder: (c, i) {
         final stars = Storage.getInt(cardStarsKey(i));
         final moves = Storage.getInt(cardMovesKey(i));
-        return Card(
-          child: ListTile(
-            leading: CircleAvatar(child: Text('${i + 1}')),
-            title: Text('${cardLevels[i].label} grid'),
-            subtitle: Text(moves == 0 ? 'Not played yet' : 'Best: $moves moves'),
-            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-              for (var s = 1; s <= 3; s++)
-                Icon(s <= stars ? Icons.star_rounded : Icons.star_outline_rounded, color: Colors.amber),
-            ]),
+        final col = Pal.accents[(i + 4) % Pal.accents.length];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: GlassCard(
+            blur: 0,
+            radius: 24,
+            glow: stars > 0 ? col : null,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [col.withValues(alpha: 0.26), col.withValues(alpha: 0.05)],
+            ),
             onTap: () => setState(() => _level = i),
-          ),
+            child: Row(children: [
+              Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  gradient: Pal.accent(col),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+                ),
+                child: Text('${i + 1}',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('${cardLevels[i].label} grid',
+                      style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 17)),
+                  const SizedBox(height: 2),
+                  Text(moves == 0 ? 'Not played yet' : 'Best: $moves moves',
+                      style: const TextStyle(color: Pal.textDim, fontSize: 13)),
+                ]),
+              ),
+              StarRow(stars: stars, size: 22),
+            ]),
+          ).animate(delay: (70 * i).ms).fadeIn(duration: 350.ms).slideX(begin: 0.15, end: 0, curve: Curves.easeOutCubic),
         );
       },
     );
@@ -149,27 +178,17 @@ class _CardBoardState extends State<_CardBoard> {
     final prev = Storage.getInt(cardMovesKey(widget.level));
     final newBest = prev == 0 || moves < prev;
     if (newBest) Storage.setInt(cardMovesKey(widget.level), moves);
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
     final hasNext = widget.level + 1 < cardLevels.length;
     final choice = await showResultDialog(
       context,
       title: 'Level complete!',
+      emoji: '🏆',
+      stars: stars,
+      message: '$moves moves  -  ${fmtTime(seconds)}${newBest ? '\nNew best!' : ''}',
       retryLabel: 'Replay',
       extraLabel: hasNext ? 'Next level' : null,
-      body: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          for (var s = 1; s <= 3; s++)
-            Icon(s <= stars ? Icons.star_rounded : Icons.star_outline_rounded, color: Colors.amber, size: 40),
-        ]),
-        const SizedBox(height: 12),
-        Text('$moves moves  -  ${fmtTime(seconds)}'),
-        if (newBest)
-          const Padding(
-            padding: EdgeInsets.only(top: 6),
-            child: Text('New best!', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-      ],
     );
     if (!mounted) return;
     switch (choice) {
@@ -189,8 +208,8 @@ class _CardBoardState extends State<_CardBoard> {
         padding: const EdgeInsets.all(12),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           StatChip(Icons.touch_app_rounded, '$moves moves'),
-          StatChip(Icons.timer_rounded, fmtTime(seconds)),
-          StatChip(Icons.check_circle_rounded, '${matched.length ~/ 2}/${lv.pairs}'),
+          StatChip(Icons.timer_rounded, fmtTime(seconds), color: Pal.gold),
+          StatChip(Icons.check_circle_rounded, '${matched.length ~/ 2}/${lv.pairs}', color: Pal.success),
         ]),
       ),
       Expanded(
@@ -205,6 +224,7 @@ class _CardBoardState extends State<_CardBoard> {
               height: size * lv.rows + gap * (lv.rows - 1),
               child: GridView.count(
                 physics: const NeverScrollableScrollPhysics(),
+                clipBehavior: Clip.none,
                 crossAxisCount: lv.cols,
                 mainAxisSpacing: gap,
                 crossAxisSpacing: gap,
@@ -217,7 +237,8 @@ class _CardBoardState extends State<_CardBoard> {
                       matched: matched.contains(i),
                       fontSize: size * 0.5,
                       onTap: () => _tap(i),
-                    ),
+                    ).animate(delay: (25 * i).ms).fadeIn(duration: 300.ms).scale(
+                        begin: const Offset(0.7, 0.7), end: const Offset(1, 1), curve: Curves.easeOutBack),
                 ],
               ),
             ),
@@ -244,39 +265,110 @@ class _FlipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final radius = BorderRadius.circular(14);
     return GestureDetector(
       onTap: onTap,
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(end: faceUp ? 1.0 : 0.0),
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeInOut,
-        builder: (c, v, _) {
-          final showFront = v > 0.5;
-          return Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateY(v * pi),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: showFront ? (matched ? Colors.green.shade100 : cs.surface) : cs.primary,
-                border: Border.all(color: showFront && matched ? Colors.green : cs.primary, width: 2),
-                boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
-              ),
+      child: Stack(clipBehavior: Clip.none, fit: StackFit.expand, children: [
+        TweenAnimationBuilder<double>(
+          tween: Tween(end: faceUp ? 1.0 : 0.0),
+          duration: const Duration(milliseconds: 380),
+          curve: Curves.easeInOutCubic,
+          builder: (c, v, _) {
+            final showFront = v > 0.5;
+            final lift = 1 - (2 * v - 1).abs(); // peaks mid-flip
+            return Transform(
               alignment: Alignment.center,
+              transform: Matrix4.identity()
+                ..setEntry(3, 2, 0.0012)
+                ..rotateY(v * pi)
+                ..scaleByDouble(1 + 0.08 * lift, 1 + 0.08 * lift, 1, 1),
               child: showFront
-                  ? Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationY(pi),
-                      child: Text(emoji, style: TextStyle(fontSize: fontSize)),
-                    )
-                  : Icon(Icons.psychology_rounded, color: cs.onPrimary.withValues(alpha: 0.8), size: fontSize),
+                  ? Transform(alignment: Alignment.center, transform: Matrix4.rotationY(pi), child: _front(radius))
+                  : _back(radius),
+            );
+          },
+        ),
+        if (matched)
+          IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: radius,
+                border: Border.all(color: Pal.success, width: 3),
+                boxShadow: [BoxShadow(color: Pal.success.withValues(alpha: 0.8), blurRadius: 24, spreadRadius: 4)],
+              ),
             ),
-          );
-        },
+          )
+              .animate()
+              .scale(begin: const Offset(1, 1), end: const Offset(1.45, 1.45), duration: 520.ms, curve: Curves.easeOut)
+              .fadeOut(duration: 520.ms),
+      ]),
+    );
+  }
+
+  Widget _back(BorderRadius radius) {
+    const c = Color(0xFF7C5CFF);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        gradient: Pal.accent(c),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.45), width: 1.5),
+        boxShadow: [BoxShadow(color: c.withValues(alpha: 0.45), blurRadius: 10, offset: const Offset(0, 3))],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: CustomPaint(
+          painter: _BackPainter(),
+          child: Center(
+            child: Icon(Icons.psychology_rounded, color: Colors.white.withValues(alpha: 0.85), size: fontSize * 0.9),
+          ),
+        ),
       ),
     );
   }
+
+  Widget _front(BorderRadius radius) {
+    final col = matched ? Pal.success : Pal.gold;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: matched
+              ? [const Color(0xFF1F6B4A), const Color(0xFF123F33)]
+              : [const Color(0xFF3A2D7A), const Color(0xFF1E1650)],
+        ),
+        border: Border.all(color: col.withValues(alpha: matched ? 0.9 : 0.5), width: 1.5),
+        boxShadow: [BoxShadow(color: col.withValues(alpha: matched ? 0.5 : 0.25), blurRadius: matched ? 16 : 8)],
+      ),
+      child: Center(child: Text(emoji, style: TextStyle(fontSize: fontSize))),
+    );
+  }
+}
+
+class _BackPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size s) {
+    final line = Paint()
+      ..color = Colors.white.withValues(alpha: 0.14)
+      ..strokeWidth = 1;
+    final step = s.shortestSide / 4;
+    for (double d = -s.height; d < s.width; d += step) {
+      canvas.drawLine(Offset(d, 0), Offset(d + s.height, s.height), line);
+      canvas.drawLine(Offset(d + s.height, 0), Offset(d, s.height), line);
+    }
+    final top = Rect.fromLTWH(0, 0, s.width, s.height * 0.5);
+    canvas.drawRect(
+      top,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.white.withValues(alpha: 0.22), Colors.white.withValues(alpha: 0)],
+        ).createShader(top),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
 }
