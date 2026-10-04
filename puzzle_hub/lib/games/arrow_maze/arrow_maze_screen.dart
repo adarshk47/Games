@@ -5,9 +5,67 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/rewards.dart';
+import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrow_maze_logic.dart';
 import 'progress.dart';
+
+class ArrowMazeTheme {
+  final String name;
+  final List<Color> bgColors;
+  const ArrowMazeTheme(this.name, this.bgColors);
+}
+
+class ArrowMazePalette {
+  final String name;
+  final List<Color> colors;
+  const ArrowMazePalette(this.name, this.colors);
+}
+
+const List<ArrowMazeTheme> kMazeThemes = [
+  ArrowMazeTheme('Dark Space', [Color(0xFF1B1840), Color(0xFF0E0B26)]),
+  ArrowMazeTheme('Midnight Slate', [Color(0xFF0F172A), Color(0xFF020617)]),
+  ArrowMazeTheme('Neon Cyber', [Color(0xFF180828), Color(0xFF0D021A)]),
+  ArrowMazeTheme('Emerald Dark', [Color(0xFF062C22), Color(0xFF021712)]),
+  ArrowMazeTheme('Deep Velvet', [Color(0xFF2C0B1E), Color(0xFF14030C)]),
+  ArrowMazeTheme('Pure AMOLED', [Color(0xFF121212), Color(0xFF000000)]),
+];
+
+const List<ArrowMazePalette> kMazePalettes = [
+  ArrowMazePalette('Neon Spectrum', Pal.accents),
+  ArrowMazePalette('Pastel Soft', [
+    Color(0xFFFF9AA2),
+    Color(0xFFFFB7B2),
+    Color(0xFFFFDAC1),
+    Color(0xFFE2F0CB),
+    Color(0xFFB5EAD7),
+    Color(0xFFC7CEEA)
+  ]),
+  ArrowMazePalette('Rainbow Glow', [
+    Color(0xFFFF3366),
+    Color(0xFFFF9900),
+    Color(0xFFFFCC00),
+    Color(0xFF33CC33),
+    Color(0xFF3399FF),
+    Color(0xFF9933FF)
+  ]),
+  ArrowMazePalette('Gold & Amber', [
+    Color(0xFFFFD700),
+    Color(0xFFFFB100),
+    Color(0xFFFF8C00),
+    Color(0xFFFFA500),
+    Color(0xFFE6B800),
+    Color(0xFFFF7F50)
+  ]),
+  ArrowMazePalette('Cyan Breeze', [
+    Color(0xFF00F2FE),
+    Color(0xFF4FACFE),
+    Color(0xFF00C6FF),
+    Color(0xFF0072FF),
+    Color(0xFF38EF7D),
+    Color(0xFF11998E)
+  ]),
+];
 
 const _tint = Color(0xFF7C9CFF);
 
@@ -352,6 +410,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   bool over = false;
   int version = 0;
   int loadId = 0;
+  int themeIdx = Storage.getInt('arrow_maze.theme', 0);
+  int paletteIdx = Storage.getInt('arrow_maze.palette', 0);
 
   @override
   void initState() {
@@ -529,13 +589,160 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     return best;
   }
 
+  void _showColorSelector() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: GlassCard(
+                radius: 28,
+                padding: const EdgeInsets.all(20),
+                child: SingleChildScrollView(
+                  child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Customize Colors 🎨',
+                            style: TextStyle(
+                                color: Pal.text,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800)),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded, color: Pal.textDim),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    const Text('Background Theme',
+                        style: TextStyle(
+                            color: Pal.textDim,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        for (var i = 0; i < kMazeThemes.length; i++)
+                          GestureDetector(
+                            onTap: () {
+                              setSheetState(() => themeIdx = i);
+                              setState(() => version++);
+                              Storage.setInt('arrow_maze.theme', i);
+                            },
+                            child: Container(
+                              width: 100,
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: themeIdx == i ? Pal.gold : Pal.glassBorder,
+                                  width: themeIdx == i ? 2 : 1,
+                                ),
+                                gradient: LinearGradient(
+                                  colors: kMazeThemes[i].bgColors,
+                                ),
+                              ),
+                              child: Text(kMazeThemes[i].name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: themeIdx == i
+                                          ? FontWeight.bold
+                                          : FontWeight.normal)),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text('Arrow Color Palette',
+                        style: TextStyle(
+                            color: Pal.textDim,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 10),
+                    Column(
+                      children: [
+                        for (var i = 0; i < kMazePalettes.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: GlassCard(
+                              onTap: () {
+                                setSheetState(() => paletteIdx = i);
+                                setState(() => version++);
+                                Storage.setInt('arrow_maze.palette', i);
+                              },
+                              radius: 16,
+                              padding: const EdgeInsets.all(10),
+                              glow: paletteIdx == i ? Pal.gold : null,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(kMazePalettes[i].name,
+                                        style: TextStyle(
+                                            color: Pal.text,
+                                            fontWeight: paletteIdx == i
+                                                ? FontWeight.bold
+                                                : FontWeight.normal)),
+                                  ),
+                                  Row(
+                                    children: [
+                                      for (final c in kMazePalettes[i].colors.take(5))
+                                        Container(
+                                          margin: const EdgeInsets.only(left: 4),
+                                          width: 16,
+                                          height: 16,
+                                          decoration: BoxDecoration(
+                                            color: c,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  if (paletteIdx == i) ...[
+                                    const SizedBox(width: 8),
+                                    const Icon(Icons.check_circle_rounded,
+                                        color: Pal.gold, size: 20),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+  }
+
   @override
   Widget build(BuildContext context) {
     final hidden = <int>{for (final f in _fx) f.id, ?hinted};
+    final activeTheme = kMazeThemes[themeIdx.clamp(0, kMazeThemes.length - 1)];
     return GameScaffold(
       title: '${tier.label} - Level $level',
       tint: _tierColor(tier),
       actions: [
+        BarAction(
+            icon: Icons.palette_rounded,
+            tooltip: 'Colors',
+            onTap: _showColorSelector),
         BarAction(
             icon: Icons.undo_rounded,
             tooltip: 'Undo',
@@ -597,10 +804,10 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(22),
-                            gradient: const LinearGradient(
+                            gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
-                              colors: [Color(0xFF1B1840), Color(0xFF0E0B26)],
+                              colors: activeTheme.bgColors,
                             ),
                             border: Border.all(color: Pal.glassBorder),
                           ),
@@ -612,7 +819,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                                     painter: _StaticPainter(
                                         board: board,
                                         hidden: hidden,
-                                        version: version),
+                                        version: version,
+                                        paletteIdx: paletteIdx),
                                   ),
                                 ),
                               ),
@@ -624,6 +832,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                                     hinted: hinted,
                                     clock: _clock,
                                     repaint: _tick,
+                                    paletteIdx: paletteIdx,
                                   ),
                                 ),
                               ),
@@ -686,7 +895,10 @@ class _Heart extends StatelessWidget {
 
 double _bodyLen(Snake s) => (s.length - 1).toDouble();
 
-Color _colorOf(int id) => Pal.accents[(id * 3 + id ~/ 8) % Pal.accents.length];
+Color _colorOf(int id, [int paletteIdx = 0]) {
+  final pal = kMazePalettes[paletteIdx.clamp(0, kMazePalettes.length - 1)].colors;
+  return pal[(id * 3 + id ~/ 8) % pal.length];
+}
 
 /// Polyline of the snake body (tail -> head) in cell units (cell centers).
 List<Offset> _bodyPoints(Snake s, int cols) => [
@@ -764,10 +976,14 @@ void _drawSnake(Canvas canvas, List<Offset> pts, double cell, Color color,
 
 class _StaticPainter extends CustomPainter {
   _StaticPainter(
-      {required this.board, required this.hidden, required this.version});
+      {required this.board,
+      required this.hidden,
+      required this.version,
+      this.paletteIdx = 0});
   final ArrowMazeBoard board;
   final Set<int> hidden;
   final int version;
+  final int paletteIdx;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -784,7 +1000,7 @@ class _StaticPainter extends CustomPainter {
     final glow = board.snakes.length < 60;
     for (final s in board.snakes) {
       if (board.removed.contains(s.id) || hidden.contains(s.id)) continue;
-      _drawSnake(canvas, _bodyPoints(s, board.cols), cell, _colorOf(s.id),
+      _drawSnake(canvas, _bodyPoints(s, board.cols), cell, _colorOf(s.id, paletteIdx),
           glow: glow ? 0.22 : 0);
     }
     canvas.restore();
@@ -792,7 +1008,7 @@ class _StaticPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_StaticPainter old) =>
-      old.version != version || old.board != board;
+      old.version != version || old.board != board || old.paletteIdx != paletteIdx;
 }
 
 class _FxPainter extends CustomPainter {
@@ -801,12 +1017,14 @@ class _FxPainter extends CustomPainter {
       required this.fx,
       required this.hinted,
       required this.clock,
+      this.paletteIdx = 0,
       required Listenable repaint})
       : super(repaint: repaint);
   final ArrowMazeBoard board;
   final List<_Fx> fx;
   final int? hinted;
   final Stopwatch clock;
+  final int paletteIdx;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -819,7 +1037,7 @@ class _FxPainter extends CustomPainter {
       final s = board.snakes[f.id];
       final t = ((now - f.startMs) / f.durMs).clamp(0.0, 1.0);
       final body = _bodyPoints(s, board.cols);
-      final color = _colorOf(s.id);
+      final color = _colorOf(s.id, paletteIdx);
       if (f.slide) {
         final d = Curves.easeInQuad.transform(t) * f.travel;
         final ext = [

@@ -92,14 +92,25 @@ class AppAudio with WidgetsBindingObserver {
 
   Future<void> _play(Sound s, double volume) async {
     try {
-      final list = _pool.putIfAbsent(s, () => [AudioPlayer(), AudioPlayer()]);
+      final list = _pool.putIfAbsent(s, () => List.generate(6, (_) => AudioPlayer()..setReleaseMode(ReleaseMode.stop)));
       final i = (_next[s] ?? 0) % list.length;
       _next[s] = i + 1;
-      final p = list[i];
-      await p.setPlayerMode(PlayerMode.lowLatency);
+      var p = list[i];
+      try {
+        await p.stop();
+      } catch (_) {}
       await p.play(AssetSource('audio/${s.name}.wav'), volume: volume);
     } catch (e) {
       debugPrint('sfx ${s.name} failed: $e');
+      try {
+        final list = _pool[s];
+        if (list != null && list.isNotEmpty) {
+          final idx = (_next[s]! - 1) % list.length;
+          final newP = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
+          list[idx] = newP;
+          await newP.play(AssetSource('audio/${s.name}.wav'), volume: volume);
+        }
+      } catch (_) {}
     }
   }
 

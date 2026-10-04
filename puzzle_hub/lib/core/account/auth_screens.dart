@@ -276,6 +276,22 @@ class _LockScreenState extends State<LockScreen> {
                           )
                         : null,
                   ),
+                  const SizedBox(height: 16),
+                  TextButton.icon(
+                    onPressed: () async {
+                      await AccountService.I.loginWithoutPin(name);
+                      Rewards.reload();
+                    },
+                    icon: const Icon(Icons.flash_on_rounded, color: Pal.gold, size: 20),
+                    label: const Text(
+                      'Play Without PIN',
+                      style: TextStyle(
+                        color: Pal.gold,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -431,6 +447,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ? () => setState(() => _step = 1)
                           : null,
                     ),
+                    const SizedBox(height: 12),
+                    TextButton.icon(
+                      onPressed: () async {
+                        await AccountService.I.loginWithoutPin(
+                          _name.text.trim().isEmpty ? 'Player' : _name.text.trim(),
+                        );
+                        Rewards.reload();
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded, color: Pal.gold, size: 22),
+                      label: const Text(
+                        'Skip PIN & Play Directly',
+                        style: TextStyle(
+                          color: Pal.gold,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
                   ] else ...[
                     if (_step == 1 && _bioAvail)
                       Padding(
@@ -474,6 +508,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: const TextStyle(color: Pal.danger),
                         ),
                       ),
+                    const SizedBox(height: 12),
+                    TextButton.icon(
+                      onPressed: () async {
+                        await AccountService.I.loginWithoutPin(
+                          _name.text.trim().isEmpty ? 'Player' : _name.text.trim(),
+                        );
+                        Rewards.reload();
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded, color: Pal.gold, size: 22),
+                      label: const Text(
+                        'Skip PIN & Play Directly',
+                        style: TextStyle(
+                          color: Pal.gold,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
                   ],
                 ],
               ),

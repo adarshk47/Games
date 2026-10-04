@@ -59,6 +59,22 @@ class AccountService extends ChangeNotifier {
     return salt != null && hash != null && _hash(pin, salt) == hash;
   }
 
+  /// Allows guest access or playing without creating/entering a PIN.
+  Future<void> loginWithoutPin([String guestName = 'Player']) async {
+    if (!hasAccount) {
+      final salt = List.generate(16, (_) => Random.secure().nextInt(256)).join('-');
+      final id = 'u_guest';
+      await Storage.setGlobalString(_kName, guestName.trim().isEmpty ? 'Player' : guestName.trim());
+      await Storage.setGlobalString(_kSalt, salt);
+      await Storage.setGlobalString(_kHash, 'GUEST_NO_PIN');
+      await Storage.setGlobalString(_kId, id);
+      await Storage.setGlobalBool(_kBio, false);
+      justRegistered = true;
+    }
+    justRegistered = false;
+    _enter();
+  }
+
   /// Returns true and enters the account if the PIN is right.
   bool loginWithPin(String pin) {
     if (!verifyPin(pin)) return false;

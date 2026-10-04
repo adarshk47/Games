@@ -13,6 +13,8 @@ import 'sudoku/sudoku_screen.dart';
 
 /// Each game exposes one root screen widget; the hub only knows about this list.
 final List<GameInfo> games = [
+  /*
+  // Mom Memory temporarily disabled (preserved for future release)
   GameInfo(
     id: 'mom_memory',
     title: 'Mom Memory',
@@ -23,6 +25,7 @@ final List<GameInfo> games = [
     featured: true,
     builder: (_) => const MomMemoryScreen(),
   ),
+  */
   GameInfo(
     id: 'arrow_maze',
     title: 'Arrow Maze',
