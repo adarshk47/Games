@@ -21,7 +21,7 @@ class PuzzleHubApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Puzzle Hub',
+      title: 'Master G',
       debugShowCheckedModeBanner: false,
       navigatorKey: Rewards.navKey,
       theme: buildTheme(Brightness.dark),

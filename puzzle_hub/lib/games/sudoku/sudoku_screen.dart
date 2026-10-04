@@ -26,7 +26,7 @@ Difficulty _diffFromSave(Object? d) {
 }
 
 int _bestFor(Difficulty d) {
-  final v = _bestFor(d);
+  final v = Storage.getInt(_bestKey(d));
   if (v > 0 || d != Difficulty.extreme) return v;
   return Storage.getInt('sudoku.best.expert');
 }
@@ -554,7 +554,10 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _hearts(g),
+              Flexible(
+                child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: _hearts(g)),
+              ),
+              const SizedBox(width: 8),
               GlassCard(
                 blur: 0,
                 radius: 20,

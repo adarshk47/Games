@@ -72,7 +72,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   ShaderMask(
                     shaderCallback: (r) => const LinearGradient(colors: [Pal.gold, Color(0xFFFF8FB8), Color(0xFFB794FF)]).createShader(r),
-                    child: const Text('Puzzle Hub',
+                    child: const Text('Master G',
                         style: TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.5)),
                   ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.1, end: 0),
                   const SizedBox(height: 4),

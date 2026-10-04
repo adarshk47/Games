@@ -4,17 +4,24 @@ import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
 import 'arrows/arrows_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
+import 'block_puzzle/block_puzzle_screen.dart';
+import 'flow_pairs/flow_pairs_screen.dart';
 import 'focus_color/focus_color_screen.dart';
 import 'game_2048/game_2048_screen.dart';
 import 'maze_escape/maze_escape_screen.dart';
 import 'memory_boost/memory_boost_screen.dart';
+import 'minesweeper/minesweeper_screen.dart';
 import 'mom_memory/mom_memory_screen.dart';
+import 'sliding_puzzle/sliding_puzzle_screen.dart';
 import 'sudoku/sudoku_screen.dart';
 
-/// Each game exposes one root screen widget; the hub only knows about this list.
-final List<GameInfo> games = [
-  /*
-  // Mom Memory temporarily disabled (preserved for future release)
+/// Games shown in the hub (only those with `enabled: true`).
+final List<GameInfo> games = [for (final g in allGames) if (g.enabled) g];
+
+/// Every game that exists in the codebase. To release a hidden game, flip its
+/// `enabled` flag to true (and bump the version).
+final List<GameInfo> allGames = [
+  // Hidden for now (preserved for a future release).
   GameInfo(
     id: 'mom_memory',
     title: 'Mom Memory',
@@ -23,9 +30,49 @@ final List<GameInfo> games = [
     emoji: '🤰',
     color: const Color(0xFFFF8FB8),
     featured: true,
+    enabled: false,
     builder: (_) => const MomMemoryScreen(),
   ),
-  */
+  GameInfo(
+    id: 'block_puzzle',
+    title: 'Block Puzzle',
+    subtitle: 'Blocks girao, lines saaf karo',
+    icon: Icons.view_module_rounded,
+    emoji: '🧱',
+    color: const Color(0xFFFF6FB5),
+    enabled: false,
+    builder: (_) => const BlockPuzzleScreen(),
+  ),
+  GameInfo(
+    id: 'flow_pairs',
+    title: 'Flow',
+    subtitle: 'Same rang ke dots jodo',
+    icon: Icons.timeline_rounded,
+    emoji: '🔗',
+    color: const Color(0xFF5EEAD4),
+    enabled: false,
+    builder: (_) => const FlowPairsScreen(),
+  ),
+  GameInfo(
+    id: 'sliding_puzzle',
+    title: 'Sliding Puzzle',
+    subtitle: 'Tiles ko sahi order mein lagao',
+    icon: Icons.grid_view_rounded,
+    emoji: '🧩',
+    color: const Color(0xFFB794FF),
+    enabled: false,
+    builder: (_) => const SlidingPuzzleScreen(),
+  ),
+  GameInfo(
+    id: 'minesweeper',
+    title: 'Minesweeper',
+    subtitle: 'Mines bachakar board saaf karo',
+    icon: Icons.flag_rounded,
+    emoji: '💣',
+    color: const Color(0xFFFB923C),
+    enabled: false,
+    builder: (_) => const MinesweeperScreen(),
+  ),
   GameInfo(
     id: 'arrow_maze',
     title: 'Arrow Maze',

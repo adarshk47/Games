@@ -10,6 +10,7 @@ class GameInfo {
     required this.builder,
     this.emoji,
     this.featured = false,
+    this.enabled = true,
   });
 
   final String id;
@@ -24,4 +25,7 @@ class GameInfo {
 
   /// Featured games get a wide banner card at the top of the home screen.
   final bool featured;
+
+  /// Disabled games are fully built but hidden from the hub (enable in a later release).
+  final bool enabled;
 }
