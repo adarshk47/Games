@@ -2,6 +2,8 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
+    // Firebase: applied only when android/app/google-services.json exists (see below).
+    id("com.google.gms.google-services") apply false
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -19,6 +21,7 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -71,4 +74,14 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+}
+
+// Firebase config is added by the developer (FIREBASE_SETUP.md). Until then the
+// app builds and runs fully offline.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }

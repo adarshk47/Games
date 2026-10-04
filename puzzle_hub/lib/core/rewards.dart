@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -12,8 +14,27 @@ import 'ui/palette.dart';
 ///   Rewards.onLevelComplete('sudoku', 'easy', stars: 3);   // coins + record a win
 ///   Rewards.onGameEnd('focus_color', score: 120, won: true); // record only (+ small coins if won)
 /// Ads can later call Rewards.addCoins(n, label: 'Ad reward').
+/// Broadcast to listeners (daily quests, achievements, leaderboard, referral).
+class RewardEvent {
+  const RewardEvent({required this.gameId, required this.type, this.levelKey, this.stars = 0, this.score, this.won = false, this.firstTime = false});
+  final String gameId;
+
+  /// 'level' (onLevelComplete) or 'run' (onGameEnd).
+  final String type;
+  final String? levelKey;
+  final int stars;
+  final int? score;
+  final bool won;
+  final bool firstTime;
+}
+
 class Rewards {
   Rewards._();
+
+  static final StreamController<RewardEvent> _events = StreamController<RewardEvent>.broadcast();
+
+  /// Every completed level / finished run, after records and coins are updated.
+  static Stream<RewardEvent> get events => _events.stream;
 
   /// Wire this to MaterialApp.navigatorKey so toasts can show above any screen.
   static final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
@@ -53,6 +74,7 @@ class Rewards {
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     AppAudio.play(Sound.win);
     addCoins(reward, label: first ? 'Level complete!' : null, playSound: false);
+    _events.add(RewardEvent(gameId: gameId, type: 'level', levelKey: levelKey, stars: stars, score: score, won: true, firstTime: first));
     return reward;
   }
 
@@ -60,6 +82,7 @@ class Rewards {
   static void onGameEnd(String gameId, {int? score, bool won = false}) {
     _record(gameId, won: won, score: score);
     if (won) addCoins(5);
+    _events.add(RewardEvent(gameId: gameId, type: 'run', score: score, won: won));
   }
 
   static void _record(String gameId, {required bool won, int? score, int level = 0}) {

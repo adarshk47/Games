@@ -223,3 +223,11 @@ class _Head extends StatelessWidget {
         child: Text(t, style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1)),
       );
 }
+
+/// Profile content for the bottom-navigation tab (no back button). Placeholder.
+class ProfileTab extends StatelessWidget {
+  const ProfileTab({super.key});
+
+  @override
+  Widget build(BuildContext context) => const Center(child: Text('Profile'));
+}
