@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -134,12 +135,30 @@ class _BallSortGameState extends State<BallSortGame> {
     });
   }
 
-  void _addTube() {
-    if (!_state.canAddTube) return;
-    AppAudio.play(Sound.tap);
+  bool _offerOpen = false;
+
+  Future<void> _addTube() async {
+    if (_state.canAddTube) {
+      AppAudio.play(Sound.tap);
+      setState(() {
+        _history.add(_state.clone());
+        _state.addTube();
+      });
+      return;
+    }
+    if (!_state.canBuyTube || _offerOpen || _won) return;
+    // Free tubes used up: offer an extra tube for coins / an ad.
+    _offerOpen = true;
+    final paid = await showContinueOffer(context, OfferKind.extraLife);
+    _offerOpen = false;
+    if (!mounted || !paid || _won) return;
+    AppAudio.play(Sound.success);
     setState(() {
-      _history.add(_state.clone());
-      _state.addTube();
+      // Bought tubes are permanent for this level: undo must not take them away.
+      _state.addPaidTube();
+      for (final h in _history) {
+        h.addPaidTube();
+      }
     });
   }
 
@@ -316,8 +335,8 @@ class _BallSortGameState extends State<BallSortGame> {
                 _Pill(icon: Icons.refresh_rounded, label: 'Restart', onTap: _restart, big: true),
                 _Pill(
                     icon: Icons.add_rounded,
-                    label: 'Tube (${kMaxExtraTubes - _state.extraUsed})',
-                    onTap: _state.canAddTube ? _addTube : null,
+                    label: _state.canAddTube ? 'Tube (${kMaxExtraTubes - _state.extraUsed})' : 'Tube +🪙',
+                    onTap: _state.canAddTube || _state.canBuyTube ? _addTube : null,
                     big: true),
               ],
             ),

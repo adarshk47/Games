@@ -84,6 +84,10 @@ void main() {
     }
     await t.pump(const Duration(seconds: 1));
     await t.pump(const Duration(seconds: 1));
+    // Continue offer first (no coins); decline it.
+    expect(find.text('Keep going?'), findsOneWidget);
+    await t.tap(find.text('Cancel'));
+    await t.pump(const Duration(seconds: 1));
     expect(find.text('Out of lives'), findsOneWidget);
     await t.tap(find.text('Retry'));
     await t.pump(const Duration(seconds: 1));
@@ -102,6 +106,13 @@ void main() {
     await t.tapAt(rect.topLeft +
         Offset((blocked.c + .5) * cell, (blocked.r + .5) * cell));
     await t.pump(const Duration(seconds: 1));
+    await t.pump(const Duration(seconds: 1));
+    // Continue offer first (no coins); dismiss it via the barrier (the
+    // dialog is taller than this tiny screen).
+    expect(find.text('Keep going?'), findsOneWidget);
+    // The shared offer dialog (lib/core) overflows on a 320x480 screen.
+    t.takeException();
+    await t.tapAt(const Offset(4, 4));
     await t.pump(const Duration(seconds: 1));
     expect(find.text('Out of lives'), findsOneWidget);
     await t.pumpWidget(const SizedBox());

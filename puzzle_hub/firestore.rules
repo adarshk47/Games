@@ -1,0 +1,116 @@
+rules_version = '2';
+
+// Master G - Firestore security rules. Paste into Firebase console ->
+// Firestore Database -> Rules (see FIREBASE_SETUP.md).
+//
+// Collections:
+//   users/{uid}                          cloud save (owner only) + referral counters
+//   referrals/{inviteeUid}               one document per invited player (one credit per invitee)
+//   leaderboards/{board}/entries/{uid}   {name, score, updatedAt}
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Must match lib/core/cloud/leaderboard_service.dart (maxScore).
+    function maxScores() {
+      return {
+        'game_2048': 10000000,
+        'focus_color': 1000000,
+        'memory_boost': 1000000,
+        'block_puzzle': 10000000,
+        'total_stars': 100000
+      };
+    }
+
+    function maxInvites() {
+      return 20;
+    }
+
+    function inviterBonus() {
+      return 100;
+    }
+
+    // ---------------------------------------------------------------- users
+    function validUserDoc(d) {
+      return d.keys().hasOnly(['name', 'data', 'meta', 'schema', 'updatedAt', 'pendingCredits', 'inviteCount'])
+        && (!('name' in d) || (d.name is string && d.name.size() <= 40))
+        && (!('data' in d) || (d.data is map && d.data.size() <= 5000))
+        && (!('meta' in d) || d.meta is map)
+        && (!('updatedAt' in d) || d.updatedAt is timestamp);
+    }
+
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && validUserDoc(request.resource.data)
+        && request.resource.data.get('pendingCredits', 0) == 0
+        && request.resource.data.get('inviteCount', 0) == 0;
+
+      // Owner sync: may only consume (lower) pendingCredits, never raise it,
+      // and may not change inviteCount.
+      allow update: if isOwner(uid)
+        && validUserDoc(request.resource.data)
+        && request.resource.data.get('inviteCount', 0) == resource.data.get('inviteCount', 0)
+        && request.resource.data.get('pendingCredits', 0) >= 0
+        && request.resource.data.get('pendingCredits', 0) <= resource.data.get('pendingCredits', 0);
+
+      // An invited player credits their inviter: +100 pendingCredits and +1
+      // inviteCount (max 20), only in the same transaction that creates
+      // referrals/{invitee} for the first time (one credit per invitee uid).
+      allow update: if signedIn() && request.auth.uid != uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pendingCredits', 'inviteCount'])
+        && request.resource.data.inviteCount == resource.data.get('inviteCount', 0) + 1
+        && request.resource.data.inviteCount <= maxInvites()
+        && request.resource.data.pendingCredits == resource.data.get('pendingCredits', 0) + inviterBonus()
+        && !exists(/databases/$(database)/documents/referrals/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/referrals/$(request.auth.uid)).data.inviter == uid;
+    }
+
+    // ------------------------------------------------------------ referrals
+    match /referrals/{invitee} {
+      allow read, delete: if isOwner(invitee);
+      allow update: if false;
+      allow create: if isOwner(invitee)
+        && request.resource.data.keys().hasOnly(['inviter', 'inviterCredited', 'createdAt'])
+        && request.resource.data.inviter is string
+        && request.resource.data.inviter.size() > 0
+        && request.resource.data.inviter.size() <= 128
+        && request.resource.data.inviter != invitee
+        && request.resource.data.inviterCredited is bool
+        && request.resource.data.createdAt == request.time
+        && (request.resource.data.inviterCredited == false
+          || getAfter(/databases/$(database)/documents/users/$(request.resource.data.inviter)).data.get('inviteCount', 0)
+             == get(/databases/$(database)/documents/users/$(request.resource.data.inviter)).data.get('inviteCount', 0) + 1);
+    }
+
+    // --------------------------------------------------------- leaderboards
+    match /leaderboards/{board}/entries/{uid} {
+      allow read: if signedIn();
+      allow delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && board in maxScores()
+        && request.resource.data.keys().hasOnly(['name', 'score', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 24
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= maxScores()[board]
+        && request.resource.data.updatedAt == request.time
+        && (resource == null || request.resource.data.score >= resource.data.score);
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

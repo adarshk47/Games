@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -79,6 +80,7 @@ class _SimonGameState extends State<_SimonGame> {
   int pulse = 0; // bumps on every light-up to retrigger the ripple
   int lastPad = -1;
   int round = 0; // bumps to cancel stale playback loops
+  bool continueUsed = false; // extra-life offer shown this run
 
   @override
   void dispose() {
@@ -89,6 +91,7 @@ class _SimonGameState extends State<_SimonGame> {
   Future<void> _startGame() async {
     logic.reset();
     chancesLeft = params.chances;
+    continueUsed = false;
     await _nextRound();
   }
 
@@ -146,6 +149,20 @@ class _SimonGameState extends State<_SimonGame> {
         await Future.delayed(const Duration(milliseconds: 700));
         if (mounted) _playback(++round);
         return;
+      }
+      if (!continueUsed) {
+        continueUsed = true;
+        AppAudio.play(Sound.fail);
+        AppAudio.haptic(true);
+        setState(() => phase = _Phase.watching);
+        final my = ++round;
+        final paid = await showContinueOffer(context, OfferKind.extraLife);
+        if (!mounted || my != round) return;
+        if (paid) {
+          logic.restartInput();
+          _playback(++round);
+          return;
+        }
       }
       await _gameOver();
     } else if (res == SequenceResult.complete) {

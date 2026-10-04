@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -270,6 +271,20 @@ class _LevelGridPageState extends State<_LevelGridPage> {
     if (mounted) setState(() {});
   }
 
+  /// Only the first locked level can be bought; others stay locked.
+  Future<void> _buy(int level) async {
+    if (ArrowMazeProgress.firstLocked(tier) != level) {
+      AppAudio.haptic();
+      return;
+    }
+    final ok = await showContinueOffer(context, OfferKind.unlockLevel);
+    if (!ok || !mounted) return;
+    await ArrowMazeProgress.buyUnlock(tier, level);
+    if (!mounted) return;
+    setState(() {});
+    await _open(level);
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = _tierColor(tier);
@@ -291,7 +306,7 @@ class _LevelGridPageState extends State<_LevelGridPage> {
             unlocked: unlocked,
             done: done,
             stars: ArrowMazeProgress.stars(tier, level),
-            onTap: () => _open(level),
+            onTap: () => unlocked ? _open(level) : _buy(level),
           )
               .animate(delay: (math.min(i, 24) * 30).ms)
               .fadeIn(duration: 350.ms)
@@ -372,7 +387,9 @@ class _LevelTile extends StatelessWidget {
     );
     return unlocked
         ? Pressable(onTap: onTap, child: tile)
-        : Opacity(opacity: 0.7, child: tile);
+        : GestureDetector(
+            onTap: onTap,
+            child: Opacity(opacity: 0.7, child: tile));
   }
 }
 
@@ -406,6 +423,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   int lives = 3;
   int hintsLeft = 0;
   int moves = 0;
+  int continuesUsed = 0;
+  static const maxContinues = 2;
   int? hinted;
   bool over = false;
   int version = 0;
@@ -432,6 +451,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     lives = maxLives;
     hintsLeft = tier.hints;
     moves = 0;
+    continuesUsed = 0;
     hinted = null;
     over = false;
     version++;
@@ -491,15 +511,37 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     } else if (lives <= 0) {
       over = true;
       AppAudio.play(Sound.fail);
-      Future.delayed(const Duration(milliseconds: 650), _showLose);
+      Future.delayed(const Duration(milliseconds: 650), _offerContinue);
     }
   }
 
-  void _hint() {
+  /// Out of lives: offer an extra life (coins / ad) a couple of times per
+  /// level before the lose dialog.
+  Future<void> _offerContinue() async {
+    if (!mounted) return;
+    if (continuesUsed < maxContinues) {
+      final id = loadId;
+      final ok = await showContinueOffer(context, OfferKind.extraLife);
+      if (!mounted || id != loadId) return;
+      if (ok) {
+        setState(() {
+          continuesUsed++;
+          lives += 1;
+          over = false;
+          version++;
+        });
+        return;
+      }
+    }
+    _showLose();
+  }
+
+  Future<void> _hint() async {
     if (over) return;
     if (hintsLeft <= 0) {
-      AppAudio.haptic();
-      return;
+      final ok = await showContinueOffer(context, OfferKind.hint);
+      if (!ok || !mounted || over) return;
+      hintsLeft++;
     }
     final h = board.hint();
     if (h != null) {
@@ -750,7 +792,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
         BarAction(
             icon: Icons.lightbulb_rounded,
             tooltip: 'Hint ($hintsLeft left)',
-            onTap: over || hintsLeft <= 0 ? null : _hint),
+            onTap: over ? null : _hint),
         BarAction(
             icon: Icons.refresh_rounded,
             tooltip: 'Restart',

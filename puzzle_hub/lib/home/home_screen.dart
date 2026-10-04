@@ -1,204 +1,241 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'dart:ui';
 
-import '../core/account/account_service.dart';
-import '../core/game_info.dart';
-import '../core/rewards.dart';
+import 'package:flutter/material.dart';
+
+import '../core/audio.dart';
+import '../core/daily/daily_hub_screen.dart';
+import '../core/shop/shop_screen.dart';
+import '../core/ui/app_theme.dart';
 import '../core/ui/ui.dart';
-import '../games/registry.dart';
+import 'games_tab.dart';
 import 'profile_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+/// Height of the floating bottom navigation bar (without its outer margin).
+const double kNavBarHeight = 66;
+const double _kNavMargin = 12;
+
+/// Space the floating bar occupies at the bottom of the screen; tab bodies keep
+/// at least this much bottom padding so content is never hidden behind it.
+double navBarInset(BuildContext context) =>
+    kNavBarHeight + _kNavMargin * 2 + MediaQuery.paddingOf(context).bottom;
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  void _openProfile(BuildContext context) =>
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-  void _open(BuildContext context, GameInfo g) =>
-      Navigator.of(context).push(PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 380),
-        pageBuilder: (ctx, _, _) => g.builder(ctx),
-        transitionsBuilder: (_, a, _, child) => FadeTransition(
-          opacity: a,
-          child: SlideTransition(
-            position: Tween(begin: const Offset(0, 0.06), end: Offset.zero).animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
-            child: child,
-          ),
-        ),
-      ));
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  int _tab = 0;
+  late final AnimationController _fade =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 260), value: 1);
+
+  static const _items = <_NavItem>[
+    _NavItem('games', 'Games', Icons.sports_esports_outlined, Icons.sports_esports_rounded),
+    _NavItem('daily', 'Daily', Icons.calendar_today_outlined, Icons.calendar_month_rounded),
+    _NavItem('shop', 'Shop', Icons.storefront_outlined, Icons.storefront_rounded),
+    _NavItem('profile', 'Profile', Icons.person_outline_rounded, Icons.person_rounded),
+  ];
+
+  void _select(int i) {
+    if (i == _tab) return;
+    setState(() => _tab = i);
+    _fade.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _fade.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final featured = games.where((g) => g.featured).toList();
-    final rest = games.where((g) => !g.featured).toList();
+    final inset = navBarInset(context);
+    // External tab bodies get plain bottom padding; the games tab scrolls under
+    // the glass bar and pads its own last sliver instead.
+    Widget padded(Widget w) => Padding(padding: EdgeInsets.only(bottom: inset), child: w);
+
     return Scaffold(
-      backgroundColor: Pal.bg0,
+      backgroundColor: AppThemeController.theme.bg0,
       body: AnimatedBackground(
-        child: SafeArea(
-          child: CustomScrollView(slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(22, 18, 22, 6),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(children: [
-                    Expanded(
-                      child: Text(
-                        AccountService.I.justRegistered
-                            ? 'Welcome, ${AccountService.I.name}! 🎉'
-                            : 'Welcome back, ${AccountService.I.name} 👋',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Pal.textDim, fontSize: 15, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    CoinPill(onTap: () => _openProfile(context)),
-                    const SizedBox(width: 10),
-                    GlassCard(
-                      blur: 0,
-                      radius: 18,
-                      padding: const EdgeInsets.all(9),
-                      onTap: () => showSettingsSheet(context),
-                      child: const Icon(Icons.tune_rounded, color: Pal.text, size: 22),
-                    ),
-                    const SizedBox(width: 8),
-                    GlassCard(
-                      blur: 0,
-                      radius: 18,
-                      padding: const EdgeInsets.all(9),
-                      onTap: () => _openProfile(context),
-                      child: const Icon(Icons.person_rounded, color: Pal.text, size: 22),
-                    ),
-                  ]).animate().fadeIn(duration: 400.ms),
-                  const SizedBox(height: 10),
-                  ShaderMask(
-                    shaderCallback: (r) => const LinearGradient(colors: [Pal.gold, Color(0xFFFF8FB8), Color(0xFFB794FF)]).createShader(r),
-                    child: const Text('Master G',
-                        style: TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.5)),
-                  ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.1, end: 0),
-                  const SizedBox(height: 4),
-                  const Text('Khelo. Socho. Yaaddasht badhao ✨', style: TextStyle(color: Pal.textDim, fontSize: 15))
-                      .animate(delay: 150.ms)
-                      .fadeIn(duration: 500.ms),
-                ]),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
-              sliver: SliverList.list(children: [
-                for (var i = 0; i < featured.length; i++)
-                  _FeaturedCard(g: featured[i], onTap: () => _open(context, featured[i]))
-                      .animate(delay: (200 + i * 100).ms)
-                      .fadeIn(duration: 500.ms)
-                      .slideY(begin: 0.15, end: 0, curve: Curves.easeOutCubic),
-              ]),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 28),
-              sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: 0.92,
-                ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => _GameCard(g: rest[i], onTap: () => _open(context, rest[i]))
-                      .animate(delay: (350 + i * 80).ms)
-                      .fadeIn(duration: 450.ms)
-                      .slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
-                  childCount: rest.length,
+        child: Stack(children: [
+          Positioned.fill(
+            child: SafeArea(
+              bottom: false,
+              child: FadeTransition(
+                opacity: CurvedAnimation(parent: _fade, curve: Curves.easeOut),
+                child: IndexedStack(
+                  index: _tab,
+                  children: [
+                    GamesTab(bottomInset: inset, onOpenShop: () => _select(2)),
+                    padded(const DailyHubScreen()),
+                    padded(const ShopScreen()),
+                    padded(const ProfileTab()),
+                  ],
                 ),
               ),
             ),
-          ]),
-        ),
-      ),
-    );
-  }
-}
-
-class _FeaturedCard extends StatelessWidget {
-  const _FeaturedCard({required this.g, required this.onTap});
-  final GameInfo g;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassCard(
-      onTap: onTap,
-      glow: g.color,
-      blur: 0,
-      padding: const EdgeInsets.all(20),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [g.color.withValues(alpha: 0.55), const Color(0xFF7C5CFF).withValues(alpha: 0.35)],
-      ),
-      child: Row(children: [
-        Text(g.emoji ?? '', style: const TextStyle(fontSize: 56))
-            .animate(onPlay: (c) => c.repeat(reverse: true))
-            .moveY(begin: -4, end: 4, duration: 1600.ms, curve: Curves.easeInOut),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              decoration: BoxDecoration(color: Pal.gold, borderRadius: BorderRadius.circular(20)),
-              child: const Text('SPECIAL', style: TextStyle(color: Color(0xFF3B2A00), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-            ),
-            const SizedBox(height: 6),
-            Text(g.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white)),
-            const SizedBox(height: 2),
-            Text(g.subtitle, style: const TextStyle(color: Pal.text, fontSize: 13, height: 1.3)),
-          ]),
-        ),
-        const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white70, size: 18),
-      ]),
-    );
-  }
-}
-
-class _GameCard extends StatelessWidget {
-  const _GameCard({required this.g, required this.onTap});
-  final GameInfo g;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassCard(
-      onTap: onTap,
-      glow: g.color,
-      blur: 0,
-      padding: const EdgeInsets.all(14),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [g.color.withValues(alpha: 0.38), g.color.withValues(alpha: 0.08)],
-      ),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(
-          width: 76,
-          height: 76,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: Pal.accent(g.color),
-            boxShadow: [BoxShadow(color: g.color.withValues(alpha: 0.6), blurRadius: 22, spreadRadius: -2)],
-            border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1.5),
           ),
-          child: g.emoji != null
-              ? Text(g.emoji!, style: const TextStyle(fontSize: 36))
-              : Icon(g.icon, size: 38, color: Colors.white),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _BottomNav(items: _items, index: _tab, onTap: _select),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+class _NavItem {
+  const _NavItem(this.id, this.label, this.icon, this.activeIcon);
+  final String id;
+  final String label;
+  final IconData icon;
+  final IconData activeIcon;
+}
+
+/// Floating frosted-glass navigation bar with a sliding gradient pill.
+class _BottomNav extends StatelessWidget {
+  const _BottomNav({required this.items, required this.index, required this.onTap});
+  final List<_NavItem> items;
+  final int index;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppThemeController.theme;
+    final bottom = MediaQuery.paddingOf(context).bottom;
+    final br = BorderRadius.circular(30);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(_kNavMargin, 0, _kNavMargin, _kNavMargin + bottom),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: br,
+              boxShadow: [
+                BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 24, offset: const Offset(0, 8)),
+                BoxShadow(color: t.accent.withValues(alpha: 0.18), blurRadius: 30, spreadRadius: -6),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: br,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                child: Container(
+                  height: kNavBarHeight,
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    borderRadius: br,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [t.bg1.withValues(alpha: 0.72), t.bg0.withValues(alpha: 0.82)],
+                    ),
+                    border: Border.all(color: Pal.glassBorder),
+                  ),
+                  child: LayoutBuilder(builder: (context, c) {
+                    final w = c.maxWidth / items.length;
+                    return Stack(children: [
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 320),
+                        curve: Curves.easeOutBack,
+                        left: w * index,
+                        top: 0,
+                        bottom: 0,
+                        width: w,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [Color.lerp(t.accent, Colors.white, 0.15)!, Color.lerp(t.accent, t.orb, 0.5)!],
+                              ),
+                              boxShadow: [
+                                BoxShadow(color: t.accent.withValues(alpha: 0.55), blurRadius: 16, spreadRadius: -4),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Row(children: [
+                        for (var i = 0; i < items.length; i++)
+                          Expanded(
+                            child: _NavButton(
+                              key: ValueKey('nav_${items[i].id}'),
+                              item: items[i],
+                              selected: i == index,
+                              onTap: () => onTap(i),
+                            ),
+                          ),
+                      ]),
+                    ]);
+                  }),
+                ),
+              ),
+            ),
+          ),
         ),
-        const SizedBox(height: 12),
-        Text(g.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
-        const SizedBox(height: 4),
-        Text(g.subtitle,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Pal.textDim, fontSize: 11.5, height: 1.25)),
-      ]),
+      ),
+    );
+  }
+}
+
+class _NavButton extends StatelessWidget {
+  const _NavButton({
+    super.key,
+    required this.item,
+    required this.selected,
+    required this.onTap,
+  });
+  final _NavItem item;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: item.label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (!selected) AppAudio.play(Sound.tap, volume: 0.5);
+          onTap();
+        },
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          AnimatedScale(
+            scale: selected ? 1.12 : 1,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOutBack,
+            child: Icon(selected ? item.activeIcon : item.icon,
+                size: 22, color: selected ? Colors.white : Pal.textDim),
+          ),
+          const SizedBox(height: 2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 250),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: selected ? FontWeight.w900 : FontWeight.w600,
+                color: selected ? Colors.white : Pal.textDim,
+                letterSpacing: 0.2,
+              ),
+              child: Text(item.label, maxLines: 1),
+            ),
+          ),
+        ]),
+      ),
     );
   }
 }

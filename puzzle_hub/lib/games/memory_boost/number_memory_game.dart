@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -32,6 +33,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   String answer = '';
   bool lastOk = true;
   int token = 0;
+  bool continueUsed = false; // extra-life offer shown this run
 
   @override
   void dispose() {
@@ -45,6 +47,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
     lives = params.lives;
     level = 1;
     reached = 0;
+    continueUsed = false;
     _show();
   }
 
@@ -96,6 +99,16 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
       level++;
       _show();
     } else if (lives <= 0) {
+      if (!continueUsed) {
+        continueUsed = true;
+        final paid = await showContinueOffer(context, OfferKind.extraLife);
+        if (!mounted) return;
+        if (paid) {
+          setState(() => lives = 1);
+          _show();
+          return;
+        }
+      }
       await _gameOver();
     } else {
       _show(); // same length, new number

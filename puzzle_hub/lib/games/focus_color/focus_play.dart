@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -75,6 +76,8 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   OddRound? _or;
   RuleRound? _rr;
   int _round = 0; // bumps per new round for transitions
+  bool _continueUsed = false; // extra-life / extra-time offer shown this run
+  bool _offering = false; // continue offer dialog is open
 
   double get _total => _p.seconds.toDouble();
 
@@ -111,6 +114,8 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
       _score = _streak = _bestStreak = _solved = _wrong = 0;
       _lives = _p.lives;
       _burstText = '';
+      _continueUsed = false;
+      _offering = false;
     });
     AppAudio.play(Sound.tap);
     _cd = Timer.periodic(const Duration(milliseconds: 800), (tm) {
@@ -150,7 +155,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   }
 
   void _answer(bool ok) {
-    if (_phase != _Phase.playing) return;
+    if (_phase != _Phase.playing || _offering) return;
     if (ok) {
       final now = DateTime.now();
       final spammy = now.difference(_lastOk).inMilliseconds < 450;
@@ -198,9 +203,27 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   }
 
   Future<void> _finish({bool timeUp = false}) async {
-    if (_phase == _Phase.over) return;
+    if (_phase == _Phase.over || _offering) return;
     _t.stop();
     if (timeUp) AppAudio.play(Sound.fail);
+    if (!_continueUsed && _phase == _Phase.playing) {
+      _continueUsed = true;
+      _offering = true;
+      final paid = await showContinueOffer(context, OfferKind.extraLife);
+      if (!mounted) return;
+      _offering = false;
+      if (paid) {
+        setState(() {
+          if (_p.lives > 0 && _lives <= 0) _lives = 1;
+        });
+        if (timeUp) {
+          _adjustTime(-10);
+        } else {
+          _t.forward();
+        }
+        return;
+      }
+    }
     setState(() => _phase = _Phase.over);
     final isBest = Storage.setBest(_bestKey, _score);
     final stars = focusStars(info.mode, tier, _score);

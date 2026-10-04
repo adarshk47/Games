@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/levels.dart';
@@ -43,6 +44,9 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   bool _done = false;
   Offset _acc = Offset.zero;
   bool _fired = false;
+  int _attempt = 0;
+  int continuesUsed = 0;
+  static const maxContinues = 2;
 
   @override
   void initState() {
@@ -71,6 +75,8 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     _hintPath = const [];
     _walking = false;
     _done = false;
+    continuesUsed = 0;
+    _attempt++;
     _hintCtl.reset();
     _markSeen();
   }
@@ -152,8 +158,14 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     }
   }
 
-  void _useTorch() {
-    if (_done || torchesLeft <= 0 || _hintCtl.isAnimating) return;
+  Future<void> _useTorch() async {
+    if (_done || _hintCtl.isAnimating) return;
+    if (torchesLeft <= 0) {
+      final a = _attempt;
+      final ok = await showContinueOffer(context, OfferKind.hint);
+      if (!ok || !mounted || a != _attempt || _done) return;
+      torchesLeft++;
+    }
     AppAudio.play(Sound.pop);
     setState(() {
       torchesLeft--;
@@ -193,6 +205,20 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     setState(() {});
     await Future<void>.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
+    if (continuesUsed < maxContinues) {
+      final a = _attempt;
+      final ok = await showContinueOffer(context, OfferKind.extraLife);
+      if (!mounted || a != _attempt) return;
+      if (ok) {
+        setState(() {
+          continuesUsed++;
+          limit += (limit * 0.25).ceil();
+          _done = false;
+        });
+        return;
+      }
+    }
+    if (!mounted) return;
     showPremiumDialog(
       context,
       title: 'Moves khatam!',
@@ -212,7 +238,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
       title: 'Labyrinth ${widget.tier.label} ${widget.level}',
       tint: const Color(0xFF7C5CFF),
       actions: [
-        BarAction(icon: Icons.flashlight_on_rounded, tooltip: 'Torch', onTap: torchesLeft > 0 && !_done ? _useTorch : null),
+        BarAction(icon: Icons.flashlight_on_rounded, tooltip: 'Torch', onTap: !_done ? _useTorch : null),
         BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: _restart),
       ],
       body: Column(children: [

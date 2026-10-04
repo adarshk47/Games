@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/economy/continue_offer.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'ball_sort_game.dart';
@@ -166,6 +167,24 @@ class _LevelGridScreenState extends State<_LevelGridScreen> {
     if (mounted) setState(() {});
   }
 
+  bool _offerOpen = false;
+
+  /// Buy the next locked level (coins / ad), persist it and open it.
+  Future<void> _unlockNext(int level) async {
+    final unlocked = Storage.getInt(bsKey(_d, 'unlocked'), 1);
+    if (level != unlocked + 1 || _offerOpen) return;
+    _offerOpen = true;
+    final paid = await showContinueOffer(context, OfferKind.unlockLevel);
+    _offerOpen = false;
+    if (!mounted || !paid) return;
+    if (Storage.getInt(bsKey(_d, 'unlocked'), 1) < level) {
+      await Storage.setInt(bsKey(_d, 'unlocked'), level);
+    }
+    if (!mounted) return;
+    setState(() {});
+    await _play(level);
+  }
+
   @override
   Widget build(BuildContext context) {
     final unlocked = Storage.getInt(bsKey(_d, 'unlocked'), 1);
@@ -198,6 +217,7 @@ class _LevelGridScreenState extends State<_LevelGridScreen> {
                 done: lv < unlocked,
                 current: lv == current,
                 onTap: () => _play(lv),
+                onLockedTap: lv == unlocked + 1 ? () => _unlockNext(lv) : null,
               );
             },
           ),
@@ -215,10 +235,14 @@ class _LevelTile extends StatelessWidget {
     required this.current,
     required this.stars,
     required this.onTap,
+    this.onLockedTap,
   });
   final int level, stars;
   final bool locked, done, current;
   final VoidCallback onTap;
+
+  /// Set only for the next locked level, which can be bought.
+  final VoidCallback? onLockedTap;
 
   @override
   Widget build(BuildContext context) {
@@ -240,13 +264,15 @@ class _LevelTile extends StatelessWidget {
             : [BoxShadow(color: bsAccent.withValues(alpha: current ? 0.55 : 0.2), blurRadius: current ? 16 : 8, spreadRadius: -2)],
       ),
       child: locked
-          ? const Icon(Icons.lock_rounded, size: 18, color: Pal.textDim)
+          ? Icon(onLockedTap != null ? Icons.lock_open_rounded : Icons.lock_rounded,
+              size: 18, color: onLockedTap != null ? Pal.gold : Pal.textDim)
           : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text('$level',
                   style: TextStyle(color: current ? Colors.white : Pal.text, fontWeight: FontWeight.w800, fontSize: 18)),
               if (done) StarRow(stars: stars, size: 12),
             ]),
     );
-    return locked ? tile : Pressable(onTap: onTap, child: tile);
+    if (locked) return onLockedTap == null ? tile : Pressable(onTap: onLockedTap!, child: tile);
+    return Pressable(onTap: onTap, child: tile);
   }
 }

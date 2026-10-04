@@ -1,27 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/economy/continue_offer.dart';
 import '../../core/ui/ui.dart';
 import 'labyrinth_game.dart';
 import 'logic/levels.dart';
+import 'memory_maze_game.dart';
 import 'progress.dart';
 
 const Color kMazeTint = Color(0xFFFFC857);
 
-/// Maze Escape: pick a tier, pick a level, find the one way out.
+/// Maze Escape: pick a mode, a tier, a level, then find the one way out.
 class MazeEscapeScreen extends StatelessWidget {
   const MazeEscapeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const _TierSelect();
+  Widget build(BuildContext context) => const _ModeMenu();
 }
 
-void openMazeLevel(BuildContext context, MazeTier tier, int level, {bool replace = false}) {
-  final route = MaterialPageRoute<void>(builder: (_) => LabyrinthGame(tier: tier, level: level));
+void openMazeLevel(BuildContext context, MazeTier tier, int level, {bool replace = false, MazeMode mode = MazeMode.labyrinth}) {
+  final route = MaterialPageRoute<void>(
+    builder: (_) => mode == MazeMode.memory ? MemoryMazeGame(tier: tier, level: level) : LabyrinthGame(tier: tier, level: level),
+  );
   final nav = Navigator.of(context);
   replace ? nav.pushReplacement(route) : nav.push(route);
 }
 
+/// Tapping a locked tile: only the first locked level can be bought (coins
+/// or a rewarded ad); it is then unlocked permanently and opened.
+Future<void> buyMazeLevel(BuildContext context, MazeTier tier, int level, {MazeMode mode = MazeMode.labyrinth}) async {
+  if (MazeProgress.firstLocked(tier, mode: mode) != level) return;
+  final ok = await showContinueOffer(context, OfferKind.unlockLevel);
+  if (!ok || !context.mounted) return;
+  await MazeProgress.buyUnlock(tier, level, mode: mode);
+  if (!context.mounted) return;
+  openMazeLevel(context, tier, level, mode: mode);
+}
+
 const _kColor = Color(0xFF7C5CFF);
+const kMemColor = Color(0xFF2EC4FF);
+
+Color _modeColor(MazeMode m) => m == MazeMode.memory ? kMemColor : _kColor;
 
 const _tierColor = {
   MazeTier.easy: Color(0xFF3DDC97),
@@ -36,7 +55,14 @@ const _tierIcon = {
   MazeTier.extreme: Icons.bolt_rounded,
 };
 
-String _tierBlurb(MazeTier t) {
+String _tierBlurb(MazeMode mode, MazeTier t) {
+  if (mode == MazeMode.memory) {
+    final a = MemLevel.minSize(t), b = MemLevel.maxSize(t);
+    final l = MemLevel.of(t, 1);
+    final peeks = l.peeks == 0 ? 'no peeks' : '${l.peeks} peek${l.peeks == 1 ? '' : 's'}';
+    final extra = l.maxBumps > 0 ? ', ${l.maxBumps} bumps and out' : '';
+    return '${a}x$a to ${b}x$b mazes. ${MemLevel.baseSeconds(t)}s look, $peeks$extra.';
+  }
   final a = LabLevel.of(t, 1).size, b = LabLevel.of(t, kLevelCount).size;
   return switch (t) {
     MazeTier.easy => '${a}x$a to ${b}x$b mazes. Clear view, 3 torches.',
@@ -46,17 +72,24 @@ String _tierBlurb(MazeTier t) {
   };
 }
 
-class _TierSelect extends StatefulWidget {
-  const _TierSelect();
+int _levelSize(MazeMode mode, MazeTier t, int level) =>
+    mode == MazeMode.memory ? MemLevel.of(t, level).size : LabLevel.of(t, level).size;
+
+// ---------------------------------------------------------------------------
+// Mode menu
+// ---------------------------------------------------------------------------
+
+class _ModeMenu extends StatefulWidget {
+  const _ModeMenu();
 
   @override
-  State<_TierSelect> createState() => _TierSelectState();
+  State<_ModeMenu> createState() => _ModeMenuState();
 }
 
-class _TierSelectState extends State<_TierSelect> {
+class _ModeMenuState extends State<_ModeMenu> {
   @override
   Widget build(BuildContext context) {
-    final last = MazeProgress.lastTier;
+    final last = MazeProgress.lastMode;
     return GameScaffold(
       title: 'Maze Escape',
       tint: kMazeTint,
@@ -67,6 +100,135 @@ class _TierSelectState extends State<_TierSelect> {
           children: [
             const Text('Tum phanse ho. Raaste bahut hain,\nbahar ka sirf ek hai.',
                 style: TextStyle(color: Pal.textDim, fontSize: 15, height: 1.4)),
+            const SizedBox(height: 18),
+            _hero(
+              context,
+              MazeMode.labyrinth,
+              icon: Icons.route_rounded,
+              tagline: 'Swipe through twisting corridors. Fog, torches and move limits.',
+              isLast: last == MazeMode.labyrinth,
+            ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
+            const SizedBox(height: 16),
+            _hero(
+              context,
+              MazeMode.memory,
+              icon: Icons.psychology_rounded,
+              tagline: 'Study the maze, then the lights go out. Walk to the exit from memory.',
+              isLast: last == MazeMode.memory,
+              isNew: MazeProgress.modeStars(MazeMode.memory) == 0,
+            ).animate().fadeIn(delay: 120.ms, duration: 350.ms).slideY(begin: 0.08, end: 0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _hero(BuildContext context, MazeMode mode,
+      {required IconData icon, required String tagline, bool isLast = false, bool isNew = false}) {
+    final c = _modeColor(mode);
+    final stars = MazeProgress.modeStars(mode);
+    final max = MazeProgress.modeMaxStars();
+    return GlassCard(
+      key: ValueKey('mode-${mode.name}'),
+      glow: isLast ? c : null,
+      radius: 28,
+      padding: const EdgeInsets.all(20),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [c.withValues(alpha: 0.55), c.withValues(alpha: 0.10)],
+      ),
+      onTap: () {
+        MazeProgress.lastMode = mode;
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => _TierSelect(mode: mode))).then((_) {
+          if (mounted) setState(() {});
+        });
+      },
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: c.withValues(alpha: 0.25),
+              border: Border.all(color: c, width: 2),
+              boxShadow: [BoxShadow(color: c.withValues(alpha: 0.5), blurRadius: 18, spreadRadius: -4)],
+            ),
+            child: Icon(icon, color: Pal.text, size: 34),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Wrap(spacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                Text(mode.label, style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900)),
+                if (isNew) _badge('NEW', Pal.gold) else if (isLast) _badge('LAST PLAYED', c),
+              ]),
+              const SizedBox(height: 6),
+              Row(children: [
+                const Icon(Icons.star_rounded, color: Pal.gold, size: 18),
+                const SizedBox(width: 4),
+                Text('$stars / $max',
+                    style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w800, fontSize: 14)),
+              ]),
+            ]),
+          ),
+          const Icon(Icons.arrow_forward_rounded, color: Pal.text),
+        ]),
+        const SizedBox(height: 14),
+        Text(tagline, style: const TextStyle(color: Pal.textDim, fontSize: 13.5, height: 1.35)),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: LinearProgressIndicator(
+            value: max == 0 ? 0 : stars / max,
+            minHeight: 6,
+            backgroundColor: Colors.black.withValues(alpha: 0.25),
+            valueColor: AlwaysStoppedAnimation(c),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget _badge(String t, Color c) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        decoration: BoxDecoration(color: c.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: c)),
+        child: Text(t, style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
+      );
+}
+
+// ---------------------------------------------------------------------------
+// Tier select (shared by both modes)
+// ---------------------------------------------------------------------------
+
+class _TierSelect extends StatefulWidget {
+  const _TierSelect({required this.mode});
+  final MazeMode mode;
+
+  @override
+  State<_TierSelect> createState() => _TierSelectState();
+}
+
+class _TierSelectState extends State<_TierSelect> {
+  @override
+  Widget build(BuildContext context) {
+    final mode = widget.mode;
+    final last = MazeProgress.lastTierOf(mode);
+    return GameScaffold(
+      title: mode.label,
+      tint: _modeColor(mode),
+      body: ValueListenableBuilder<int>(
+        valueListenable: MazeProgress.tick,
+        builder: (context, _, _) => ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            Text(
+              mode == MazeMode.memory
+                  ? 'Dekho, yaad karo, phir andhere mein raasta dhoondo.'
+                  : 'Raaste bahut hain, bahar ka sirf ek hai.',
+              style: const TextStyle(color: Pal.textDim, fontSize: 15, height: 1.4),
+            ),
             const SizedBox(height: 14),
             const Text('Choose your difficulty', style: TextStyle(color: Pal.textDim, fontSize: 15)),
             const SizedBox(height: 14),
@@ -81,9 +243,10 @@ class _TierSelectState extends State<_TierSelect> {
   }
 
   Widget _tierCard(BuildContext context, MazeTier t, bool isLast) {
+    final mode = widget.mode;
     final c = _tierColor[t]!;
-    final stars = MazeProgress.totalStars(t);
-    final done = MazeProgress.completed(t);
+    final stars = MazeProgress.totalStars(t, mode: mode);
+    final done = MazeProgress.completed(t, mode: mode);
     return GlassCard(
       glow: isLast ? c : null,
       radius: 24,
@@ -94,8 +257,8 @@ class _TierSelectState extends State<_TierSelect> {
         colors: [c.withValues(alpha: 0.4), c.withValues(alpha: 0.08)],
       ),
       onTap: () {
-        MazeProgress.lastTier = t;
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => _LevelSelect(tier: t))).then((_) {
+        MazeProgress.setLastTier(mode, t);
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => _LevelSelect(tier: t, mode: mode))).then((_) {
           if (mounted) setState(() {});
         });
       },
@@ -117,7 +280,7 @@ class _TierSelectState extends State<_TierSelect> {
               ],
             ]),
             const SizedBox(height: 3),
-            Text(_tierBlurb(t), style: const TextStyle(color: Pal.textDim, fontSize: 12.5, height: 1.3)),
+            Text(_tierBlurb(mode, t), style: const TextStyle(color: Pal.textDim, fontSize: 12.5, height: 1.3)),
             const SizedBox(height: 8),
             Row(children: [
               const Icon(Icons.star_rounded, color: Pal.gold, size: 16),
@@ -134,15 +297,20 @@ class _TierSelectState extends State<_TierSelect> {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Level grid (shared by both modes)
+// ---------------------------------------------------------------------------
+
 class _LevelSelect extends StatelessWidget {
-  const _LevelSelect({required this.tier});
+  const _LevelSelect({required this.tier, required this.mode});
   final MazeTier tier;
+  final MazeMode mode;
 
   @override
   Widget build(BuildContext context) {
-    const color = _kColor;
+    final color = _modeColor(mode);
     return GameScaffold(
-      title: 'Labyrinth - ${tier.label}',
+      title: '${mode.label} - ${tier.label}',
       tint: color,
       body: ValueListenableBuilder<int>(
         valueListenable: MazeProgress.tick,
@@ -153,9 +321,9 @@ class _LevelSelect extends StatelessWidget {
           itemCount: kLevelCount,
           itemBuilder: (context, i) {
             final level = i + 1;
-            final open = MazeProgress.unlocked(tier, level);
-            final stars = MazeProgress.stars(tier, level);
-            final sub = '${LabLevel.of(tier, level).size}x${LabLevel.of(tier, level).size}';
+            final open = MazeProgress.unlocked(tier, level, mode: mode);
+            final stars = MazeProgress.stars(tier, level, mode: mode);
+            final size = _levelSize(mode, tier, level);
             return Opacity(
               opacity: open ? 1 : 0.45,
               child: GlassCard(
@@ -163,13 +331,15 @@ class _LevelSelect extends StatelessWidget {
                 radius: 20,
                 padding: const EdgeInsets.all(8),
                 glow: stars > 0 ? color : null,
-                onTap: open ? () => openMazeLevel(context, tier, level) : () {},
+                onTap: open
+                    ? () => openMazeLevel(context, tier, level, mode: mode)
+                    : () => buyMazeLevel(context, tier, level, mode: mode),
                 child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                   open
                       ? Text('$level', style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900))
                       : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 24),
                   const SizedBox(height: 2),
-                  Text(sub, style: const TextStyle(color: Pal.textDim, fontSize: 11)),
+                  Text('${size}x$size', style: const TextStyle(color: Pal.textDim, fontSize: 11)),
                   const SizedBox(height: 4),
                   StarRow(stars: stars, size: 14),
                 ]),

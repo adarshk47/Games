@@ -278,4 +278,51 @@ void main() {
       expect(g2.tiles.length, g.tiles.length);
     });
   });
+
+  group('coin economy helpers', () {
+    test('paid undo works without free undos (extreme) and keeps undosLeft', () {
+      final g = Game2048.forTier(Tier2048.extreme, rng: Random(4))..reset();
+      final before = g.tiles.map((t) => [t.value, t.r, t.c]).toList();
+      Dir? used;
+      for (final d in Dir.values) {
+        if (g.move(d) != null) {
+          used = d;
+          break;
+        }
+      }
+      expect(used, isNotNull);
+      expect(g.canUndo, isFalse);
+      expect(g.hasHistory, isTrue);
+      expect(g.paidUndo(), isTrue);
+      expect(g.undosLeft, 0);
+      expect(g.tiles.map((t) => [t.value, t.r, t.c]).toList(), before);
+      expect(g.paidUndo(), isFalse);
+    });
+
+    test('removeSmallest frees the two smallest tiles and marks continued', () {
+      final g = make(4, [
+        [2, 4, 2, 4],
+        [4, 2, 4, 2],
+        [2, 4, 2, 4],
+        [4, 2, 4, 8],
+      ]);
+      expect(g.hasMoves, isFalse);
+      expect(g.removeSmallest(2), isTrue);
+      expect(g.tiles.length, 14);
+      expect(g.tiles.where((t) => t.value == 2).length, 5);
+      expect(g.hasMoves, isTrue);
+      expect(g.continued, isTrue);
+      final g2 = Game2048.fromJsonString(g.toJsonString())!;
+      expect(g2.continued, isTrue);
+      g.reset();
+      expect(g.continued, isFalse);
+    });
+
+    test('old saves without the continued flag still load', () {
+      final g = Game2048.forTier(Tier2048.classic, rng: Random(2))..reset();
+      final m = g.toJsonString().replaceAll(',"cont":false', '');
+      expect(m.contains('cont'), isFalse);
+      expect(Game2048.fromJsonString(m)!.continued, isFalse);
+    });
+  });
 }

@@ -3,6 +3,9 @@ import 'dart:math';
 const int kTubeCapacity = 4;
 const int kMaxExtraTubes = 2;
 
+/// Max tubes that can be bought per level once the free ones are used.
+const int kMaxPaidTubes = 3;
+
 enum BsDifficulty {
   easy('easy', 'Easy'),
   medium('medium', 'Medium'),
@@ -55,15 +58,18 @@ int starsFor(BsDifficulty d, int level, int moves) {
 
 /// Pure game state. Tubes are listed bottom -> top, values are color ids.
 class BallSortState {
-  BallSortState(this.tubes, {this.capacity = kTubeCapacity, this.extraUsed = 0, this.moves = 0});
+  BallSortState(this.tubes, {this.capacity = kTubeCapacity, this.extraUsed = 0, this.moves = 0, this.paidTubes = 0});
 
   final List<List<int>> tubes;
   final int capacity;
   int extraUsed;
   int moves;
 
+  /// Extra tubes bought (coins/ad) after the free ones ran out.
+  int paidTubes;
+
   BallSortState clone() => BallSortState([for (final t in tubes) List<int>.of(t)],
-      capacity: capacity, extraUsed: extraUsed, moves: moves);
+      capacity: capacity, extraUsed: extraUsed, moves: moves, paidTubes: paidTubes);
 
   int? topColor(int tube) => tubes[tube].isEmpty ? null : tubes[tube].last;
 
@@ -114,6 +120,17 @@ class BallSortState {
     if (!canAddTube) return false;
     tubes.add([]);
     extraUsed++;
+    return true;
+  }
+
+  /// Free tubes are used up but more can still be bought.
+  bool get canBuyTube => !canAddTube && paidTubes < kMaxPaidTubes;
+
+  /// Adds a bought tube (does not consume a free one).
+  bool addPaidTube() {
+    if (paidTubes >= kMaxPaidTubes) return false;
+    tubes.add([]);
+    paidTubes++;
     return true;
   }
 

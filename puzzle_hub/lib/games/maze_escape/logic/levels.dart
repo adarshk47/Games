@@ -55,3 +55,60 @@ int labStars(int moves, int optimal, {int torchesUsed = 0}) {
   if (torchesUsed > 0 && s > 2) s = 2;
   return s;
 }
+
+/// Game mode inside Maze Escape.
+enum MazeMode {
+  labyrinth('Labyrinth', 'lab'),
+  memory('Memory Maze', 'mem');
+
+  const MazeMode(this.label, this.keyPrefix);
+  final String label;
+
+  /// Storage key segment: `maze.<keyPrefix>.<tier>...`.
+  final String keyPrefix;
+}
+
+/// Memory Maze level: the maze is shown for [previewMs], then goes dark and
+/// must be walked from memory.
+class MemLevel {
+  const MemLevel(this.tier, this.level, this.size, this.previewMs, this.peeks, this.maxBumps, this.seed);
+  final MazeTier tier;
+  final int level;
+  final int size;
+
+  /// How long the full map is shown before it fades out.
+  final int previewMs;
+
+  /// Number of 1.5s "peeks" allowed.
+  final int peeks;
+
+  /// Bumps allowed before failing; 0 = unlimited.
+  final int maxBumps;
+  final int seed;
+
+  static const int peekMs = 1500;
+
+  static const _minSize = {MazeTier.easy: 5, MazeTier.medium: 7, MazeTier.hard: 9, MazeTier.extreme: 11};
+  static const _maxSize = {MazeTier.easy: 7, MazeTier.medium: 9, MazeTier.hard: 11, MazeTier.extreme: 13};
+  static const _baseSec = {MazeTier.easy: 6, MazeTier.medium: 5, MazeTier.hard: 4, MazeTier.extreme: 3};
+  static const _peeks = {MazeTier.easy: 3, MazeTier.medium: 2, MazeTier.hard: 1, MazeTier.extreme: 0};
+
+  static int minSize(MazeTier t) => _minSize[t]!;
+  static int maxSize(MazeTier t) => _maxSize[t]!;
+  static int baseSeconds(MazeTier t) => _baseSec[t]!;
+
+  static MemLevel of(MazeTier tier, int level) {
+    final seed = 500009 + level * 7907 + tier.index * 130003;
+    final size = _lerp(_minSize[tier]!, _maxSize[tier]!, level);
+    // Bigger mazes within a tier get a little extra preview time.
+    final preview = _baseSec[tier]! * 1000 + (size - _minSize[tier]!) * 250;
+    return MemLevel(tier, level, size, preview, _peeks[tier]!, tier == MazeTier.extreme ? 3 : 0, seed);
+  }
+}
+
+/// Memory Maze stars from wall bumps (mistakes) and peeks used. Each peek
+/// counts as two mistakes, so any peek caps the result at 2 stars.
+int memStars(int bumps, int peeksUsed) {
+  final p = bumps + 2 * peeksUsed;
+  return p <= 1 ? 3 : (p <= 4 ? 2 : 1);
+}

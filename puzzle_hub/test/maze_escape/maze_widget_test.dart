@@ -16,7 +16,11 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(400, 800));
     await tester.pumpWidget(const MaterialApp(home: MazeEscapeScreen()));
     await tester.pump(const Duration(seconds: 1));
+    await tester.tap(find.byKey(const ValueKey('mode-labyrinth')));
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Extreme'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
 
     await tester.pumpWidget(const MaterialApp(home: LabyrinthGame(tier: MazeTier.hard, level: 9)));
     await tester.pump(const Duration(seconds: 1));

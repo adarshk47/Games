@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -144,6 +145,9 @@ class _CardBoardState extends State<_CardBoard> {
   int moves = 0;
   int seconds = 0;
   Timer? timer;
+  bool freePeekUsed = false; // one free Peek per level attempt
+  bool extraTimeUsed = false; // Extreme time-out offer shown this attempt
+  bool peeking = false;
 
   @override
   void initState() {
@@ -161,6 +165,9 @@ class _CardBoardState extends State<_CardBoard> {
     seconds = 0;
     timer?.cancel();
     over = false;
+    freePeekUsed = false;
+    extraTimeUsed = false;
+    peeking = false;
     final my = ++gen;
     if (params.peekMs > 0) {
       busy = true;
@@ -190,9 +197,27 @@ class _CardBoardState extends State<_CardBoard> {
   Future<void> _timeUp() async {
     over = true;
     timer?.cancel();
-    gen++;
     AppAudio.play(Sound.fail);
     AppAudio.haptic(true);
+    if (!extraTimeUsed) {
+      extraTimeUsed = true;
+      final paid = await showContinueOffer(context, OfferKind.extraLife);
+      if (!mounted) return;
+      if (paid) {
+        gen++; // cancel any pending peek/flip callbacks
+        setState(() {
+          seconds = (limit! - 15).clamp(0, limit!);
+          up.clear();
+          first = null;
+          busy = false;
+          peeking = false;
+          over = false;
+        });
+        _startTimer();
+        return;
+      }
+    }
+    gen++;
     Rewards.onGameEnd('memory_boost', score: _tierStarTotal());
     final choice = await showResultDialog(
       context,
@@ -261,6 +286,38 @@ class _CardBoardState extends State<_CardBoard> {
         busy = false;
       });
     }
+  }
+
+  bool get _canPeek => !busy && !over && matched.length < deck.length;
+
+  Future<void> _peek() async {
+    if (!_canPeek) return;
+    if (freePeekUsed) {
+      final hadTimer = timer?.isActive ?? false;
+      timer?.cancel();
+      final paid = await showContinueOffer(context, OfferKind.hint);
+      if (!mounted || over) return;
+      if (hadTimer) _startTimer();
+      if (!paid || !_canPeek) return;
+    }
+    freePeekUsed = true;
+    final my = gen;
+    final before = Set<int>.from(up);
+    AppAudio.play(Sound.flip);
+    setState(() {
+      busy = true;
+      peeking = true;
+      up.addAll(List.generate(deck.length, (i) => i).where((i) => !matched.contains(i)));
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    if (!mounted || my != gen || over) return;
+    setState(() {
+      up
+        ..clear()
+        ..addAll(before);
+      busy = false;
+      peeking = false;
+    });
   }
 
   Future<void> _won() async {
@@ -342,7 +399,25 @@ class _CardBoardState extends State<_CardBoard> {
           );
         }),
       ),
-      const SizedBox(height: 12),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+        child: Opacity(
+          opacity: _canPeek ? 1 : 0.5,
+          child: GlassCard(
+            key: const ValueKey('peek-button'),
+            blur: 0,
+            radius: 22,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            onTap: _canPeek ? _peek : null,
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(peeking ? Icons.visibility_rounded : Icons.lightbulb_rounded, size: 18, color: Pal.gold),
+              const SizedBox(width: 8),
+              Text(freePeekUsed ? 'Peek  (${Prices.hint} coins)' : 'Peek  (1 free)',
+                  style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 14)),
+            ]),
+          ),
+        ),
+      ),
     ]);
   }
 }

@@ -23,11 +23,15 @@ class PremiumButton extends StatelessWidget {
         boxShadow: enabled ? [BoxShadow(color: c.withValues(alpha: 0.45), blurRadius: 20, offset: const Offset(0, 6))] : null,
         border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
       ),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        if (icon != null) ...[Icon(icon, size: 20, color: Colors.white), const SizedBox(width: 8)],
-        Text(label,
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: compact ? 14 : 17, letterSpacing: 0.3)),
-      ]),
+      // Scale the label down instead of overflowing on narrow screens / large font settings.
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          if (icon != null) ...[Icon(icon, size: 20, color: Colors.white), const SizedBox(width: 8)],
+          Text(label,
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: compact ? 14 : 17, letterSpacing: 0.3)),
+        ]),
+      ),
     );
     return enabled ? Pressable(onTap: onTap!, child: btn) : btn;
   }

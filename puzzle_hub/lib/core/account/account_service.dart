@@ -7,8 +7,9 @@ import 'package:local_auth/local_auth.dart';
 
 import '../storage.dart';
 
-/// Single local account stored on the device: name + salted-hash PIN, optional
-/// fingerprint unlock. Nothing leaves the phone. On login, [Storage.userPrefix]
+/// Single local account stored on the device: name + salted-hash PIN (optional
+/// app lock), optional fingerprint unlock. It can be linked to a Firebase uid
+/// ([cloudUid]) for cloud sync; the PIN never leaves the phone. On login, [Storage.userPrefix]
 /// is set so all game data/coins/records are per-user.
 class AccountService extends ChangeNotifier {
   AccountService._();
@@ -19,6 +20,9 @@ class AccountService extends ChangeNotifier {
   static const _kHash = 'acct.hash';
   static const _kBio = 'acct.bio';
   static const _kId = 'acct.id';
+  static const _kCloudUid = 'acct.cloudUid';
+  static const _kCloudEmail = 'acct.cloudEmail';
+  static const _kNoPin = 'GUEST_NO_PIN';
 
   final LocalAuthentication _auth = LocalAuthentication();
 
@@ -26,6 +30,16 @@ class AccountService extends ChangeNotifier {
   bool get loggedIn => _loggedIn;
   bool get hasAccount => Storage.globalString(_kHash) != null;
   String get name => Storage.globalString(_kName) ?? '';
+
+  /// False for guest / "play without PIN" accounts (no app lock).
+  bool get hasPin {
+    final h = Storage.globalString(_kHash);
+    return h != null && h != _kNoPin;
+  }
+
+  /// Firebase uid linked to this local account (null = not linked).
+  String? get cloudUid => Storage.globalString(_kCloudUid);
+  String? get cloudEmail => Storage.globalString(_kCloudEmail);
   bool get biometricEnabled => Storage.globalBool(_kBio);
 
   /// True only for the very first session after registering (for "Welcome").
@@ -66,7 +80,7 @@ class AccountService extends ChangeNotifier {
       final id = 'u_guest';
       await Storage.setGlobalString(_kName, guestName.trim().isEmpty ? 'Player' : guestName.trim());
       await Storage.setGlobalString(_kSalt, salt);
-      await Storage.setGlobalString(_kHash, 'GUEST_NO_PIN');
+      await Storage.setGlobalString(_kHash, _kNoPin);
       await Storage.setGlobalString(_kId, id);
       await Storage.setGlobalBool(_kBio, false);
       justRegistered = true;
@@ -113,6 +127,41 @@ class AccountService extends ChangeNotifier {
     return true;
   }
 
+  /// Adds an optional PIN lock to a guest / cloud account that has none.
+  Future<void> setPin(String pin) async {
+    var salt = Storage.globalString(_kSalt);
+    if (salt == null) {
+      salt = List.generate(16, (_) => Random.secure().nextInt(256)).join('-');
+      await Storage.setGlobalString(_kSalt, salt);
+    }
+    await Storage.setGlobalString(_kHash, _hash(pin, salt));
+    notifyListeners();
+  }
+
+  /// Removes the PIN lock (and fingerprint unlock).
+  Future<void> removePin() async {
+    await Storage.setGlobalString(_kHash, _kNoPin);
+    await Storage.setGlobalBool(_kBio, false);
+    notifyListeners();
+  }
+
+  Future<void> linkCloud(String uid, {String? email}) async {
+    await Storage.setGlobalString(_kCloudUid, uid);
+    if (email != null) {
+      await Storage.setGlobalString(_kCloudEmail, email);
+    } else {
+      await Storage.removeGlobal(_kCloudEmail);
+    }
+    notifyListeners();
+  }
+
+  Future<void> unlinkCloud() async {
+    await Storage.removeGlobal(_kCloudUid);
+    await Storage.removeGlobal(_kCloudEmail);
+    await Storage.removeGlobal('cloud.lastSync');
+    notifyListeners();
+  }
+
   Future<void> rename(String newName) async {
     await Storage.setGlobalString(_kName, newName.trim());
     notifyListeners();
@@ -124,11 +173,12 @@ class AccountService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Erases the account and all of its saved game data (caller must confirm with PIN).
+  /// Erases the local account and all of its saved game data (caller must
+  /// confirm, and delete cloud data first via CloudAuth.deleteCloudAccount).
   Future<void> deleteAccount() async {
     final id = Storage.globalString(_kId);
     if (id != null) await Storage.clearPrefix('$id.');
-    for (final k in [_kName, _kSalt, _kHash, _kBio, _kId]) {
+    for (final k in [_kName, _kSalt, _kHash, _kBio, _kId, _kCloudUid, _kCloudEmail, 'cloud.lastSync']) {
       await Storage.removeGlobal(k);
     }
     lock();

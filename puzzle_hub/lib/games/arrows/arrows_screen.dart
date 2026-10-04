@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrows_logic.dart';
@@ -215,6 +216,20 @@ class _ArrowsLevelsPageState extends State<ArrowsLevelsPage> {
     if (mounted) setState(() {});
   }
 
+  /// Only the first locked level can be bought; others stay locked.
+  Future<void> _buy(int level) async {
+    if (ArrowsProgress.firstLocked(widget.tier) != level) {
+      AppAudio.haptic();
+      return;
+    }
+    final ok = await showContinueOffer(context, OfferKind.unlockLevel);
+    if (!ok || !mounted) return;
+    await ArrowsProgress.buyUnlock(widget.tier, level);
+    if (!mounted) return;
+    setState(() {});
+    await _open(level);
+  }
+
   @override
   Widget build(BuildContext context) {
     final tier = widget.tier;
@@ -236,7 +251,7 @@ class _ArrowsLevelsPageState extends State<ArrowsLevelsPage> {
             unlocked: unlocked,
             done: done,
             stars: ArrowsProgress.stars(tier, level),
-            onTap: () => _open(level),
+            onTap: () => unlocked ? _open(level) : _buy(level),
           )
               .animate(delay: (math.min(i, 24) * 30).ms)
               .fadeIn(duration: 350.ms)
@@ -318,7 +333,9 @@ class _LevelTile extends StatelessWidget {
             : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 24),
       ),
     );
-    return unlocked ? Pressable(onTap: onTap, child: tile) : Opacity(opacity: 0.7, child: tile);
+    return unlocked
+        ? Pressable(onTap: onTap, child: tile)
+        : GestureDetector(onTap: onTap, child: Opacity(opacity: 0.7, child: tile));
   }
 }
 
@@ -344,6 +361,8 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
   int? hinted;
   bool over = false;
   int attempt = 0;
+  int continuesUsed = 0;
+  static const maxContinues = 2;
 
   @override
   void initState() {
@@ -360,6 +379,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
     moves = 0;
     hinted = null;
     over = false;
+    continuesUsed = 0;
     attempt++;
   }
 
@@ -396,9 +416,29 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
       AppAudio.play(Sound.fail);
       final a = attempt;
       Future.delayed(const Duration(milliseconds: 450), () {
-        if (attempt == a) _showLose();
+        if (attempt == a) _offerContinue();
       });
     }
+  }
+
+  /// Out of lives: offer an extra life (coins / ad) a couple of times per
+  /// level before the lose dialog.
+  Future<void> _offerContinue() async {
+    if (!mounted) return;
+    if (continuesUsed < maxContinues) {
+      final a = attempt;
+      final ok = await showContinueOffer(context, OfferKind.extraLife);
+      if (!mounted || attempt != a) return;
+      if (ok) {
+        setState(() {
+          continuesUsed++;
+          lives += 1;
+          over = false;
+        });
+        return;
+      }
+    }
+    _showLose();
   }
 
   void _showWin() {

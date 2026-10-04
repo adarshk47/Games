@@ -101,4 +101,22 @@ void main() {
     expect(generateLevel(BsDifficulty.easy, 5).key, generateLevel(BsDifficulty.easy, 5).key);
     expect(generateLevel(BsDifficulty.easy, 5).key, isNot(generateLevel(BsDifficulty.hard, 5).key));
   });
+
+  test('paid tubes only after free ones and capped', () {
+    final s = BallSortState([
+      [0, 1],
+      [1, 0],
+    ]);
+    expect(s.canBuyTube, isFalse);
+    while (s.addTube()) {}
+    expect(s.extraUsed, kMaxExtraTubes);
+    expect(s.canBuyTube, isTrue);
+    for (var i = 0; i < kMaxPaidTubes; i++) {
+      expect(s.addPaidTube(), isTrue);
+    }
+    expect(s.canBuyTube, isFalse);
+    expect(s.addPaidTube(), isFalse);
+    expect(s.tubes.length, 2 + kMaxExtraTubes + kMaxPaidTubes);
+    expect(s.clone().paidTubes, kMaxPaidTubes);
+  });
 }

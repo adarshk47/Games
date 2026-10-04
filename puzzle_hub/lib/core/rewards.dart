@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'ads/ads_service.dart';
 import 'audio.dart';
 import 'storage.dart';
 import 'ui/palette.dart';
@@ -13,7 +14,8 @@ import 'ui/palette.dart';
 /// Games call:
 ///   Rewards.onLevelComplete('sudoku', 'easy', stars: 3);   // coins + record a win
 ///   Rewards.onGameEnd('focus_color', score: 120, won: true); // record only (+ small coins if won)
-/// Ads can later call Rewards.addCoins(n, label: 'Ad reward').
+/// Ads call Rewards.addCoins(n, label: 'Ad reward').
+///
 /// Broadcast to listeners (daily quests, achievements, leaderboard, referral).
 class RewardEvent {
   const RewardEvent({required this.gameId, required this.type, this.levelKey, this.stars = 0, this.score, this.won = false, this.firstTime = false});
@@ -41,47 +43,109 @@ class Rewards {
 
   static final ValueNotifier<int> coins = ValueNotifier<int>(0);
 
+  // ---- Coin ledger ----------------------------------------------------------
+  // 'coins'        current balance (kept for backwards compatibility)
+  // 'coins.earned' monotonic total ever earned
+  // 'coins.spent'  monotonic total ever spent
+  // Invariant: coins == coins.earned - coins.spent. Both totals only grow, so a
+  // cloud merge can simply take the max of each and recompute the balance.
+  static const kBalance = 'coins';
+  static const kEarned = 'coins.earned';
+  static const kSpent = 'coins.spent';
+
+  /// Reward amounts (kept low so coins feel earned).
+  static const firstClearBase = 3;
+  static const firstClearPerStar = 1;
+  static const replayReward = 1;
+  static const runWinReward = 2;
+
+  static int get earned => Storage.getInt(kEarned);
+  static int get spent => Storage.getInt(kSpent);
+  static int get balance => Storage.getInt(kBalance);
+
   /// Call after login (and after lock/unlock) to load the user's balance.
-  static void reload() => coins.value = Storage.getInt('coins');
+  /// Also repairs / migrates the ledger so balance == earned - spent.
+  static void reload() {
+    _normalizeLedger();
+    coins.value = Storage.getInt(kBalance);
+  }
+
+  static void _normalizeLedger() {
+    final bal = Storage.getInt(kBalance).clamp(0, 1 << 31);
+    final sp = Storage.getInt(kSpent).clamp(0, 1 << 31);
+    final storedEarned = Storage.getInt(kEarned, -1);
+    // Missing earned (old installs) -> derive it; otherwise never shrink it.
+    final e = storedEarned < 0 ? bal + sp : (storedEarned > bal + sp ? storedEarned : bal + sp);
+    _writeLedger(e, e - bal);
+  }
+
+  static void _writeLedger(int earnedTotal, int spentTotal) {
+    Storage.setInt(kEarned, earnedTotal);
+    Storage.setInt(kSpent, spentTotal);
+    Storage.setInt(kBalance, earnedTotal - spentTotal);
+  }
+
+  /// Merge totals coming from another device / the cloud: takes the max of
+  /// each monotonic counter and recomputes the balance.
+  static void mergeLedger({required int earned, required int spent}) {
+    _normalizeLedger();
+    final e = earned > Rewards.earned ? earned : Rewards.earned;
+    var s = spent > Rewards.spent ? spent : Rewards.spent;
+    if (s > e) s = e;
+    _writeLedger(e, s);
+    coins.value = e - s;
+  }
 
   static Future<void> addCoins(int n, {String? label, bool playSound = true}) async {
     if (n <= 0) return;
     if (playSound) AppAudio.play(Sound.coin);
-    final v = Storage.getInt('coins') + n;
-    await Storage.setInt('coins', v);
-    Storage.setInt('coins.earned', Storage.getInt('coins.earned') + n);
-    coins.value = v;
+    _normalizeLedger();
+    final e = earned + n;
+    final s = spent;
+    _writeLedger(e, s);
+    coins.value = e - s;
     _toast('+$n 🪙${label == null ? '' : '  $label'}');
   }
 
   /// Returns false (and spends nothing) if the user cannot afford it.
   static Future<bool> spend(int n) async {
-    final v = Storage.getInt('coins');
-    if (n > v) return false;
-    await Storage.setInt('coins', v - n);
-    coins.value = v - n;
+    if (n < 0) return false;
+    _normalizeLedger();
+    final e = earned;
+    final s = spent;
+    if (n > e - s) return false;
+    if (n == 0) return true;
+    _writeLedger(e, s + n);
+    coins.value = e - s - n;
     return true;
   }
 
-  /// A level / puzzle was completed. First completion of [levelKey] pays full
-  /// coins (10 + 5 per star); replays pay 2. Also updates the game's record.
+  /// Coins paid for a level completion (pure, for UI / tests).
+  static int levelReward({required bool firstTime, int stars = 0}) =>
+      firstTime ? firstClearBase + firstClearPerStar * stars.clamp(0, 3) : replayReward;
+
+  /// A level / puzzle was completed. First completion of [levelKey] pays
+  /// 3 + 1 per star; replays pay 1. Also updates the game's record.
   /// Returns the coins awarded.
   static int onLevelComplete(String gameId, String levelKey, {int stars = 0, int? score}) {
     final done = 'rec.$gameId.done.$levelKey';
     final first = !Storage.getBool(done);
     if (first) Storage.setBool(done, true);
-    final reward = first ? 10 + 5 * stars.clamp(0, 3) : 2;
+    final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     AppAudio.play(Sound.win);
     addCoins(reward, label: first ? 'Level complete!' : null, playSound: false);
     _events.add(RewardEvent(gameId: gameId, type: 'level', levelKey: levelKey, stars: stars, score: score, won: true, firstTime: first));
+    try {
+      AdsService.onLevelCompleted(gameId: gameId);
+    } catch (_) {}
     return reward;
   }
 
-  /// A run ended (score based games). Winning pays 5 coins.
+  /// A run ended (score based games). Winning pays 2 coins.
   static void onGameEnd(String gameId, {int? score, bool won = false}) {
     _record(gameId, won: won, score: score);
-    if (won) addCoins(5);
+    if (won) addCoins(runWinReward);
     _events.add(RewardEvent(gameId: gameId, type: 'run', score: score, won: won));
   }
 

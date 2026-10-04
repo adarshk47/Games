@@ -81,7 +81,18 @@ class Game2048 {
   int nextId = 1;
   int undosLeft = 0;
   bool keepGoing = false;
+
+  /// True once the one-per-game paid "continue" at game over was used.
+  bool continued = false;
   final List<_Snap> _history = [];
+
+  /// Snapshots kept for undo: at least [minHistory] so paid undos work even on
+  /// tiers without free undos.
+  static const minHistory = 3;
+  int get _historyCap => max(maxUndos, minHistory);
+
+  /// Whether a previous board is available (free or paid undo).
+  bool get hasHistory => _history.isNotEmpty;
 
   int get target => _target;
   bool isStone(int r, int c) => stones.contains(r * size + c);
@@ -95,6 +106,7 @@ class Game2048 {
     nextId = 1;
     undosLeft = maxUndos;
     keepGoing = false;
+    continued = false;
     _history.clear();
     stones = {};
     while (stones.length < stoneCount) {
@@ -178,7 +190,7 @@ class Game2048 {
     tiles.removeWhere(removed.contains);
     score += gained;
     _history.add(snap);
-    if (_history.length > maxUndos) _history.removeAt(0);
+    if (_history.length > _historyCap) _history.removeAt(0);
     final spawned = spawn();
     return MoveResult(gained, merged, removed, spawned);
   }
@@ -195,11 +207,34 @@ class Game2048 {
 
   bool undo() {
     if (!canUndo) return false;
+    _restoreLast();
+    undosLeft--;
+    return true;
+  }
+
+  /// Undo bought with coins/ad: does not consume a free undo.
+  bool paidUndo() {
+    if (_history.isEmpty) return false;
+    _restoreLast();
+    return true;
+  }
+
+  void _restoreLast() {
     final s = _history.removeLast();
     tiles = s.tiles.map((t) => t.copy()).toList();
     score = s.score;
     nextId = max(nextId, s.nextId);
-    undosLeft--;
+  }
+
+  /// Paid "continue" at game over: removes the [n] smallest tiles so the
+  /// board has room again. Returns false when nothing could be removed.
+  bool removeSmallest([int n = 2]) {
+    if (tiles.length <= 1) return false;
+    final sorted = [...tiles]..sort((a, b) => a.value.compareTo(b.value));
+    final drop = sorted.take(min(n, tiles.length - 1)).toSet();
+    tiles.removeWhere(drop.contains);
+    _history.clear();
+    continued = true;
     return true;
   }
 
@@ -211,6 +246,7 @@ class Game2048 {
         'nextId': nextId,
         'undos': undosLeft,
         'keep': keepGoing,
+        'cont': continued,
         'tiles': tiles.map((t) => t.toJson()).toList(),
       });
 
@@ -226,6 +262,7 @@ class Game2048 {
       g.nextId = m['nextId'] as int;
       g.undosLeft = m['undos'] as int;
       g.keepGoing = m['keep'] as bool;
+      g.continued = m['cont'] as bool? ?? false;
       g.tiles = [for (final t in m['tiles'] as List) Tile.fromJson(t as List)];
       for (final t in g.tiles) {
         if (t.r < 0 || t.c < 0 || t.r >= g.size || t.c >= g.size || g.isStone(t.r, t.c)) return null;

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -38,14 +39,27 @@ class _Game {
   List<int> cur;
   List<int> notes;
   int mistakes, hints, elapsed;
+
+  /// Hints bought with coins/ads on top of the tier's free ones.
+  int bonusHints;
+
+  /// Whether the one-per-game paid extra life was already offered/used.
+  bool lifeOffered;
   final List<List<List<int>>> undo = [];
 
   _Game(this.difficulty, this.daily, this.puzzle, this.solution,
-      {List<int>? cur, List<int>? notes, this.mistakes = 0, this.hints = 0, this.elapsed = 0})
+      {List<int>? cur,
+      List<int>? notes,
+      this.mistakes = 0,
+      this.hints = 0,
+      this.elapsed = 0,
+      this.bonusHints = 0,
+      this.lifeOffered = false})
       : cur = cur ?? List<int>.from(puzzle),
         notes = notes ?? List<int>.filled(81, 0);
 
-  int get maxHints => difficulty.maxHints;
+  int get maxHints => difficulty.maxHints + bonusHints;
+  int get hintsLeft => maxHints - hints;
   int get maxMistakes => difficulty.maxMistakes; // 0 = unlimited
 
   bool get solved {
@@ -65,6 +79,8 @@ class _Game {
         'm': mistakes,
         'h': hints,
         't': elapsed,
+        'bh': bonusHints,
+        'xl': lifeOffered,
       };
 
   static _Game? fromJson(String s) {
@@ -72,7 +88,10 @@ class _Game {
       final j = jsonDecode(s) as Map<String, dynamic>;
       List<int> l(String k) => (j[k] as List).cast<int>();
       return _Game(_diffFromSave(j['d']), j['daily'] as bool, l('p'), l('s'),
-          cur: l('c'), notes: l('n'), mistakes: j['m'] as int, hints: j['h'] as int, elapsed: j['t'] as int);
+          cur: l('c'), notes: l('n'), mistakes: j['m'] as int, hints: j['h'] as int,
+          elapsed: j['t'] as int,
+          bonusHints: (j['bh'] as int?) ?? 0,
+          lifeOffered: (j['xl'] as bool?) ?? false);
     } catch (_) {
       return null;
     }
@@ -228,15 +247,30 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     _save();
   }
 
-  void _hint() {
+  bool _offerOpen = false;
+
+  Future<void> _hint() async {
     final g = _g;
-    if (!_active || g == null || g.hints >= g.maxHints) return;
-    var i = _sel;
-    if (i < 0 || g.cur[i] == g.solution[i]) {
-      i = List.generate(81, (k) => k).firstWhere((k) => g.cur[k] != g.solution[k], orElse: () => -1);
+    if (!_active || g == null || _offerOpen) return;
+    int target() {
+      var i = _sel;
+      if (i < 0 || g.cur[i] == g.solution[i]) {
+        i = List.generate(81, (k) => k).firstWhere((k) => g.cur[k] != g.solution[k], orElse: () => -1);
+      }
+      return i;
     }
-    if (i < 0) return;
-    final cell = i;
+
+    if (target() < 0) return;
+    if (g.hintsLeft <= 0) {
+      // Free hints used up: offer a paid one.
+      _offerOpen = true;
+      final paid = await showContinueOffer(context, OfferKind.hint);
+      _offerOpen = false;
+      if (!mounted || !paid || !identical(_g, g) || !_active) return;
+      g.bonusHints++;
+    }
+    final cell = target();
+    if (cell < 0) return;
     AppAudio.play(Sound.pop);
     setState(() {
       _snapshot();
@@ -250,9 +284,32 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     _afterMove();
   }
 
+  /// Mistake limit reached: offer one paid extra life per game.
+  Future<void> _offerExtraLife(_Game g) async {
+    g.lifeOffered = true;
+    _offerOpen = true;
+    final paid = await showContinueOffer(context, OfferKind.extraLife);
+    _offerOpen = false;
+    if (!mounted || !identical(_g, g)) return;
+    if (paid) {
+      AppAudio.play(Sound.success);
+      setState(() {
+        g.mistakes = math.max(0, g.mistakes - 1);
+        _over = false;
+      });
+      _save();
+    } else {
+      _afterMove();
+    }
+  }
+
   void _afterMove() {
     final g = _g!;
-    if (_over) {
+    if (_over && !g.lifeOffered) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && identical(_g, g)) _offerExtraLife(g);
+      });
+    } else if (_over) {
       AppAudio.play(Sound.fail);
       _save();
       Rewards.onGameEnd('sudoku', won: false);
@@ -294,7 +351,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
       stars: win ? stars : null,
       message: win
           ? 'Time ${fmtTime(g.elapsed)}${newBest ? '\nNew best time!' : ''}'
-          : 'You made ${g.maxMistakes} mistakes.',
+          : 'You made ${g.mistakes} mistakes.',
       actions: [
         DialogAction('Menu', () => setState(() => _g = null)),
         DialogAction('New game', () => _newGame(g.difficulty), primary: true),
@@ -576,7 +633,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
               Row(mainAxisSize: MainAxisSize.min, children: [
                 const Icon(Icons.lightbulb_rounded, size: 18, color: Pal.gold),
                 const SizedBox(width: 4),
-                Text('${g.maxHints - g.hints}',
+                Text('${g.hintsLeft}',
                     style: const TextStyle(color: Pal.text, fontSize: 16, fontWeight: FontWeight.w800)),
               ]),
             ],
@@ -620,7 +677,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
                     setState(() => _notesMode = !_notesMode);
                   },
                   highlight: _notesMode),
-              _tool(Icons.lightbulb_rounded, 'Hint', _hint, badge: g.maxHints - g.hints),
+              _tool(Icons.lightbulb_rounded, 'Hint', _hint, badge: g.hintsLeft),
             ],
           ),
         ),

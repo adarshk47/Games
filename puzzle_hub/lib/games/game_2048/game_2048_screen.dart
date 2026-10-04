@@ -6,6 +6,7 @@ import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/continue_offer.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -113,13 +114,25 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     _save();
   }
 
-  void _undo() {
+  Future<void> _undo() async {
     if (_g.undo()) {
-      AppAudio.play(Sound.tap);
-      AppAudio.haptic();
-      setState(() => _ghosts = []);
-      _save();
+      _afterUndo();
+      return;
     }
+    if (!_g.hasHistory || _dialogOpen) return;
+    // Free undos used up: offer a paid one.
+    _dialogOpen = true;
+    final paid = await showContinueOffer(context, OfferKind.undo);
+    _dialogOpen = false;
+    if (!mounted || !paid) return;
+    if (_g.paidUndo()) _afterUndo();
+  }
+
+  void _afterUndo() {
+    AppAudio.play(Sound.tap);
+    AppAudio.haptic();
+    setState(() => _ghosts = []);
+    _save();
   }
 
   void _move(Dir d) {
@@ -173,7 +186,22 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     ).then((_) => _dialogOpen = false);
   }
 
-  void _showOver() {
+  Future<void> _showOver() async {
+    if (!_g.continued && _g.tiles.length > 1) {
+      // One paid continue per game: clear the 2 smallest tiles.
+      _dialogOpen = true;
+      final paid = await showContinueOffer(context, OfferKind.extraLife);
+      _dialogOpen = false;
+      if (!mounted) return;
+      if (paid && _g.removeSmallest(2)) {
+        AppAudio.play(Sound.success);
+        setState(() => _ghosts = []);
+        _save();
+        if (_g.hasMoves) return;
+      }
+      _g.continued = true;
+      _save();
+    }
     AppAudio.play(Sound.fail);
     _reportOver();
     _dialogOpen = true;
@@ -184,7 +212,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       emoji: '😵',
       color: Pal.danger,
       actions: [
-        if (_g.canUndo) DialogAction('Undo', _undo),
+        if (_g.hasHistory) DialogAction('Undo', _undo),
         DialogAction('Try again', _restart, primary: true),
       ],
     ).then((_) => _dialogOpen = false);
@@ -223,7 +251,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       title: '2048',
       tint: _tint,
       actions: [
-        BarAction(icon: Icons.undo_rounded, tooltip: 'Undo (${_g.undosLeft})', onTap: _g.canUndo ? _undo : null),
+        BarAction(icon: Icons.undo_rounded, tooltip: 'Undo (${_g.undosLeft})', onTap: _g.hasHistory ? _undo : null),
         BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: _restart),
       ],
       body: Focus(

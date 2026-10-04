@@ -9,7 +9,22 @@ class ArrowMazeProgress {
       Storage.getInt(_k(t, 'stars.$level'));
   static bool isDone(MazeTier t, int level) => stars(t, level) > 0;
   static bool isUnlocked(MazeTier t, int level) =>
-      level <= 1 || isDone(t, level - 1);
+      level <= 1 || isDone(t, level - 1) || isBought(t, level);
+
+  /// Levels unlocked early with coins / a rewarded ad.
+  static bool isBought(MazeTier t, int level) =>
+      Storage.getBool(_k(t, 'unlockedBought.$level'));
+  static Future<void> buyUnlock(MazeTier t, int level) =>
+      Storage.setBool(_k(t, 'unlockedBought.$level'), true);
+
+  /// The first locked level of the tier (the only one that can be bought),
+  /// or null when every level is unlocked.
+  static int? firstLocked(MazeTier t) {
+    for (var l = 1; l <= t.count; l++) {
+      if (!isUnlocked(t, l)) return l;
+    }
+    return null;
+  }
 
   static int completed(MazeTier t) {
     var n = 0;

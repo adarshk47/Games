@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/ads/ads_service.dart';
 import '../../core/audio.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -25,11 +26,13 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
   @override
   void initState() {
     super.initState();
+    AdsService.suppress(); // no ads anywhere in the pregnancy section
     AppAudio.setMusic(MusicTrack.calm);
   }
 
   @override
   void dispose() {
+    AdsService.unsuppress();
     AppAudio.setMusic(MusicTrack.main);
     super.dispose();
   }

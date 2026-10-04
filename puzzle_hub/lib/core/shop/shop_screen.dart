@@ -1,9 +1,240 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
-/// Coin shop: buy hints/lives/undo packs, ad-free pass, themes; watch ads for coins.
-class ShopScreen extends StatelessWidget {
+import '../ads/ads_service.dart';
+import '../economy/continue_offer.dart';
+import '../rewards.dart';
+import '../ui/ui.dart';
+
+/// Coin shop body. Shown as a tab inside the home's bottom navigation (the
+/// animated background is already behind it), so no Scaffold / back button.
+class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const Center(child: Text('Shop'));
+  State<ShopScreen> createState() => _ShopScreenState();
+}
+
+class _ShopScreenState extends State<ShopScreen> {
+  Timer? _tick;
+  bool _busy = false;
+  String? _msg;
+
+  @override
+  void initState() {
+    super.initState();
+    AdsService.changes.addListener(_refresh);
+    _syncTimer();
+  }
+
+  @override
+  void dispose() {
+    AdsService.changes.removeListener(_refresh);
+    _tick?.cancel();
+    super.dispose();
+  }
+
+  void _refresh() {
+    if (!mounted) return;
+    _syncTimer();
+    setState(() {});
+  }
+
+  /// Ticks once a second only while the ad-free countdown is visible.
+  void _syncTimer() {
+    if (AdsService.adFree) {
+      _tick ??= Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) return;
+        if (!AdsService.adFree) {
+          _tick?.cancel();
+          _tick = null;
+        }
+        setState(() {});
+      });
+    } else {
+      _tick?.cancel();
+      _tick = null;
+    }
+  }
+
+  Future<void> _watchAd() async {
+    setState(() {
+      _busy = true;
+      _msg = null;
+    });
+    final got = await AdsService.watchAdForCoins();
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _msg = got > 0 ? null : 'No ad available right now. Try again later.';
+    });
+  }
+
+  Future<void> _buyPass() async {
+    final ok = await AdsService.buyAdFree();
+    if (!mounted) return;
+    setState(() => _msg = ok ? null : 'Not enough coins for the pass yet.');
+    _syncTimer();
+  }
+
+  static String _fmt(Duration d) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(d.inHours)}:${two(d.inMinutes % 60)}:${two(d.inSeconds % 60)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: ValueListenableBuilder<int>(
+        valueListenable: Rewards.coins,
+        builder: (_, bal, _) => ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          children: [
+            _header(bal),
+            const SizedBox(height: 18),
+            _adCard(),
+            const SizedBox(height: 14),
+            _passCard(bal),
+            if (_msg != null) ...[
+              const SizedBox(height: 10),
+              Text(_msg!, textAlign: TextAlign.center, style: const TextStyle(color: Pal.danger, fontSize: 13)),
+            ],
+            const SizedBox(height: 14),
+            _pricesCard(),
+            const SizedBox(height: 14),
+            _historyCard(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _header(int bal) => Row(children: [
+        const Text('Shop', style: TextStyle(color: Pal.text, fontSize: 30, fontWeight: FontWeight.w900)),
+        const Spacer(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: Pal.accent(Pal.goldDeep),
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [BoxShadow(color: Pal.goldDeep.withValues(alpha: 0.45), blurRadius: 18)],
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            const Text('🪙', style: TextStyle(fontSize: 18)),
+            const SizedBox(width: 6),
+            Text('$bal', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18)),
+          ]),
+        ),
+      ]);
+
+  Widget _iconBadge(String emoji, Color c) => Container(
+        width: 52,
+        height: 52,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(gradient: Pal.accent(c), borderRadius: BorderRadius.circular(16)),
+        child: Text(emoji, style: const TextStyle(fontSize: 26)),
+      );
+
+  Widget _title(String t, String sub) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(t, style: const TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 3),
+        Text(sub, style: const TextStyle(color: Pal.textDim, fontSize: 13)),
+      ]);
+
+  Widget _adCard() {
+    final left = AdsService.rewardedRemainingToday;
+    const blue = Color(0xFF4DA8FF);
+    return GlassCard(
+      glow: blue,
+      child: Row(children: [
+        _iconBadge('🎬', blue),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _title('Watch ad: +${AdsService.rewardedCoins} coins',
+              left > 0 ? '$left of ${AdsService.dailyRewardedCap} left today' : 'Come back tomorrow for more'),
+        ),
+        PremiumButton(
+          label: _busy ? '…' : 'Watch',
+          compact: true,
+          color: blue,
+          onTap: _busy || left <= 0 ? null : _watchAd,
+        ),
+      ]),
+    );
+  }
+
+  Widget _passCard(int bal) {
+    final active = AdsService.adFree;
+    const green = Color(0xFF2EE6A8);
+    return GlassCard(
+      glow: active ? Pal.success : Pal.gold,
+      child: Row(children: [
+        _iconBadge('🚫', active ? green : Pal.goldDeep),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _title(
+            '24h Ad-free pass',
+            active
+                ? 'Active - ${_fmt(AdsService.adFreeRemaining)} left'
+                : '${AdsService.adFreePrice} coins - no interstitial ads',
+          ),
+        ),
+        PremiumButton(
+          label: active ? 'Extend' : 'Buy',
+          compact: true,
+          color: active ? green : null,
+          onTap: bal >= AdsService.adFreePrice ? _buyPass : null,
+        ),
+      ]),
+    );
+  }
+
+  Widget _priceRow(String emoji, String label, int price) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Row(children: [
+          Text(emoji, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 10),
+          Expanded(child: Text(label, style: const TextStyle(color: Pal.text, fontSize: 15))),
+          Text('$price 🪙', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w800, fontSize: 15)),
+        ]),
+      );
+
+  Widget _pricesCard() => GlassCard(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('Spend coins in games', style: TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 4),
+          const Text('When you run out of free help, use coins or watch an ad.',
+              style: TextStyle(color: Pal.textDim, fontSize: 13)),
+          const SizedBox(height: 8),
+          _priceRow('💡', 'Hint', Prices.hint),
+          _priceRow('↩️', 'Undo', Prices.undo),
+          _priceRow('❤️', 'Extra life', Prices.extraLife),
+          _priceRow('🔓', 'Unlock level', Prices.unlockLevel),
+        ]),
+      );
+
+  Widget _stat(String label, int v, Color c) => Expanded(
+        child: Column(children: [
+          Text('$v', style: TextStyle(color: c, fontSize: 22, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 2),
+          Text(label, style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+        ]),
+      );
+
+  Widget _historyCard() => GlassCard(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text('Coin history', style: TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 12),
+          Row(children: [
+            _stat('Earned', Rewards.earned, Pal.success),
+            _stat('Spent', Rewards.spent, Pal.danger),
+            _stat('Balance', Rewards.balance, Pal.gold),
+          ]),
+          const SizedBox(height: 10),
+          const Text('Earn coins by clearing new levels (more stars = more coins).',
+              style: TextStyle(color: Pal.textDim, fontSize: 12)),
+        ]),
+      );
 }
