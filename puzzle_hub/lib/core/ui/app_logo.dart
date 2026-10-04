@@ -21,7 +21,7 @@ class AppLogo extends StatelessWidget {
       );
 }
 
-/// Purple-gold "G" logo.
+/// Purple-gold "Master G" logo: game motifs above the M-aster-G wordmark.
 ///
 /// * [background] paints the indigo gradient square + puzzle-piece motif.
 /// * [glyph] paints the glossy gold G (with glow + sparkle).
@@ -33,12 +33,16 @@ class MasterGLogoPainter extends CustomPainter {
     this.glyph = true,
     this.monochrome = false,
     this.glyphScale = 0.60,
+    this.fontFamily,
   });
 
   final bool background;
   final bool glyph;
   final bool monochrome;
   final double glyphScale;
+
+  /// Font for the wordmark / 2048 tile (null = platform default).
+  final String? fontFamily;
 
   static const bgLight = Color(0xFF7C5CFF);
   static const bgDark = Color(0xFF2D1B69);
@@ -48,7 +52,7 @@ class MasterGLogoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (background && !monochrome) paintBackground(canvas, size);
-    if (glyph) _paintG(canvas, size);
+    if (glyph) _paintArt(canvas, size);
   }
 
   /// Indigo gradient with soft top light, vignette and a faint puzzle piece.
@@ -145,88 +149,137 @@ class MasterGLogoPainter extends CustomPainter {
     return Path.combine(PathOperation.union, Path.combine(PathOperation.union, arc, terminal), bar);
   }
 
-  static Path _sparklePath(Offset c, double r) {
-    final p = Path()..moveTo(c.dx, c.dy - r);
-    final k = r * 0.22;
-    p
-      ..quadraticBezierTo(c.dx + k, c.dy - k, c.dx + r, c.dy)
-      ..quadraticBezierTo(c.dx + k, c.dy + k, c.dx, c.dy + r)
-      ..quadraticBezierTo(c.dx - k, c.dy + k, c.dx - r, c.dy)
-      ..quadraticBezierTo(c.dx - k, c.dy - k, c.dx, c.dy - r)
-      ..close();
-    return p;
-  }
 
-  void _paintG(Canvas canvas, Size size) {
+  /// Game motifs (snake arrow, 2048 tile, rows of blocks) above the
+  /// "Master G" wordmark: big M, small "aster", medium G.
+  void _paintArt(Canvas canvas, Size size) {
     final s = size.shortestSide;
-    final c = size.center(Offset.zero);
-    final ro = s * glyphScale / 2;
-    final g = gPath(c, ro);
+    // Content box: glyphScale 0.60 = full icon; smaller values (adaptive
+    // foreground) shrink everything to stay inside the safe zone.
+    final b = s * 0.84 * (glyphScale / 0.60);
+    final o = size.center(Offset.zero) - Offset(b / 2, b / 2);
+    Offset at(double x, double y) => o + Offset(x * b, y * b);
+    final white = Colors.white;
 
+    // --- Snake arrow (left) ---
+    final arrow = Path()
+      ..moveTo(at(0.07, 0.50).dx, at(0.07, 0.50).dy)
+      ..lineTo(at(0.07, 0.27).dx, at(0.07, 0.27).dy)
+      ..lineTo(at(0.21, 0.27).dx, at(0.21, 0.27).dy)
+      ..lineTo(at(0.21, 0.13).dx, at(0.21, 0.13).dy);
+    final arrowPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = b * 0.045
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final head = Path()
+      ..moveTo(at(0.21, 0.04).dx, at(0.21, 0.04).dy)
+      ..lineTo(at(0.30, 0.15).dx, at(0.30, 0.15).dy)
+      ..lineTo(at(0.12, 0.15).dx, at(0.12, 0.15).dy)
+      ..close();
     if (monochrome) {
-      canvas.drawPath(g, Paint()..color = Colors.white);
-      return;
+      canvas.drawPath(arrow, arrowPaint..color = white);
+      canvas.drawPath(head, Paint()..color = white);
+    } else {
+      canvas.drawPath(arrow, Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = b * 0.075
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..color = const Color(0xFF5EEAD4).withValues(alpha: 0.35)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, b * 0.02));
+      canvas.drawPath(arrow, arrowPaint..color = const Color(0xFF5EEAD4));
+      canvas.drawPath(head, Paint()..color = const Color(0xFF5EEAD4));
     }
 
-    final bounds = g.getBounds();
-    // Drop shadow + warm glow.
-    canvas.drawPath(
-      g.shift(Offset(0, s * 0.012)),
-      Paint()
-        ..color = const Color(0xFF0B0820).withValues(alpha: 0.45)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, s * 0.018),
-    );
-    canvas.drawPath(
-      g,
-      Paint()
-        ..color = const Color(0xFFFFC94D).withValues(alpha: 0.55)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, s * 0.045),
-    );
-    // Gold body.
-    canvas.drawPath(
-      g,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFFFF0BE), gold, goldDeep, Color(0xFFD9811A)],
-          stops: [0.0, 0.38, 0.78, 1.0],
-        ).createShader(bounds),
-    );
-    // Gloss on the upper half.
-    canvas.save();
-    canvas.clipPath(g);
-    final gloss = Rect.fromLTRB(bounds.left, bounds.top, bounds.right, bounds.top + bounds.height * 0.5);
-    canvas.drawOval(
-      gloss.inflate(ro * 0.1).shift(Offset(0, -ro * 0.12)),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.white.withValues(alpha: 0.55), Colors.white.withValues(alpha: 0.0)],
-        ).createShader(gloss),
-    );
-    canvas.restore();
-    // Crisp edge for small sizes.
-    canvas.drawPath(
-      g,
-      Paint()
+    // --- 2048 tile (centre) ---
+    final tile = RRect.fromRectAndRadius(Rect.fromPoints(at(0.33, 0.05), at(0.70, 0.42)), Radius.circular(b * 0.07));
+    if (monochrome) {
+      canvas.drawRRect(tile, Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = math.max(1.0, s * 0.006)
-        ..color = const Color(0xFF9A5A0C).withValues(alpha: 0.55),
-    );
-    // Sparkle near the terminal.
-    final sp = c + Offset(ro * 0.98, -ro * 0.98);
-    canvas.drawPath(
-      _sparklePath(sp, ro * 0.2),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.6)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, s * 0.01),
-    );
-    canvas.drawPath(_sparklePath(sp, ro * 0.17), Paint()..color = const Color(0xFFFFF6DA));
+        ..strokeWidth = b * 0.03
+        ..color = white);
+    } else {
+      canvas.drawRRect(tile.shift(Offset(0, b * 0.015)), Paint()
+        ..color = Colors.black.withValues(alpha: 0.35)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, b * 0.02));
+      canvas.drawRRect(tile, Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFE08A), goldDeep, Color(0xFFE2711D)],
+        ).createShader(tile.outerRect));
+      canvas.drawRRect(tile, Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = math.max(1.0, b * 0.008)
+        ..color = Colors.white.withValues(alpha: 0.55));
+    }
+    final num = TextPainter(
+      textDirection: TextDirection.ltr,
+      text: TextSpan(
+        text: '2048',
+        style: TextStyle(fontFamily: fontFamily, fontSize: b * 0.125, fontWeight: FontWeight.w900, color: white, height: 1),
+      ),
+    )..layout();
+    num.paint(canvas, tile.center - Offset(num.width / 2, num.height / 2));
+
+    // --- Rows of blocks (right) ---
+    const rows = [
+      [Color(0xFFFF6FB5), Color(0xFFFF6FB5)],
+      [Color(0xFF4DA8FF), Color(0xFF4DA8FF)],
+      [Color(0xFF4ADE80), Color(0xFF4ADE80)],
+    ];
+    final cell = b * 0.095, gap = b * 0.022;
+    for (var r = 0; r < rows.length; r++) {
+      for (var c = 0; c < 2; c++) {
+        final tl = at(0.76, 0.08) + Offset(c * (cell + gap), r * (cell + gap));
+        final rr = RRect.fromRectAndRadius(tl & Size(cell, cell), Radius.circular(cell * 0.25));
+        canvas.drawRRect(rr, Paint()..color = monochrome ? white : rows[r][c]);
+        if (!monochrome) {
+          canvas.drawRRect(
+              RRect.fromRectAndRadius(Rect.fromLTWH(tl.dx + cell * 0.15, tl.dy + cell * 0.12, cell * 0.7, cell * 0.22),
+                  Radius.circular(cell * 0.1)),
+              Paint()..color = Colors.white.withValues(alpha: 0.35));
+        }
+      }
+    }
+
+    // --- Wordmark: big M, small "aster", medium G (all on one baseline) ---
+    final goldShader = const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFFFF0BE), gold, goldDeep],
+    ).createShader(Rect.fromLTWH(0, 0, b, b * 0.36)); // text-local coords (painted after translate)
+    final shadow = monochrome ? null : [Shadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: b * 0.02, offset: Offset(0, b * 0.01))];
+    TextStyle st(double size, {bool goldText = false}) => TextStyle(
+          fontFamily: fontFamily,
+          fontSize: b * size,
+          fontWeight: FontWeight.w900,
+          height: 1,
+          shadows: shadow,
+          foreground: Paint()
+            ..shader = (goldText && !monochrome) ? goldShader : null
+            ..color = (goldText && !monochrome) ? gold : white,
+        );
+    final word = TextPainter(
+      textDirection: TextDirection.ltr,
+      text: TextSpan(children: [
+        TextSpan(text: 'M', style: st(0.36, goldText: true)),
+        TextSpan(text: 'aster', style: st(0.17)),
+        TextSpan(text: ' G', style: st(0.25, goldText: true)),
+      ]),
+    )..layout();
+    // Shrink to fit the content width if the font is wide.
+    final scale = math.min(1.0, b * 0.98 / word.width);
+    canvas.save();
+    final pos = at(0.5, 0.95) - Offset(word.width * scale / 2, word.height * scale);
+    canvas.translate(pos.dx, pos.dy);
+    canvas.scale(scale);
+    word.paint(canvas, Offset.zero);
+    canvas.restore();
   }
 
   @override
   bool shouldRepaint(MasterGLogoPainter old) =>
-      old.background != background || old.glyph != glyph || old.monochrome != monochrome || old.glyphScale != glyphScale;
+      old.background != background || old.glyph != glyph || old.monochrome != monochrome || old.glyphScale != glyphScale || old.fontFamily != fontFamily;
 }

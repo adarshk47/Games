@@ -59,7 +59,7 @@ void _featureGraphic(Canvas canvas, Size size) {
   canvas.save();
   canvas.clipRRect(rrect);
   canvas.translate(tileRect.left, tileRect.top);
-  const MasterGLogoPainter().paint(canvas, tileRect.size);
+  const MasterGLogoPainter(fontFamily: _font).paint(canvas, tileRect.size);
   canvas.restore();
   canvas.drawRRect(
     rrect,
@@ -74,8 +74,9 @@ void _featureGraphic(Canvas canvas, Size size) {
     text: const TextSpan(
       style: TextStyle(fontFamily: _font, fontSize: 104, fontWeight: FontWeight.w900, color: Color(0xFFF4F1FF), letterSpacing: 1),
       children: [
-        TextSpan(text: 'Master '),
-        TextSpan(text: 'G', style: TextStyle(color: Color(0xFFFFD369))),
+        TextSpan(text: 'M', style: TextStyle(fontSize: 150, color: Color(0xFFFFD369))),
+        TextSpan(text: 'aster', style: TextStyle(fontSize: 76)),
+        TextSpan(text: ' G', style: TextStyle(fontSize: 108, color: Color(0xFFFFD369))),
       ],
     ),
   )..layout();
@@ -107,13 +108,13 @@ void main() {
   testWidgets('render icon PNGs', (tester) async {
     await tester.runAsync(() async {
       await _loadFonts();
-      const full = MasterGLogoPainter();
+      const full = MasterGLogoPainter(fontFamily: _font);
       await _write('assets/icon/app_icon.png', 1024, 1024, full.paint);
       await _write('assets/icon/app_icon_background.png', 1024, 1024, (c, s) => MasterGLogoPainter.paintBackground(c, s));
       await _write('assets/icon/app_icon_foreground.png', 1024, 1024,
-          const MasterGLogoPainter(background: false, glyphScale: 0.56).paint);
+          const MasterGLogoPainter(background: false, glyphScale: 0.48, fontFamily: _font).paint);
       await _write('assets/icon/app_icon_monochrome.png', 1024, 1024,
-          const MasterGLogoPainter(background: false, monochrome: true, glyphScale: 0.56).paint);
+          const MasterGLogoPainter(background: false, monochrome: true, glyphScale: 0.48, fontFamily: _font).paint);
       await _write('store_assets/play_icon_512.png', 512, 512, full.paint);
       await _write('store_assets/feature_graphic_1024x500.png', 1024, 500, _featureGraphic);
     });
