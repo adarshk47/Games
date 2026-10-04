@@ -1,7 +1,7 @@
 /// Level definitions + star rules (pure Dart).
 const int kLevelCount = 30;
 
-/// Difficulty tier, applies to both modes.
+/// Difficulty tier, for the Labyrinth.
 enum MazeTier {
   easy('Easy'),
   medium('Medium'),
@@ -53,43 +53,5 @@ int labStars(int moves, int optimal, {int torchesUsed = 0}) {
   final r = moves / (optimal <= 0 ? 1 : optimal);
   var s = r <= 2.0 ? 3 : (r <= 3.5 ? 2 : 1);
   if (torchesUsed > 0 && s > 2) s = 2;
-  return s;
-}
-
-class ForkLevel {
-  const ForkLevel(this.tier, this.level, this.forks, this.options, this.resetFrom, this.lanterns, this.seed);
-  final MazeTier tier;
-  final int level;
-  final int forks;
-  final int options;
-
-  /// A wrong turn at fork index >= [resetFrom] sends the player back to the
-  /// first fork. A large value means never.
-  final int resetFrom;
-  final int lanterns;
-  final int seed;
-
-  bool get resetOnWrong => resetFrom < 1000;
-
-  static ForkLevel of(MazeTier tier, int level) {
-    final seed = 5000 + level * 104729 + tier.index * 1000003;
-    switch (tier) {
-      case MazeTier.easy:
-        return ForkLevel(tier, level, _lerp(3, 4, level), 3, 1000, 3, seed);
-      case MazeTier.medium:
-        return ForkLevel(tier, level, _lerp(4, 6, level), level < 15 ? 3 : 4, 1000, 2, seed);
-      case MazeTier.hard:
-        return ForkLevel(tier, level, _lerp(5, 8, level), level < 15 ? 4 : 5, 2, 2, seed);
-      case MazeTier.extreme:
-        return ForkLevel(tier, level, _lerp(6, 10, level), level < 15 ? 5 : 6, 0, 1, seed);
-    }
-  }
-}
-
-/// Stars by wrong turns. Using the lantern caps the result at 2 stars.
-int forkStars(int wrong, int forks, {bool usedHint = false}) {
-  final lim = forks ~/ 2 < 1 ? 1 : forks ~/ 2;
-  var s = wrong == 0 ? 3 : (wrong <= lim ? 2 : 1);
-  if (usedHint && s > 2) s = 2;
   return s;
 }

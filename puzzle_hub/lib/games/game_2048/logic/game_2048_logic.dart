@@ -39,7 +39,11 @@ enum Tier2048 {
   easy('Easy', 5, 5, 2048, 0, 0.10),
   medium('Medium', 4, 3, 2048, 0, 0.10),
   hard('Hard', 4, 1, 1024, 2, 0.25),
-  extreme('Extreme', 4, 0, 256, 3, 0.30);
+  extreme('Extreme', 4, 0, 256, 3, 0.30),
+
+  /// Plain original rules. Declared last so saved tier indices stay valid;
+  /// the UI shows it as a hero card above the four difficulty tiers.
+  classic('Classic 2048', 4, 3, 2048, 0, 0.10);
 
   const Tier2048(this.label, this.size, this.undos, this.target, this.stones, this.fourChance);
   final String label;

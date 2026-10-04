@@ -72,8 +72,9 @@ class _Game2048ScreenState extends State<Game2048Screen> {
 
   void _awardMilestones() {
     final n = _g.size, m = _g.maxTile, t = _g.tier.name;
+    final prefix = _g.tier == Tier2048.classic ? 'classic' : 'tier-$t';
     void pay(String id, int v, int stars) {
-      if (_paid.add(id)) Rewards.onLevelComplete('game_2048', 'size$n/tier-$t-$v', stars: stars, score: _g.score);
+      if (_paid.add(id)) Rewards.onLevelComplete('game_2048', 'size$n/$prefix-$v', stars: stars, score: _g.score);
     }
     if (m >= _g.target) pay('target', _g.target, 3);
     if (m >= 512 && _g.target != 512) pay('512', 512, 1);
@@ -280,12 +281,47 @@ class _TierSelector extends StatelessWidget {
     Tier2048.medium: Color(0xFF60A5FA),
     Tier2048.hard: Color(0xFFFB923C),
     Tier2048.extreme: Color(0xFFFF4D6D),
+    Tier2048.classic: Color(0xFFF59E0B),
   };
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      for (final t in Tier2048.values)
+    const tiers = [Tier2048.easy, Tier2048.medium, Tier2048.hard, Tier2048.extreme];
+    final classicSel = selected == Tier2048.classic;
+    final classicColor = _colors[Tier2048.classic]!;
+    final hero = Pressable(
+      onTap: () => onSelect(Tier2048.classic),
+      child: AnimatedContainer(
+        duration: 200.ms,
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 6, left: 3, right: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        decoration: BoxDecoration(
+          gradient: classicSel ? Pal.accent(classicColor) : null,
+          color: classicSel ? null : Pal.glass,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: classicSel ? Colors.white.withValues(alpha: 0.45) : Pal.glassBorder),
+          boxShadow: classicSel ? [BoxShadow(color: classicColor.withValues(alpha: 0.4), blurRadius: 14, spreadRadius: -3)] : null,
+        ),
+        child: Row(children: [
+          Icon(Icons.grid_view_rounded, size: 20, color: classicSel ? Colors.white : classicColor),
+          const SizedBox(width: 10),
+          Text('Classic 2048',
+              style: TextStyle(color: classicSel ? Colors.white : Pal.text, fontWeight: FontWeight.w900, fontSize: 15)),
+          const Spacer(),
+          Flexible(
+            child: Text(
+                classicSel ? '4x4 • original rules • $undosLeft/${Tier2048.classic.undos} undos' : '4x4 • original rules • endless',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    color: classicSel ? Colors.white.withValues(alpha: 0.9) : Pal.textDim, fontSize: 11, fontWeight: FontWeight.w700)),
+          ),
+        ]),
+      ),
+    );
+    return Column(mainAxisSize: MainAxisSize.min, children: [hero, Row(children: [
+      for (final t in tiers)
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -298,7 +334,7 @@ class _TierSelector extends StatelessWidget {
             ),
           ),
         ),
-    ]);
+    ])]);
   }
 }
 

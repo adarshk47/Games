@@ -36,6 +36,7 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appLabel"] = "Master G"
     }
 
     signingConfigs {
@@ -50,6 +51,11 @@ android {
     }
 
     buildTypes {
+        // Debug builds install side-by-side with the Play Store build (different package id + label).
+        debug {
+            applicationIdSuffix = ".dev"
+            manifestPlaceholders["appLabel"] = "Master G Dev"
+        }
         release {
             signingConfig = if (keystoreProperties.containsKey("storeFile"))
                 signingConfigs.getByName("release") else signingConfigs.getByName("debug")

@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:puzzle_hub/games/maze_escape/logic/fork_path.dart';
 import 'package:puzzle_hub/games/maze_escape/logic/levels.dart';
 import 'package:puzzle_hub/games/maze_escape/logic/maze.dart';
 
@@ -56,20 +55,6 @@ void main() {
     }
   });
 
-  test('every fork level of every tier has exactly one correct option per fork', () {
-    for (final t in MazeTier.values) {
-      for (var level = 1; level <= kLevelCount; level++) {
-        final l = ForkLevel.of(t, level);
-        final f = ForkPath.generate(l.seed, l.forks, l.options);
-        expect(f.forkCount, l.forks);
-        for (var i = 0; i < f.forkCount; i++) {
-          expect([for (var o = 0; o < l.options; o++) if (f.isCorrect(i, o)) o].length, 1, reason: '${t.name} L$level fork $i');
-          expect(f.correct[i], inInclusiveRange(0, l.options - 1));
-        }
-      }
-    }
-  });
-
   test('tier scaling', () {
     expect(LabLevel.of(MazeTier.easy, 1).size, 7);
     expect(LabLevel.of(MazeTier.easy, kLevelCount).size, 11);
@@ -84,22 +69,6 @@ void main() {
     expect(LabLevel.of(MazeTier.extreme, 5).fogRadius, 2);
     expect(LabLevel.of(MazeTier.extreme, 5).torches, 1);
     expect(LabLevel.of(MazeTier.extreme, 5).limitFactor, lessThan(LabLevel.of(MazeTier.hard, 5).limitFactor));
-
-    expect(ForkLevel.of(MazeTier.easy, 1).options, 3);
-    expect(ForkLevel.of(MazeTier.easy, 1).forks, 3);
-    expect(ForkLevel.of(MazeTier.easy, kLevelCount).forks, 4);
-    expect(ForkLevel.of(MazeTier.easy, 5).resetOnWrong, isFalse);
-    expect(ForkLevel.of(MazeTier.medium, kLevelCount).options, 4);
-    expect(ForkLevel.of(MazeTier.hard, 1).options, 4);
-    expect(ForkLevel.of(MazeTier.hard, kLevelCount).options, 5);
-    expect(ForkLevel.of(MazeTier.hard, 5).resetOnWrong, isTrue);
-    expect(ForkLevel.of(MazeTier.hard, 5).resetFrom, greaterThan(0));
-    expect(ForkLevel.of(MazeTier.extreme, 1).options, 5);
-    expect(ForkLevel.of(MazeTier.extreme, kLevelCount).options, 6);
-    expect(ForkLevel.of(MazeTier.extreme, 1).forks, 6);
-    expect(ForkLevel.of(MazeTier.extreme, kLevelCount).forks, 10);
-    expect(ForkLevel.of(MazeTier.extreme, 5).resetFrom, 0);
-    expect(ForkLevel.of(MazeTier.extreme, 5).lanterns, 1);
   });
 
   test('stars', () {
@@ -107,8 +76,5 @@ void main() {
     expect(labStars(10, 10, torchesUsed: 1), 2);
     expect(labStars(30, 10), 2);
     expect(labStars(100, 10), 1);
-    expect(forkStars(0, 5), 3);
-    expect(forkStars(2, 5), 2);
-    expect(forkStars(9, 5), 1);
   });
 }

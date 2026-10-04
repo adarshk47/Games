@@ -252,4 +252,30 @@ void main() {
       expect(reached, true, reason: '${t.label} target ${t.target}');
     }
   }, timeout: const Timeout(Duration(minutes: 9)));
+
+  group('Classic tier', () {
+    test('config matches original rules', () {
+      final g = Game2048.forTier(Tier2048.classic, rng: Random(1))..reset();
+      expect(g.size, 4);
+      expect(g.stoneCount, 0);
+      expect(g.stones, isEmpty);
+      expect(g.fourChance, 0.1);
+      expect(g.target, 2048);
+      expect(g.maxUndos, 3);
+      expect(g.tiles.length, 2);
+    });
+
+    test('save/load round trip keeps tier', () {
+      final g = Game2048.forTier(Tier2048.classic, rng: Random(4))..reset();
+      for (var i = 0; i < 6; i++) {
+        g.move(Dir.values[i % 4]);
+      }
+      final g2 = Game2048.fromJsonString(g.toJsonString())!;
+      expect(g2.tier, Tier2048.classic);
+      expect(g2.size, 4);
+      expect(g2.score, g.score);
+      expect(g2.target, 2048);
+      expect(g2.tiles.length, g.tiles.length);
+    });
+  });
 }

@@ -166,7 +166,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   Future<void> _win() async {
     _done = true;
     final stars = labStars(moves, optimal, torchesUsed: torchesUsed);
-    MazeProgress.save(MazeMode.labyrinth, widget.tier, widget.level, stars);
+    MazeProgress.save(widget.tier, widget.level, stars);
     Rewards.onLevelComplete('maze_escape', 'labyrinth-${widget.tier.name}-L${widget.level}', stars: stars);
     setState(() {});
     await Future<void>.delayed(const Duration(milliseconds: 450));
@@ -181,7 +181,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
       actions: [
         DialogAction('Levels', () => Navigator.of(context).maybePop()),
         DialogAction('Replay', _restart),
-        if (hasNext) DialogAction('Next', () => openMazeLevel(context, MazeMode.labyrinth, widget.tier, widget.level + 1, replace: true), primary: true),
+        if (hasNext) DialogAction('Next', () => openMazeLevel(context, widget.tier, widget.level + 1, replace: true), primary: true),
       ],
     );
   }
