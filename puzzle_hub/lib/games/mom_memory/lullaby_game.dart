@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -22,7 +23,7 @@ class _LullabyGameState extends State<LullabyGame> {
   int _lit = -1;
   bool _listening = false; // player's turn
   bool _started = false;
-  String _msg = 'Shuru karne ke liye neeche dabaiye';
+  String _msg = tr('mom_memory.lullaby_tap_start');
   int _run = 0; // cancels stale playback loops
 
   @override
@@ -36,7 +37,7 @@ class _LullabyGameState extends State<LullabyGame> {
   void _start() {
     _seq = extendPattern([], _rng);
     _started = true;
-    _play('Dhyaan se dekhiye');
+    _play(tr('mom_memory.watch'));
   }
 
   Future<void> _play(String msg) async {
@@ -60,7 +61,7 @@ class _LullabyGameState extends State<LullabyGame> {
     if (!mounted || id != _run) return;
     setState(() {
       _listening = true;
-      _msg = 'Ab aapki baari';
+      _msg = tr('mom_memory.your_turn');
     });
   }
 
@@ -77,7 +78,7 @@ class _LullabyGameState extends State<LullabyGame> {
       _listening = false;
       await _wait(500);
       if (!mounted) return;
-      _play('${pick(gentle)}. Pattern phir se dikhate hain');
+      _play(tr('mom_memory.lullaby_retry', {'msg': pick(gentle)}));
     } else if (r == TapResult.right) {
       setState(() => _input++);
     } else {
@@ -97,7 +98,7 @@ class _LullabyGameState extends State<LullabyGame> {
       await _wait(1100);
       if (!mounted) return;
       _seq = extendPattern(_seq, _rng);
-      _play('Ab thoda lamba, dhyaan se dekhiye');
+      _play(tr('mom_memory.lullaby_longer'));
     }
   }
 
@@ -105,11 +106,11 @@ class _LullabyGameState extends State<LullabyGame> {
   Widget build(BuildContext context) {
     final best = Storage.getInt('mom.lullaby.best');
     return MmPage(
-      title: 'Lullaby Pattern',
+      title: tr('mom_memory.lullaby_title'),
       actions: [
         BarAction(
           icon: Icons.refresh_rounded,
-          tooltip: 'Naya',
+          tooltip: tr('common.new_game'),
           onTap: () {
             _run++;
             setState(() {
@@ -117,7 +118,7 @@ class _LullabyGameState extends State<LullabyGame> {
               _seq = [];
               _lit = -1;
               _listening = false;
-              _msg = 'Shuru karne ke liye neeche dabaiye';
+              _msg = tr('mom_memory.lullaby_tap_start');
             });
           },
         ),
@@ -127,8 +128,11 @@ class _LullabyGameState extends State<LullabyGame> {
           const SizedBox(height: 10),
           Text(
             _started
-                ? 'Lambai ${_seq.length}   •   Sabse achhi: $best'
-                : 'Sabse achhi lambai: $best',
+                ? tr('mom_memory.lullaby_status', {
+                    'n': _seq.length,
+                    'best': best,
+                  })
+                : tr('mom_memory.lullaby_best_len', {'best': best}),
             style: const TextStyle(
               color: Pal.textDim,
               fontWeight: FontWeight.w700,
@@ -222,7 +226,7 @@ class _LullabyGameState extends State<LullabyGame> {
           ),
           if (!_started)
             PremiumButton(
-              label: 'Shuru karein',
+              label: tr('mom_memory.start'),
               icon: Icons.nightlight_round,
               color: Mm.rose,
               onTap: _start,

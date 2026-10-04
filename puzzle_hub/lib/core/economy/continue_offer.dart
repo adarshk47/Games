@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ads/ads_service.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../ui/ui.dart';
 
@@ -27,24 +28,24 @@ class Prices {
 ({String title, String emoji, String message}) _copy(OfferKind k) =>
     switch (k) {
       OfferKind.hint => (
-        title: 'Need a hint?',
+        title: tr('offer.hint.title'),
         emoji: '💡',
-        message: 'Reveal a helpful move.',
+        message: tr('offer.hint.msg'),
       ),
       OfferKind.undo => (
-        title: 'Undo move?',
+        title: tr('offer.undo.title'),
         emoji: '↩️',
-        message: 'Take back your last move.',
+        message: tr('offer.undo.msg'),
       ),
       OfferKind.extraLife => (
-        title: 'Keep going?',
+        title: tr('offer.life.title'),
         emoji: '❤️',
-        message: 'Get an extra life and continue.',
+        message: tr('offer.life.msg'),
       ),
       OfferKind.unlockLevel => (
-        title: 'Unlock level?',
+        title: tr('offer.unlock.title'),
         emoji: '🔓',
-        message: 'Jump ahead and play it now.',
+        message: tr('offer.unlock.msg'),
       ),
     };
 
@@ -97,7 +98,7 @@ class _OfferDialogState extends State<_OfferDialog> {
     } else {
       setState(() {
         _busy = false;
-        _error = 'Not enough coins';
+        _error = tr('offer.not_enough');
       });
     }
   }
@@ -114,7 +115,7 @@ class _OfferDialogState extends State<_OfferDialog> {
     } else {
       setState(() {
         _busy = false;
-        _error = 'No ad available right now. Try again later.';
+        _error = tr('shop.no_ad');
       });
     }
   }
@@ -172,9 +173,9 @@ class _OfferDialogState extends State<_OfferDialog> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Balance ',
-                            style: TextStyle(color: Pal.textDim, fontSize: 14),
+                          Text(
+                            '${tr('offer.balance')} ',
+                            style: const TextStyle(color: Pal.textDim, fontSize: 14),
                           ),
                           const Text('🪙', style: TextStyle(fontSize: 15)),
                           const SizedBox(width: 4),
@@ -193,7 +194,7 @@ class _OfferDialogState extends State<_OfferDialog> {
                         width: double.infinity,
                         child: Center(
                           child: PremiumButton(
-                            label: 'Use ${widget.price} coins',
+                            label: tr('offer.use_coins', {'coins': widget.price}),
                             icon: Icons.monetization_on_rounded,
                             onTap: _busy || !canAfford ? null : _useCoins,
                           ),
@@ -201,7 +202,7 @@ class _OfferDialogState extends State<_OfferDialog> {
                       ),
                       const SizedBox(height: 10),
                       PremiumButton(
-                        label: _busy ? 'Loading…' : 'Watch ad',
+                        label: _busy ? tr('offer.loading') : tr('offer.watch_ad'),
                         icon: Icons.ondemand_video_rounded,
                         color: const Color(0xFF4DA8FF),
                         onTap: _busy ? null : _watchAd,
@@ -209,7 +210,7 @@ class _OfferDialogState extends State<_OfferDialog> {
                       if (_error != null || !canAfford) ...[
                         const SizedBox(height: 10),
                         Text(
-                          _error ?? 'Need ${widget.price - bal} more coins',
+                          _error ?? tr('offer.need_more', {'n': widget.price - bal}),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Pal.danger,
@@ -222,9 +223,9 @@ class _OfferDialogState extends State<_OfferDialog> {
                         onPressed: _busy
                             ? null
                             : () => Navigator.of(context).pop(false),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
+                        child: Text(
+                          tr('common.cancel'),
+                          style: const TextStyle(
                             color: Pal.textDim,
                             fontWeight: FontWeight.w700,
                           ),

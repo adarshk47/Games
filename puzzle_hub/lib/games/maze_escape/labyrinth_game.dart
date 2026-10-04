@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/levels.dart';
@@ -186,14 +187,14 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     final hasNext = widget.level < kLevelCount;
     showPremiumDialog(
       context,
-      title: 'Bahar nikal gaye!',
+      title: tr('maze_escape.lab_win_title'),
       emoji: '🚪',
       stars: stars,
-      message: 'Escaped in $moves moves (best possible: $optimal).',
+      message: tr('maze_escape.lab_win_msg', {'moves': moves, 'optimal': optimal}),
       actions: [
-        DialogAction('Levels', () => Navigator.of(context).maybePop()),
-        DialogAction('Replay', _restart),
-        if (hasNext) DialogAction('Next', () => openMazeLevel(context, widget.tier, widget.level + 1, replace: true), primary: true),
+        DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop()),
+        DialogAction(tr('common.replay'), _restart),
+        if (hasNext) DialogAction(tr('common.next_level'), () => openMazeLevel(context, widget.tier, widget.level + 1, replace: true), primary: true),
       ],
     );
   }
@@ -221,13 +222,13 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     if (!mounted) return;
     showPremiumDialog(
       context,
-      title: 'Moves khatam!',
+      title: tr('maze_escape.lab_lose_title'),
       emoji: '😵',
       color: Pal.danger,
-      message: 'You ran out of the $limit moves allowed. Try a smarter route.',
+      message: tr('maze_escape.lab_lose_msg', {'limit': limit}),
       actions: [
-        DialogAction('Levels', () => Navigator.of(context).maybePop()),
-        DialogAction('Retry', _restart, primary: true),
+        DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop()),
+        DialogAction(tr('common.retry'), _restart, primary: true),
       ],
     );
   }
@@ -235,11 +236,11 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Labyrinth ${widget.tier.label} ${widget.level}',
+      title: tr('maze_escape.lab_title', {'tier': mazeTierLabel(widget.tier), 'n': widget.level}),
       tint: const Color(0xFF7C5CFF),
       actions: [
-        BarAction(icon: Icons.flashlight_on_rounded, tooltip: 'Torch', onTap: !_done ? _useTorch : null),
-        BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: _restart),
+        BarAction(icon: Icons.flashlight_on_rounded, tooltip: tr('maze_escape.torch'), onTap: !_done ? _useTorch : null),
+        BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: _restart),
       ],
       body: Column(children: [
         _hud(),
@@ -296,11 +297,11 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Wrap(spacing: 8, runSpacing: 6, alignment: WrapAlignment.center, children: [
-        chip('Moves $moves${limit > 0 ? ' / $limit' : ''}', color: nearLimit ? Pal.danger : Pal.text),
+        chip(limit > 0 ? tr('maze_escape.hud_moves_limit', {'n': moves, 'limit': limit}) : tr('maze_escape.hud_moves', {'n': moves}), color: nearLimit ? Pal.danger : Pal.text),
         chip('🔦 $torchesLeft'),
         chip('${cfg.size}x${cfg.size}'),
-        if (cfg.fogRadius > 0) chip('🌫️ Fog', color: Pal.textDim),
-        if (_deadEnds.isNotEmpty) chip('✖ ${_deadEnds.length} dead ends', color: Pal.danger),
+        if (cfg.fogRadius > 0) chip(tr('maze_escape.fog'), color: Pal.textDim),
+        if (_deadEnds.isNotEmpty) chip(tr('maze_escape.dead_ends', {'n': _deadEnds.length}), color: Pal.danger),
       ]),
     );
   }

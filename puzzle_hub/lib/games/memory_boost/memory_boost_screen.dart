@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'card_match_game.dart';
@@ -34,15 +35,15 @@ class _MemoryBoostScreenState extends State<MemoryBoostScreen> {
       numBest = numBest > Storage.getInt(numberBestKeyFor(t)) ? numBest : Storage.getInt(numberBestKeyFor(t));
     }
     final cards = <_Hero>[
-      _Hero(Icons.grid_view_rounded, Pal.accents[4], 'Card Match', 'Flip pairs of cards. Easy to Extreme.',
-          'Stars $cardStars/$cardMax', () => _open(const CardMatchScreen())),
-      _Hero(Icons.lightbulb_rounded, Pal.accents[1], 'Simon Sequence', 'Repeat the growing light pattern.',
-          'Best streak $simonBest', () => _open(const SimonScreen())),
-      _Hero(Icons.pin_rounded, Pal.accents[3], 'Number Memory', 'Remember the number, one more digit each round.',
-          'Best round $numBest', () => _open(const NumberMemoryScreen())),
+      _Hero(Icons.grid_view_rounded, Pal.accents[4], tr('memory_boost.card.title'), tr('memory_boost.card.sub'),
+          tr('memory_boost.card.stars', {'n': cardStars, 'max': cardMax}), () => _open(const CardMatchScreen())),
+      _Hero(Icons.lightbulb_rounded, Pal.accents[1], tr('memory_boost.simon.title'), tr('memory_boost.simon.sub'),
+          tr('memory_boost.simon.best_streak', {'n': simonBest}), () => _open(const SimonScreen())),
+      _Hero(Icons.pin_rounded, Pal.accents[3], tr('memory_boost.number.title'), tr('memory_boost.number.sub'),
+          tr('memory_boost.number.best_round', {'n': numBest}), () => _open(const NumberMemoryScreen())),
     ];
     return GameScaffold(
-      title: 'Brain Gym',
+      title: tr('memory_boost.title'),
       tint: mbTint,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),

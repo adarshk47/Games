@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../account/account_service.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import 'cloud_service.dart';
@@ -95,33 +96,33 @@ class CloudAuth {
   Future<void> _ensureGoogle() => _googleInit ??= GoogleSignIn.instance.initialize();
 
   Future<String?> signInWithGoogle() async {
-    if (!CloudService.available) return CloudService.pendingMessage;
+    if (!CloudService.available) return CloudService.pendingText;
     try {
       await _ensureGoogle();
       final acc = await GoogleSignIn.instance.authenticate();
       final idToken = acc.authentication.idToken;
-      if (idToken == null) return 'Google sign-in failed (no token). Check the Firebase setup.';
+      if (idToken == null) return tr('cloud.err.google_no_token');
       final res = await _auth.signInWithCredential(GoogleAuthProvider.credential(idToken: idToken));
       if (res.user != null) await _completeSignIn(res.user!);
       return null;
     } on GoogleSignInException catch (e) {
       if (e.code == GoogleSignInExceptionCode.canceled) return '';
       debugPrint('google sign-in: $e');
-      return 'Google sign-in failed. Please try again.';
+      return tr('cloud.err.google_retry');
     } on FirebaseAuthException catch (e) {
       return friendlyAuthError(e.code);
     } catch (e) {
       debugPrint('google sign-in: $e');
-      return 'Google sign-in failed. Please try again.';
+      return tr('cloud.err.google_retry');
     }
   }
 
   Future<String?> signUpWithEmail({required String email, required String password, String? name}) async {
-    if (!CloudService.available) return CloudService.pendingMessage;
+    if (!CloudService.available) return CloudService.pendingText;
     try {
       final res = await _auth.createUserWithEmailAndPassword(email: email.trim(), password: password);
       final u = res.user;
-      if (u == null) return 'Sign up failed.';
+      if (u == null) return tr('cloud.err.signup_failed');
       if (name != null && name.trim().isNotEmpty) await u.updateDisplayName(name.trim());
       try {
         await u.sendEmailVerification();
@@ -131,12 +132,12 @@ class CloudAuth {
     } on FirebaseAuthException catch (e) {
       return friendlyAuthError(e.code);
     } catch (e) {
-      return 'Sign up failed. Please try again.';
+      return tr('cloud.err.signup_retry');
     }
   }
 
   Future<String?> signInWithEmail({required String email, required String password}) async {
-    if (!CloudService.available) return CloudService.pendingMessage;
+    if (!CloudService.available) return CloudService.pendingText;
     try {
       final res = await _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
       if (res.user != null) await _completeSignIn(res.user!);
@@ -144,32 +145,32 @@ class CloudAuth {
     } on FirebaseAuthException catch (e) {
       return friendlyAuthError(e.code);
     } catch (e) {
-      return 'Sign in failed. Please try again.';
+      return tr('cloud.err.signin_retry');
     }
   }
 
   Future<String?> sendPasswordReset(String email) async {
-    if (!CloudService.available) return CloudService.pendingMessage;
+    if (!CloudService.available) return CloudService.pendingText;
     try {
       await _auth.sendPasswordResetEmail(email: email.trim());
       return null;
     } on FirebaseAuthException catch (e) {
       return friendlyAuthError(e.code);
     } catch (_) {
-      return 'Could not send the reset email.';
+      return tr('cloud.err.reset_failed');
     }
   }
 
   Future<String?> sendVerification() async {
     final u = CloudService.available ? _auth.currentUser : null;
-    if (u == null) return 'Not signed in.';
+    if (u == null) return tr('cloud.err.not_signed_in');
     try {
       await u.sendEmailVerification();
       return null;
     } on FirebaseAuthException catch (e) {
       return friendlyAuthError(e.code);
     } catch (_) {
-      return 'Could not send the verification email.';
+      return tr('cloud.err.verify_failed');
     }
   }
 
@@ -203,25 +204,25 @@ class CloudAuth {
   /// Google users re-pick their account; email users pass [password].
   Future<String?> reauthenticate({String? password}) async {
     final u = CloudService.available ? _auth.currentUser : null;
-    if (u == null) return 'Not signed in.';
+    if (u == null) return tr('cloud.err.not_signed_in');
     try {
       if (user.value?.isGoogle ?? false) {
         await _ensureGoogle();
         final acc = await GoogleSignIn.instance.authenticate();
         final t = acc.authentication.idToken;
-        if (t == null) return 'Google sign-in failed.';
+        if (t == null) return tr('cloud.err.google_failed');
         await u.reauthenticateWithCredential(GoogleAuthProvider.credential(idToken: t));
       } else {
-        if (password == null || u.email == null) return 'Password required.';
+        if (password == null || u.email == null) return tr('cloud.err.password_required');
         await u.reauthenticateWithCredential(EmailAuthProvider.credential(email: u.email!, password: password));
       }
       return null;
     } on GoogleSignInException catch (e) {
-      return e.code == GoogleSignInExceptionCode.canceled ? '' : 'Google sign-in failed.';
+      return e.code == GoogleSignInExceptionCode.canceled ? '' : tr('cloud.err.google_failed');
     } on FirebaseAuthException catch (e) {
       return friendlyAuthError(e.code);
     } catch (_) {
-      return 'Could not confirm your identity.';
+      return tr('cloud.err.reauth_failed');
     }
   }
 
@@ -255,16 +256,16 @@ class CloudAuth {
   }
 
   static String friendlyAuthError(String code) => switch (code) {
-        'invalid-email' => 'That email address looks wrong.',
-        'user-disabled' => 'This account has been disabled.',
-        'user-not-found' || 'wrong-password' || 'invalid-credential' => 'Wrong email or password.',
-        'email-already-in-use' => 'An account with this email already exists. Try signing in.',
-        'weak-password' => 'Password is too weak (use at least 6 characters).',
-        'too-many-requests' => 'Too many attempts. Please wait a bit and try again.',
-        'network-request-failed' => 'No internet connection.',
-        'account-exists-with-different-credential' => 'This email is already used with another sign-in method.',
-        'requires-recent-login' => 'Please sign in again to continue.',
-        'operation-not-allowed' => 'This sign-in method is not enabled yet.',
-        _ => 'Something went wrong ($code).',
+        'invalid-email' => tr('cloud.err.invalid_email'),
+        'user-disabled' => tr('cloud.err.user_disabled'),
+        'user-not-found' || 'wrong-password' || 'invalid-credential' => tr('cloud.err.wrong_credentials'),
+        'email-already-in-use' => tr('cloud.err.email_in_use'),
+        'weak-password' => tr('cloud.err.weak_password'),
+        'too-many-requests' => tr('cloud.err.too_many'),
+        'network-request-failed' => tr('cloud.err.no_internet'),
+        'account-exists-with-different-credential' => tr('cloud.err.other_method'),
+        'requires-recent-login' => tr('cloud.err.recent_login'),
+        'operation-not-allowed' => tr('cloud.err.not_enabled'),
+        _ => tr('cloud.err.unknown', {'code': code}),
       };
 }

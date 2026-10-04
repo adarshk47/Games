@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../daily/daily_reward.dart';
+import '../i18n/i18n.dart';
 import '../ui/ui.dart';
 import 'achievements.dart';
 
@@ -23,7 +24,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Achievements',
+      title: tr('ach.title'),
       tint: Pal.gold,
       body: ValueListenableBuilder<int>(
         valueListenable: dailyChanged,
@@ -78,7 +79,7 @@ class _Summary extends StatelessWidget {
         const SizedBox(width: 14),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('$done / $total badges', style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
+            Text(tr('ach.badges', {'done': done, 'total': total}), style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
             const SizedBox(height: 8),
             ProgressBar(value: f, color: Pal.gold, height: 10),
           ]),

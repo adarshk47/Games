@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/i18n/i18n.dart';
 import '../../core/ui/ui.dart';
 import '../../core/storage.dart';
 import 'focus_play.dart';
@@ -20,12 +21,6 @@ class _FocusColorScreenState extends State<FocusColorScreen> {
     FocusTier.medium: Color(0xFF4DA8FF),
     FocusTier.hard: Color(0xFFFF9140),
     FocusTier.extreme: Color(0xFFFF4D5E),
-  };
-  static const _tierBlurbs = {
-    FocusTier.easy: 'More time, fewer options, gentle pace',
-    FocusTier.medium: 'The classic challenge',
-    FocusTier.hard: 'Less time, more options, subtle shades',
-    FocusTier.extreme: 'Tight clock, max options, one life',
   };
 
   Future<void> _open(FocusModeInfo m) async {
@@ -61,7 +56,7 @@ class _FocusColorScreenState extends State<FocusColorScreen> {
             Expanded(child: Text(m.title, style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900))),
           ]),
           const SizedBox(height: 4),
-          const Text('Choose difficulty', style: TextStyle(color: Pal.textDim, fontSize: 14)),
+          Text(tr('focus_color.choose'), style: const TextStyle(color: Pal.textDim, fontSize: 14)),
           const SizedBox(height: 14),
           for (final t in FocusTier.values)
             Padding(
@@ -88,13 +83,13 @@ class _FocusColorScreenState extends State<FocusColorScreen> {
         child: Row(children: [
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(t.label, style: TextStyle(color: c, fontSize: 18, fontWeight: FontWeight.w900)),
+              Text(focusTierName(t), style: TextStyle(color: c, fontSize: 18, fontWeight: FontWeight.w900)),
               const SizedBox(height: 2),
-              Text(_tierBlurbs[t]!, style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+              Text(tr('focus_color.tier_blurb.${t.name}'), style: const TextStyle(color: Pal.textDim, fontSize: 12)),
             ]),
           ),
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(best > 0 ? 'Best $best' : 'New',
+            Text(best > 0 ? tr('focus_color.best_n', {'n': best}) : tr('focus_color.new'),
                 style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 13)),
             const SizedBox(height: 2),
             StarRow(stars: focusStars(m.mode, t, best)),
@@ -107,14 +102,14 @@ class _FocusColorScreenState extends State<FocusColorScreen> {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Focus Colors',
+      title: tr('focus_color.title'),
       tint: focusTint,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 14),
-            child: Text('Train your attention. Pick a mode.', style: TextStyle(color: Pal.textDim, fontSize: 15)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
+            child: Text(tr('focus_color.subtitle'), style: const TextStyle(color: Pal.textDim, fontSize: 15)),
           ),
           for (var i = 0; i < focusModes.length; i++)
             Padding(
@@ -160,9 +155,12 @@ class _FocusColorScreenState extends State<FocusColorScreen> {
               Row(children: [
                 const Icon(Icons.emoji_events_rounded, size: 16, color: Colors.white),
                 const SizedBox(width: 4),
-                Text(top != null ? '${top.label} best $best' : 'No score yet',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
-                const Spacer(),
+                Expanded(
+                  child: Text(
+                      top != null ? tr('focus_color.top_best', {'tier': focusTierName(top), 'n': best}) : tr('focus_color.no_score'),
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+                ),
                 StarRow(stars: top == null ? 0 : focusStars(m.mode, top, best)),
               ]),
             ]),

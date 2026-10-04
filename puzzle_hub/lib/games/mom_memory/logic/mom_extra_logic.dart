@@ -1,31 +1,183 @@
 import 'dart:math';
 
-/// Small emoji thing with a Hinglish name.
+import 'mm_text.dart';
+import 'mom_stories.dart';
+
+export 'mm_text.dart';
+export 'mom_stories.dart';
+
+/// Small emoji thing with a name in every language.
 class MmThing {
-  const MmThing(this.emoji, this.hi);
-  final String emoji, hi;
+  const MmThing(this.emoji, this.names);
+  final String emoji;
+  final MmL<String> names; // lang -> name
+  String get name => mmPick(names);
 }
 
 // ---------- Missing Item (Kya gaya?) ----------
 const missingPool = [
-  MmThing('🍼', 'Bottle'),
-  MmThing('🧸', 'Khilona'),
-  MmThing('🧦', 'Moze'),
-  MmThing('🧷', 'Pin'),
-  MmThing('🛁', 'Tub'),
-  MmThing('🧴', 'Lotion'),
-  MmThing('🧺', 'Tokri'),
-  MmThing('🪥', 'Brush'),
-  MmThing('🧼', 'Sabun'),
-  MmThing('🧣', 'Shawl'),
-  MmThing('🧢', 'Topi'),
-  MmThing('🦆', 'Battakh'),
-  MmThing('🍪', 'Biscuit'),
-  MmThing('🔔', 'Ghanti'),
-  MmThing('🪮', 'Kanghi'),
-  MmThing('🥄', 'Chamach'),
-  MmThing('☕', 'Chai'),
-  MmThing('🔑', 'Chaabi'),
+  MmThing('🍼', {
+    'en': "Bottle",
+    'hi': "बोतल",
+    'hinglish': "Bottle",
+    'te': "సీసా",
+    'ta': "புட்டி",
+    'pa': "ਬੋਤਲ",
+    'bho': "बोतल",
+  }),
+  MmThing('🧸', {
+    'en': "Toy",
+    'hi': "खिलौना",
+    'hinglish': "Khilona",
+    'te': "బొమ్మ",
+    'ta': "பொம்மை",
+    'pa': "ਖਿਡੌਣਾ",
+    'bho': "खिलौना",
+  }),
+  MmThing('🧦', {
+    'en': "Socks",
+    'hi': "मोज़े",
+    'hinglish': "Moze",
+    'te': "సాక్స్",
+    'ta': "காலுறை",
+    'pa': "ਜੁਰਾਬਾਂ",
+    'bho': "मोजा",
+  }),
+  MmThing('🧷', {
+    'en': "Pin",
+    'hi': "पिन",
+    'hinglish': "Pin",
+    'te': "పిన్",
+    'ta': "பின்",
+    'pa': "ਪਿੰਨ",
+    'bho': "पिन",
+  }),
+  MmThing('🛁', {
+    'en': "Tub",
+    'hi': "टब",
+    'hinglish': "Tub",
+    'te': "తొట్టి",
+    'ta': "தொட்டி",
+    'pa': "ਟੱਬ",
+    'bho': "टब",
+  }),
+  MmThing('🧴', {
+    'en': "Lotion",
+    'hi': "लोशन",
+    'hinglish': "Lotion",
+    'te': "లోషన్",
+    'ta': "லோஷன்",
+    'pa': "ਲੋਸ਼ਨ",
+    'bho': "लोशन",
+  }),
+  MmThing('🧺', {
+    'en': "Basket",
+    'hi': "टोकरी",
+    'hinglish': "Tokri",
+    'te': "బుట్ట",
+    'ta': "கூடை",
+    'pa': "ਟੋਕਰੀ",
+    'bho': "टोकरी",
+  }),
+  MmThing('🪥', {
+    'en': "Brush",
+    'hi': "ब्रश",
+    'hinglish': "Brush",
+    'te': "బ్రష్",
+    'ta': "பிரஷ்",
+    'pa': "ਬੁਰਸ਼",
+    'bho': "ब्रश",
+  }),
+  MmThing('🧼', {
+    'en': "Soap",
+    'hi': "साबुन",
+    'hinglish': "Sabun",
+    'te': "సబ్బు",
+    'ta': "சோப்பு",
+    'pa': "ਸਾਬਣ",
+    'bho': "साबुन",
+  }),
+  MmThing('🧣', {
+    'en': "Shawl",
+    'hi': "शॉल",
+    'hinglish': "Shawl",
+    'te': "శాలువా",
+    'ta': "சால்வை",
+    'pa': "ਸ਼ਾਲ",
+    'bho': "साल",
+  }),
+  MmThing('🧢', {
+    'en': "Cap",
+    'hi': "टोपी",
+    'hinglish': "Topi",
+    'te': "టోపీ",
+    'ta': "தொப்பி",
+    'pa': "ਟੋਪੀ",
+    'bho': "टोपी",
+  }),
+  MmThing('🦆', {
+    'en': "Duck",
+    'hi': "बत्तख",
+    'hinglish': "Battakh",
+    'te': "బాతు",
+    'ta': "வாத்து",
+    'pa': "ਬੱਤਖ",
+    'bho': "बतख",
+  }),
+  MmThing('🍪', {
+    'en': "Biscuit",
+    'hi': "बिस्कुट",
+    'hinglish': "Biscuit",
+    'te': "బిస్కెట్",
+    'ta': "பிஸ்கட்",
+    'pa': "ਬਿਸਕੁਟ",
+    'bho': "बिस्कुट",
+  }),
+  MmThing('🔔', {
+    'en': "Bell",
+    'hi': "घंटी",
+    'hinglish': "Ghanti",
+    'te': "గంట",
+    'ta': "மணி",
+    'pa': "ਘੰਟੀ",
+    'bho': "घंटी",
+  }),
+  MmThing('🪮', {
+    'en': "Comb",
+    'hi': "कंघी",
+    'hinglish': "Kanghi",
+    'te': "దువ్వెన",
+    'ta': "சீப்பு",
+    'pa': "ਕੰਘੀ",
+    'bho': "ककही",
+  }),
+  MmThing('🥄', {
+    'en': "Spoon",
+    'hi': "चम्मच",
+    'hinglish': "Chamach",
+    'te': "చెంచా",
+    'ta': "கரண்டி",
+    'pa': "ਚਮਚਾ",
+    'bho': "चम्मच",
+  }),
+  MmThing('☕', {
+    'en': "Tea",
+    'hi': "चाय",
+    'hinglish': "Chai",
+    'te': "టీ",
+    'ta': "தேநீர்",
+    'pa': "ਚਾਹ",
+    'bho': "चाय",
+  }),
+  MmThing('🔑', {
+    'en': "Key",
+    'hi': "चाबी",
+    'hinglish': "Chaabi",
+    'te': "తాళం చెవి",
+    'ta': "சாவி",
+    'pa': "ਚਾਬੀ",
+    'bho': "चाभी",
+  }),
 ];
 
 const missingMaxLevel = 5;
@@ -57,28 +209,333 @@ int triesToStars(int tries) => tries <= 1 ? 3 : (tries == 2 ? 2 : 1);
 
 // ---------- Word Pairs (Jodi Milao) ----------
 class WordPair {
-  const WordPair(this.word, this.partner);
-  final String word; // Hindi/English word shown
+  const WordPair(this.words, this.partner);
+  final MmL<String> words; // lang -> word shown
   final MmThing partner;
+  String get word => mmPick(words);
 }
 
 const wordPairs = [
-  WordPair('Doodh', MmThing('🍼', 'Bottle')),
-  WordPair('Neend', MmThing('😴', 'Sona')),
-  WordPair('Nahana', MmThing('🛁', 'Tub')),
-  WordPair('Lori', MmThing('🌙', 'Chaand')),
-  WordPair('Khilona', MmThing('🧸', 'Teddy')),
-  WordPair('Sardi', MmThing('🧣', 'Shawl')),
-  WordPair('Baarish', MmThing('☔', 'Chhatri')),
-  WordPair('Roti', MmThing('🥣', 'Katori')),
-  WordPair('Phool', MmThing('🌸', 'Bagiya')),
-  WordPair('Sooraj', MmThing('☀️', 'Roshni')),
-  WordPair('Paani', MmThing('💧', 'Glass')),
-  WordPair('Kitaab', MmThing('📖', 'Kahani')),
-  WordPair('Chai', MmThing('☕', 'Pyaali')),
-  WordPair('Taare', MmThing('⭐', 'Aasman')),
-  WordPair('Gaadi', MmThing('🚗', 'Sadak')),
-  WordPair('Tooth', MmThing('🪥', 'Brush')),
+  WordPair(
+    {
+      'en': "Milk",
+      'hi': "दूध",
+      'hinglish': "Doodh",
+      'te': "పాలు",
+      'ta': "பால்",
+      'pa': "ਦੁੱਧ",
+      'bho': "दूध",
+    },
+    MmThing('🍼', {
+      'en': "Bottle",
+      'hi': "बोतल",
+      'hinglish': "Bottle",
+      'te': "సీసా",
+      'ta': "புட்டி",
+      'pa': "ਬੋਤਲ",
+      'bho': "बोतल",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Sleep",
+      'hi': "नींद",
+      'hinglish': "Neend",
+      'te': "నిద్ర",
+      'ta': "தூக்கம்",
+      'pa': "ਨੀਂਦ",
+      'bho': "नींद",
+    },
+    MmThing('😴', {
+      'en': "Nap",
+      'hi': "सोना",
+      'hinglish': "Sona",
+      'te': "కునుకు",
+      'ta': "ஓய்வு",
+      'pa': "ਸੌਣਾ",
+      'bho': "सुतल",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Bath",
+      'hi': "नहाना",
+      'hinglish': "Nahana",
+      'te': "స్నానం",
+      'ta': "குளியல்",
+      'pa': "ਨਹਾਉਣਾ",
+      'bho': "नहाइल",
+    },
+    MmThing('🛁', {
+      'en': "Tub",
+      'hi': "टब",
+      'hinglish': "Tub",
+      'te': "తొట్టి",
+      'ta': "தொட்டி",
+      'pa': "ਟੱਬ",
+      'bho': "टब",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Lullaby",
+      'hi': "लोरी",
+      'hinglish': "Lori",
+      'te': "జోల పాట",
+      'ta': "தாலாட்டு",
+      'pa': "ਲੋਰੀ",
+      'bho': "लोरी",
+    },
+    MmThing('🌙', {
+      'en': "Moon",
+      'hi': "चाँद",
+      'hinglish': "Chaand",
+      'te': "చందమామ",
+      'ta': "நிலா",
+      'pa': "ਚੰਨ",
+      'bho': "चंदा",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Toy",
+      'hi': "खिलौना",
+      'hinglish': "Khilona",
+      'te': "బొమ్మ",
+      'ta': "பொம்மை",
+      'pa': "ਖਿਡੌਣਾ",
+      'bho': "खिलौना",
+    },
+    MmThing('🧸', {
+      'en': "Teddy",
+      'hi': "टेडी",
+      'hinglish': "Teddy",
+      'te': "టెడ్డీ",
+      'ta': "டெடி",
+      'pa': "ਟੈਡੀ",
+      'bho': "टेडी",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Winter",
+      'hi': "सर्दी",
+      'hinglish': "Sardi",
+      'te': "చలి",
+      'ta': "குளிர்",
+      'pa': "ਸਰਦੀ",
+      'bho': "जाड़ा",
+    },
+    MmThing('🧣', {
+      'en': "Shawl",
+      'hi': "शॉल",
+      'hinglish': "Shawl",
+      'te': "శాలువా",
+      'ta': "சால்வை",
+      'pa': "ਸ਼ਾਲ",
+      'bho': "साल",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Rain",
+      'hi': "बारिश",
+      'hinglish': "Baarish",
+      'te': "వర్షం",
+      'ta': "மழை",
+      'pa': "ਮੀਂਹ",
+      'bho': "बरखा",
+    },
+    MmThing('☔', {
+      'en': "Umbrella",
+      'hi': "छतरी",
+      'hinglish': "Chhatri",
+      'te': "గొడుగు",
+      'ta': "குடை",
+      'pa': "ਛਤਰੀ",
+      'bho': "छाता",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Soup",
+      'hi': "रोटी",
+      'hinglish': "Roti",
+      'te': "పప్పు",
+      'ta': "சாம்பார்",
+      'pa': "ਰੋਟੀ",
+      'bho': "रोटी",
+    },
+    MmThing('🥣', {
+      'en': "Bowl",
+      'hi': "कटोरी",
+      'hinglish': "Katori",
+      'te': "గిన్నె",
+      'ta': "கிண்ணம்",
+      'pa': "ਕਟੋਰੀ",
+      'bho': "कटोरी",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Flower",
+      'hi': "फूल",
+      'hinglish': "Phool",
+      'te': "పువ్వు",
+      'ta': "பூ",
+      'pa': "ਫੁੱਲ",
+      'bho': "फूल",
+    },
+    MmThing('🌸', {
+      'en': "Garden",
+      'hi': "बगिया",
+      'hinglish': "Bagiya",
+      'te': "తోట",
+      'ta': "தோட்டம்",
+      'pa': "ਬਗੀਚਾ",
+      'bho': "फुलवारी",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Sun",
+      'hi': "सूरज",
+      'hinglish': "Sooraj",
+      'te': "సూర్యుడు",
+      'ta': "சூரியன்",
+      'pa': "ਸੂਰਜ",
+      'bho': "सुरुज",
+    },
+    MmThing('☀️', {
+      'en': "Light",
+      'hi': "रोशनी",
+      'hinglish': "Roshni",
+      'te': "వెలుగు",
+      'ta': "வெளிச்சம்",
+      'pa': "ਰੋਸ਼ਨੀ",
+      'bho': "अंजोर",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Water",
+      'hi': "पानी",
+      'hinglish': "Paani",
+      'te': "నీళ్లు",
+      'ta': "தண்ணீர்",
+      'pa': "ਪਾਣੀ",
+      'bho': "पानी",
+    },
+    MmThing('💧', {
+      'en': "Glass",
+      'hi': "गिलास",
+      'hinglish': "Glass",
+      'te': "గ్లాసు",
+      'ta': "குவளை",
+      'pa': "ਗਲਾਸ",
+      'bho': "गिलास",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Book",
+      'hi': "किताब",
+      'hinglish': "Kitaab",
+      'te': "పుస్తకం",
+      'ta': "புத்தகம்",
+      'pa': "ਕਿਤਾਬ",
+      'bho': "किताब",
+    },
+    MmThing('📖', {
+      'en': "Story",
+      'hi': "कहानी",
+      'hinglish': "Kahani",
+      'te': "కథ",
+      'ta': "கதை",
+      'pa': "ਕਹਾਣੀ",
+      'bho': "कहानी",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Tea",
+      'hi': "चाय",
+      'hinglish': "Chai",
+      'te': "టీ",
+      'ta': "தேநீர்",
+      'pa': "ਚਾਹ",
+      'bho': "चाय",
+    },
+    MmThing('☕', {
+      'en': "Cup",
+      'hi': "प्याली",
+      'hinglish': "Pyaali",
+      'te': "కప్పు",
+      'ta': "கோப்பை",
+      'pa': "ਪਿਆਲੀ",
+      'bho': "कप",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Stars",
+      'hi': "तारे",
+      'hinglish': "Taare",
+      'te': "నక్షత్రాలు",
+      'ta': "நட்சத்திரம்",
+      'pa': "ਤਾਰੇ",
+      'bho': "तरई",
+    },
+    MmThing('⭐', {
+      'en': "Sky",
+      'hi': "आसमान",
+      'hinglish': "Aasman",
+      'te': "ఆకాశం",
+      'ta': "வானம்",
+      'pa': "ਅਸਮਾਨ",
+      'bho': "असमान",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Car",
+      'hi': "गाड़ी",
+      'hinglish': "Gaadi",
+      'te': "కారు",
+      'ta': "வண்டி",
+      'pa': "ਗੱਡੀ",
+      'bho': "गाड़ी",
+    },
+    MmThing('🚗', {
+      'en': "Road",
+      'hi': "सड़क",
+      'hinglish': "Sadak",
+      'te': "రోడ్డు",
+      'ta': "சாலை",
+      'pa': "ਸੜਕ",
+      'bho': "सड़क",
+    }),
+  ),
+  WordPair(
+    {
+      'en': "Teeth",
+      'hi': "दाँत",
+      'hinglish': "Daant",
+      'te': "పళ్లు",
+      'ta': "பல்",
+      'pa': "ਦੰਦ",
+      'bho': "दाँत",
+    },
+    MmThing('🪥', {
+      'en': "Brush",
+      'hi': "ब्रश",
+      'hinglish': "Brush",
+      'te': "బ్రష్",
+      'ta': "பிரஷ்",
+      'pa': "ਬੁਰਸ਼",
+      'bho': "ब्रश",
+    }),
+  ),
 ];
 
 const pairsMaxLevel = 5;
@@ -166,193 +623,7 @@ int whereStars(int correct, int wrong, int total) {
 }
 
 // ---------- Story Recall (Kahani yaad karo) ----------
-class StoryQ {
-  const StoryQ(this.q, this.options, this.answer);
-  final String q;
-  final List<String> options;
-  final int answer;
-}
-
-class MmStory {
-  const MmStory(this.emoji, this.title, this.lines, this.questions);
-  final String emoji, title;
-  final List<String> lines;
-  final List<StoryQ> questions;
-}
-
-const stories = [
-  MmStory(
-    '🐥',
-    'Chhoti Chidiya',
-    [
-      'Sunita ki chhoti chidiya ka naam Chiku tha.',
-      'Roz subah Chiku neem ke ped par gaana gaati thi.',
-      'Aaj Sunita ne use teen laal daane khilaaye.',
-      'Chiku khush hokar phurr se ud gayi.',
-    ],
-    [
-      StoryQ('Chidiya ka naam kya tha?', ['Chiku', 'Mithu', 'Tuntun'], 0),
-      StoryQ('Chiku kis ped par gaati thi?', ['Aam', 'Neem', 'Peepal'], 1),
-      StoryQ('Sunita ne kitne daane khilaaye?', ['Do', 'Teen', 'Paanch'], 1),
-    ],
-  ),
-  MmStory(
-    '🧸',
-    'Pyaara Teddy',
-    [
-      'Aarav ke paas ek bhura teddy tha.',
-      'Teddy ne neela scarf pehna tha.',
-      'Raat ko Aarav teddy ko god mein lekar so jaata.',
-      'Dono ko meethe sapne aate.',
-    ],
-    [
-      StoryQ('Teddy ka rang kaisa tha?', ['Bhura', 'Safed', 'Gulabi'], 0),
-      StoryQ('Teddy ne kya pehna tha?', ['Topi', 'Neela scarf', 'Moze'], 1),
-      StoryQ('Aarav teddy ko kab god mein leta?', [
-        'Subah',
-        'Dopahar',
-        'Raat ko',
-      ], 2),
-    ],
-  ),
-  MmStory(
-    '🌧️',
-    'Baarish Ka Din',
-    [
-      'Aaj Meera ke ghar ke bahar halki baarish ho rahi thi.',
-      'Maa ne garam adrak wali chai banayi.',
-      'Meera ne khidki se chhote bachchon ko chhatri mein dekha.',
-      'Sab kuch bahut shaant aur sundar tha.',
-    ],
-    [
-      StoryQ('Bahar kya ho raha tha?', ['Dhoop', 'Halki baarish', 'Aandhi'], 1),
-      StoryQ('Maa ne kaisi chai banayi?', [
-        'Adrak wali',
-        'Elaichi wali',
-        'Bina cheeni',
-      ], 0),
-      StoryQ('Meera ne kahan se dekha?', [
-        'Chhat se',
-        'Darwaze se',
-        'Khidki se',
-      ], 2),
-    ],
-  ),
-  MmStory(
-    '🍼',
-    'Nanhi Gudiya',
-    [
-      'Nanhi Gudiya subah paanch baje uthi.',
-      'Dadi ne use halka doodh pilaya.',
-      'Phir Gudiya ne peele rang ka khilona pakda.',
-      'Dadi ne pyaar se uske sir par haath fera.',
-    ],
-    [
-      StoryQ('Gudiya kab uthi?', ['Paanch baje', 'Saat baje', 'Chhe baje'], 0),
-      StoryQ('Doodh kisne pilaya?', ['Nani', 'Dadi', 'Bua'], 1),
-      StoryQ('Khilone ka rang kaisa tha?', ['Peela', 'Laal', 'Hara'], 0),
-    ],
-  ),
-  MmStory(
-    '🌳',
-    'Bagiya Mein Subah',
-    [
-      'Papa aur Rohan bagiya mein gaye.',
-      'Wahan do gulabi phool khile the.',
-      'Rohan ne ek titli ko phool par baithte dekha.',
-      'Papa ne kaha, "Dekho, prakriti kitni pyaari hai."',
-    ],
-    [
-      StoryQ('Rohan kiske saath gaya?', ['Mama', 'Papa', 'Dada'], 1),
-      StoryQ('Kitne phool khile the?', ['Do', 'Chaar', 'Ek'], 0),
-      StoryQ('Phool par kaun baitha?', ['Bhanwra', 'Titli', 'Chidiya'], 1),
-    ],
-  ),
-  MmStory(
-    '🌙',
-    'Chaand Ki Lori',
-    [
-      'Raat ko aasman mein poora chaand chamak raha tha.',
-      'Nani ne dheere se ek lori gungunayi.',
-      'Chhoti Tara ki aankhen dheere dheere band ho gayin.',
-      'Chaand muskuraya aur taare jhilmilaye.',
-    ],
-    [
-      StoryQ('Aasman mein kya chamak raha tha?', [
-        'Suraj',
-        'Poora chaand',
-        'Indradhanush',
-      ], 1),
-      StoryQ('Lori kisne gungunayi?', ['Nani', 'Mausi', 'Didi'], 0),
-      StoryQ('Chhoti bachchi ka naam kya tha?', ['Tara', 'Gudiya', 'Pari'], 0),
-    ],
-  ),
-  MmStory(
-    '🍎',
-    'Mithe Seb',
-    [
-      'Mausi bazaar se chaar laal seb laayi.',
-      'Maa ne unhe dhokar plate mein sajaya.',
-      'Kabir ne ek seb aadha kaata aur sabko baanta.',
-      'Sab ne milkar seb ka maza liya.',
-    ],
-    [
-      StoryQ('Mausi kya laayi?', ['Kele', 'Seb', 'Angoor'], 1),
-      StoryQ('Kitne seb laayi?', ['Teen', 'Chaar', 'Chhe'], 1),
-      StoryQ('Seb kisne baanta?', ['Kabir', 'Maa', 'Papa'], 0),
-    ],
-  ),
-  MmStory(
-    '🚲',
-    'Nayi Cycle',
-    [
-      'Dada ji Ishaan ke liye hari cycle laaye.',
-      'Ishaan ne cycle par ek chhoti ghanti lagayi.',
-      'Shaam ko usne park ke teen chakkar lagaye.',
-      'Dada ji taaliyan bajate rahe.',
-    ],
-    [
-      StoryQ('Cycle ka rang kaisa tha?', ['Hara', 'Neela', 'Laal'], 0),
-      StoryQ('Cycle par kya lagaya?', ['Tokri', 'Ghanti', 'Jhanda'], 1),
-      StoryQ('Park ke kitne chakkar lagaye?', ['Do', 'Teen', 'Paanch'], 1),
-    ],
-  ),
-  MmStory(
-    '🍪',
-    'Biscuit Wala Din',
-    [
-      'Riya ne Maa ke saath biscuit banaye.',
-      'Unhone aate mein thoda sa gud milaya.',
-      'Biscuit ko tare ke aakar mein kaata gaya.',
-      'Poore ghar mein meethi khushbu phail gayi.',
-    ],
-    [
-      StoryQ('Riya ne kiske saath biscuit banaye?', [
-        'Maa',
-        'Dadi',
-        'Saheli',
-      ], 0),
-      StoryQ('Aate mein kya milaya?', ['Namak', 'Gud', 'Shahad'], 1),
-      StoryQ('Biscuit kis aakar ke the?', ['Dil', 'Gol', 'Tare'], 2),
-    ],
-  ),
-  MmStory(
-    '🐶',
-    'Moti Kutta',
-    [
-      'Gali ka bhura kutta Moti sabka dost tha.',
-      'Roz shaam ko Moti Gudiya ke saath khelta.',
-      'Aaj Gudiya ne use ek laal gend di.',
-      'Moti poonchh hilata hua gend le aaya.',
-    ],
-    [
-      StoryQ('Kutte ka naam kya tha?', ['Sheru', 'Moti', 'Tommy'], 1),
-      StoryQ('Gudiya ne kya di?', ['Haddi', 'Roti', 'Laal gend'], 2),
-      StoryQ('Moti kab khelta tha?', ['Shaam ko', 'Subah', 'Raat ko'], 0),
-    ],
-  ),
-];
-
+// Stories live in mom_stories.dart (all languages).
 const storyReadSeconds = 20;
 
 /// Random story index, never repeating the previous one back to back.

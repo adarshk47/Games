@@ -238,9 +238,9 @@ class _LockScreenState extends State<LockScreen> {
                         curve: Curves.easeInOut,
                       ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Welcome back,',
-                    style: TextStyle(color: Pal.textDim, fontSize: 18),
+                  Text(
+                    tr('account.welcome_back'),
+                    style: const TextStyle(color: Pal.textDim, fontSize: 18),
                   ).animate().fadeIn(),
                   ShaderMask(
                     shaderCallback: (r) => const LinearGradient(
@@ -260,7 +260,7 @@ class _LockScreenState extends State<LockScreen> {
                   if (!AccountService.I.hasPin) ...[
                     const SizedBox(height: 18),
                     PremiumButton(
-                      label: 'Continue',
+                      label: tr('common.continue'),
                       icon: Icons.play_arrow_rounded,
                       onTap: () async {
                         await AccountService.I.loginWithoutPin(name);
@@ -270,8 +270,8 @@ class _LockScreenState extends State<LockScreen> {
                   ] else ...[
                     Text(
                       _error
-                          ? 'Galat PIN, dobara try karein'
-                          : 'Apna PIN daalein',
+                          ? tr('account.wrong_pin_retry')
+                          : tr('account.enter_pin'),
                       style: TextStyle(
                         color: _error ? Pal.danger : Pal.textDim,
                         fontSize: 14,
@@ -304,9 +304,9 @@ class _LockScreenState extends State<LockScreen> {
                         color: Pal.gold,
                         size: 20,
                       ),
-                      label: const Text(
-                        'Play Without PIN',
-                        style: TextStyle(
+                      label: Text(
+                        tr('account.play_without_pin'),
+                        style: const TextStyle(
                           color: Pal.gold,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
@@ -369,7 +369,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _guest() async {
     await AccountService.I.loginWithoutPin(
-      _name.text.trim().isEmpty ? 'Player' : _name.text.trim(),
+      _name.text.trim().isEmpty ? tr('home.player') : _name.text.trim(),
     );
     Rewards.reload();
     _done();
@@ -398,7 +398,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Rewards.reload();
         _done();
       } else {
-        setState(() => _msg = 'PIN match nahi hua, dobara daalein');
+        setState(() => _msg = tr('account.reg.mismatch'));
         await Future.delayed(const Duration(milliseconds: 700));
         if (mounted) {
           setState(() {
@@ -414,14 +414,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final title = switch (_step) {
-      0 => 'Play on this phone',
-      1 => 'Welcome, ${_name.text.trim()}!',
-      _ => 'PIN confirm karein',
+      0 => tr('account.reg.title'),
+      1 => tr('account.reg.welcome', {'name': _name.text.trim()}),
+      _ => tr('account.reg.confirm_title'),
     };
     final sub = switch (_step) {
-      0 => 'Apna naam batayein, hum aapka sab kuch is phone mein hi save rakhenge.',
-      1 => '4 ank ka PIN chunein (optional app lock).',
-      _ => 'Wahi PIN dobara daalein.',
+      0 => tr('account.reg.sub_name'),
+      1 => tr('account.reg.sub_pin'),
+      _ => tr('account.reg.sub_confirm'),
     };
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -471,9 +471,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
-                        decoration: const InputDecoration(
-                          hintText: 'Aapka naam',
-                          hintStyle: TextStyle(color: Pal.textDim),
+                        decoration: InputDecoration(
+                          hintText: tr('account.your_name'),
+                          hintStyle: const TextStyle(color: Pal.textDim),
                           border: InputBorder.none,
                           counterText: '',
                         ),
@@ -481,7 +481,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 22),
                     PremiumButton(
-                      label: 'Aage badhein',
+                      label: tr('account.reg.next'),
                       icon: Icons.arrow_forward_rounded,
                       onTap: _name.text.trim().length >= 2
                           ? () => setState(() => _step = 1)
@@ -495,9 +495,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: Pal.gold,
                         size: 22,
                       ),
-                      label: const Text(
-                        'Skip PIN & Play Directly',
-                        style: TextStyle(
+                      label: Text(
+                        tr('account.skip_pin'),
+                        style: const TextStyle(
                           color: Pal.gold,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
@@ -521,9 +521,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: Pal.gold,
                               size: 32,
                             ),
-                            title: const Text(
-                              'Fingerprint se unlock',
-                              style: TextStyle(
+                            title: Text(
+                              tr('account.fingerprint_unlock'),
+                              style: const TextStyle(
                                 color: Pal.text,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -555,9 +555,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: Pal.gold,
                         size: 22,
                       ),
-                      label: const Text(
-                        'Skip PIN & Play Directly',
-                        style: TextStyle(
+                      label: Text(
+                        tr('account.skip_pin'),
+                        style: const TextStyle(
                           color: Pal.gold,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
@@ -599,20 +599,20 @@ class WelcomeScreen extends StatelessWidget {
                         curve: Curves.easeInOut,
                       ),
                   const SizedBox(height: 14),
-                  const Text(
-                    'Welcome to Master G',
+                  Text(
+                    tr('account.welcome_title'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Pal.text,
                       fontSize: 30,
                       fontWeight: FontWeight.w900,
                     ),
                   ).animate().fadeIn(),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Sign in to back up your progress and join the leaderboards, or just play on this phone.',
+                  Text(
+                    tr('account.welcome_sub'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Pal.textDim,
                       fontSize: 14,
                       height: 1.4,
@@ -628,9 +628,9 @@ class WelcomeScreen extends StatelessWidget {
                           color: Pal.textDim.withValues(alpha: 0.3),
                         ),
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Text('or', style: TextStyle(color: Pal.textDim)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(tr('account.or'), style: const TextStyle(color: Pal.textDim)),
                       ),
                       Expanded(
                         child: Divider(
@@ -641,7 +641,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   PremiumButton(
-                    label: 'Play as guest / local',
+                    label: tr('account.play_guest'),
                     icon: Icons.phone_android_rounded,
                     color: const Color(0xFF7C5CFF),
                     onTap: () => Navigator.of(context).push(
@@ -649,10 +649,10 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'You can sign in later from Profile. Local progress is kept.',
+                  Text(
+                    tr('account.later_note'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Pal.textDim, fontSize: 12),
+                    style: const TextStyle(color: Pal.textDim, fontSize: 12),
                   ),
                 ],
               ),
@@ -669,14 +669,14 @@ class CloudPendingNote extends StatelessWidget {
   const CloudPendingNote({super.key});
 
   @override
-  Widget build(BuildContext context) => const Row(
+  Widget build(BuildContext context) => Row(
     children: [
-      Icon(Icons.cloud_off_rounded, color: Pal.textDim, size: 20),
-      SizedBox(width: 10),
+      const Icon(Icons.cloud_off_rounded, color: Pal.textDim, size: 20),
+      const SizedBox(width: 10),
       Expanded(
         child: Text(
-          CloudService.pendingMessage,
-          style: TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3),
+          tr('account.cloud_pending'),
+          style: const TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3),
         ),
       ),
     ],
@@ -721,14 +721,14 @@ class _CloudSignInPanelState extends State<CloudSignInPanel> {
       mainAxisSize: MainAxisSize.min,
       children: [
         PremiumButton(
-          label: _busy ? 'Signing in...' : 'Continue with Google',
+          label: _busy ? tr('account.signing_in') : tr('account.continue_google'),
           icon: Icons.g_mobiledata_rounded,
           color: const Color(0xFF4285F4),
           onTap: on ? _google : null,
         ),
         const SizedBox(height: 12),
         PremiumButton(
-          label: 'Continue with Email',
+          label: tr('account.continue_email'),
           icon: Icons.email_rounded,
           color: const Color(0xFF22B07D),
           onTap: on ? _email : null,
@@ -786,10 +786,10 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
   Future<void> _submit() async {
     final email = _email.text.trim();
     if (!_emailRe.hasMatch(email)) {
-      return setState(() => _error = 'Enter a valid email address.');
+      return setState(() => _error = tr('account.invalid_email'));
     }
     if (_mode != _EmailMode.reset && _pass.text.length < 6) {
-      return setState(() => _error = 'Password must be at least 6 characters.');
+      return setState(() => _error = tr('account.short_password'));
     }
     setState(() {
       _busy = true;
@@ -814,7 +814,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     if (err != null) return setState(() => _error = err.isEmpty ? null : err);
     if (mode == _EmailMode.reset) {
       setState(() {
-        _info = 'Reset link sent to $email. Check your inbox, then sign in.';
+        _info = tr('account.reset_sent', {'email': email});
         _mode = _EmailMode.signIn;
       });
       return;
@@ -822,7 +822,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     if (mode == _EmailMode.signUp) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Welcome! We sent a verification link to $email.'),
+          content: Text(tr('account.signup_welcome', {'email': email})),
         ),
       );
     }
@@ -865,9 +865,9 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
   @override
   Widget build(BuildContext context) {
     final title = switch (_mode) {
-      _EmailMode.signIn => 'Sign in',
-      _EmailMode.signUp => 'Create account',
-      _EmailMode.reset => 'Reset password',
+      _EmailMode.signIn => tr('account.sign_in'),
+      _EmailMode.signUp => tr('account.create_account'),
+      _EmailMode.reset => tr('account.reset_password'),
     };
     return GameScaffold(
       title: title,
@@ -882,20 +882,20 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
           if (_mode == _EmailMode.signUp)
             _field(
               _name,
-              'Your name',
+              tr('account.your_name'),
               Icons.person_rounded,
               cap: TextCapitalization.words,
             ),
           _field(
             _email,
-            'Email',
+            tr('account.email'),
             Icons.email_rounded,
             type: TextInputType.emailAddress,
           ),
           if (_mode != _EmailMode.reset)
             _field(
               _pass,
-              'Password',
+              tr('account.password'),
               Icons.lock_rounded,
               obscure: _hide,
               suffix: IconButton(
@@ -920,7 +920,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
             ),
           const SizedBox(height: 6),
           PremiumButton(
-            label: _busy ? 'Please wait...' : title,
+            label: _busy ? tr('account.please_wait') : title,
             icon: Icons.arrow_forward_rounded,
             color: const Color(0xFF22B07D),
             onTap: _busy || !CloudService.available ? null : _submit,
@@ -929,24 +929,24 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
           if (_mode == _EmailMode.signIn) ...[
             TextButton(
               onPressed: () => _setMode(_EmailMode.reset),
-              child: const Text(
-                'Forgot password?',
-                style: TextStyle(color: Pal.gold),
+              child: Text(
+                tr('account.forgot_password'),
+                style: const TextStyle(color: Pal.gold),
               ),
             ),
             TextButton(
               onPressed: () => _setMode(_EmailMode.signUp),
-              child: const Text(
-                'New here? Create an account',
-                style: TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
+              child: Text(
+                tr('account.new_here'),
+                style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
               ),
             ),
           ] else
             TextButton(
               onPressed: () => _setMode(_EmailMode.signIn),
-              child: const Text(
-                'Already have an account? Sign in',
-                style: TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
+              child: Text(
+                tr('account.have_account'),
+                style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
               ),
             ),
         ],

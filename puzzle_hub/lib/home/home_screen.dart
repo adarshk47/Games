@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../core/audio.dart';
 import '../core/daily/daily_hub_screen.dart';
+import '../core/i18n/i18n.dart';
 import '../core/shop/shop_screen.dart';
 import '../core/ui/app_theme.dart';
 import '../core/ui/ui.dart';
@@ -32,10 +33,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       AnimationController(vsync: this, duration: const Duration(milliseconds: 260), value: 1);
 
   static const _items = <_NavItem>[
-    _NavItem('games', 'Games', Icons.sports_esports_outlined, Icons.sports_esports_rounded),
-    _NavItem('daily', 'Daily', Icons.calendar_today_outlined, Icons.calendar_month_rounded),
-    _NavItem('shop', 'Shop', Icons.storefront_outlined, Icons.storefront_rounded),
-    _NavItem('profile', 'Profile', Icons.person_outline_rounded, Icons.person_rounded),
+    _NavItem('games', 'home.nav.games', Icons.sports_esports_outlined, Icons.sports_esports_rounded),
+    _NavItem('daily', 'home.nav.daily', Icons.calendar_today_outlined, Icons.calendar_month_rounded),
+    _NavItem('shop', 'home.nav.shop', Icons.storefront_outlined, Icons.storefront_rounded),
+    _NavItem('profile', 'home.nav.profile', Icons.person_outline_rounded, Icons.person_rounded),
   ];
 
   void _select(int i) {
@@ -91,9 +92,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 }
 
 class _NavItem {
-  const _NavItem(this.id, this.label, this.icon, this.activeIcon);
+  const _NavItem(this.id, this.labelKey, this.icon, this.activeIcon);
   final String id;
-  final String label;
+  final String labelKey;
+  String get label => tr(labelKey);
   final IconData icon;
   final IconData activeIcon;
 }

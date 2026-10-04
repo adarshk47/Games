@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -13,6 +14,8 @@ const _tint = Color(0xFFFF6FB5);
 const _milestones = [500, 1000, 2500];
 
 String _bestKey(Tier t) => 'block.${t.name}.best';
+
+String _tierLabel(Tier t) => tr('common.tier.${t.name}');
 
 /// Block Puzzle: tier select, then the game.
 class BlockPuzzleScreen extends StatefulWidget {
@@ -39,12 +42,6 @@ class _TierMenu extends StatelessWidget {
   const _TierMenu({required this.onPick});
   final ValueChanged<Tier> onPick;
 
-  static const _desc = {
-    Tier.easy: 'Friendly pieces, always a move available',
-    Tier.medium: 'Classic 8x8, any shape can show up',
-    Tier.hard: 'Pre-filled blocks and bigger shapes',
-    Tier.extreme: '10x10 board, crowded start, no mercy',
-  };
   static const _icon = {
     Tier.easy: Icons.spa_rounded,
     Tier.medium: Icons.grid_view_rounded,
@@ -56,13 +53,13 @@ class _TierMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final last = Storage.getInt('block.tier', 0).clamp(0, Tier.values.length - 1);
     return GameScaffold(
-      title: 'Block Puzzle',
+      title: tr('block_puzzle.title'),
       tint: _tint,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          const Text('Choose your challenge',
-              style: TextStyle(color: Pal.textDim, fontSize: 15, fontWeight: FontWeight.w600)),
+          Text(tr('block_puzzle.choose'),
+              style: const TextStyle(color: Pal.textDim, fontSize: 15, fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
           for (final t in Tier.values)
             Padding(
@@ -91,19 +88,19 @@ class _TierMenu extends StatelessWidget {
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Row(children: [
-                          Text(t.label, style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
+                          Text(_tierLabel(t), style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
                           if (t.index == last) ...[
                             const SizedBox(width: 8),
-                            const Text('LAST PLAYED',
-                                style: TextStyle(color: _tint, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                            Text(tr('common.last_played').toUpperCase(),
+                                style: const TextStyle(color: _tint, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
                           ],
                         ]),
                         const SizedBox(height: 2),
-                        Text(_desc[t]!, style: const TextStyle(color: Pal.textDim, fontSize: 13)),
+                        Text(tr('block_puzzle.desc.${t.name}'), style: const TextStyle(color: Pal.textDim, fontSize: 13)),
                       ]),
                     ),
                     Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                      const Text('BEST', style: TextStyle(color: Pal.textDim, fontSize: 10, letterSpacing: 1)),
+                      Text(tr('common.best').toUpperCase(), style: const TextStyle(color: Pal.textDim, fontSize: 10, letterSpacing: 1)),
                       Text('${Storage.getInt(_bestKey(t))}',
                           style: const TextStyle(color: Pal.gold, fontSize: 20, fontWeight: FontWeight.w900)),
                     ]),
@@ -337,9 +334,9 @@ class _BlockGameViewState extends State<_BlockGameView> {
       }
       final pops = <_Pop>[_Pop('+${res.gained}', px, py, res.lines > 0)];
       if (res.lines >= 2) {
-        pops.add(_Pop('${res.lines} LINES!', px, py - 34, true));
+        pops.add(_Pop(tr('block_puzzle.lines', {'n': res.lines}), px, py - 34, true));
       } else if (res.streak >= 2) {
-        pops.add(_Pop('COMBO x${res.streak}', px, py - 34, true));
+        pops.add(_Pop(tr('block_puzzle.combo', {'n': res.streak}), px, py - 34, true));
       }
       _pops.addAll(pops);
       _later(1100.ms, () => setState(() => _pops.removeWhere(pops.contains)));
@@ -368,14 +365,14 @@ class _BlockGameViewState extends State<_BlockGameView> {
       final score = _g.score;
       showPremiumDialog(
         context,
-        title: 'No more moves',
+        title: tr('block_puzzle.no_moves'),
         emoji: score >= _best && score > 0 ? '🏆' : '🧱',
-        message: 'Score $score\nBest $_best  (${_tier.label})',
+        message: tr('block_puzzle.result', {'score': score, 'best': _best, 'tier': _tierLabel(_tier)}),
         stars: score >= _milestones[2] ? 3 : score >= _milestones[1] ? 2 : score >= _milestones[0] ? 1 : 0,
         color: _tint,
         actions: [
-          DialogAction('Play again', () => setState(_newGame), primary: true),
-          DialogAction('Menu', widget.onMenu),
+          DialogAction(tr('common.play_again'), () => setState(_newGame), primary: true),
+          DialogAction(tr('common.menu'), widget.onMenu),
         ],
       );
     });
@@ -386,11 +383,11 @@ class _BlockGameViewState extends State<_BlockGameView> {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Block Puzzle · ${_tier.label}',
+      title: '${tr('block_puzzle.title')} · ${_tierLabel(_tier)}',
       tint: _tint,
       onBack: widget.onMenu,
       actions: [
-        BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: () => setState(_newGame)),
+        BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: () => setState(_newGame)),
       ],
       body: LayoutBuilder(builder: (context, bc) {
         const trayH = 130.0;
@@ -433,9 +430,9 @@ class _BlockGameViewState extends State<_BlockGameView> {
           ]),
         );
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      box('SCORE', '${_g.score}', Pal.text, key: const ValueKey('score')),
+      box(tr('common.score').toUpperCase(), '${_g.score}', Pal.text, key: const ValueKey('score')),
       const SizedBox(width: 14),
-      box('BEST', '$_best', Pal.gold, key: const ValueKey('best')),
+      box(tr('common.best').toUpperCase(), '$_best', Pal.gold, key: const ValueKey('best')),
     ]);
   }
 

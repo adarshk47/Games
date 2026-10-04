@@ -5,12 +5,15 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrows_logic.dart';
 import 'progress.dart';
 
 const _arrowsColor = Color(0xFFFF7A59);
+
+String _tierName(ArrowsTier t) => tr('common.tier.${t.id}');
 
 Route<void> _fadeRoute(Widget page) => PageRouteBuilder<void>(
       transitionDuration: const Duration(milliseconds: 380),
@@ -61,15 +64,15 @@ class _ArrowsScreenState extends State<ArrowsScreen> {
   Widget build(BuildContext context) {
     final last = ArrowsProgress.lastTier;
     return GameScaffold(
-      title: 'Arrows',
+      title: tr('arrows.title'),
       tint: _arrowsColor,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 12),
-            child: Text('Choose difficulty',
-                style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 12),
+            child: Text(tr('arrows.choose_difficulty'),
+                style: const TextStyle(
                     color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
           ),
           for (final (i, t) in ArrowsTier.values.indexed)
@@ -140,7 +143,7 @@ class _TierCard extends StatelessWidget {
               children: [
                 Row(children: [
                   Flexible(
-                    child: Text(tier.label,
+                    child: Text(_tierName(tier),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -156,8 +159,8 @@ class _TierCard extends StatelessWidget {
                 ]),
                 const SizedBox(height: 2),
                 Text(
-                    '${lo}x$lo - ${hi}x$hi  |  ${tier.lives} '
-                    '${tier.lives == 1 ? 'life' : 'lives'}',
+                    tr(tier.lives == 1 ? 'arrows.tier_info_one' : 'arrows.tier_info_many',
+                        {'lo': lo, 'hi': hi, 'n': tier.lives}),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(color: Pal.textDim, fontSize: 13)),
@@ -234,7 +237,7 @@ class _ArrowsLevelsPageState extends State<ArrowsLevelsPage> {
   Widget build(BuildContext context) {
     final tier = widget.tier;
     return GameScaffold(
-      title: 'Arrows - ${tier.label}',
+      title: tr('arrows.grid_title', {'tier': _tierName(tier)}),
       tint: _tierColors[tier],
       body: GridView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -447,15 +450,15 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
     final stars = _stars;
     showPremiumDialog(
       context,
-      title: 'Level cleared!',
-      message: 'Lives left: $lives',
+      title: tr('arrows.win_title'),
+      message: tr('arrows.win_msg', {'lives': lives}),
       emoji: '🎉✨',
       stars: stars,
       color: _arrowsColor,
       actions: [
-        DialogAction('Levels', () => Navigator.pop(context)),
+        DialogAction(tr('common.levels'), () => Navigator.pop(context)),
         if (hasNext)
-          DialogAction('Next level', () {
+          DialogAction(tr('common.next_level'), () {
             setState(() {
               level++;
               _load();
@@ -469,13 +472,13 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
     if (!mounted) return;
     showPremiumDialog(
       context,
-      title: 'Out of lives',
-      message: 'Those arrows were blocked. Try again!',
+      title: tr('arrows.lose_title'),
+      message: tr('arrows.lose_msg'),
       emoji: '💔',
       color: Pal.danger,
       actions: [
-        DialogAction('Levels', () => Navigator.pop(context)),
-        DialogAction('Retry', () => setState(_load), primary: true),
+        DialogAction(tr('common.levels'), () => Navigator.pop(context)),
+        DialogAction(tr('common.retry'), () => setState(_load), primary: true),
       ],
     );
   }
@@ -484,12 +487,12 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
   Widget build(BuildContext context) {
     final n = board.size;
     return GameScaffold(
-      title: '${tier.label} - Level $level',
+      title: tr('arrows.game_title', {'tier': _tierName(tier), 'n': level}),
       tint: _tierColors[tier],
       actions: [
         BarAction(
             icon: Icons.lightbulb_rounded,
-            tooltip: 'Hint',
+            tooltip: tr('common.hint'),
             onTap: over
                 ? null
                 : () {
@@ -498,7 +501,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
                   }),
         BarAction(
             icon: Icons.refresh_rounded,
-            tooltip: 'Restart',
+            tooltip: tr('common.restart'),
             onTap: () => setState(_load)),
       ],
       body: Column(
@@ -520,7 +523,7 @@ class _ArrowsGamePageState extends State<ArrowsGamePage> {
                   Flexible(
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text('Moves $moves  |  Left ${board.remaining}',
+                      child: Text(tr('arrows.hud', {'moves': moves, 'left': board.remaining}),
                           maxLines: 1,
                           style: const TextStyle(
                               color: Pal.text,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/ui/ui.dart';
 import 'labyrinth_game.dart';
 import 'logic/levels.dart';
@@ -9,6 +10,12 @@ import 'memory_maze_game.dart';
 import 'progress.dart';
 
 const Color kMazeTint = Color(0xFFFFC857);
+
+/// Localized tier name ("Easy", ...).
+String mazeTierLabel(MazeTier t) => tr('common.tier.${t.name}');
+
+/// Localized mode name ("Labyrinth" / "Memory Maze").
+String mazeModeLabel(MazeMode m) => tr('maze_escape.mode.${m.name}');
 
 /// Maze Escape: pick a mode, a tier, a level, then find the one way out.
 class MazeEscapeScreen extends StatelessWidget {
@@ -59,17 +66,14 @@ String _tierBlurb(MazeMode mode, MazeTier t) {
   if (mode == MazeMode.memory) {
     final a = MemLevel.minSize(t), b = MemLevel.maxSize(t);
     final l = MemLevel.of(t, 1);
-    final peeks = l.peeks == 0 ? 'no peeks' : '${l.peeks} peek${l.peeks == 1 ? '' : 's'}';
-    final extra = l.maxBumps > 0 ? ', ${l.maxBumps} bumps and out' : '';
-    return '${a}x$a to ${b}x$b mazes. ${MemLevel.baseSeconds(t)}s look, $peeks$extra.';
+    final peeks = l.peeks == 0
+        ? tr('maze_escape.no_peeks')
+        : tr(l.peeks == 1 ? 'maze_escape.peeks_one' : 'maze_escape.peeks_many', {'n': l.peeks});
+    final extra = l.maxBumps > 0 ? ' ${tr('maze_escape.bumps_out', {'n': l.maxBumps})}' : '';
+    return '${tr('maze_escape.mem_blurb', {'a': a, 'b': b, 's': MemLevel.baseSeconds(t)})} $peeks$extra';
   }
   final a = LabLevel.of(t, 1).size, b = LabLevel.of(t, kLevelCount).size;
-  return switch (t) {
-    MazeTier.easy => '${a}x$a to ${b}x$b mazes. Clear view, 3 torches.',
-    MazeTier.medium => '${a}x$a to ${b}x$b mazes. Light fog later on, 3 torches.',
-    MazeTier.hard => '${a}x$a to ${b}x$b mazes. Fog, move limits, 2 torches.',
-    MazeTier.extreme => '${a}x$a to ${b}x$b mazes. Thick fog, tight move limit, 1 torch.',
-  };
+  return tr('maze_escape.blurb.${t.name}', {'a': a, 'b': b});
 }
 
 int _levelSize(MazeMode mode, MazeTier t, int level) =>
@@ -91,21 +95,21 @@ class _ModeMenuState extends State<_ModeMenu> {
   Widget build(BuildContext context) {
     final last = MazeProgress.lastMode;
     return GameScaffold(
-      title: 'Maze Escape',
+      title: tr('maze_escape.title'),
       tint: kMazeTint,
       body: ValueListenableBuilder<int>(
         valueListenable: MazeProgress.tick,
         builder: (context, _, _) => ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           children: [
-            const Text('Tum phanse ho. Raaste bahut hain,\nbahar ka sirf ek hai.',
-                style: TextStyle(color: Pal.textDim, fontSize: 15, height: 1.4)),
+            Text(tr('maze_escape.intro'),
+                style: const TextStyle(color: Pal.textDim, fontSize: 15, height: 1.4)),
             const SizedBox(height: 18),
             _hero(
               context,
               MazeMode.labyrinth,
               icon: Icons.route_rounded,
-              tagline: 'Swipe through twisting corridors. Fog, torches and move limits.',
+              tagline: tr('maze_escape.tagline.labyrinth'),
               isLast: last == MazeMode.labyrinth,
             ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
             const SizedBox(height: 16),
@@ -113,7 +117,7 @@ class _ModeMenuState extends State<_ModeMenu> {
               context,
               MazeMode.memory,
               icon: Icons.psychology_rounded,
-              tagline: 'Study the maze, then the lights go out. Walk to the exit from memory.',
+              tagline: tr('maze_escape.tagline.memory'),
               isLast: last == MazeMode.memory,
               isNew: MazeProgress.modeStars(MazeMode.memory) == 0,
             ).animate().fadeIn(delay: 120.ms, duration: 350.ms).slideY(begin: 0.08, end: 0),
@@ -161,8 +165,8 @@ class _ModeMenuState extends State<_ModeMenu> {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Wrap(spacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                Text(mode.label, style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900)),
-                if (isNew) _badge('NEW', Pal.gold) else if (isLast) _badge('LAST PLAYED', c),
+                Text(mazeModeLabel(mode), style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900)),
+                if (isNew) _badge(tr('maze_escape.badge_new'), Pal.gold) else if (isLast) _badge(tr('common.last_played').toUpperCase(), c),
               ]),
               const SizedBox(height: 6),
               Row(children: [
@@ -216,7 +220,7 @@ class _TierSelectState extends State<_TierSelect> {
     final mode = widget.mode;
     final last = MazeProgress.lastTierOf(mode);
     return GameScaffold(
-      title: mode.label,
+      title: mazeModeLabel(mode),
       tint: _modeColor(mode),
       body: ValueListenableBuilder<int>(
         valueListenable: MazeProgress.tick,
@@ -224,13 +228,11 @@ class _TierSelectState extends State<_TierSelect> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
           children: [
             Text(
-              mode == MazeMode.memory
-                  ? 'Dekho, yaad karo, phir andhere mein raasta dhoondo.'
-                  : 'Raaste bahut hain, bahar ka sirf ek hai.',
+              tr('maze_escape.sub.${mode.name}'),
               style: const TextStyle(color: Pal.textDim, fontSize: 15, height: 1.4),
             ),
             const SizedBox(height: 14),
-            const Text('Choose your difficulty', style: TextStyle(color: Pal.textDim, fontSize: 15)),
+            Text(tr('maze_escape.choose_difficulty'), style: const TextStyle(color: Pal.textDim, fontSize: 15)),
             const SizedBox(height: 14),
             for (final t in MazeTier.values) ...[
               _tierCard(context, t, t == last),
@@ -273,10 +275,20 @@ class _TierSelectState extends State<_TierSelect> {
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Text(t.label, style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
+              Flexible(
+                child: Text(mazeTierLabel(t),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
+              ),
               if (isLast) ...[
                 const SizedBox(width: 8),
-                Text('LAST PLAYED', style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
+                Flexible(
+                  child: Text(tr('common.last_played').toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
+                ),
               ],
             ]),
             const SizedBox(height: 3),
@@ -310,7 +322,7 @@ class _LevelSelect extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _modeColor(mode);
     return GameScaffold(
-      title: '${mode.label} - ${tier.label}',
+      title: tr('maze_escape.grid_title', {'mode': mazeModeLabel(mode), 'tier': mazeTierLabel(tier)}),
       tint: color,
       body: ValueListenableBuilder<int>(
         valueListenable: MazeProgress.tick,
@@ -334,7 +346,9 @@ class _LevelSelect extends StatelessWidget {
                 onTap: open
                     ? () => openMazeLevel(context, tier, level, mode: mode)
                     : () => buyMazeLevel(context, tier, level, mode: mode),
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
                   open
                       ? Text('$level', style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900))
                       : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 24),
@@ -342,7 +356,8 @@ class _LevelSelect extends StatelessWidget {
                   Text('${size}x$size', style: const TextStyle(color: Pal.textDim, fontSize: 11)),
                   const SizedBox(height: 4),
                   StarRow(stars: stars, size: 14),
-                ]),
+                  ]),
+                ),
               ),
             );
           },

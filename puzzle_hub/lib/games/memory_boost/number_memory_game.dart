@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -128,11 +129,12 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
     });
     final choice = await showResultDialog(
       context,
-      title: 'Game over',
+      title: tr('common.game_over'),
       emoji: '🔢',
       color: _teal,
       message:
-          'Rounds cleared: $reached\n${newBest && reached > 0 ? 'New best!' : 'Best: ${Storage.getInt(numberBestKeyFor(tier))}'}',
+          '${tr('memory_boost.number.rounds_cleared', {'n': reached})}\n'
+          '${newBest && reached > 0 ? tr('memory_boost.new_best') : tr('memory_boost.best_value', {'n': Storage.getInt(numberBestKeyFor(tier))})}',
     );
     if (!mounted) return;
     if (choice == DialogChoice.retry) {
@@ -145,7 +147,9 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: phase == _Phase.setup ? 'Number Memory' : 'Number - ${tier.label}',
+      title: phase == _Phase.setup
+          ? tr('memory_boost.number.title')
+          : '${tr('memory_boost.number.short')} - ${tierName(tier)}',
       tint: mbTint,
       onBack: phase == _Phase.setup
           ? null
@@ -158,16 +162,23 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
   }
 
   Widget _setup() {
-    String sec(Tier t) => '${(numberTierParams[t]!.displayFor(numberTierParams[t]!.startDigits).inMilliseconds / 1000).toStringAsFixed(1)}s';
+    String sec(Tier t) => tr('memory_boost.seconds', {
+          'n': (numberTierParams[t]!.displayFor(numberTierParams[t]!.startDigits).inMilliseconds / 1000).toStringAsFixed(1)
+        });
+    String desc(Tier t) {
+      final p = numberTierParams[t]!;
+      return tr('memory_boost.number.desc', {
+        'digits': tr(p.startDigits > 1 ? 'memory_boost.number.digit_many' : 'memory_boost.number.digit_one', {'n': p.startDigits}),
+        'sec': sec(t),
+        'lives': tr(p.lives > 1 ? 'memory_boost.number.life_many' : 'memory_boost.number.life_one', {'n': p.lives}),
+      });
+    }
+
     return TierChooser(
       game: 'number',
-      heading: 'Memorize the number, then type it. Each round adds a digit. Pick a difficulty.',
-      descriptions: {
-        for (final t in Tier.values)
-          t: 'Starts at ${numberTierParams[t]!.startDigits} digit${numberTierParams[t]!.startDigits > 1 ? 's' : ''}, '
-              '${sec(t)} to look, ${numberTierParams[t]!.lives} ${numberTierParams[t]!.lives > 1 ? 'lives' : 'life'}.',
-      },
-      bestText: (t) => 'Best round ${Storage.getInt(numberBestKeyFor(t))}',
+      heading: tr('memory_boost.number.heading'),
+      descriptions: {for (final t in Tier.values) t: desc(t)},
+      bestText: (t) => tr('memory_boost.number.best_round', {'n': Storage.getInt(numberBestKeyFor(t))}),
       onSelect: _begin,
     );
   }
@@ -210,7 +221,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
         );
       case _Phase.input:
         center = Column(mainAxisSize: MainAxisSize.min, children: [
-          const Text('What was the number?', style: TextStyle(color: Pal.textDim, fontSize: 16, fontWeight: FontWeight.w700)),
+          Text(tr('memory_boost.number.what_was'), style: TextStyle(color: Pal.textDim, fontSize: 16, fontWeight: FontWeight.w700)),
           const SizedBox(height: 14),
           GlassCard(
             blur: 0,
@@ -227,9 +238,9 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
             Shadow(color: col.withValues(alpha: 0.8), blurRadius: 30),
           ]).animate().scale(begin: const Offset(0.3, 0.3), end: const Offset(1, 1), curve: Curves.elasticOut, duration: 600.ms),
           const SizedBox(height: 10),
-          Text(lastOk ? 'Correct!' : 'It was $number',
+          Text(lastOk ? tr('memory_boost.number.correct') : tr('memory_boost.number.it_was', {'n': number}),
               style: TextStyle(color: col, fontSize: 24, fontWeight: FontWeight.w900)),
-          if (!lastOk) Text('You typed $answer', style: const TextStyle(color: Pal.textDim, fontSize: 15)),
+          if (!lastOk) Text(tr('memory_boost.number.you_typed', {'n': answer}), style: const TextStyle(color: Pal.textDim, fontSize: 15)),
         ]);
       case _Phase.setup:
         center = const SizedBox();
@@ -238,7 +249,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
       Padding(
         padding: const EdgeInsets.all(14),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          StatChip(Icons.layers_rounded, 'Round $level'),
+          Flexible(child: StatChip(Icons.layers_rounded, tr('memory_boost.number.round_n', {'n': level}))),
           GlassCard(
             blur: 0,
             radius: 22,
@@ -249,7 +260,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
                     color: Pal.danger, size: 19),
             ]),
           ),
-          StatChip(Icons.emoji_events_rounded, 'Best ${Storage.getInt(numberBestKeyFor(tier))}', color: Pal.gold),
+          Flexible(child: StatChip(Icons.emoji_events_rounded, '${tr('common.best')} ${Storage.getInt(numberBestKeyFor(tier))}', color: Pal.gold)),
         ]),
       ),
       Expanded(

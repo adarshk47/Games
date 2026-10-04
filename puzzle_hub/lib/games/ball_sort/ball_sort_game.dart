@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -14,6 +15,9 @@ const _kMarkersKey = 'ball_sort.markers';
 
 /// Storage key helpers: everything is per difficulty.
 String bsKey(BsDifficulty d, String what) => 'ball_sort.${d.id}.$what';
+
+/// Localized difficulty name.
+String bsTierName(BsDifficulty d) => tr('common.tier.${d.id}');
 
 const _palette = <Color>[
   Color(0xFFE53935), // red
@@ -218,14 +222,14 @@ class _BallSortGameState extends State<BallSortGame> {
   void _showWin(int stars) {
     showPremiumDialog(
       context,
-      title: 'Level $_level complete!',
-      message: 'Solved in ${_state.moves} moves (par ${parMoves(_diff, _level)}).',
+      title: tr('ball_sort.level_done', {'n': _level}),
+      message: tr('ball_sort.solved_msg', {'moves': _state.moves, 'par': parMoves(_diff, _level)}),
       emoji: '🧪',
       color: bsAccent,
       stars: stars,
       actions: [
-        DialogAction('Replay', _restart),
-        DialogAction('Next level', () => setState(() => _load(_level + 1)), primary: true),
+        DialogAction(tr('common.replay'), _restart),
+        DialogAction(tr('common.next_level'), () => setState(() => _load(_level + 1)), primary: true),
       ],
     );
   }
@@ -248,12 +252,12 @@ class _BallSortGameState extends State<BallSortGame> {
   Widget build(BuildContext context) {
     final n = _state.tubes.length;
     return GameScaffold(
-      title: 'Ball Sort · ${_diff.label}',
+      title: tr('ball_sort.title_tier', {'tier': bsTierName(_diff)}),
       tint: bsAccent,
       actions: [
         BarAction(
           icon: _markers ? Icons.accessibility_new : Icons.accessibility_outlined,
-          tooltip: 'Shape markers',
+          tooltip: tr('ball_sort.markers'),
           onTap: () {
             setState(() => _markers = !_markers);
             Storage.setBool(_kMarkersKey, _markers);
@@ -265,9 +269,9 @@ class _BallSortGameState extends State<BallSortGame> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              _Pill(icon: Icons.grid_view_rounded, label: 'Level $_level', onTap: () => Navigator.of(context).maybePop()),
+              _Pill(icon: Icons.grid_view_rounded, label: tr('common.level_n', {'n': _level}), onTap: () => Navigator.of(context).maybePop()),
               const SizedBox(width: 10),
-              _Pill(icon: Icons.swap_vert_rounded, label: 'Moves ${_state.moves}'),
+              _Pill(icon: Icons.swap_vert_rounded, label: tr('ball_sort.moves_n', {'n': _state.moves})),
             ]),
           ),
           Expanded(
@@ -331,11 +335,13 @@ class _BallSortGameState extends State<BallSortGame> {
               spacing: 10,
               runSpacing: 10,
               children: [
-                _Pill(icon: Icons.undo_rounded, label: 'Undo', onTap: _history.isEmpty ? null : _undo, big: true),
-                _Pill(icon: Icons.refresh_rounded, label: 'Restart', onTap: _restart, big: true),
+                _Pill(icon: Icons.undo_rounded, label: tr('common.undo'), onTap: _history.isEmpty ? null : _undo, big: true),
+                _Pill(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart, big: true),
                 _Pill(
                     icon: Icons.add_rounded,
-                    label: _state.canAddTube ? 'Tube (${kMaxExtraTubes - _state.extraUsed})' : 'Tube +🪙',
+                    label: _state.canAddTube
+                        ? tr('ball_sort.tube_n', {'n': kMaxExtraTubes - _state.extraUsed})
+                        : tr('ball_sort.tube_buy'),
                     onTap: _state.canAddTube || _state.canBuyTube ? _addTube : null,
                     big: true),
               ],

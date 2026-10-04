@@ -7,6 +7,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../i18n/i18n.dart';
 import '../storage.dart';
 import 'daily_reward.dart';
 import 'daily_service.dart';
@@ -158,14 +159,15 @@ class ReminderService {
     }
   }
 
-  /// Friendly rotating Hinglish message for [now].
+  /// Friendly rotating message for [now] in the current app language
+  /// (picked at scheduling time).
   static String messageFor(DateTime now, {required int streak, required bool rewardReady}) {
     final msgs = <String>[
-      'Aaj ka puzzle aapka intezaar kar raha hai 🧩',
-      if (streak > 0) 'Streak mat todiye! 🔥 Day ${streak + 1}',
-      if (rewardReady || streak > 0) 'Daily reward ready hai 🎁',
-      'Aaj ke 3 quests ready hain, coins jeetiye 🪙',
-      'Bas 5 minute, dimaag ki thodi kasrat 🧠',
+      tr('reminder.msg.puzzle'),
+      if (streak > 0) tr('reminder.msg.streak', {'n': streak + 1}),
+      if (rewardReady || streak > 0) tr('reminder.msg.reward'),
+      tr('reminder.msg.quests'),
+      tr('reminder.msg.brain'),
     ];
     final dayOfYear = daysBetween(DateTime(now.year), now);
     return msgs[dayOfYear % msgs.length];
@@ -189,10 +191,10 @@ class ReminderService {
         title: 'Master G',
         body: messageFor(at, streak: streak, rewardReady: true),
         scheduledDate: at,
-        notificationDetails: const NotificationDetails(
-          android: AndroidNotificationDetails('daily_reminder', 'Daily reminder',
-              channelDescription: 'Daily puzzle reminder', importance: Importance.defaultImportance),
-          iOS: DarwinNotificationDetails(),
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails('daily_reminder', tr('reminder.title'),
+              channelDescription: tr('reminder.channel_desc'), importance: Importance.defaultImportance),
+          iOS: const DarwinNotificationDetails(),
         ),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,

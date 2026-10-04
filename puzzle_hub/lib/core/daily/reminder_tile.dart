@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../i18n/i18n.dart';
 import '../ui/palette.dart';
 import 'reminder_service.dart';
 
@@ -11,7 +12,7 @@ class ReminderSettingsTile extends StatelessWidget {
     final picked = await showTimePicker(
       context: context,
       initialTime: ReminderService.time.value,
-      helpText: 'Reminder time',
+      helpText: tr('reminder.time'),
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           colorScheme: Theme.of(ctx).colorScheme.copyWith(primary: Pal.gold, onPrimary: Colors.black, surface: Pal.bg1),
@@ -31,8 +32,8 @@ class ReminderSettingsTile extends StatelessWidget {
         builder: (context, t, _) => Column(mainAxisSize: MainAxisSize.min, children: [
           SwitchListTile(
             secondary: Icon(Icons.notifications_active_rounded, color: on ? Pal.gold : Pal.textDim, size: 28),
-            title: const Text('Daily reminder', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w700)),
-            subtitle: Text(on ? 'Roz ${t.format(context)} par yaad dilayenge' : 'Off',
+            title: Text(tr('reminder.title'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w700)),
+            subtitle: Text(on ? tr('reminder.on_sub', {'time': t.format(context)}) : tr('reminder.off'),
                 style: const TextStyle(color: Pal.textDim, fontSize: 12)),
             value: on,
             activeThumbColor: Pal.gold,
@@ -40,7 +41,7 @@ class ReminderSettingsTile extends StatelessWidget {
               final res = await ReminderService.setEnabled(v);
               if (v && !res && context.mounted) {
                 ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-                  const SnackBar(content: Text('Notifications ki permission settings se allow karein')),
+                  SnackBar(content: Text(tr('reminder.permission'))),
                 );
               }
             },
@@ -48,7 +49,7 @@ class ReminderSettingsTile extends StatelessWidget {
           if (on)
             ListTile(
               leading: const SizedBox(width: 28, child: Icon(Icons.schedule_rounded, color: Pal.textDim)),
-              title: const Text('Reminder time', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w600)),
+              title: Text(tr('reminder.time'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w600)),
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(

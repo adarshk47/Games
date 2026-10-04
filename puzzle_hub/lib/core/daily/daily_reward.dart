@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 
@@ -90,7 +91,7 @@ class DailyReward {
     await Storage.setString(_kLast, dateKey(DailyClock.today()));
     await Storage.setInt(_kStreak, s);
     if (s > bestStreak) await Storage.setInt(_kBest, s);
-    await Rewards.addCoins(coins, label: 'Day ${cycleDay(s)} reward');
+    await Rewards.addCoins(coins, label: tr('daily.day_reward_label', {'n': cycleDay(s)}));
     notifyDailyChanged();
     return coins;
   }

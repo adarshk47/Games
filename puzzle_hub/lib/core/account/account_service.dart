@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 
+import '../i18n/i18n.dart';
 import '../storage.dart';
 
 /// Single local account stored on the device: name + salted-hash PIN (optional
@@ -101,7 +102,7 @@ class AccountService extends ChangeNotifier {
     if (!biometricEnabled) return false;
     try {
       final ok = await _auth.authenticate(
-        localizedReason: 'Fingerprint se unlock karein',
+        localizedReason: tr('account.fingerprint_unlock'),
         biometricOnly: true,
         persistAcrossBackgrounding: true,
       );

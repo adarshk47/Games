@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -100,17 +101,20 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
     mmDialog(
       context,
       title: pick(praise),
-      message:
-          '$_moves chaal mein sab jodi mil gayi. Aaram se khelne ke liye shukriya!',
+      message: tr('mom_memory.match_win', {'moves': _moves}),
       emoji: '🧸',
       stars: stars,
       actions: [
-        DialogAction('Phir se', () => _start(_level)),
+        DialogAction(tr('common.replay'), () => _start(_level)),
         if (next)
-          DialogAction('Agla level', () => _start(_level + 1), primary: true),
+          DialogAction(
+            tr('common.next_level'),
+            () => _start(_level + 1),
+            primary: true,
+          ),
         if (!next)
           DialogAction(
-            'Menu',
+            tr('common.menu'),
             () => Navigator.of(context).maybePop(),
             primary: true,
           ),
@@ -122,11 +126,11 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
   Widget build(BuildContext context) {
     final lv = matchLevels[_level];
     return MmPage(
-      title: 'Baby Items Match',
+      title: tr('mom_memory.match_title'),
       actions: [
         BarAction(
           icon: Icons.refresh_rounded,
-          tooltip: 'Naya',
+          tooltip: tr('common.new_game'),
           onTap: () => _start(_level),
         ),
       ],
@@ -180,7 +184,11 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              'Chaal: $_moves   •   ${_done.length ~/ 2}/${lv.pairs} jodi',
+              tr('mom_memory.match_status', {
+                'moves': _moves,
+                'done': _done.length ~/ 2,
+                'total': lv.pairs,
+              }),
               style: const TextStyle(
                 color: Pal.textDim,
                 fontWeight: FontWeight.w700,
@@ -224,11 +232,11 @@ class _BabyMatchGameState extends State<BabyMatchGame> {
               ),
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 4),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
             child: Text(
-              'Aaram se, koi jaldi nahi 🌸',
-              style: TextStyle(color: Pal.textDim, fontSize: 13),
+              '${tr('mom_memory.gentle_1')} 🌸',
+              style: const TextStyle(color: Pal.textDim, fontSize: 13),
             ),
           ),
           const MmFootnote(),

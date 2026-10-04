@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'flow_painter.dart';
@@ -12,6 +13,9 @@ import 'logic/flow_logic.dart';
 import 'progress.dart';
 
 const flowTint = Color(0xFF5EEAD4);
+
+/// Localized tier name.
+String flowTierLabel(FlowTier t) => tr('common.tier.${t.name}');
 
 /// One playable level; can advance to the next level in place.
 class FlowGamePage extends StatefulWidget {
@@ -169,17 +173,17 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
       if (!mounted) return;
       showPremiumDialog(
         context,
-        title: 'Flow complete!',
+        title: tr('flow_pairs.complete'),
         emoji: '🌈',
         stars: stars,
         color: flowTint,
         message: MediaQuery.sizeOf(context).height < 560
             ? null
-            : '${_game.moves} strokes (best ${_game.puzzle.minMoves})',
+            : tr('flow_pairs.strokes', {'n': _game.moves, 'best': _game.puzzle.minMoves}),
         actions: [
-          DialogAction('Levels', () => Navigator.of(context).maybePop()),
-          DialogAction('Replay', () => setState(() => _load(_level))),
-          if (_level < FlowLevels.count) DialogAction('Next', () => setState(() => _load(_level + 1)), primary: true),
+          DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop()),
+          DialogAction(tr('common.replay'), () => setState(() => _load(_level))),
+          if (_level < FlowLevels.count) DialogAction(tr('common.next_level'), () => setState(() => _load(_level + 1)), primary: true),
         ],
       );
     });
@@ -220,7 +224,7 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
     final puzzle = _game.puzzle;
     final board = _game.board;
     return GameScaffold(
-      title: '${_tier.label}  -  Level $_level',
+      title: '${flowTierLabel(_tier)}  -  ${tr('common.level_n', {'n': _level})}',
       tint: flowTint,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
@@ -230,12 +234,12 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
             radius: 20,
             blur: 0,
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              _Stat('Pairs', '${board.connectedCount}/${puzzle.pairs.length}'),
-              _Stat('Moves', '${_game.moves}'),
+              _Stat(tr('flow_pairs.pairs'), '${board.connectedCount}/${puzzle.pairs.length}'),
+              _Stat(tr('common.moves'), '${_game.moves}'),
               if (puzzle.requireFill)
-                _Stat('Fill all', '${(board.filledCount * 100 ~/ puzzle.cells)}%')
+                _Stat(tr('flow_pairs.fill_all'), '${(board.filledCount * 100 ~/ puzzle.cells)}%')
               else
-                _Stat('Grid', '${puzzle.size}x${puzzle.size}'),
+                _Stat(tr('flow_pairs.grid'), '${puzzle.size}x${puzzle.size}'),
             ]),
           ),
           Expanded(
@@ -283,13 +287,13 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
           ),
           const SizedBox(height: 12),
           Row(children: [
-            _Tool(icon: Icons.undo_rounded, label: 'Undo', onTap: _game.canUndo ? _undo : null),
+            _Tool(icon: Icons.undo_rounded, label: tr('common.undo'), onTap: _game.canUndo ? _undo : null),
             _Tool(
                 icon: Icons.lightbulb_rounded,
-                label: 'Hint ${_game.hintsLeft}',
+                label: '${tr('common.hint')} ${_game.hintsLeft}',
                 onTap: _game.hintsLeft > 0 ? _hint : null,
                 color: Pal.gold),
-            _Tool(icon: Icons.refresh_rounded, label: 'Restart', onTap: _restart),
+            _Tool(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart),
           ]),
         ]),
       ),

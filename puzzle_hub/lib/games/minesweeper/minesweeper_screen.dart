@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -15,6 +16,8 @@ const _maxHints = 3;
 
 String _bestKey(MineTier t) => 'mines.${t.name}.best';
 String _winsKey(MineTier t) => 'mines.${t.name}.wins';
+
+String _tierLabel(MineTier t) => tr('common.tier.${t.name}');
 
 String _fmt(int s) => '${(s ~/ 60).toString().padLeft(2, '0')}:${(s % 60).toString().padLeft(2, '0')}';
 
@@ -176,24 +179,24 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
       if (isBest) Storage.setInt(_bestKey(t), _elapsed);
       Storage.setInt(_winsKey(t), Storage.getInt(_winsKey(t)) + 1);
       Rewards.onLevelComplete('minesweeper', '${t.name}-win', stars: stars);
-      message = 'Cleared ${c.label} in ${_fmt(_elapsed)}${isBest ? '\nNew best time!' : ''}';
+      message = '${tr('minesweeper.cleared_in', {'tier': _tierLabel(t), 'time': _fmt(_elapsed)})}${isBest ? '\n${tr('minesweeper.new_best')}' : ''}';
     } else {
       Rewards.onGameEnd('minesweeper', won: false);
-      message = 'You hit a mine after ${_fmt(_elapsed)}. Try again!';
+      message = tr('minesweeper.hit_mine', {'time': _fmt(_elapsed)});
     }
     _endTimer?.cancel();
     _endTimer = Timer(Duration(milliseconds: won ? 500 : 1300), () {
       if (!mounted) return;
       showPremiumDialog(
         context,
-        title: won ? 'Field cleared!' : 'Boom!',
+        title: won ? tr('minesweeper.field_cleared') : tr('minesweeper.boom'),
         emoji: won ? '🏆' : '💥',
         stars: stars,
         message: message,
         color: won ? Pal.gold : Pal.danger,
         actions: [
-          DialogAction('Play again', () => _start(t), primary: true),
-          DialogAction('Menu', _menu),
+          DialogAction(tr('common.play_again'), () => _start(t), primary: true),
+          DialogAction(tr('common.menu'), _menu),
         ],
       );
     });
@@ -203,10 +206,10 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
   Widget build(BuildContext context) {
     final inGame = _game != null;
     return GameScaffold(
-      title: inGame ? 'Minesweeper · ${mineConfigs[_tier!]!.label}' : 'Minesweeper',
+      title: inGame ? '${tr('minesweeper.title')} · ${_tierLabel(_tier!)}' : tr('minesweeper.title'),
       tint: _tint,
       onBack: inGame ? _menu : null,
-      actions: inGame ? [BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: () => _start(_tier!))] : null,
+      actions: inGame ? [BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: () => _start(_tier!))] : null,
       body: inGame ? _gameBody() : _menuBody(),
     );
   }
@@ -217,10 +220,10 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(18, 10, 18, 24),
       children: [
-        const Padding(
-          padding: EdgeInsets.only(bottom: 14, left: 4),
-          child: Text('Clear the field without touching a mine.\nTap to reveal, long-press to flag.',
-              style: TextStyle(color: Pal.textDim, fontSize: 14, height: 1.4)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 14, left: 4),
+          child: Text(tr('minesweeper.intro'),
+              style: const TextStyle(color: Pal.textDim, fontSize: 14, height: 1.4)),
         ),
         for (final (n, t) in MineTier.values.indexed) _tierCard(t, n),
       ],
@@ -252,11 +255,14 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(c.label, style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w800)),
+              Text(_tierLabel(t), style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w800)),
               const SizedBox(height: 2),
-              Text('${c.cols}×${c.rows} · ${c.mines} mines', style: TextStyle(color: col, fontSize: 13, fontWeight: FontWeight.w600)),
+              Text(tr('minesweeper.board_info', {'cols': c.cols, 'rows': c.rows, 'n': c.mines}), style: TextStyle(color: col, fontSize: 13, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text(best > 0 ? 'Best ${_fmt(best)}  ·  $wins wins' : (wins > 0 ? '$wins wins' : 'Not cleared yet'),
+              Text(
+                  best > 0
+                      ? tr('minesweeper.best_wins', {'time': _fmt(best), 'n': wins})
+                      : (wins > 0 ? tr('minesweeper.wins', {'n': wins}) : tr('minesweeper.not_cleared')),
                   style: const TextStyle(color: Pal.textDim, fontSize: 12)),
             ]),
           ),
@@ -275,11 +281,11 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
       Padding(
         padding: const EdgeInsets.fromLTRB(14, 6, 14, 6),
         child: Row(children: [
-          Expanded(child: _stat(Icons.flag_rounded, '${g.minesLeft}', 'Mines', Pal.danger, key: const ValueKey('minesLeft'))),
+          Expanded(child: _stat(Icons.flag_rounded, '${g.minesLeft}', tr('minesweeper.mines'), Pal.danger, key: const ValueKey('minesLeft'))),
           const SizedBox(width: 8),
-          Expanded(child: _stat(Icons.timer_rounded, _fmt(_elapsed), 'Time', _tint, key: const ValueKey('timer'))),
+          Expanded(child: _stat(Icons.timer_rounded, _fmt(_elapsed), tr('common.time'), _tint, key: const ValueKey('timer'))),
           const SizedBox(width: 8),
-          Expanded(child: _stat(Icons.emoji_events_rounded, best > 0 ? _fmt(best) : '--:--', 'Best', Pal.gold)),
+          Expanded(child: _stat(Icons.emoji_events_rounded, best > 0 ? _fmt(best) : '--:--', tr('common.best'), Pal.gold)),
         ]),
       ),
       Expanded(
@@ -462,7 +468,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Icon(_flagMode ? Icons.flag_rounded : Icons.touch_app_rounded, color: _flagMode ? _tint : Pal.text, size: 22),
                 const SizedBox(width: 8),
-                Text(_flagMode ? 'Flag' : 'Reveal',
+                Text(_flagMode ? tr('minesweeper.flag') : tr('minesweeper.reveal'),
                     style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
               ]),
             ),
@@ -482,7 +488,12 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
                 child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   const Icon(Icons.lightbulb_rounded, color: Pal.gold, size: 22),
                   const SizedBox(width: 8),
-                  Text('Hint ($left)', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
+                  Flexible(
+                    child: Text('${tr('common.hint')} ($left)',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
+                  ),
                 ]),
               ),
             ),

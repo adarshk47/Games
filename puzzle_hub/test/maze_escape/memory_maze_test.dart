@@ -153,7 +153,7 @@ void main() {
     }
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
-    expect(find.text('Yaad se nikal gaye!'), findsOneWidget);
+    expect(find.text('Escaped from memory!'), findsOneWidget);
     // 1 bump + 1 peek => 2 stars, saved under the memory key only.
     expect(MazeProgress.stars(MazeTier.easy, 1, mode: MazeMode.memory), 2);
     expect(MazeProgress.stars(MazeTier.easy, 1), 0);
@@ -180,7 +180,7 @@ void main() {
     expect(find.text('Keep going?'), findsOneWidget);
     await tester.tap(find.text('Cancel'));
     await tester.pump(const Duration(seconds: 1));
-    expect(find.text('Deewar se takra gaye!'), findsOneWidget);
+    expect(find.text('Hit the walls!'), findsOneWidget);
     expect(MazeProgress.stars(MazeTier.extreme, 1, mode: MazeMode.memory), 0);
 
     await tester.pumpWidget(const SizedBox());

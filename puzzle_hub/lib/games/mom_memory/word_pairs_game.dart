@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -90,7 +91,7 @@ class _WordPairsGameState extends State<WordPairsGame>
 
   @override
   Widget build(BuildContext context) => MmPage(
-    title: 'Jodi Milao',
+    title: tr('mom_memory.pairs_title'),
     body: Column(
       children: [
         Expanded(
@@ -104,19 +105,23 @@ class _WordPairsGameState extends State<WordPairsGame>
                   level: _level,
                   unlocked: Storage.getInt('mom.pairs.level'),
                   maxLevel: pairsMaxLevel,
-                  text:
-                      '${pairsCount(_level)} jodiyaan dekhiye aur yaad kijiye.\nPhir ek shabd ka saathi chuniye.',
+                  text: tr('mom_memory.pairs_intro', {
+                    'n': pairsCount(_level),
+                  }),
                   onLevel: (i) => setState(() => _level = i),
                   onStart: _begin,
                 ),
                 _Phase.show => _show(),
                 _Phase.ask => _ask(),
                 _Phase.result => MmResult(
-                  title: '$_correct/${_round.questions.length} sahi',
+                  title: tr('mom_memory.n_correct', {
+                    'n': _correct,
+                    'total': _round.questions.length,
+                  }),
                   stars: _stars,
                   message: _correct == _round.questions.length
                       ? pick(praise)
-                      : 'Bahut achha prayas! Aaram se phir koshish kijiye.',
+                      : tr('mom_memory.good_try'),
                   onAgain: _begin,
                   onNext: _level < pairsMaxLevel
                       ? () {
@@ -136,11 +141,11 @@ class _WordPairsGameState extends State<WordPairsGame>
 
   Widget _show() => Column(
     children: [
-      const Padding(
-        padding: EdgeInsets.fromLTRB(20, 8, 20, 0),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
         child: Text(
-          'Ye jodiyaan yaad kijiye',
-          style: TextStyle(
+          tr('mom_memory.remember_pairs'),
+          style: const TextStyle(
             color: Pal.text,
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -166,7 +171,7 @@ class _WordPairsGameState extends State<WordPairsGame>
       Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: PremiumButton(
-          label: 'Yaad ho gaya',
+          label: tr('mom_memory.memorized'),
           compact: true,
           color: Mm.lavender,
           onTap: _toAsk,
@@ -182,12 +187,16 @@ class _WordPairsGameState extends State<WordPairsGame>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            p.word,
-            style: const TextStyle(
-              color: Mm.ink,
-              fontSize: 20,
-              fontWeight: FontWeight.w900,
+          Flexible(
+            child: Text(
+              p.word,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Mm.ink,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
           const Padding(
@@ -196,12 +205,16 @@ class _WordPairsGameState extends State<WordPairsGame>
           ),
           Text(p.partner.emoji, style: const TextStyle(fontSize: 28)),
           const SizedBox(width: 8),
-          Text(
-            p.partner.hi,
-            style: TextStyle(
-              color: Mm.ink.withValues(alpha: 0.75),
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+          Flexible(
+            child: Text(
+              p.partner.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Mm.ink.withValues(alpha: 0.75),
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -217,13 +230,17 @@ class _WordPairsGameState extends State<WordPairsGame>
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
           child: Text(
-            'Sawaal ${_q + 1}/${_round.questions.length}',
+            tr('mom_memory.question_n', {
+              'n': _q + 1,
+              'total': _round.questions.length,
+            }),
             style: const TextStyle(color: Pal.textDim, fontSize: 13),
           ),
         ),
         const SizedBox(height: 6),
         Text(
-          '"${w.word}" ka saathi kaun?',
+          tr('mom_memory.pairs_q', {'word': w.word}),
+          textAlign: TextAlign.center,
           style: const TextStyle(
             color: Pal.text,
             fontSize: 24,
@@ -259,7 +276,7 @@ class _WordPairsGameState extends State<WordPairsGame>
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              wordPairs[qn.options[i]].partner.hi,
+                              wordPairs[qn.options[i]].partner.name,
                               style: const TextStyle(
                                 color: Mm.ink,
                                 fontSize: 16,
@@ -277,7 +294,12 @@ class _WordPairsGameState extends State<WordPairsGame>
                   child: Text(
                     _chosen == qn.answerOption
                         ? pick(praise)
-                        : 'Koi baat nahi: ${w.word} - ${w.partner.emoji} ${w.partner.hi}',
+                        : tr('mom_memory.pairs_wrong', {
+                            'word': w.word,
+                            'emoji': w.partner.emoji,
+                            'partner': w.partner.name,
+                          }),
+                    textAlign: TextAlign.center,
                     style: const TextStyle(color: Pal.textDim, fontSize: 14),
                   ).animate().fadeIn(),
                 ),

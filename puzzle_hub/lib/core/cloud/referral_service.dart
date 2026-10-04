@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../account/account_service.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import 'cloud_auth.dart';
@@ -38,9 +39,9 @@ class ReferralService {
 
   static String inviteLink(String uid) => 'https://play.google.com/store/apps/details?id=$packageId&referrer=ref_$uid';
 
-  static String inviteText(String uid, String name) =>
-      '${name.isEmpty ? 'I' : name} invited you to Master G - fun brain & puzzle games! '
-      'Install, finish your first level and get $inviteeBonus bonus coins: ${inviteLink(uid)}';
+  static String inviteText(String uid, String name) => name.isEmpty
+      ? tr('cloud.invite.text_anon', {'coins': inviteeBonus, 'link': inviteLink(uid)})
+      : tr('cloud.invite.text', {'name': name, 'coins': inviteeBonus, 'link': inviteLink(uid)});
 
   /// Extracts the inviter uid from a raw install-referrer string such as
   /// `ref_abc123`, `referrer=ref_abc123` or URL-encoded variants.
@@ -117,7 +118,7 @@ class ReferralService {
         credited = await run(false);
       }
       await Storage.removeGlobal(_kPending);
-      if (credited) await Rewards.addCoins(inviteeBonus, label: 'Invite bonus');
+      if (credited) await Rewards.addCoins(inviteeBonus, label: tr('cloud.invite_bonus'));
     } catch (e) {
       debugPrint('referral credit: $e');
     } finally {
@@ -128,7 +129,7 @@ class ReferralService {
   Future<void> share() async {
     final uid = CloudAuth.I.user.value?.uid;
     if (uid == null) return;
-    await SharePlus.instance.share(ShareParams(text: inviteText(uid, AccountService.I.name), subject: 'Play Master G with me'));
+    await SharePlus.instance.share(ShareParams(text: inviteText(uid, AccountService.I.name), subject: tr('cloud.invite.subject')));
   }
 
   Future<void> deleteMine(String uid) async {

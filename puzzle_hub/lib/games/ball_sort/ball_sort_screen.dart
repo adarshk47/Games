@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'ball_sort_game.dart';
@@ -33,37 +34,36 @@ class _BallSortScreenState extends State<BallSortScreen> {
     if (mounted) setState(() {});
   }
 
-  static const _info = <BsDifficulty, (String, String, Color, IconData)>{
-    BsDifficulty.easy: ('3-5 colors', 'Relaxed start. Two spare tubes.', Color(0xFF4ADE80), Icons.spa_rounded),
-    BsDifficulty.medium: ('6-9 colors', 'A proper sorting workout.', Color(0xFFFFB347), Icons.bolt_rounded),
-    BsDifficulty.hard:
-        ('10-14 colors', 'A rainbow of tubes. Shape markers help.', Color(0xFFFF6B8A), Icons.local_fire_department_rounded),
-    BsDifficulty.extreme:
-        ('15-20 colors', 'Only 1-2 spare tubes. Pure chaos.', Color(0xFFB66DFF), Icons.whatshot_rounded),
+  /// Color range, color and icon per difficulty; texts come from [tr].
+  static const _info = <BsDifficulty, (String, Color, IconData)>{
+    BsDifficulty.easy: ('3-5', Color(0xFF4ADE80), Icons.spa_rounded),
+    BsDifficulty.medium: ('6-9', Color(0xFFFFB347), Icons.bolt_rounded),
+    BsDifficulty.hard: ('10-14', Color(0xFFFF6B8A), Icons.local_fire_department_rounded),
+    BsDifficulty.extreme: ('15-20', Color(0xFFB66DFF), Icons.whatshot_rounded),
   };
 
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Ball Sort',
+      title: tr('ball_sort.title'),
       tint: bsAccent,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 24),
         children: [
-          const Text('Choose difficulty',
+          Text(tr('ball_sort.choose'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w800)),
+              style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w800)),
           const SizedBox(height: 4),
-          const Text('Each mode keeps its own levels and records.',
-              textAlign: TextAlign.center, style: TextStyle(color: Pal.textDim, fontSize: 13)),
+          Text(tr('ball_sort.choose_sub'),
+              textAlign: TextAlign.center, style: const TextStyle(color: Pal.textDim, fontSize: 13)),
           const SizedBox(height: 18),
           for (final d in BsDifficulty.values) ...[
             _DiffCard(
               difficulty: d,
-              title: _info[d]!.$1,
-              subtitle: _info[d]!.$2,
-              color: _info[d]!.$3,
-              icon: _info[d]!.$4,
+              title: tr('ball_sort.colors', {'range': _info[d]!.$1}),
+              subtitle: tr('ball_sort.desc.${d.id}'),
+              color: _info[d]!.$2,
+              icon: _info[d]!.$3,
               last: d == _last,
               onTap: () => _open(d),
             ).animate().fadeIn(duration: 300.ms, delay: (80 * d.index).ms).slideY(begin: 0.15, end: 0),
@@ -72,7 +72,7 @@ class _BallSortScreenState extends State<BallSortScreen> {
           const SizedBox(height: 4),
           Center(
             child: PremiumButton(
-              label: 'Continue ${_last.label}',
+              label: tr('ball_sort.continue_tier', {'tier': bsTierName(_last)}),
               icon: Icons.play_arrow_rounded,
               color: bsAccent,
               onTap: () => _open(_last),
@@ -124,14 +124,18 @@ class _DiffCard extends StatelessWidget {
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Text(difficulty.label,
-                  style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w800)),
+              Flexible(
+                child: Text(bsTierName(difficulty),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w800)),
+              ),
               if (last) ...[
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(color: color.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(10)),
-                  child: const Text('LAST', style: TextStyle(color: Pal.text, fontSize: 10, fontWeight: FontWeight.w800)),
+                  child: Text(tr('ball_sort.last'), style: const TextStyle(color: Pal.text, fontSize: 10, fontWeight: FontWeight.w800)),
                 ),
               ],
             ]),
@@ -139,7 +143,7 @@ class _DiffCard extends StatelessWidget {
             Text(title, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 14)),
             Text(subtitle, style: const TextStyle(color: Pal.textDim, fontSize: 12)),
             const SizedBox(height: 4),
-            Text(done == 0 ? 'Not started' : '$done level${done == 1 ? '' : 's'} cleared',
+            Text(done == 0 ? tr('ball_sort.not_started') : tr(done == 1 ? 'ball_sort.cleared_one' : 'ball_sort.cleared_n', {'n': done}),
                 style: const TextStyle(color: Pal.text, fontSize: 12, fontWeight: FontWeight.w600)),
           ]),
         ),
@@ -190,13 +194,13 @@ class _LevelGridScreenState extends State<_LevelGridScreen> {
     final unlocked = Storage.getInt(bsKey(_d, 'unlocked'), 1);
     final current = Storage.getInt(bsKey(_d, 'level'), 1).clamp(1, unlocked);
     return GameScaffold(
-      title: 'Ball Sort · ${_d.label}',
+      title: tr('ball_sort.title_tier', {'tier': bsTierName(_d)}),
       tint: bsAccent,
       body: Column(children: [
         const SizedBox(height: 8),
         Center(
           child: PremiumButton(
-              label: 'Play level $current',
+              label: tr('ball_sort.play_level', {'n': current}),
               icon: Icons.play_arrow_rounded,
               color: bsAccent,
               compact: true,

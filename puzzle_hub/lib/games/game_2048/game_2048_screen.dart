@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -171,17 +172,17 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     _dialogOpen = true;
     showPremiumDialog(
       context,
-      title: '${_g.target} reached!',
-      message: 'Score ${_g.score}. Keep going for a higher tile?',
+      title: tr('game_2048.target_reached', {'n': _g.target}),
+      message: tr('game_2048.win_msg', {'score': _g.score}),
       emoji: '🏆',
       color: _tint,
       actions: [
-        DialogAction('Keep going', () {
+        DialogAction(tr('game_2048.keep_going'), () {
           _g.keepGoing = true;
           _save();
           if (!_g.hasMoves) _showOver();
         }, primary: true),
-        DialogAction('New game', _restart),
+        DialogAction(tr('common.new_game'), _restart),
       ],
     ).then((_) => _dialogOpen = false);
   }
@@ -207,13 +208,13 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     _dialogOpen = true;
     showPremiumDialog(
       context,
-      title: 'Game over',
-      message: 'Score ${_g.score}  •  Best $_best\nHighest tile ${_g.maxTile}',
+      title: tr('common.game_over'),
+      message: tr('game_2048.over_msg', {'score': _g.score, 'best': _best, 'tile': _g.maxTile}),
       emoji: '😵',
       color: Pal.danger,
       actions: [
-        if (_g.hasHistory) DialogAction('Undo', _undo),
-        DialogAction('Try again', _restart, primary: true),
+        if (_g.hasHistory) DialogAction(tr('common.undo'), _undo),
+        DialogAction(tr('common.try_again'), _restart, primary: true),
       ],
     ).then((_) => _dialogOpen = false);
   }
@@ -251,8 +252,8 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       title: '2048',
       tint: _tint,
       actions: [
-        BarAction(icon: Icons.undo_rounded, tooltip: 'Undo (${_g.undosLeft})', onTap: _g.hasHistory ? _undo : null),
-        BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: _restart),
+        BarAction(icon: Icons.undo_rounded, tooltip: tr('game_2048.undo_tip', {'n': _g.undosLeft}), onTap: _g.hasHistory ? _undo : null),
+        BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: _restart),
       ],
       body: Focus(
         focusNode: _focus,
@@ -262,9 +263,9 @@ class _Game2048ScreenState extends State<Game2048Screen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           child: Column(children: [
             Row(children: [
-              Expanded(child: _ScorePill(label: 'SCORE', value: _g.score, floatSerial: _floatSerial, floatPts: _floatPts)),
+              Expanded(child: _ScorePill(label: tr('common.score').toUpperCase(), value: _g.score, floatSerial: _floatSerial, floatPts: _floatPts)),
               const SizedBox(width: 12),
-              Expanded(child: _ScorePill(label: 'BEST', value: math.max(_best, _g.score))),
+              Expanded(child: _ScorePill(label: tr('common.best').toUpperCase(), value: math.max(_best, _g.score))),
             ]),
             const SizedBox(height: 14),
             _TierSelector(selected: _g.tier, undosLeft: _g.undosLeft, onSelect: _setTier),
@@ -289,7 +290,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
                 }),
               ),
             ),
-            Text('Swipe to merge tiles. Reach ${_g.target}!',
+            Text(tr('game_2048.swipe_hint', {'n': _g.target}),
                 style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w600)),
           ]),
         ),
@@ -334,12 +335,14 @@ class _TierSelector extends StatelessWidget {
         child: Row(children: [
           Icon(Icons.grid_view_rounded, size: 20, color: classicSel ? Colors.white : classicColor),
           const SizedBox(width: 10),
-          Text('Classic 2048',
+          Text(tr('game_2048.classic'),
               style: TextStyle(color: classicSel ? Colors.white : Pal.text, fontWeight: FontWeight.w900, fontSize: 15)),
           const Spacer(),
           Flexible(
             child: Text(
-                classicSel ? '4x4 • original rules • $undosLeft/${Tier2048.classic.undos} undos' : '4x4 • original rules • endless',
+                classicSel
+                    ? tr('game_2048.classic_sel', {'left': undosLeft, 'total': Tier2048.classic.undos})
+                    : tr('game_2048.classic_idle'),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -392,14 +395,14 @@ class _TierCard extends StatelessWidget {
           boxShadow: selected ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 14, spreadRadius: -3)] : null,
         ),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(tier.label,
+          Text(tr('common.tier.${tier.name}'),
               maxLines: 1,
               style: TextStyle(color: selected ? Colors.white : Pal.text, fontWeight: FontWeight.w900, fontSize: 13)),
           const SizedBox(height: 3),
           Text('${tier.size}x${tier.size} \u2192 ${tier.target}', maxLines: 1, style: small),
-          Text('$undoTxt undo${tier.undos == 1 ? '' : 's'}', maxLines: 1, style: small),
-          Text(tier.stones > 0 ? '${tier.stones} stones' : 'no stones', maxLines: 1, style: small),
-          Text('${(tier.fourChance * 100).round()}% fours', maxLines: 1, style: small),
+          Text(tr(tier.undos == 1 ? 'game_2048.undos_one' : 'game_2048.undos_n', {'n': undoTxt}), maxLines: 1, style: small),
+          Text(tier.stones > 0 ? tr('game_2048.stones_n', {'n': tier.stones}) : tr('game_2048.no_stones'), maxLines: 1, style: small),
+          Text(tr('game_2048.fours', {'n': (tier.fourChance * 100).round()}), maxLines: 1, style: small),
         ]),
       ),
     );

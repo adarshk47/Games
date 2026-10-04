@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import 'ads/ads_service.dart';
 import 'audio.dart';
+import 'i18n/i18n.dart';
 import 'storage.dart';
 import 'ui/palette.dart';
 
@@ -134,7 +135,7 @@ class Rewards {
     final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     AppAudio.play(Sound.win);
-    addCoins(reward, label: first ? 'Level complete!' : null, playSound: false);
+    addCoins(reward, label: first ? tr('common.level_complete') : null, playSound: false);
     _events.add(RewardEvent(gameId: gameId, type: 'level', levelKey: levelKey, stars: stars, score: score, won: true, firstTime: first));
     try {
       AdsService.onLevelCompleted(gameId: gameId);

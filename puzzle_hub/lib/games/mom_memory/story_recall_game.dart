@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -90,7 +91,7 @@ class _StoryRecallGameState extends State<StoryRecallGame>
 
   @override
   Widget build(BuildContext context) => MmPage(
-    title: 'Kahani yaad karo',
+    title: tr('mom_memory.story_title'),
     body: Column(
       children: [
         Expanded(
@@ -107,19 +108,20 @@ class _StoryRecallGameState extends State<StoryRecallGame>
                       children: [
                         const Text('📖', style: TextStyle(fontSize: 72)),
                         const SizedBox(height: 14),
-                        const Text(
-                          'Ek chhoti kahani',
-                          style: TextStyle(
+                        Text(
+                          tr('mom_memory.story_heading'),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
                             color: Pal.text,
                             fontSize: 26,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'Kahani aaram se padhiye, phir 3 aasaan sawaal honge.',
+                        Text(
+                          tr('mom_memory.story_info'),
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Pal.textDim,
                             fontSize: 15,
                             height: 1.45,
@@ -127,7 +129,7 @@ class _StoryRecallGameState extends State<StoryRecallGame>
                         ),
                         const SizedBox(height: 22),
                         PremiumButton(
-                          label: 'Shuru karein',
+                          label: tr('mom_memory.start'),
                           icon: Icons.favorite_rounded,
                           color: Mm.rose,
                           onTap: _begin,
@@ -139,9 +141,14 @@ class _StoryRecallGameState extends State<StoryRecallGame>
                 _Phase.read => _read(),
                 _Phase.ask => _ask(),
                 _Phase.result => MmResult(
-                  title: '$_correct/${_s.questions.length} sahi',
+                  title: tr('mom_memory.n_correct', {
+                    'n': _correct,
+                    'total': _s.questions.length,
+                  }),
                   stars: _stars,
-                  message: _correct == _s.questions.length ? pick(praise) : 'Bahut achha prayas! Nayi kahani ke saath phir koshish kijiye.',
+                  message: _correct == _s.questions.length
+                      ? pick(praise)
+                      : tr('mom_memory.story_good_try'),
                   onAgain: _begin,
                   onNext: _begin,
                 ),
@@ -171,6 +178,7 @@ class _StoryRecallGameState extends State<StoryRecallGame>
                 const SizedBox(height: 6),
                 Text(
                   _s.title,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Pal.text,
                     fontSize: 22,
@@ -199,7 +207,7 @@ class _StoryRecallGameState extends State<StoryRecallGame>
       Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: PremiumButton(
-          label: 'Padh liya',
+          label: tr('mom_memory.read_done'),
           compact: true,
           color: Mm.lavender,
           onTap: _toAsk,
@@ -215,7 +223,10 @@ class _StoryRecallGameState extends State<StoryRecallGame>
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
           child: Text(
-            'Sawaal ${_q + 1}/${_s.questions.length}',
+            tr('mom_memory.question_n', {
+              'n': _q + 1,
+              'total': _s.questions.length,
+            }),
             style: const TextStyle(color: Pal.textDim, fontSize: 13),
           ),
         ),
@@ -251,6 +262,7 @@ class _StoryRecallGameState extends State<StoryRecallGame>
                             _chosen != null && (i == q.answer || i == _chosen),
                         child: Text(
                           q.options[i],
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Mm.ink,
                             fontSize: 17,
@@ -266,7 +278,10 @@ class _StoryRecallGameState extends State<StoryRecallGame>
                   child: Text(
                     _chosen == q.answer
                         ? pick(praise)
-                        : 'Koi baat nahi, sahi jawab: ${q.options[q.answer]}',
+                        : tr('mom_memory.story_wrong', {
+                            'answer': q.options[q.answer],
+                          }),
+                    textAlign: TextAlign.center,
                     style: const TextStyle(color: Pal.textDim, fontSize: 14),
                   ).animate().fadeIn(),
                 ),

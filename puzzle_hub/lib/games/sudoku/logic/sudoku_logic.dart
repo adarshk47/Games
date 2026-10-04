@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import '../../../core/i18n/i18n.dart';
+
 enum Difficulty { easy, medium, hard, extreme }
 
 extension DifficultyX on Difficulty {
-  String get label => name[0].toUpperCase() + name.substring(1);
+  String get label => tr('common.tier.$name');
 
   /// Target number of given cells.
   int get clues => switch (this) {

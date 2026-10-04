@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -17,13 +18,21 @@ import 'logic/stroop_logic.dart';
 
 const focusTint = Color(0xFF5EEAD4);
 
+/// Localized tier name (Easy / Medium / Hard / Extreme).
+String focusTierName(FocusTier t) => tr('common.tier.${t.name}');
+
+/// Localized name of a Stroop color. Display only: answers are always judged
+/// by comparing [StroopColor] ids, never by this text.
+String stroopColorName(StroopColor c) => tr('focus_color.color.${c.name}');
+
 class FocusModeInfo {
-  const FocusModeInfo(this.mode, this.title, this.blurb, this.icon, this.color);
+  const FocusModeInfo(this.mode, this.icon, this.color);
   final FocusMode mode;
-  final String title;
-  final String blurb;
   final IconData icon;
   final Color color;
+
+  String get title => tr('focus_color.mode.${mode.name}.title');
+  String get blurb => tr('focus_color.mode.${mode.name}.blurb');
 
   /// Best score for a tier (medium also honours the pre-difficulty legacy key).
   int bestFor(FocusTier t) {
@@ -33,12 +42,9 @@ class FocusModeInfo {
 }
 
 const focusModes = <FocusModeInfo>[
-  FocusModeInfo(FocusMode.stroop, 'Color vs Word', 'Tap the INK color, not the word. Beat the clock.',
-      Icons.palette_rounded, Color(0xFFFF6FB5)),
-  FocusModeInfo(FocusMode.odd, 'Odd One Out', 'Spot the tile with a different shade. Grid grows, shade fades.',
-      Icons.grid_view_rounded, Color(0xFF4DA8FF)),
-  FocusModeInfo(FocusMode.rule, 'Match Rule', 'Same color or same shape? The rule keeps flipping.',
-      Icons.rule_rounded, Color(0xFFFFC857)),
+  FocusModeInfo(FocusMode.stroop, Icons.palette_rounded, Color(0xFFFF6FB5)),
+  FocusModeInfo(FocusMode.odd, Icons.grid_view_rounded, Color(0xFF4DA8FF)),
+  FocusModeInfo(FocusMode.rule, Icons.rule_rounded, Color(0xFFFFC857)),
 ];
 
 enum _Phase { countdown, playing, over }
@@ -170,13 +176,13 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
       final after = comboMultiplier(_streak);
       if (after > before) {
         _burst++;
-        _burstText = 'COMBO x$after';
+        _burstText = tr('focus_color.combo', {'n': after});
         AppAudio.play(Sound.coin);
       } else {
         AppAudio.play(spammy ? Sound.pop : Sound.success);
         if (info.mode == FocusMode.stroop && _p.bonusEvery > 0 && _streak % _p.bonusEvery == 0) {
           _burst++;
-          _burstText = '+${_p.bonusSeconds}s';
+          _burstText = tr('focus_color.bonus', {'n': _p.bonusSeconds});
           _adjustTime(-_p.bonusSeconds.toDouble());
         }
       }
@@ -233,19 +239,28 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     }
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
-    final unit = info.mode == FocusMode.odd ? 'found' : 'pts';
+    final unit = tr(info.mode == FocusMode.odd ? 'focus_color.unit.found' : 'focus_color.unit.pts');
     await showPremiumDialog(
       context,
-      title: isBest && _score > 0 ? 'New best!' : (stars == 0 ? 'Keep focusing' : 'Time!'),
+      title: isBest && _score > 0
+          ? tr('focus_color.result.new_best')
+          : tr(stars == 0 ? 'focus_color.result.keep_focusing' : 'focus_color.result.time'),
       emoji: isBest && _score > 0 ? '🏆' : (stars == 0 ? '🎯' : '🧠'),
       stars: stars,
       color: info.color,
-      message: 'Score: $_score $unit\nBest streak: $_bestStreak   Mistakes: $_wrong\nBest (${tier.label}): ${max(info.bestFor(tier), _score)}',
+      message: tr('focus_color.result.message', {
+        'score': _score,
+        'unit': unit,
+        'streak': _bestStreak,
+        'wrong': _wrong,
+        'tier': focusTierName(tier),
+        'best': max(info.bestFor(tier), _score),
+      }),
       actions: [
-        DialogAction('Menu', () {
+        DialogAction(tr('common.menu'), () {
           if (mounted) Navigator.of(context).maybePop();
         }),
-        DialogAction('Play again', () {
+        DialogAction(tr('common.play_again'), () {
           if (mounted) _begin();
         }, primary: true),
       ],
@@ -257,7 +272,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: '${info.title} - ${tier.label}',
+      title: '${info.title} - ${focusTierName(tier)}',
       tint: focusTint,
       body: Stack(children: [
         Column(children: [
@@ -314,7 +329,9 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: Row(children: [
-        Expanded(child: _stat(info.mode == FocusMode.odd ? 'FOUND' : 'SCORE', '$_score', Pal.gold)),
+        Expanded(
+            child: _stat(info.mode == FocusMode.odd ? tr('focus_color.hud.found') : tr('common.score').toUpperCase(),
+                '$_score', Pal.gold)),
         const SizedBox(width: 10),
         _ring(),
         const SizedBox(width: 10),
@@ -325,7 +342,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
                   radius: 18,
                   padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                   child: Column(children: [
-                    const Text('LIVES', style: TextStyle(color: Pal.textDim, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1)),
+                    Text(tr('common.lives').toUpperCase(), style: const TextStyle(color: Pal.textDim, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1)),
                     const SizedBox(height: 2),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       for (var i = 0; i < _p.lives; i++)
@@ -334,21 +351,21 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
                     ]),
                   ]),
                 )
-              : _stat('STREAK', '$_streak', Pal.success),
+              : _stat(tr('focus_color.hud.streak'), '$_streak', Pal.success, showCombo: false),
         ),
       ]),
     );
   }
 
-  Widget _stat(String label, String value, Color c) => GlassCard(
+  Widget _stat(String label, String value, Color c, {bool showCombo = true}) => GlassCard(
         blur: 0,
         radius: 18,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Column(children: [
           Text(label, style: const TextStyle(color: Pal.textDim, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1)),
           const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: c, fontSize: 22, fontWeight: FontWeight.w900)),
-          if (comboMultiplier(_streak) > 1 && label != 'STREAK')
+          Text(value, key: ValueKey('focus-stat-$label'), style: TextStyle(color: c, fontSize: 22, fontWeight: FontWeight.w900)),
+          if (comboMultiplier(_streak) > 1 && showCombo)
             Text('x${comboMultiplier(_streak)}', style: const TextStyle(color: Pal.goldDeep, fontSize: 11, fontWeight: FontWeight.w800)),
         ]),
       );
@@ -404,7 +421,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     if (r == null) return const SizedBox();
     final ink = Color(r.ink.argb);
     return Column(children: [
-      const Text('Tap the INK color', style: TextStyle(color: Pal.textDim, fontSize: 15, fontWeight: FontWeight.w600)),
+      Text(tr('focus_color.stroop.prompt'), style: const TextStyle(color: Pal.textDim, fontSize: 15, fontWeight: FontWeight.w600)),
       Expanded(
         child: Center(
           child: GlassCard(
@@ -412,14 +429,17 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
             radius: 32,
             glow: ink,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 36),
-            child: Text(r.word.label,
-                    key: ValueKey(_round),
-                    style: TextStyle(
-                        color: ink,
-                        fontSize: 56,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        shadows: [Shadow(color: ink.withValues(alpha: 0.5), blurRadius: 18)]))
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(stroopColorName(r.word),
+                  key: const ValueKey('stroop-word'),
+                  style: TextStyle(
+                      color: ink,
+                      fontSize: 56,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      shadows: [Shadow(color: ink.withValues(alpha: 0.5), blurRadius: 18)])),
+            )
                 .animate(key: ValueKey(_round))
                 .scale(begin: const Offset(0.85, 0.85), end: const Offset(1, 1), duration: 160.ms, curve: Curves.easeOut),
           ),
@@ -435,7 +455,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
               width: (MediaQuery.of(context).size.width - 32 - 12) / 2,
               child: Pressable(
                 onTap: () => _answer(r.isCorrect(c)),
-                child: _glossy(c.label, h: r.options.length > 6 ? 50 : 62, font: r.options.length > 6 ? 16 : 18),
+                child: _glossy(stroopColorName(c), h: r.options.length > 6 ? 50 : 62, font: r.options.length > 6 ? 16 : 18),
               ),
             ),
         ],
@@ -457,7 +477,11 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
           border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
           boxShadow: [BoxShadow(color: base.withValues(alpha: 0.5), blurRadius: 14, offset: const Offset(0, 5))],
         ),
-        child: Text(label, style: TextStyle(color: Colors.white, fontSize: font, fontWeight: FontWeight.w800, letterSpacing: 1)),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(label, style: TextStyle(color: Colors.white, fontSize: font, fontWeight: FontWeight.w800, letterSpacing: 1)),
+        ),
       );
 
   // ---- Odd one out
@@ -519,7 +543,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Icon(isColor ? Icons.palette_rounded : Icons.category_rounded, color: rc),
           const SizedBox(width: 10),
-          Text(isColor ? 'SAME COLOR?' : 'SAME SHAPE?',
+          Text(tr(isColor ? 'focus_color.rule.same_color' : 'focus_color.rule.same_shape'),
               style: TextStyle(color: rc, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
         ]),
       ).animate(key: ValueKey('rule$_round${r.rule}')).fadeIn(duration: 120.ms).scale(begin: const Offset(0.9, 0.9), duration: 200.ms),
@@ -532,11 +556,11 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
       ),
       Row(children: [
         Expanded(
-          child: Pressable(onTap: () => _answer(!r.answer), child: _glossy('NO', base: const Color(0xFFD14B6A), h: 70, font: 24)),
+          child: Pressable(onTap: () => _answer(!r.answer), child: _glossy(tr('common.no').toUpperCase(), base: const Color(0xFFD14B6A), h: 70, font: 24)),
         ),
         const SizedBox(width: 14),
         Expanded(
-          child: Pressable(onTap: () => _answer(r.answer), child: _glossy('YES', base: const Color(0xFF22A06B), h: 70, font: 24)),
+          child: Pressable(onTap: () => _answer(r.answer), child: _glossy(tr('common.yes').toUpperCase(), base: const Color(0xFF22A06B), h: 70, font: 24)),
         ),
       ]),
     ]);

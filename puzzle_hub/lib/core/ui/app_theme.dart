@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 
@@ -10,7 +11,7 @@ import '../storage.dart';
 class AppThemeData {
   const AppThemeData({
     required this.id,
-    required this.name,
+    required String name,
     required this.bg0,
     required this.bg1,
     required this.orb,
@@ -18,10 +19,15 @@ class AppThemeData {
     required this.accent,
     required this.highlight,
     this.price = 0,
-  });
+  // Private fields cannot be named initializing formals.
+  // ignore: prefer_initializing_formals
+  }) : _name = name;
 
   final String id;
-  final String name;
+  final String _name;
+
+  /// Localised theme name (key `home.theme.<id>`), falling back to the given name.
+  String get name => tr('home.theme.$id', const {}, _name);
 
   /// Background gradient (dark edge / lighter middle).
   final Color bg0;

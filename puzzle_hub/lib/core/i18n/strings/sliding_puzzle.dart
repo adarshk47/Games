@@ -1,4 +1,77 @@
 // Translations for the sliding_puzzle module.
 // Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
-const Map<String, Map<String, String>> slidingPuzzleStrings = {};
+const Map<String, Map<String, String>> slidingPuzzleStrings = {
+  'sliding_puzzle.title': {
+    'en': "Sliding Puzzle",
+    'hi': "स्लाइडिंग पज़ल",
+    'hinglish': "Sliding Puzzle",
+    'te': "స్లైడింగ్ పజిల్",
+    'ta': "நகர்த்தும் புதிர்",
+    'pa': "ਸਲਾਈਡਿੰਗ ਪਜ਼ਲ",
+    'bho': "स्लाइडिंग पज़ल",
+  },
+  'sliding_puzzle.picture_mode': {
+    'en': "Picture mode",
+    'hi': "चित्र मोड",
+    'hinglish': "Picture mode",
+    'te': "చిత్ర మోడ్",
+    'ta': "படப் பயன்முறை",
+    'pa': "ਤਸਵੀਰ ਮੋਡ",
+    'bho': "फोटो मोड",
+  },
+  'sliding_puzzle.choose_level': {
+    'en': "Choose a level",
+    'hi': "लेवल चुनें",
+    'hinglish': "Level chuno",
+    'te': "స్థాయిని ఎంచుకోండి",
+    'ta': "நிலையைத் தேர்ந்தெடுங்கள்",
+    'pa': "ਲੈਵਲ ਚੁਣੋ",
+    'bho': "लेवल चुनीं",
+  },
+  'sliding_puzzle.solved': {
+    'en': "Solved!",
+    'hi': "हल हो गया!",
+    'hinglish': "Solve ho gaya!",
+    'te': "పరిష్కరించారు!",
+    'ta': "தீர்ந்தது!",
+    'pa': "ਹੱਲ ਹੋ ਗਿਆ!",
+    'bho': "हल हो गइल!",
+  },
+  'sliding_puzzle.result': {
+    'en': "{n} moves  -  {time}",
+    'hi': "{n} चालें  -  {time}",
+    'hinglish': "{n} moves  -  {time}",
+    'te': "{n} కదలికలు  -  {time}",
+    'ta': "{n} நகர்வுகள்  -  {time}",
+    'pa': "{n} ਚਾਲਾਂ  -  {time}",
+    'bho': "{n} चाल  -  {time}",
+  },
+  'sliding_puzzle.new_best': {
+    'en': "New best moves!",
+    'hi': "नया बेस्ट!",
+    'hinglish': "Naya best!",
+    'te': "కొత్త ఉత్తమ కదలికలు!",
+    'ta': "புதிய சிறந்த நகர்வுகள்!",
+    'pa': "ਨਵਾਂ ਬੈਸਟ!",
+    'bho': "नया बेस्ट!",
+  },
+  'sliding_puzzle.par': {
+    'en': "Par",
+    'hi': "लक्ष्य",
+    'hinglish': "Par",
+    'te': "లక్ష్యం",
+    'ta': "இலக்கு",
+    'pa': "ਟੀਚਾ",
+    'bho': "लक्ष्य",
+  },
+  'sliding_puzzle.par_n': {
+    'en': "Par {n}",
+    'hi': "लक्ष्य {n}",
+    'hinglish': "Par {n}",
+    'te': "లక్ష్యం {n}",
+    'ta': "இலக்கு {n}",
+    'pa': "ਟੀਚਾ {n}",
+    'bho': "लक्ष्य {n}",
+  },
+};

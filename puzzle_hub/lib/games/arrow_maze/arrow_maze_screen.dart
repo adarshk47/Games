@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -77,6 +78,8 @@ Color _tierColor(MazeTier t) => switch (t) {
       MazeTier.extreme => const Color(0xFFFF5C7A),
     };
 
+String _tierName(MazeTier t) => tr('common.tier.${t.key}');
+
 IconData _tierIcon(MazeTier t) => switch (t) {
       MazeTier.easy => Icons.spa_rounded,
       MazeTier.medium => Icons.bolt_rounded,
@@ -112,15 +115,15 @@ class _ArrowMazeScreenState extends State<ArrowMazeScreen> {
   Widget build(BuildContext context) {
     final last = ArrowMazeProgress.lastTier;
     return GameScaffold(
-      title: 'Arrow Maze',
+      title: tr('arrow_maze.title'),
       tint: _tint,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 14),
-            child: Text('Choose your challenge',
-                style: TextStyle(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
+            child: Text(tr('arrow_maze.choose_challenge'),
+                style: const TextStyle(
                     color: Pal.textDim,
                     fontSize: 15,
                     fontWeight: FontWeight.w600)),
@@ -191,11 +194,15 @@ class _TierCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(children: [
-                  Text(tier.label,
-                      style: const TextStyle(
-                          color: Pal.text,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900)),
+                  Flexible(
+                    child: Text(_tierName(tier),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Pal.text,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900)),
+                  ),
                   if (isLast) ...[
                     const SizedBox(width: 8),
                     Container(
@@ -207,8 +214,8 @@ class _TierCard extends StatelessWidget {
                         border:
                             Border.all(color: color.withValues(alpha: 0.7)),
                       ),
-                      child: const Text('LAST PLAYED',
-                          style: TextStyle(
+                      child: Text(tr('common.last_played').toUpperCase(),
+                          style: const TextStyle(
                               color: Pal.text,
                               fontSize: 9,
                               fontWeight: FontWeight.w800,
@@ -217,7 +224,7 @@ class _TierCard extends StatelessWidget {
                   ],
                 ]),
                 const SizedBox(height: 2),
-                Text(tier.blurb,
+                Text(tr('arrow_maze.blurb.${tier.key}'),
                     style: const TextStyle(color: Pal.textDim, fontSize: 13)),
                 const SizedBox(height: 10),
                 ClipRRect(
@@ -230,7 +237,7 @@ class _TierCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text('$done / ${tier.count} levels',
+                Text(tr('arrow_maze.levels_progress', {'done': done, 'total': tier.count}),
                     style: const TextStyle(
                         color: Pal.text,
                         fontSize: 12,
@@ -289,7 +296,7 @@ class _LevelGridPageState extends State<_LevelGridPage> {
   Widget build(BuildContext context) {
     final color = _tierColor(tier);
     return GameScaffold(
-      title: 'Arrow Maze - ${tier.label}',
+      title: tr('arrow_maze.grid_title', {'tier': _tierName(tier)}),
       tint: color,
       body: GridView.builder(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -575,16 +582,16 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     final stars = _stars;
     showPremiumDialog(
       context,
-      title: 'Maze cleared!',
-      message: 'Lives left: $lives  |  Moves: $moves',
+      title: tr('arrow_maze.win_title'),
+      message: tr('arrow_maze.win_msg', {'lives': lives, 'moves': moves}),
       emoji: '🎉✨',
       stars: stars,
       color: _tierColor(tier),
       actions: [
-        DialogAction('Levels', () => Navigator.pop(context)),
-        DialogAction('Replay', () => setState(_load)),
+        DialogAction(tr('common.levels'), () => Navigator.pop(context)),
+        DialogAction(tr('common.replay'), () => setState(_load)),
         if (hasNext)
-          DialogAction('Next level', () {
+          DialogAction(tr('common.next_level'), () {
             setState(() {
               level++;
               _load();
@@ -598,13 +605,13 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     if (!mounted) return;
     showPremiumDialog(
       context,
-      title: 'Out of lives',
-      message: 'Those arrows were blocked. Try again!',
+      title: tr('arrow_maze.lose_title'),
+      message: tr('arrow_maze.lose_msg'),
       emoji: '💔',
       color: Pal.danger,
       actions: [
-        DialogAction('Levels', () => Navigator.pop(context)),
-        DialogAction('Retry', () => setState(_load), primary: true),
+        DialogAction(tr('common.levels'), () => Navigator.pop(context)),
+        DialogAction(tr('common.retry'), () => setState(_load), primary: true),
       ],
     );
   }
@@ -652,11 +659,13 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Customize Colors 🎨',
-                            style: TextStyle(
-                                color: Pal.text,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800)),
+                        Flexible(
+                          child: Text(tr('arrow_maze.colors_title'),
+                              style: const TextStyle(
+                                  color: Pal.text,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800)),
+                        ),
                         IconButton(
                           icon: const Icon(Icons.close_rounded, color: Pal.textDim),
                           onPressed: () => Navigator.pop(context),
@@ -664,8 +673,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                       ],
                     ),
                     const SizedBox(height: 14),
-                    const Text('Background Theme',
-                        style: TextStyle(
+                    Text(tr('arrow_maze.bg_theme'),
+                        style: const TextStyle(
                             color: Pal.textDim,
                             fontSize: 14,
                             fontWeight: FontWeight.w600)),
@@ -694,7 +703,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                                   colors: kMazeThemes[i].bgColors,
                                 ),
                               ),
-                              child: Text(kMazeThemes[i].name,
+                              child: Text(tr('arrow_maze.theme.$i', const {}, kMazeThemes[i].name),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Colors.white,
@@ -707,8 +716,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const Text('Arrow Color Palette',
-                        style: TextStyle(
+                    Text(tr('arrow_maze.palette'),
+                        style: const TextStyle(
                             color: Pal.textDim,
                             fontSize: 14,
                             fontWeight: FontWeight.w600)),
@@ -730,7 +739,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                               child: Row(
                                 children: [
                                   Expanded(
-                                    child: Text(kMazePalettes[i].name,
+                                    child: Text(tr('arrow_maze.palette.$i', const {}, kMazePalettes[i].name),
                                         style: TextStyle(
                                             color: Pal.text,
                                             fontWeight: paletteIdx == i
@@ -778,24 +787,24 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     final hidden = <int>{for (final f in _fx) f.id, ?hinted};
     final activeTheme = kMazeThemes[themeIdx.clamp(0, kMazeThemes.length - 1)];
     return GameScaffold(
-      title: '${tier.label} - Level $level',
+      title: tr('arrow_maze.game_title', {'tier': _tierName(tier), 'n': level}),
       tint: _tierColor(tier),
       actions: [
         BarAction(
             icon: Icons.palette_rounded,
-            tooltip: 'Colors',
+            tooltip: tr('arrow_maze.colors'),
             onTap: _showColorSelector),
         BarAction(
             icon: Icons.undo_rounded,
-            tooltip: 'Undo',
+            tooltip: tr('common.undo'),
             onTap: over || board.history.isEmpty ? null : _undo),
         BarAction(
             icon: Icons.lightbulb_rounded,
-            tooltip: 'Hint ($hintsLeft left)',
+            tooltip: tr('arrow_maze.hint_left', {'n': hintsLeft}),
             onTap: over ? null : _hint),
         BarAction(
             icon: Icons.refresh_rounded,
-            tooltip: 'Restart',
+            tooltip: tr('common.restart'),
             onTap: () => setState(_load)),
       ],
       body: Column(
@@ -814,11 +823,23 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                     for (var i = 0; i < maxLives; i++)
                       _Heart(alive: i < lives),
                   ]),
-                  Text('Hints $hintsLeft  |  Moves $moves  |  Left ${board.remaining}',
-                      style: const TextStyle(
-                          color: Pal.text,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14)),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                          tr('arrow_maze.hud', {
+                            'hints': hintsLeft,
+                            'moves': moves,
+                            'left': board.remaining,
+                          }),
+                          maxLines: 1,
+                          style: const TextStyle(
+                              color: Pal.text,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14)),
+                    ),
+                  ),
                 ],
               ),
             ),

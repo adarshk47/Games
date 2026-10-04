@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -96,7 +97,7 @@ class _MissingItemGameState extends State<MissingItemGame>
 
   @override
   Widget build(BuildContext context) => MmPage(
-    title: 'Kya gaya?',
+    title: tr('mom_memory.missing_title'),
     body: Column(
       children: [
         Expanded(
@@ -114,8 +115,9 @@ class _MissingItemGameState extends State<MissingItemGame>
                   level: _level,
                   unlocked: Storage.getInt('mom.missing.level'),
                   maxLevel: missingMaxLevel,
-                  text:
-                      '${missingCount(_level)} cheezein dekhiye. Ek chhup jayegi.\nBataiye kaunsi gayi? Aaram se.',
+                  text: tr('mom_memory.missing_intro', {
+                    'n': missingCount(_level),
+                  }),
                   onLevel: (i) => setState(() => _level = i),
                   onStart: _begin,
                 ),
@@ -123,8 +125,8 @@ class _MissingItemGameState extends State<MissingItemGame>
                   title: pick(praise),
                   stars: _stars,
                   message: _tries <= 1
-                      ? 'Pehli baar mein sahi!'
-                      : 'Aapne dhyaan se dhoondh liya.',
+                      ? tr('mom_memory.first_try')
+                      : tr('mom_memory.found_carefully'),
                   onAgain: _begin,
                   onNext: _level < missingMaxLevel
                       ? () {
@@ -152,7 +154,9 @@ class _MissingItemGameState extends State<MissingItemGame>
         children: [
           Text(t.emoji, style: TextStyle(fontSize: size)),
           Text(
-            t.hi,
+            t.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Mm.ink,
               fontWeight: FontWeight.w800,
@@ -173,10 +177,13 @@ class _MissingItemGameState extends State<MissingItemGame>
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
           child: Text(
             showing
-                ? 'Ye cheezein yaad kijiye'
+                ? tr('mom_memory.remember_items')
                 : (_revealed
-                      ? (_solved ? 'Bilkul sahi!' : 'Kaunsi cheez chali gayi?')
-                      : 'Parda gir raha hai...'),
+                      ? (_solved
+                            ? tr('mom_memory.praise_4')
+                            : tr('mom_memory.which_gone'))
+                      : tr('mom_memory.curtain')),
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Pal.text,
               fontSize: 18,
@@ -292,7 +299,9 @@ class _MissingItemGameState extends State<MissingItemGame>
                                   style: const TextStyle(fontSize: 28),
                                 ),
                                 Text(
-                                  missingPool[_round.options[i]].hi,
+                                  missingPool[_round.options[i]].name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     color: Mm.ink,
                                     fontWeight: FontWeight.w800,
@@ -313,7 +322,7 @@ class _MissingItemGameState extends State<MissingItemGame>
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: PremiumButton(
-              label: 'Yaad ho gaya',
+              label: tr('mom_memory.memorized'),
               compact: true,
               color: Mm.lavender,
               onTap: _cover,

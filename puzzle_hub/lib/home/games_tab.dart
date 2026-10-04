@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../core/account/account_service.dart';
 import '../core/game_info.dart';
+import '../core/i18n/i18n.dart';
 import '../core/rewards.dart';
 import '../core/ui/app_logo.dart';
 import '../core/ui/app_theme.dart';
@@ -83,7 +84,7 @@ class _GamesTabState extends State<GamesTab> {
             child: _enter(
               featured.isNotEmpty
                   ? _FeaturedCarousel(list: featured, onOpen: _open)
-                  : _Banner(g: gameOfTheDay(games), label: 'GAME OF THE DAY', onTap: () => _open(gameOfTheDay(games))),
+                  : _Banner(g: gameOfTheDay(games), label: tr('home.game_of_the_day'), onTap: () => _open(gameOfTheDay(games))),
               200,
             ),
           ),
@@ -92,7 +93,12 @@ class _GamesTabState extends State<GamesTab> {
         child: Padding(
           padding: EdgeInsets.fromLTRB(hPad + 4, 22, hPad, 10),
           child: Row(children: [
-            const Text('All Games', style: TextStyle(color: Pal.text, fontSize: 18, fontWeight: FontWeight.w900)),
+            Flexible(
+              child: Text(tr('home.all_games'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Pal.text, fontSize: 18, fontWeight: FontWeight.w900)),
+            ),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -137,7 +143,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppThemeController.theme;
     final a = AccountService.I;
-    final name = a.name.trim().isEmpty ? 'Player' : a.name.trim();
+    final name = a.name.trim().isEmpty ? tr('home.player') : a.name.trim();
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         const AppLogo(size: 44),
@@ -169,14 +175,14 @@ class _Header extends StatelessWidget {
       ]).animate().fadeIn(duration: 400.ms).slideX(begin: -0.05, end: 0),
       const SizedBox(height: 14),
       Text(
-        a.justRegistered ? 'Welcome, $name! 🎉' : 'Welcome back, $name 👋',
+        a.justRegistered ? tr('home.welcome_new', {'name': name}) : tr('home.welcome_back', {'name': name}),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w800),
       ).animate(delay: 100.ms).fadeIn(duration: 450.ms),
       const SizedBox(height: 2),
-      const Text('Khelo. Socho. Yaaddasht badhao ✨',
-              maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Pal.textDim, fontSize: 14))
+      Text(tr('home.tagline'),
+              maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Pal.textDim, fontSize: 14))
           .animate(delay: 150.ms)
           .fadeIn(duration: 450.ms),
     ]);
@@ -205,7 +211,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   @override
   Widget build(BuildContext context) {
     final l = widget.list;
-    if (l.length == 1) return _Banner(g: l.first, label: 'FEATURED', onTap: () => widget.onOpen(l.first));
+    if (l.length == 1) return _Banner(g: l.first, label: tr('home.featured'), onTap: () => widget.onOpen(l.first));
     return Column(children: [
       SizedBox(
         height: _Banner.height,
@@ -215,7 +221,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
           onPageChanged: (p) => setState(() => _page = p),
           itemBuilder: (_, i) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: _Banner(g: l[i], label: 'FEATURED', onTap: () => widget.onOpen(l[i])),
+            child: _Banner(g: l[i], label: tr('home.featured'), onTap: () => widget.onOpen(l[i])),
           ),
         ),
       ),
@@ -305,7 +311,7 @@ class _Banner extends StatelessWidget {
                   style: const TextStyle(color: Pal.text, fontSize: 12.5, height: 1.25)),
               if (levels > 0) ...[
                 const SizedBox(height: 4),
-                Text('⭐ $levels cleared',
+                Text(tr('home.levels_cleared', {'n': levels}),
                     style: const TextStyle(color: Pal.gold, fontSize: 11.5, fontWeight: FontWeight.w800)),
               ],
             ]),
@@ -334,6 +340,7 @@ class _GameCard extends StatelessWidget {
     final best = Rewards.best(g.id);
     final plays = Rewards.plays(g.id);
     final String stat;
+    final isNew = levels <= 0 && best <= 0 && plays <= 0;
     if (levels > 0) {
       stat = '⭐ $levels';
     } else if (best > 0) {
@@ -341,7 +348,7 @@ class _GameCard extends StatelessWidget {
     } else if (plays > 0) {
       stat = '▶ $plays';
     } else {
-      stat = 'NEW';
+      stat = tr('home.new_badge');
     }
     return GlassCard(
       onTap: onTap,
@@ -362,11 +369,11 @@ class _GameCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: (stat == 'NEW' ? Pal.success : Pal.gold).withValues(alpha: 0.6)),
+              border: Border.all(color: (isNew ? Pal.success : Pal.gold).withValues(alpha: 0.6)),
             ),
             child: Text(stat,
                 style: TextStyle(
-                    color: stat == 'NEW' ? Pal.success : Pal.gold, fontSize: 10.5, fontWeight: FontWeight.w900)),
+                    color: isNew ? Pal.success : Pal.gold, fontSize: 10.5, fontWeight: FontWeight.w900)),
           ),
         ),
         const Spacer(),

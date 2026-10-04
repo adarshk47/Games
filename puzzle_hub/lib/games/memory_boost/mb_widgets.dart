@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/mb_tiers.dart';
@@ -21,7 +22,7 @@ Future<DialogChoice> showResultDialog(
   String emoji = '🧠',
   int? stars,
   Color color = Pal.gold,
-  String retryLabel = 'Try again',
+  String? retryLabel,
   String? extraLabel,
 }) async {
   final done = Completer<DialogChoice>();
@@ -37,9 +38,9 @@ Future<DialogChoice> showResultDialog(
     stars: stars,
     color: color,
     actions: [
-      DialogAction('Back', () => finish(DialogChoice.menu)),
+      DialogAction(tr('common.back'), () => finish(DialogChoice.menu)),
       if (extraLabel != null) DialogAction(extraLabel, () => finish(DialogChoice.extra)),
-      DialogAction(retryLabel, () => finish(DialogChoice.retry), primary: true),
+      DialogAction(retryLabel ?? tr('common.try_again'), () => finish(DialogChoice.retry), primary: true),
     ],
   );
   finish(DialogChoice.menu);
@@ -62,12 +63,16 @@ class StatChip extends StatelessWidget {
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(icon, size: 17, color: color),
         const SizedBox(width: 6),
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          transitionBuilder: (c, a) => FadeTransition(opacity: a, child: ScaleTransition(scale: a, child: c)),
-          child: Text(text,
-              key: ValueKey(text),
-              style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 13.5)),
+        Flexible(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (c, a) => FadeTransition(opacity: a, child: ScaleTransition(scale: a, child: c)),
+            child: Text(text,
+                key: ValueKey(text),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 13.5)),
+          ),
         ),
       ]),
     );
@@ -90,6 +95,9 @@ const _tierIcons = {
 };
 
 Color tierColor(Tier t) => _tierColors[t]!;
+
+/// Localized tier name (Easy / Medium / Hard / Extreme).
+String tierName(Tier t) => tr('common.tier.${t.key}');
 
 /// Last tier the player picked for [game] (defaults to Medium).
 Tier lastTier(String game) => Tier.fromIndex(Storage.getInt(tierPrefKey(game), Tier.medium.index));
@@ -164,7 +172,11 @@ class TierChooser extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                Text(t.label, style: const TextStyle(color: Pal.text, fontSize: 19, fontWeight: FontWeight.w900)),
+                Flexible(
+                  child: Text(tierName(t),
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Pal.text, fontSize: 19, fontWeight: FontWeight.w900)),
+                ),
                 if (isLast) ...[
                   const SizedBox(width: 8),
                   Container(
@@ -173,7 +185,7 @@ class TierChooser extends StatelessWidget {
                       color: c.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text('LAST', style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900)),
+                    child: Text(tr('memory_boost.last'), style: TextStyle(color: c, fontSize: 10, fontWeight: FontWeight.w900)),
                   ),
                 ],
               ]),

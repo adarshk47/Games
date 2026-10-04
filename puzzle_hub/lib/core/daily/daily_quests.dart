@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import '../../games/registry.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import 'daily_reward.dart';
@@ -50,22 +51,22 @@ bool _isHardKey(String? k) {
 List<QuestTemplate> questTemplates(Map<String, String> titles) {
   final t = <QuestTemplate>[
     QuestTemplate(
-        id: 'levels_3', category: 'levels', title: 'Complete 3 levels in any game', emoji: '🧩',
+        id: 'levels_3', category: 'levels', title: tr('quest.levels_n', {'n': 3}), emoji: '🧩',
         target: 3, reward: 15, matches: (e) => e.type == 'level'),
     QuestTemplate(
-        id: 'levels_5', category: 'levels', title: 'Complete 5 levels in any game', emoji: '🚀',
+        id: 'levels_5', category: 'levels', title: tr('quest.levels_n', {'n': 5}), emoji: '🚀',
         target: 5, reward: 25, matches: (e) => e.type == 'level'),
     QuestTemplate(
-        id: 'variety_2', category: 'variety', title: 'Play 2 different games', emoji: '🎮',
+        id: 'variety_2', category: 'variety', title: tr('quest.variety_n', {'n': 2}), emoji: '🎮',
         target: 2, reward: 10, matches: (_) => true, distinctGames: true),
     QuestTemplate(
-        id: 'variety_3', category: 'variety', title: 'Play 3 different games', emoji: '🌈',
+        id: 'variety_3', category: 'variety', title: tr('quest.variety_n', {'n': 3}), emoji: '🌈',
         target: 3, reward: 20, matches: (_) => true, distinctGames: true),
     QuestTemplate(
-        id: 'hard_clear', category: 'hard', title: 'Clear a Hard or Extreme level', emoji: '💪',
+        id: 'hard_clear', category: 'hard', title: tr('quest.hard_clear'), emoji: '💪',
         target: 1, reward: 25, matches: (e) => e.type == 'level' && _isHardKey(e.levelKey)),
     QuestTemplate(
-        id: 'stars_any', category: 'stars', title: 'Get 3 stars on 2 levels', emoji: '🌟',
+        id: 'stars_any', category: 'stars', title: tr('quest.stars_any', {'n': 2}), emoji: '🌟',
         target: 2, reward: 20, matches: (e) => e.type == 'level' && e.stars >= 3),
   ];
   const winGames = ['sudoku', 'ball_sort', 'maze_escape', 'arrows', 'arrow_maze', 'minesweeper', 'flow_pairs', 'sliding_puzzle', 'block_puzzle'];
@@ -73,7 +74,7 @@ List<QuestTemplate> questTemplates(Map<String, String> titles) {
     final name = titles[g];
     if (name == null) continue;
     t.add(QuestTemplate(
-        id: 'win_$g', category: 'win', title: 'Win a $name', emoji: '🏆',
+        id: 'win_$g', category: 'win', title: tr('quest.win_game', {'game': name}), emoji: '🏆',
         target: 1, reward: 15, matches: (e) => e.gameId == g && e.won));
   }
   const starGames = ['arrow_maze', 'arrows', 'ball_sort', 'maze_escape', 'memory_boost', 'flow_pairs', 'sliding_puzzle'];
@@ -81,17 +82,17 @@ List<QuestTemplate> questTemplates(Map<String, String> titles) {
     final name = titles[g];
     if (name == null) continue;
     t.add(QuestTemplate(
-        id: 'stars_$g', category: 'stars', title: 'Get 3 stars in $name', emoji: '⭐',
+        id: 'stars_$g', category: 'stars', title: tr('quest.stars_game', {'game': name}), emoji: '⭐',
         target: 1, reward: 20, matches: (e) => e.gameId == g && e.type == 'level' && e.stars >= 3));
   }
   if (titles.containsKey('game_2048')) {
     t.add(QuestTemplate(
-        id: 'score_2048', category: 'score', title: 'Score 1000+ in ${titles['game_2048']} (any tier)', emoji: '🔢',
+        id: 'score_2048', category: 'score', title: tr('quest.score_game', {'n': 1000, 'game': titles['game_2048']}), emoji: '🔢',
         target: 1, reward: 20, matches: (e) => e.gameId == 'game_2048' && (e.score ?? 0) >= 1000));
   }
   if (titles.containsKey('focus_color')) {
     t.add(QuestTemplate(
-        id: 'run_focus', category: 'score', title: 'Finish 2 ${titles['focus_color']} runs', emoji: '🎯',
+        id: 'run_focus', category: 'score', title: tr('quest.runs_game', {'n': 2, 'game': titles['focus_color']}), emoji: '🎯',
         target: 2, reward: 15, matches: (e) => e.gameId == 'focus_color' && e.type == 'run'));
   }
   return t;
@@ -198,7 +199,10 @@ class DailyQuests {
       p[id] = after;
       changed = true;
       if (after >= t.target) {
-        showDailyToast(emoji: t.emoji, title: 'Quest complete!', subtitle: '${t.title} · claim +${t.reward} 🪙');
+        showDailyToast(
+            emoji: t.emoji,
+            title: tr('daily.quest_complete'),
+            subtitle: tr('daily.quest_toast_sub', {'title': t.title, 'coins': t.reward}));
       }
     }
     if (!changed) return;
@@ -245,7 +249,7 @@ class DailyQuests {
     s['c'] = [...c, id];
     await _save(s);
     await Storage.setInt(kClaimedTotal, claimedTotal + 1);
-    await Rewards.addCoins(t.reward, label: 'Quest complete');
+    await Rewards.addCoins(t.reward, label: tr('daily.quest_complete'));
     notifyDailyChanged();
     return t.reward;
   }
@@ -256,7 +260,7 @@ class DailyQuests {
     final s = _load();
     s['b'] = true;
     await _save(s);
-    await Rewards.addCoins(bonusCoins, label: 'Daily Challenge!');
+    await Rewards.addCoins(bonusCoins, label: tr('daily.challenge_bonus_label'));
     notifyDailyChanged();
     return bonusCoins;
   }

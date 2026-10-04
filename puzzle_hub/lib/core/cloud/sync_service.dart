@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../account/account_service.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import 'cloud_auth.dart';
@@ -268,7 +269,7 @@ class SyncService with WidgetsBindingObserver {
       // The user may have locked/switched while we were busy.
       if (Storage.userPrefix != prefix) return;
       Rewards.reload();
-      if (credits > 0) await Rewards.addCoins(credits, label: 'Invite bonus');
+      if (credits > 0) await Rewards.addCoins(credits, label: tr('cloud.invite_bonus'));
       final now = DateTime.now();
       lastSynced.value = now;
       lastError.value = null;
@@ -277,7 +278,7 @@ class SyncService with WidgetsBindingObserver {
       unawaited(ReferralService.I.tryCredit());
     } catch (e) {
       debugPrint('sync failed: $e');
-      lastError.value = 'Sync failed. Check your internet and try again.';
+      lastError.value = tr('cloud.sync_failed');
     } finally {
       syncing.value = false;
     }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../ads/ads_service.dart';
 import '../economy/continue_offer.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../ui/ui.dart';
 
@@ -67,14 +68,14 @@ class _ShopScreenState extends State<ShopScreen> {
     if (!mounted) return;
     setState(() {
       _busy = false;
-      _msg = got > 0 ? null : 'No ad available right now. Try again later.';
+      _msg = got > 0 ? null : tr('shop.no_ad');
     });
   }
 
   Future<void> _buyPass() async {
     final ok = await AdsService.buyAdFree();
     if (!mounted) return;
-    setState(() => _msg = ok ? null : 'Not enough coins for the pass yet.');
+    setState(() => _msg = ok ? null : tr('shop.not_enough_pass'));
     _syncTimer();
   }
 
@@ -112,7 +113,7 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Widget _header(int bal) => Row(children: [
-        const Text('Shop', style: TextStyle(color: Pal.text, fontSize: 30, fontWeight: FontWeight.w900)),
+        Text(tr('shop.title'), style: const TextStyle(color: Pal.text, fontSize: 30, fontWeight: FontWeight.w900)),
         const Spacer(),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -152,11 +153,14 @@ class _ShopScreenState extends State<ShopScreen> {
         _iconBadge('🎬', blue),
         const SizedBox(width: 14),
         Expanded(
-          child: _title('Watch ad: +${AdsService.rewardedCoins} coins',
-              left > 0 ? '$left of ${AdsService.dailyRewardedCap} left today' : 'Come back tomorrow for more'),
+          child: _title(
+              tr('shop.watch_ad_title', {'coins': AdsService.rewardedCoins}),
+              left > 0
+                  ? tr('shop.ads_left', {'left': left, 'cap': AdsService.dailyRewardedCap})
+                  : tr('shop.come_back')),
         ),
         PremiumButton(
-          label: _busy ? '…' : 'Watch',
+          label: _busy ? '…' : tr('shop.watch'),
           compact: true,
           color: blue,
           onTap: _busy || left <= 0 ? null : _watchAd,
@@ -175,14 +179,14 @@ class _ShopScreenState extends State<ShopScreen> {
         const SizedBox(width: 14),
         Expanded(
           child: _title(
-            '24h Ad-free pass',
+            tr('shop.pass_title'),
             active
-                ? 'Active - ${_fmt(AdsService.adFreeRemaining)} left'
-                : '${AdsService.adFreePrice} coins - no interstitial ads',
+                ? tr('shop.pass_active', {'time': _fmt(AdsService.adFreeRemaining)})
+                : tr('shop.pass_price', {'coins': AdsService.adFreePrice}),
           ),
         ),
         PremiumButton(
-          label: active ? 'Extend' : 'Buy',
+          label: active ? tr('shop.extend') : tr('shop.buy'),
           compact: true,
           color: active ? green : null,
           onTap: bal >= AdsService.adFreePrice ? _buyPass : null,
@@ -203,15 +207,14 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _pricesCard() => GlassCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Spend coins in games', style: TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
+          Text(tr('shop.spend_title'), style: const TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
           const SizedBox(height: 4),
-          const Text('When you run out of free help, use coins or watch an ad.',
-              style: TextStyle(color: Pal.textDim, fontSize: 13)),
+          Text(tr('shop.spend_sub'), style: const TextStyle(color: Pal.textDim, fontSize: 13)),
           const SizedBox(height: 8),
-          _priceRow('💡', 'Hint', Prices.hint),
-          _priceRow('↩️', 'Undo', Prices.undo),
-          _priceRow('❤️', 'Extra life', Prices.extraLife),
-          _priceRow('🔓', 'Unlock level', Prices.unlockLevel),
+          _priceRow('💡', tr('common.hint'), Prices.hint),
+          _priceRow('↩️', tr('common.undo'), Prices.undo),
+          _priceRow('❤️', tr('shop.extra_life'), Prices.extraLife),
+          _priceRow('🔓', tr('shop.unlock_level'), Prices.unlockLevel),
         ]),
       );
 
@@ -225,16 +228,15 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _historyCard() => GlassCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Coin history', style: TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
+          Text(tr('shop.history'), style: const TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w800)),
           const SizedBox(height: 12),
           Row(children: [
-            _stat('Earned', Rewards.earned, Pal.success),
-            _stat('Spent', Rewards.spent, Pal.danger),
-            _stat('Balance', Rewards.balance, Pal.gold),
+            _stat(tr('shop.earned'), Rewards.earned, Pal.success),
+            _stat(tr('shop.spent'), Rewards.spent, Pal.danger),
+            _stat(tr('shop.balance'), Rewards.balance, Pal.gold),
           ]),
           const SizedBox(height: 10),
-          const Text('Earn coins by clearing new levels (more stars = more coins).',
-              style: TextStyle(color: Pal.textDim, fontSize: 12)),
+          Text(tr('shop.earn_tip'), style: const TextStyle(color: Pal.textDim, fontSize: 12)),
         ]),
       );
 }

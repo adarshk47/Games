@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/ads/ads_service.dart';
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'baby_match_game.dart';
@@ -55,15 +56,18 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
       s += Storage.getInt('mom.match.stars.$i');
     }
     return s == 0
-        ? 'Abhi shuru karein'
-        : '$s / ${matchLevels.length * 3} sitare';
+        ? tr('mom_memory.start_now')
+        : tr('mom_memory.stars_total', {
+            'n': s,
+            'total': matchLevels.length * 3,
+          });
   }
 
   String _lvl(String k) {
     final l = Storage.getInt('mom.$k.level');
     return l == 0 && Storage.getInt('mom.$k.stars.0') == 0
-        ? 'Abhi shuru karein'
-        : 'Level ${l + 1}';
+        ? tr('mom_memory.start_now')
+        : tr('common.level_n', {'n': l + 1});
   }
 
   @override
@@ -75,77 +79,88 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
     final cards = [
       _Hero(
         '🧸',
-        'Baby Items Match',
-        'Pyaari cheezein jodiye',
+        tr('mom_memory.match_title'),
+        tr('mom_memory.match_sub'),
         _matchBest(),
         Mm.rose,
         () => _open(const BabyMatchGame()),
       ),
       _Hero(
         '🧳',
-        'Hospital Bag Recall',
-        'Dekhiye, yaad kijiye, chuniye',
+        tr('mom_memory.bag_title'),
+        tr('mom_memory.bag_sub'),
         bag == 0
-            ? 'Abhi shuru karein'
-            : 'Best: $bag yaad rahe  •  Level ${Storage.getInt('mom.bag.level') + 1}',
+            ? tr('mom_memory.start_now')
+            : tr('mom_memory.bag_best', {
+                'n': bag,
+                'level': Storage.getInt('mom.bag.level') + 1,
+              }),
         Mm.lavender,
         () => _open(const HospitalBagGame()),
       ),
       _Hero(
         '🌙',
-        'Lullaby Pattern',
-        'Narm roshni ka kram dohraiye',
-        lul == 0 ? 'Abhi shuru karein' : 'Sabse lamba: $lul',
+        tr('mom_memory.lullaby_title'),
+        tr('mom_memory.lullaby_sub'),
+        lul == 0
+            ? tr('mom_memory.start_now')
+            : tr('mom_memory.lullaby_longest', {'n': lul}),
         Mm.peach,
         () => _open(const LullabyGame()),
       ),
       _Hero(
         '🌬️',
-        'Breathe & Focus',
-        'Gehri saans + chhota sawaal',
+        tr('mom_memory.breathe_title'),
+        tr('mom_memory.breathe_sub'),
         br == 0
-            ? 'Abhi shuru karein'
-            : '$br session  •  ${Storage.getInt('mom.breath.minutes')} min',
+            ? tr('mom_memory.start_now')
+            : tr('mom_memory.breath_stats', {
+                'n': br,
+                'm': Storage.getInt('mom.breath.minutes'),
+              }),
         Mm.mint,
         () => _open(const BreatheGame()),
       ),
       _Hero(
         '🪄',
-        'Kya gaya?',
-        'Kaunsi cheez chhup gayi?',
+        tr('mom_memory.missing_title'),
+        tr('mom_memory.missing_sub'),
         _lvl('missing'),
         Mm.sky,
         () => _open(const MissingItemGame()),
       ),
       _Hero(
         '💞',
-        'Jodi Milao',
-        'Shabd aur saathi yaad kijiye',
+        tr('mom_memory.pairs_title'),
+        tr('mom_memory.pairs_sub'),
         _lvl('pairs'),
         Mm.butter,
         () => _open(const WordPairsGame()),
       ),
       _Hero(
         '🔍',
-        'Kahan tha?',
-        'Emoji ki jagah yaad kijiye',
+        tr('mom_memory.where_title'),
+        tr('mom_memory.where_sub'),
         _lvl('where'),
         Mm.rose,
         () => _open(const WhereWasItGame()),
       ),
       _Hero(
         '📖',
-        'Kahani yaad karo',
-        'Chhoti kahani, 3 sawaal',
+        tr('mom_memory.story_title'),
+        tr('mom_memory.story_sub'),
         Storage.getInt('mom.story.played') == 0
-            ? 'Abhi shuru karein'
-            : 'Best: ${Storage.getInt('mom.story.best')}/3  •  ${Storage.getInt('mom.story.played')} kahaniyaan',
+            ? tr('mom_memory.start_now')
+            : tr('mom_memory.story_stats', {
+                'n': Storage.getInt('mom.story.best'),
+                'played': Storage.getInt('mom.story.played'),
+              }),
         Mm.lavender,
         () => _open(const StoryRecallGame()),
       ),
     ];
     return MmPage(
-      title: 'Mom Memory',
+      title: tr('mom_memory.title'),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         children: [
@@ -174,9 +189,9 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Namaste! Aaram se, koi jaldi nahi',
-                        style: TextStyle(
+                      Text(
+                        tr('mom_memory.greeting'),
+                        style: const TextStyle(
                           color: Pal.text,
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
@@ -185,8 +200,8 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
                       const SizedBox(height: 4),
                       Text(
                         streak > 0
-                            ? 'Aapka saath: $streak din 💗'
-                            : 'Aaj apne liye thoda waqt nikaaliye',
+                            ? tr('mom_memory.streak', {'n': streak})
+                            : tr('mom_memory.no_streak'),
                         style: const TextStyle(
                           color: Pal.textDim,
                           fontSize: 13,

@@ -9,6 +9,7 @@ import '../core/cloud/cloud_service.dart';
 import '../core/cloud/leaderboard_screen.dart';
 import '../core/cloud/referral_service.dart';
 import '../core/cloud/sync_service.dart';
+import '../core/i18n/i18n.dart';
 import '../core/rewards.dart';
 import '../core/storage.dart';
 import '../core/ui/ui.dart';
@@ -19,10 +20,10 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const GameScaffold(
-        title: 'Profile',
-        tint: Color(0xFFFF8FB8),
-        body: _ProfileBody(),
+  Widget build(BuildContext context) => GameScaffold(
+        title: tr('home.nav.profile'),
+        tint: const Color(0xFFFF8FB8),
+        body: const _ProfileBody(),
       );
 }
 
@@ -112,8 +113,8 @@ class _ProfileBodyState extends State<_ProfileBody> {
           decoration: InputDecoration(hintText: hint),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, c.text), child: const Text('OK')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(tr('common.cancel'))),
+          TextButton(onPressed: () => Navigator.pop(ctx, c.text), child: Text(tr('common.ok'))),
         ],
       ),
     );
@@ -126,7 +127,7 @@ class _ProfileBodyState extends State<_ProfileBody> {
           title: Text(title),
           content: Text(text),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Nahi')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(tr('common.no'))),
             TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(yes)),
           ],
         ),
@@ -136,36 +137,36 @@ class _ProfileBodyState extends State<_ProfileBody> {
   // ---------------------------------------------------------------- account
 
   Future<void> _changePin() async {
-    final old = await _askPin('Purana PIN');
+    final old = await _askPin(tr('home.pin.old'));
     if (old == null) return;
-    if (!a.verifyPin(old)) return _snack('Galat PIN');
-    final n1 = await _askPin('Naya PIN');
+    if (!a.verifyPin(old)) return _snack(tr('home.pin.wrong'));
+    final n1 = await _askPin(tr('home.pin.new'));
     if (n1 == null) return;
-    final n2 = await _askPin('Naya PIN dobara');
-    if (n2 != n1) return _snack('PIN match nahi hua');
+    final n2 = await _askPin(tr('home.pin.new_again'));
+    if (n2 != n1) return _snack(tr('home.pin.mismatch'));
     await a.changePin(old, n1);
-    _snack('PIN badal gaya ✅');
+    _snack(tr('home.pin.changed'));
   }
 
   Future<void> _setPin() async {
-    final n1 = await _askPin('Naya PIN (app lock)');
+    final n1 = await _askPin(tr('home.pin.new_lock'));
     if (n1 == null) return;
-    final n2 = await _askPin('Naya PIN dobara');
-    if (n2 != n1) return _snack('PIN match nahi hua');
+    final n2 = await _askPin(tr('home.pin.new_again'));
+    if (n2 != n1) return _snack(tr('home.pin.mismatch'));
     await a.setPin(n1);
-    _snack('PIN lock on ✅');
+    _snack(tr('home.pin.lock_on'));
   }
 
   Future<void> _removePin() async {
-    final pin = await _askPin('PIN se confirm karein');
+    final pin = await _askPin(tr('home.pin.confirm'));
     if (pin == null) return;
-    if (!a.verifyPin(pin)) return _snack('Galat PIN');
+    if (!a.verifyPin(pin)) return _snack(tr('home.pin.wrong'));
     await a.removePin();
-    _snack('PIN lock off');
+    _snack(tr('home.pin.lock_off'));
   }
 
   Future<void> _rename() async {
-    final v = await _askText('Naam badlein', initial: a.name, maxLength: 20);
+    final v = await _askText(tr('home.rename'), initial: a.name, maxLength: 20);
     if (v != null && v.trim().length >= 2) {
       await a.rename(v);
       SyncService.I.schedule();
@@ -175,17 +176,17 @@ class _ProfileBodyState extends State<_ProfileBody> {
   Future<void> _delete() async {
     final cloud = CloudService.available && CloudAuth.I.user.value != null;
     final ok = await _confirm(
-      'Account delete karein?',
-      'Aapka naam, PIN, coins aur saare games ka record hamesha ke liye mit jayega.'
-          '${cloud ? '\n\nCloud backup, leaderboard scores aur aapka online account bhi delete ho jayega.' : ''}'
-          '${!cloud && a.cloudUid != null ? '\n\nCloud data delete karne ke liye pehle sign in karein.' : ''}',
-      'Haan, delete',
+      tr('home.delete.title'),
+      '${tr('home.delete.body')}'
+          '${cloud ? '\n\n${tr('home.delete.body_cloud')}' : ''}'
+          '${!cloud && a.cloudUid != null ? '\n\n${tr('home.delete.body_signin')}' : ''}',
+      tr('home.delete.yes'),
     );
     if (ok != true) return;
     if (a.hasPin) {
-      final pin = await _askPin('PIN se confirm karein');
-      if (pin == null || !a.verifyPin(pin)) return _snack('Galat PIN');
-    } else if (!await _confirm('Pakka?', 'Yeh wapas nahi hoga.', 'Delete')) {
+      final pin = await _askPin(tr('home.pin.confirm'));
+      if (pin == null || !a.verifyPin(pin)) return _snack(tr('home.pin.wrong'));
+    } else if (!await _confirm(tr('home.delete.sure'), tr('home.delete.cant_undo'), tr('home.delete.btn'))) {
       return;
     }
     if (cloud) {
@@ -193,7 +194,7 @@ class _ProfileBodyState extends State<_ProfileBody> {
       if (out == DeleteOutcome.needsReauth) {
         String? password;
         if (!(CloudAuth.I.user.value?.isGoogle ?? false)) {
-          password = await _askText('Password daalein', hint: 'Account password', obscure: true);
+          password = await _askText(tr('home.password.title'), hint: tr('home.password.hint'), obscure: true);
           if (password == null) return;
         }
         final err = await CloudAuth.I.reauthenticate(password: password);
@@ -204,7 +205,7 @@ class _ProfileBodyState extends State<_ProfileBody> {
         out = await CloudAuth.I.deleteCloudAccount();
       }
       if (out != DeleteOutcome.done) {
-        return _snack('Cloud account delete nahi hua. Internet check karke dobara try karein.');
+        return _snack(tr('home.delete.cloud_failed'));
       }
     }
     if (!mounted) return;
@@ -219,21 +220,21 @@ class _ProfileBodyState extends State<_ProfileBody> {
     await SyncService.I.syncNow();
     if (!mounted) return;
     final err = SyncService.I.lastError.value;
-    _snack(err ?? 'Synced ✅');
+    _snack(err ?? tr('home.synced'));
   }
 
   Future<void> _signOut() async {
-    if (!await _confirm('Sign out?', 'Progress is kept on this phone. Sign in again any time to sync.', 'Sign out')) return;
+    if (!await _confirm(tr('home.signout.title'), tr('home.signout.body'), tr('home.signout.btn'))) return;
     await CloudAuth.I.signOut();
   }
 
   static String _ago(DateTime? t) {
-    if (t == null) return 'never';
+    if (t == null) return tr('home.ago.never');
     final d = DateTime.now().difference(t);
-    if (d.inSeconds < 60) return 'just now';
-    if (d.inMinutes < 60) return '${d.inMinutes} min ago';
-    if (d.inHours < 24) return '${d.inHours} h ago';
-    return '${d.inDays} d ago';
+    if (d.inSeconds < 60) return tr('home.ago.just_now');
+    if (d.inMinutes < 60) return tr('home.ago.min', {'n': d.inMinutes});
+    if (d.inHours < 24) return tr('home.ago.hours', {'n': d.inHours});
+    return tr('home.ago.days', {'n': d.inDays});
   }
 
   Widget _cloudCard() {
@@ -242,15 +243,15 @@ class _ProfileBodyState extends State<_ProfileBody> {
     }
     final u = CloudAuth.I.user.value;
     if (u == null) {
-      return const GlassCard(
+      return GlassCard(
         blur: 0,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Back up your progress', style: TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w900)),
-          SizedBox(height: 4),
-          Text('Sign in to save coins & records in the cloud, play on any phone and join the leaderboards. Your local progress is kept.',
-              style: TextStyle(color: Pal.textDim, fontSize: 13, height: 1.35)),
-          SizedBox(height: 14),
-          CloudSignInPanel(),
+          Text(tr('home.cloud.backup_title'), style: const TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 4),
+          Text(tr('home.cloud.backup_body'),
+              style: const TextStyle(color: Pal.textDim, fontSize: 13, height: 1.35)),
+          const SizedBox(height: 14),
+          const CloudSignInPanel(),
         ]),
       );
     }
@@ -263,26 +264,26 @@ class _ProfileBodyState extends State<_ProfileBody> {
           const SizedBox(width: 10),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(u.email ?? u.name ?? 'Signed in',
+              Text(u.email ?? u.name ?? tr('home.cloud.signed_in'),
                   maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
-              Text('Last synced: ${_ago(SyncService.I.lastSynced.value)}', style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+              Text(tr('home.cloud.last_synced', {'time': _ago(SyncService.I.lastSynced.value)}), style: const TextStyle(color: Pal.textDim, fontSize: 12)),
             ]),
           ),
         ]),
         if (u.needsVerification) ...[
           const SizedBox(height: 10),
-          Text('Email not verified yet.', style: TextStyle(color: Pal.gold.withValues(alpha: 0.9), fontSize: 13)),
+          Text(tr('home.cloud.not_verified'), style: TextStyle(color: Pal.gold.withValues(alpha: 0.9), fontSize: 13)),
           Wrap(spacing: 4, children: [
             TextButton(
-              onPressed: () async => _snack(await CloudAuth.I.sendVerification() ?? 'Verification email sent'),
-              child: const Text('Resend link', style: TextStyle(color: Pal.gold)),
+              onPressed: () async => _snack(await CloudAuth.I.sendVerification() ?? tr('home.cloud.verification_sent')),
+              child: Text(tr('home.cloud.resend'), style: const TextStyle(color: Pal.gold)),
             ),
             TextButton(
               onPressed: () async {
                 await CloudAuth.I.reload();
-                if (CloudAuth.I.user.value?.emailVerified ?? false) _snack('Email verified ✅');
+                if (CloudAuth.I.user.value?.emailVerified ?? false) _snack(tr('home.cloud.verified'));
               },
-              child: const Text("I've verified", style: TextStyle(color: Pal.gold)),
+              child: Text(tr('home.cloud.i_verified'), style: const TextStyle(color: Pal.gold)),
             ),
           ]),
         ],
@@ -290,7 +291,7 @@ class _ProfileBodyState extends State<_ProfileBody> {
         Row(children: [
           Expanded(
             child: PremiumButton(
-              label: syncing ? 'Syncing...' : 'Sync now',
+              label: syncing ? tr('home.cloud.syncing') : tr('home.cloud.sync_now'),
               icon: Icons.sync_rounded,
               compact: true,
               color: const Color(0xFF22B07D),
@@ -300,7 +301,7 @@ class _ProfileBodyState extends State<_ProfileBody> {
           const SizedBox(width: 10),
           Expanded(
             child: PremiumButton(
-              label: 'Sign out',
+              label: tr('home.signout.btn'),
               icon: Icons.logout_rounded,
               compact: true,
               color: const Color(0xFF7C5CFF),
@@ -320,10 +321,10 @@ class _ProfileBodyState extends State<_ProfileBody> {
           blur: 0,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LeaderboardScreen())),
-          child: const Column(children: [
-            Text('🏆', style: TextStyle(fontSize: 28)),
-            SizedBox(height: 4),
-            Text('Leaderboard', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w800)),
+          child: Column(children: [
+            const Text('🏆', style: TextStyle(fontSize: 28)),
+            const SizedBox(height: 4),
+            Text(tr('home.leaderboard'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800)),
           ]),
         ),
       ),
@@ -333,15 +334,15 @@ class _ProfileBodyState extends State<_ProfileBody> {
           blur: 0,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
           onTap: () {
-            if (!CloudService.available) return _snack(CloudService.pendingMessage);
-            if (!signedIn) return _snack('Sign in first to invite friends.');
+            if (!CloudService.available) return _snack(tr('account.cloud_pending'));
+            if (!signedIn) return _snack(tr('home.invite.signin_first'));
             ReferralService.I.share();
           },
           child: Column(children: [
             const Text('🎁', style: TextStyle(fontSize: 28)),
             const SizedBox(height: 4),
-            const Text('Invite friends', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w800)),
-            Text('+${ReferralService.inviterBonus} 🪙 each', style: const TextStyle(color: Pal.gold, fontSize: 11)),
+            Text(tr('home.invite.title'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800)),
+            Text(tr('home.invite.bonus', {'coins': ReferralService.inviterBonus}), style: const TextStyle(color: Pal.gold, fontSize: 11)),
           ]),
         ),
       ),
@@ -358,9 +359,9 @@ class _ProfileBodyState extends State<_ProfileBody> {
     final totalPlays = games.fold<int>(0, (s, g) => s + Rewards.plays(g.id));
     return ListView(padding: EdgeInsets.fromLTRB(18, widget.showTitle ? 14 : 8, 18, 28), children: [
       if (widget.showTitle)
-        const Padding(
-          padding: EdgeInsets.fromLTRB(4, 0, 0, 14),
-          child: Text('Profile', style: TextStyle(color: Pal.text, fontSize: 26, fontWeight: FontWeight.w900)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 0, 14),
+          child: Text(tr('home.nav.profile'), style: const TextStyle(color: Pal.text, fontSize: 26, fontWeight: FontWeight.w900)),
         ),
       GlassCard(
         glow: Pal.gold,
@@ -376,19 +377,19 @@ class _ProfileBodyState extends State<_ProfileBody> {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(a.name, style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900)),
               const SizedBox(height: 4),
-              Text('$totalPlays games khele  •  $totalWins jeete', style: const TextStyle(color: Pal.textDim, fontSize: 13)),
+              Text(tr('home.profile.summary', {'plays': totalPlays, 'wins': totalWins}), style: const TextStyle(color: Pal.textDim, fontSize: 13)),
             ]),
           ),
           const CoinPill(),
         ]),
       ),
       const SizedBox(height: 18),
-      const _Head('Cloud account'),
+      _Head(tr('home.profile.cloud_account')),
       _cloudCard(),
       const SizedBox(height: 12),
       _actions(),
       const SizedBox(height: 18),
-      const _Head('Games ka record'),
+      _Head(tr('home.profile.records')),
       for (final g in games)
         Padding(
           padding: const EdgeInsets.only(bottom: 10),
@@ -403,28 +404,29 @@ class _ProfileBodyState extends State<_ProfileBody> {
                   Text(g.title, style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 16)),
                   const SizedBox(height: 2),
                   Text(
-                    'Khele ${Rewards.plays(g.id)}  •  Jeete ${Rewards.wins(g.id)}  •  Levels ${Rewards.levels(g.id)}',
+                    tr('home.profile.record_line',
+                        {'plays': Rewards.plays(g.id), 'wins': Rewards.wins(g.id), 'levels': Rewards.levels(g.id)}),
                     style: const TextStyle(color: Pal.textDim, fontSize: 12),
                   ),
                 ]),
               ),
               if (Rewards.best(g.id) > 0)
                 Column(children: [
-                  const Text('BEST', style: TextStyle(color: Pal.textDim, fontSize: 9, letterSpacing: 1)),
+                  Text(tr('common.best').toUpperCase(), style: const TextStyle(color: Pal.textDim, fontSize: 9, letterSpacing: 1)),
                   Text('${Rewards.best(g.id)}', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w900, fontSize: 18)),
                 ]),
             ]),
           ),
         ),
       const SizedBox(height: 10),
-      const _Head('Account'),
+      _Head(tr('home.profile.account')),
       GlassCard(
         blur: 0,
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Column(children: [
           ListTile(
             leading: const Icon(Icons.person_rounded, color: Pal.text),
-            title: const Text('Naam badlein', style: TextStyle(color: Pal.text)),
+            title: Text(tr('home.rename'), style: const TextStyle(color: Pal.text)),
             subtitle: Text(a.name, style: const TextStyle(color: Pal.textDim)),
             onTap: _rename,
           ),
@@ -433,8 +435,8 @@ class _ProfileBodyState extends State<_ProfileBody> {
               future: a.biometricAvailable(),
               builder: (_, snap) => SwitchListTile(
                 secondary: const Icon(Icons.fingerprint_rounded, color: Pal.gold),
-                title: const Text('Fingerprint unlock', style: TextStyle(color: Pal.text)),
-                subtitle: Text(snap.data == false ? 'Is phone mein fingerprint set nahi hai' : 'PIN ke saath fingerprint se bhi khulega',
+                title: Text(tr('home.fingerprint.title'), style: const TextStyle(color: Pal.text)),
+                subtitle: Text(snap.data == false ? tr('home.fingerprint.unavailable') : tr('home.fingerprint.on'),
                     style: const TextStyle(color: Pal.textDim, fontSize: 12)),
                 value: a.biometricEnabled,
                 activeThumbColor: Pal.gold,
@@ -443,17 +445,17 @@ class _ProfileBodyState extends State<_ProfileBody> {
             ),
             ListTile(
               leading: const Icon(Icons.pin_rounded, color: Pal.text),
-              title: const Text('PIN badlein', style: TextStyle(color: Pal.text)),
+              title: Text(tr('home.pin.change'), style: const TextStyle(color: Pal.text)),
               onTap: _changePin,
             ),
             ListTile(
               leading: const Icon(Icons.lock_open_rounded, color: Pal.text),
-              title: const Text('PIN lock hatayein', style: TextStyle(color: Pal.text)),
+              title: Text(tr('home.pin.remove'), style: const TextStyle(color: Pal.text)),
               onTap: _removePin,
             ),
             ListTile(
               leading: const Icon(Icons.lock_rounded, color: Pal.text),
-              title: const Text('Lock karein', style: TextStyle(color: Pal.text)),
+              title: Text(tr('home.lock_now'), style: const TextStyle(color: Pal.text)),
               onTap: () {
                 SyncService.I.syncNow();
                 Navigator.of(context).popUntil((r) => r.isFirst);
@@ -463,20 +465,20 @@ class _ProfileBodyState extends State<_ProfileBody> {
           ] else
             ListTile(
               leading: const Icon(Icons.pin_rounded, color: Pal.text),
-              title: const Text('PIN lock lagayein', style: TextStyle(color: Pal.text)),
-              subtitle: const Text('Optional: app kholne par PIN / fingerprint', style: TextStyle(color: Pal.textDim, fontSize: 12)),
+              title: Text(tr('home.pin.set'), style: const TextStyle(color: Pal.text)),
+              subtitle: Text(tr('home.pin.set_sub'), style: const TextStyle(color: Pal.textDim, fontSize: 12)),
               onTap: _setPin,
             ),
           ListTile(
             leading: const Icon(Icons.delete_forever_rounded, color: Pal.danger),
-            title: const Text('Account delete karein', style: TextStyle(color: Pal.danger)),
+            title: Text(tr('home.delete.menu'), style: const TextStyle(color: Pal.danger)),
             onTap: _delete,
           ),
         ]),
       ),
       const SizedBox(height: 14),
       Center(
-        child: Text('Total coins kamaye: ${Storage.getInt('coins.earned')} 🪙', style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+        child: Text(tr('home.profile.coins_earned', {'coins': Storage.getInt('coins.earned')}), style: const TextStyle(color: Pal.textDim, fontSize: 12)),
       ),
     ]);
   }

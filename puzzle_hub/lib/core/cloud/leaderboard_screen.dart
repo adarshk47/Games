@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../account/auth_screens.dart';
+import '../i18n/i18n.dart';
 import '../ui/ui.dart';
 import 'cloud_auth.dart';
 import 'cloud_service.dart';
 import 'leaderboard_service.dart';
+
+/// Display name of a board: game names stay as-is, "Total stars" is localized.
+String boardTitle(Board b) => b.gameId == null ? tr('cloud.lb.total_stars') : b.title;
 
 /// Leaderboards: one tab per score game + "Total stars". Needs cloud login.
 class LeaderboardScreen extends StatefulWidget {
@@ -58,7 +62,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Leaderboard',
+      title: tr('cloud.lb.title'),
       tint: Pal.gold,
       actions: [
         if (_page != null)
@@ -81,7 +85,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 Padding(
                   padding: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
                   child: ChoiceChip(
-                    label: Text('${b.emoji} ${b.title}'),
+                    label: Text('${b.emoji} ${boardTitle(b)}'),
                     selected: b.id == _board.id,
                     onSelected: (_) => _select(b),
                     selectedColor: Pal.goldDeep,
@@ -118,12 +122,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   Widget _body() {
     if (!CloudService.available) {
-      return _message(Icons.cloud_off_rounded, 'Cloud setup pending',
-          'Leaderboards will appear here once online features are switched on. Keep playing - your records are saved!');
+      return _message(Icons.cloud_off_rounded, tr('cloud.lb.pending_title'), tr('cloud.lb.pending_text'));
     }
     if (CloudAuth.I.user.value == null) {
-      return _message(Icons.emoji_events_rounded, 'Sign in to compete',
-          'Sign in with Google or Email to put your best scores on the leaderboard.',
+      return _message(Icons.emoji_events_rounded, tr('cloud.lb.signin_title'), tr('cloud.lb.signin_text'),
           action: const CloudSignInPanel());
     }
     return FutureBuilder<LeaderboardPage>(
@@ -133,8 +135,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           return const Center(child: CircularProgressIndicator(color: Pal.gold));
         }
         if (snap.hasError || !snap.hasData) {
-          return _message(Icons.wifi_off_rounded, 'Could not load', 'Check your internet connection and try again.',
-              action: PremiumButton(label: 'Retry', icon: Icons.refresh_rounded, onTap: _reload, compact: true));
+          return _message(Icons.wifi_off_rounded, tr('cloud.lb.load_failed_title'), tr('cloud.lb.load_failed_text'),
+              action: PremiumButton(label: tr('common.retry'), icon: Icons.refresh_rounded, onTap: _reload, compact: true));
         }
         final p = snap.data!;
         final me = CloudAuth.I.user.value?.uid;
@@ -149,7 +151,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   const Icon(Icons.person_pin_rounded, color: Pal.gold),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text('Your rank: #${p.myRank ?? '-'}',
+                    child: Text(tr('cloud.lb.your_rank', {'rank': p.myRank ?? '-'}),
                         style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 16)),
                   ),
                   Text('${p.mine!.score}', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w900, fontSize: 18)),
@@ -158,7 +160,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             ),
           Expanded(
             child: p.top.isEmpty
-                ? _message(Icons.emoji_events_outlined, 'No scores yet', 'Be the first on the ${_board.title} board!')
+                ? _message(Icons.emoji_events_outlined, tr('cloud.lb.no_scores'), tr('cloud.lb.be_first', {'board': boardTitle(_board)}))
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
                     itemCount: p.top.length,
@@ -194,7 +196,7 @@ class _Row extends StatelessWidget {
                 : Text('#$rank', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800)),
           ),
           Expanded(
-            child: Text(isMe ? '${entry.name} (you)' : entry.name,
+            child: Text(isMe ? tr('cloud.lb.you', {'name': entry.name}) : entry.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: isMe ? Pal.gold : Pal.text, fontWeight: FontWeight.w700, fontSize: 15)),

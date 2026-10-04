@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -30,22 +31,18 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
     return GameScaffold(
       tint: mbTint,
       title: t == null
-          ? 'Card Match'
+          ? tr('memory_boost.card.title')
           : lv == null
-              ? 'Card Match - ${t.label}'
-              : '${t.label} - Level ${lv + 1} (${cardTierParams[t]!.levels[lv].label})',
+              ? '${tr('memory_boost.card.title')} - ${tierName(t)}'
+              : '${tierName(t)} - ${tr('common.level_n', {'n': lv + 1})} (${cardTierParams[t]!.levels[lv].label})',
       onBack: t == null ? null : () => setState(() => lv == null ? _tier = null : _level = null),
       body: t == null
           ? TierChooser(
               game: 'card',
-              heading: 'Flip pairs of cards and find every match. Pick a difficulty.',
-              descriptions: const {
-                Tier.easy: '2x2 to 4x4. Mismatches stay visible a long time.',
-                Tier.medium: '2x2 to 6x6. Balanced flip-back time.',
-                Tier.hard: '3x4 to 5x6. Cards flip back fast.',
-                Tier.extreme: '5x6 and 6x6. Short peek, very fast flip-back, time limit.',
-              },
-              bestText: (t) => 'Stars ${_tierStars(t)}/${cardTierParams[t]!.levels.length * 3}',
+              heading: tr('memory_boost.card.heading'),
+              descriptions: {for (final t in Tier.values) t: tr('memory_boost.card.desc.${t.key}')},
+              bestText: (t) =>
+                  tr('memory_boost.card.stars', {'n': _tierStars(t), 'max': cardTierParams[t]!.levels.length * 3}),
               onSelect: (t) => setState(() => _tier = t),
             )
           : lv == null
@@ -105,10 +102,10 @@ class _CardMatchScreenState extends State<CardMatchScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${levels[i].label} grid',
+                  Text(tr('memory_boost.card.grid', {'grid': levels[i].label}),
                       style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 17)),
                   const SizedBox(height: 2),
-                  Text(moves == 0 ? 'Not played yet' : 'Best: $moves moves',
+                  Text(moves == 0 ? tr('memory_boost.card.not_played') : tr('memory_boost.card.best_moves', {'n': moves}),
                       style: const TextStyle(color: Pal.textDim, fontSize: 13)),
                 ]),
               ),
@@ -221,10 +218,10 @@ class _CardBoardState extends State<_CardBoard> {
     Rewards.onGameEnd('memory_boost', score: _tierStarTotal());
     final choice = await showResultDialog(
       context,
-      title: "Time is up!",
+      title: tr('memory_boost.time_up'),
       emoji: '⏰',
       color: Pal.danger,
-      message: '${matched.length ~/ 2}/${lv.pairs} pairs found',
+      message: tr('memory_boost.card.pairs_found', {'n': matched.length ~/ 2, 'total': lv.pairs}),
     );
     if (!mounted) return;
     if (choice == DialogChoice.retry) {
@@ -336,12 +333,13 @@ class _CardBoardState extends State<_CardBoard> {
     final hasNext = widget.level + 1 < params.levels.length;
     final choice = await showResultDialog(
       context,
-      title: 'Level complete!',
+      title: tr('common.level_complete'),
       emoji: '🏆',
       stars: stars,
-      message: '$moves moves  -  ${fmtTime(seconds)}${newBest ? '\nNew best!' : ''}',
-      retryLabel: 'Replay',
-      extraLabel: hasNext ? 'Next level' : null,
+      message:
+          '${tr('memory_boost.moves_n', {'n': moves})}  -  ${fmtTime(seconds)}${newBest ? '\n${tr('memory_boost.new_best')}' : ''}',
+      retryLabel: tr('common.replay'),
+      extraLabel: hasNext ? tr('common.next_level') : null,
     );
     if (!mounted) return;
     switch (choice) {
@@ -360,10 +358,12 @@ class _CardBoardState extends State<_CardBoard> {
       Padding(
         padding: const EdgeInsets.all(12),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          StatChip(Icons.touch_app_rounded, '$moves moves'),
-          StatChip(Icons.timer_rounded, fmtTime(limit == null ? seconds : (limit! - seconds).clamp(0, limit!)),
-              color: limit != null && limit! - seconds <= 10 ? Pal.danger : Pal.gold),
-          StatChip(Icons.check_circle_rounded, '${matched.length ~/ 2}/${lv.pairs}', color: Pal.success),
+          Flexible(child: StatChip(Icons.touch_app_rounded, tr('memory_boost.moves_n', {'n': moves}))),
+          Flexible(
+            child: StatChip(Icons.timer_rounded, fmtTime(limit == null ? seconds : (limit! - seconds).clamp(0, limit!)),
+                color: limit != null && limit! - seconds <= 10 ? Pal.danger : Pal.gold),
+          ),
+          Flexible(child: StatChip(Icons.check_circle_rounded, '${matched.length ~/ 2}/${lv.pairs}', color: Pal.success)),
         ]),
       ),
       Expanded(
@@ -412,7 +412,7 @@ class _CardBoardState extends State<_CardBoard> {
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(peeking ? Icons.visibility_rounded : Icons.lightbulb_rounded, size: 18, color: Pal.gold),
               const SizedBox(width: 8),
-              Text(freePeekUsed ? 'Peek  (${Prices.hint} coins)' : 'Peek  (1 free)',
+              Text(freePeekUsed ? tr('memory_boost.card.peek_coins', {'n': Prices.hint}) : tr('memory_boost.card.peek_free'),
                   style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 14)),
             ]),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/ui/ui.dart';
 import 'flow_game_page.dart';
 import 'logic/flow_logic.dart';
@@ -55,19 +56,19 @@ class _FlowPairsScreenState extends State<FlowPairsScreen> {
   Widget build(BuildContext context) {
     final last = FlowProgress.lastTier;
     return GameScaffold(
-      title: 'Flow',
+      title: tr('flow_pairs.title'),
       tint: flowTint,
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 4),
-            child: Text('Choose difficulty', style: TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 4),
+            child: Text(tr('flow_pairs.choose'), style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
           ),
-          const Padding(
-            padding: EdgeInsets.only(left: 4, bottom: 12),
-            child: Text('Connect matching colors without crossing paths.',
-                style: TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w600)),
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 12),
+            child: Text(tr('flow_pairs.subtitle'),
+                style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w600)),
           ),
           for (final (i, t) in FlowTier.values.indexed)
             Padding(
@@ -114,9 +115,9 @@ class _TierCard extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(tier.label, style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900)),
+            Text(flowTierLabel(tier), style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900)),
             const SizedBox(height: 2),
-            Text('${tier.sizeLabel}${tier.requireFill ? '  -  fill all' : ''}',
+            Text('${tier.sizeLabel}${tier.requireFill ? '  -  ${tr('flow_pairs.fill_all')}' : ''}',
                 style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             ClipRRect(
@@ -129,7 +130,7 @@ class _TierCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            Text('$done/${FlowLevels.count} levels  -  $stars/${FlowLevels.count * 3} stars',
+            Text(tr('flow_pairs.progress', {'done': done, 'total': FlowLevels.count, 'stars': stars, 'max': FlowLevels.count * 3}),
                 style: const TextStyle(color: Pal.textDim, fontSize: 12)),
           ]),
         ),
@@ -163,7 +164,7 @@ class _FlowLevelsPageState extends State<FlowLevelsPage> {
     final tier = widget.tier;
     final color = _tierColors[tier]!;
     return GameScaffold(
-      title: '${tier.label} levels',
+      title: tr('flow_pairs.tier_levels', {'tier': flowTierLabel(tier)}),
       tint: flowTint,
       body: Column(children: [
         Padding(

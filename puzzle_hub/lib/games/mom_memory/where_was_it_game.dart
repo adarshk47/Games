@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -68,7 +69,7 @@ class _WhereWasItGameState extends State<WhereWasItGame>
 
   @override
   Widget build(BuildContext context) => MmPage(
-    title: 'Kahan tha?',
+    title: tr('mom_memory.where_title'),
     body: Column(
       children: [
         Expanded(
@@ -86,7 +87,7 @@ class _WhereWasItGameState extends State<WhereWasItGame>
                   level: _level,
                   unlocked: Storage.getInt('mom.where.level'),
                   maxLevel: whereMaxLevel,
-                  text: 'Pyaare emoji kuch der dikhenge, phir chhup jayenge.\nYaad kijiye woh kahan the.',
+                  text: tr('mom_memory.where_intro'),
                   onLevel: (i) => setState(() => _level = i),
                   onStart: _begin,
                 ),
@@ -130,8 +131,12 @@ class _WhereWasItGameState extends State<WhereWasItGame>
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
           child: Text(
             showing
-                ? 'Dhyaan se dekhiye'
-                : 'Kahan the? Chuniye (${_tapped.length}/$need)',
+                ? tr('mom_memory.watch')
+                : tr('mom_memory.where_pick', {
+                    'n': _tapped.length,
+                    'total': need,
+                  }),
+            textAlign: TextAlign.center,
             style: const TextStyle(
               color: Pal.text,
               fontSize: 18,
@@ -176,7 +181,7 @@ class _WhereWasItGameState extends State<WhereWasItGame>
           padding: const EdgeInsets.only(bottom: 10),
           child: showing
               ? PremiumButton(
-                  label: 'Yaad ho gaya',
+                  label: tr('mom_memory.memorized'),
                   compact: true,
                   color: Mm.lavender,
                   onTap: () {
@@ -185,7 +190,7 @@ class _WhereWasItGameState extends State<WhereWasItGame>
                   },
                 )
               : PremiumButton(
-                  label: 'Ho gaya',
+                  label: tr('mom_memory.done'),
                   icon: Icons.check_rounded,
                   color: Mm.rose,
                   onTap: _tapped.isEmpty ? null : _submit,
@@ -235,11 +240,14 @@ class _WhereWasItGameState extends State<WhereWasItGame>
         SizedBox(
           height: 250,
           child: MmResult(
-            title: '${r.correct}/$total sahi jagah',
+            title: tr('mom_memory.where_result', {
+              'n': r.correct,
+              'total': total,
+            }),
             stars: _stars,
             message: r.correct == total
                 ? pick(praise)
-                : 'Bahut achha prayas! Aaram se phir koshish kijiye.',
+                : tr('mom_memory.good_try'),
             onAgain: _begin,
             onNext: _level < whereMaxLevel
                 ? () {

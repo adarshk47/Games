@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -28,18 +29,13 @@ class _SimonScreenState extends State<SimonScreen> {
       return _SimonGame(key: ValueKey(t), tier: t, onBack: () => setState(() => tier = null));
     }
     return GameScaffold(
-      title: 'Simon Sequence',
+      title: tr('memory_boost.simon.title'),
       tint: mbTint,
       body: TierChooser(
         game: 'simon',
-        heading: 'Watch the growing light pattern and repeat it. Pick a difficulty.',
-        descriptions: const {
-          Tier.easy: 'Slow lights, 4 pads, one forgiven mistake.',
-          Tier.medium: 'Classic speed, 4 pads.',
-          Tier.hard: 'Fast lights, 4 pads.',
-          Tier.extreme: 'Blazing speed with 6 pads.',
-        },
-        bestText: (t) => 'Best streak ${Storage.getInt(simonBestKeyFor(t))}',
+        heading: tr('memory_boost.simon.heading'),
+        descriptions: {for (final t in Tier.values) t: tr('memory_boost.simon.desc.${t.key}')},
+        bestText: (t) => tr('memory_boost.simon.best_streak', {'n': Storage.getInt(simonBestKeyFor(t))}),
         onSelect: (t) => setState(() => tier = t),
       ),
     );
@@ -188,10 +184,11 @@ class _SimonGameState extends State<_SimonGame> {
     });
     final choice = await showResultDialog(
       context,
-      title: 'Game over',
+      title: tr('common.game_over'),
       emoji: '💡',
       color: Pal.accents[1],
-      message: 'Streak: $streak\n${newBest && streak > 0 ? 'New best!' : 'Best: ${Storage.getInt(bestKey)}'}',
+      message: '${tr('memory_boost.simon.streak_value', {'n': streak})}\n'
+          '${newBest && streak > 0 ? tr('memory_boost.new_best') : tr('memory_boost.best_value', {'n': Storage.getInt(bestKey)})}',
     );
     if (!mounted) return;
     if (choice == DialogChoice.retry) {
@@ -204,23 +201,23 @@ class _SimonGameState extends State<_SimonGame> {
   @override
   Widget build(BuildContext context) {
     final status = switch (phase) {
-      _Phase.idle => 'Watch the pattern, then repeat it',
-      _Phase.watching => 'Watch...',
-      _Phase.input => 'Your turn!',
-      _Phase.over => 'Game over',
+      _Phase.idle => tr('memory_boost.simon.status.idle'),
+      _Phase.watching => tr('memory_boost.simon.status.watching'),
+      _Phase.input => tr('memory_boost.simon.status.input'),
+      _Phase.over => tr('common.game_over'),
     };
     final statusColor = phase == _Phase.input ? Pal.success : (phase == _Phase.over ? Pal.danger : Pal.textDim);
     return GameScaffold(
-      title: 'Simon - ${widget.tier.label}',
+      title: '${tr('memory_boost.simon.short')} - ${tierName(widget.tier)}',
       tint: mbTint,
       onBack: widget.onBack,
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.all(14),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            StatChip(Icons.local_fire_department_rounded, 'Streak ${logic.streak}', color: Pal.accents[0]),
-            if (params.chances > 1) StatChip(Icons.favorite_rounded, '$chancesLeft', color: Pal.danger),
-            StatChip(Icons.emoji_events_rounded, 'Best ${Storage.getInt(bestKey)}', color: Pal.gold),
+            Flexible(child: StatChip(Icons.local_fire_department_rounded, tr('memory_boost.simon.streak_chip', {'n': logic.streak}), color: Pal.accents[0])),
+            if (params.chances > 1) Flexible(child: StatChip(Icons.favorite_rounded, '$chancesLeft', color: Pal.danger)),
+            Flexible(child: StatChip(Icons.emoji_events_rounded, '${tr('common.best')} ${Storage.getInt(bestKey)}', color: Pal.gold)),
           ]),
         ),
         AnimatedSwitcher(
@@ -260,7 +257,7 @@ class _SimonGameState extends State<_SimonGame> {
           height: 84,
           child: phase == _Phase.idle
               ? Center(
-                  child: PremiumButton(label: 'Start', icon: Icons.play_arrow_rounded, onTap: _startGame)
+                  child: PremiumButton(label: tr('memory_boost.start'), icon: Icons.play_arrow_rounded, onTap: _startGame)
                       .animate(onPlay: (c) => c.repeat(reverse: true))
                       .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05), duration: 900.ms),
                 )
@@ -287,7 +284,7 @@ class _SimonGameState extends State<_SimonGame> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Text('${logic.streak}',
             style: TextStyle(color: Colors.white, fontSize: size * 0.4, fontWeight: FontWeight.w900, height: 1)),
-        Text('SCORE', style: TextStyle(color: Pal.textDim, fontSize: size * 0.1, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+        Text(tr('common.score').toUpperCase(), style: TextStyle(color: Pal.textDim, fontSize: size * 0.1, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
       ]),
     );
   }

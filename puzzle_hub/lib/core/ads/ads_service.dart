@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 
@@ -255,7 +256,7 @@ class AdsService {
     final count = rewardedToday + 1;
     await Storage.setString(_kRewardDay, today);
     await Storage.setInt(_kRewardCount, count);
-    await Rewards.addCoins(rewardedCoins, label: 'Ad reward');
+    await Rewards.addCoins(rewardedCoins, label: tr('ads.reward_label'));
     _notify();
     return rewardedCoins;
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -93,7 +94,7 @@ class _BreatheGameState extends State<BreatheGame>
   @override
   Widget build(BuildContext context) {
     return MmPage(
-      title: 'Breathe & Focus',
+      title: tr('mom_memory.breathe_title'),
       body: Column(
         children: [
           Expanded(
@@ -131,19 +132,24 @@ class _BreatheGameState extends State<BreatheGame>
           children: [
             const Text('🌬️', style: TextStyle(fontSize: 64)),
             const SizedBox(height: 12),
-            const Text(
-              'Gehri saans, shaant mann',
-              style: TextStyle(
+            Text(
+              tr('mom_memory.breathe_heading'),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
                 color: Pal.text,
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Saans andar 4, rokein 4, bahar 6.\nBas circle ke saath saath chaliye.',
+            Text(
+              tr('mom_memory.breathe_info'),
               textAlign: TextAlign.center,
-              style: TextStyle(color: Pal.textDim, fontSize: 15, height: 1.45),
+              style: const TextStyle(
+                color: Pal.textDim,
+                fontSize: 15,
+                height: 1.45,
+              ),
             ),
             const SizedBox(height: 24),
             Wrap(
@@ -153,7 +159,7 @@ class _BreatheGameState extends State<BreatheGame>
               children: [
                 for (final m in [1, 2, 3])
                   PremiumButton(
-                    label: '$m min',
+                    label: tr('mom_memory.minutes', {'n': m}),
                     color: Mm.pads[m],
                     onTap: () => _start(m),
                   ),
@@ -161,7 +167,7 @@ class _BreatheGameState extends State<BreatheGame>
             ),
             const SizedBox(height: 22),
             Text(
-              'Ab tak $sessions session',
+              tr('mom_memory.sessions_so_far', {'n': sessions}),
               style: const TextStyle(
                 color: Pal.textDim,
                 fontWeight: FontWeight.w700,
@@ -188,15 +194,15 @@ class _BreatheGameState extends State<BreatheGame>
                 final remaining = (_minutes * 60 - secs).ceil();
                 final (label, left) = switch (b.phase) {
                   BreathPhase.inhale => (
-                    'Saans andar...',
+                    tr('mom_memory.inhale'),
                     (inhaleSec * (1 - b.progress)).ceil(),
                   ),
                   BreathPhase.hold => (
-                    'Aaram se rokein',
+                    tr('mom_memory.hold'),
                     (holdSec * (1 - b.progress)).ceil(),
                   ),
                   BreathPhase.exhale => (
-                    'Dheere se bahar...',
+                    tr('mom_memory.exhale'),
                     (exhaleSec * (1 - b.progress)).ceil(),
                   ),
                 };
@@ -215,6 +221,7 @@ class _BreatheGameState extends State<BreatheGame>
                       children: [
                         Text(
                           label,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 22,
@@ -250,7 +257,7 @@ class _BreatheGameState extends State<BreatheGame>
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: PremiumButton(
-              label: 'Rukein',
+              label: tr('mom_memory.stop'),
               compact: true,
               color: const Color(0xFF6F63B8),
               onTap: _stopEarly,
@@ -267,19 +274,24 @@ class _BreatheGameState extends State<BreatheGame>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Bahut badhiya! 🌸',
-            style: TextStyle(
+          Text(
+            '${tr('mom_memory.praise_1')} 🌸',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
               color: Pal.text,
               fontSize: 24,
               fontWeight: FontWeight.w900,
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Ek chhota sa sawaal:\nKaunsa rang dikha tha?',
+          Text(
+            tr('mom_memory.quiz_q'),
             textAlign: TextAlign.center,
-            style: TextStyle(color: Pal.textDim, fontSize: 17, height: 1.45),
+            style: const TextStyle(
+              color: Pal.textDim,
+              fontSize: 17,
+              height: 1.45,
+            ),
           ),
           const SizedBox(height: 26),
           Wrap(
@@ -334,8 +346,12 @@ class _BreatheGameState extends State<BreatheGame>
             const SizedBox(height: 12),
             Text(
               ok
-                  ? 'Bilkul sahi! ${breathColors[_colorIdx].name} tha.'
-                  : 'Koi baat nahi, ${breathColors[_colorIdx].name} tha.',
+                  ? tr('mom_memory.color_right', {
+                      'color': breathColors[_colorIdx].name,
+                    })
+                  : tr('mom_memory.color_wrong', {
+                      'color': breathColors[_colorIdx].name,
+                    }),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Pal.text,
@@ -345,13 +361,13 @@ class _BreatheGameState extends State<BreatheGame>
             ),
             const SizedBox(height: 8),
             Text(
-              'Aapne $_minutes min shaanti se bitaye. Shukriya!',
+              tr('mom_memory.breathe_thanks', {'n': _minutes}),
               textAlign: TextAlign.center,
               style: const TextStyle(color: Pal.textDim, fontSize: 15),
             ),
             const SizedBox(height: 24),
             PremiumButton(
-              label: 'Phir se',
+              label: tr('common.replay'),
               color: Mm.rose,
               onTap: () => setState(() => _step = _Step.choose),
             ),

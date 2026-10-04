@@ -67,7 +67,7 @@ void main() {
       expect(FlowProgress.completed(FlowTier.easy), 1);
       expect(FlowProgress.stars(FlowTier.easy, 1), 3);
 
-      await t.tap(find.text('Next'));
+      await t.tap(find.text('Next level'));
       await t.pump(const Duration(seconds: 1));
       await t.pump(const Duration(seconds: 1));
       expect(find.byKey(const ValueKey('flow_board_easy_2')), findsOneWidget);

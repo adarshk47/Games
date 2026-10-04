@@ -59,9 +59,10 @@ class _SettingsSheet extends StatelessWidget {
     }
 
     final mq = MediaQuery.of(context);
-    return ValueListenableBuilder<int>(
-      valueListenable: AppThemeController.current,
-      builder: (_, _, _) {
+    return ListenableBuilder(
+      // Rebuild on theme and language changes (language can be switched here).
+      listenable: Listenable.merge([AppThemeController.current, I18n.lang]),
+      builder: (_, _) {
         final t = AppThemeController.theme;
         return Padding(
           padding: EdgeInsets.fromLTRB(14, 0, 14, 20 + mq.padding.bottom),
@@ -89,10 +90,10 @@ class _SettingsSheet extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 4, 12, 8),
                       child: Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Text(
-                              'Settings',
-                              style: TextStyle(
+                              tr('common.settings'),
+                              style: const TextStyle(
                                 color: Pal.text,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
@@ -105,22 +106,22 @@ class _SettingsSheet extends StatelessWidget {
                     ),
                     row(
                       Icons.volume_up_rounded,
-                      'Sound effects',
-                      'Tap, jeet, galti ki awaaz',
+                      tr('home.settings.sound'),
+                      tr('home.settings.sound_sub'),
                       AppAudio.soundOn,
                       AppAudio.setSound,
                     ),
                     row(
                       Icons.music_note_rounded,
-                      'Music',
-                      'Background music',
+                      tr('home.settings.music'),
+                      tr('home.settings.music_sub'),
                       AppAudio.musicOn,
                       AppAudio.setMusicEnabled,
                     ),
                     row(
                       Icons.vibration_rounded,
-                      'Vibration',
-                      'Halka haptic feedback',
+                      tr('home.settings.vibration'),
+                      tr('home.settings.vibration_sub'),
                       AppAudio.hapticsOn,
                       AppAudio.setHaptics,
                     ),
@@ -190,19 +191,19 @@ class _SettingsSheet extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                       child: Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.palette_rounded,
                             color: Pal.gold,
                             size: 24,
                           ),
-                          SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Text(
-                            'Theme',
-                            style: TextStyle(
+                            tr('home.settings.theme'),
+                            style: const TextStyle(
                               color: Pal.text,
                               fontWeight: FontWeight.w700,
                               fontSize: 16,
@@ -246,18 +247,18 @@ class ThemePicker extends StatelessWidget {
         context: context,
         builder: (ctx) => AlertDialog(
           backgroundColor: AppThemeController.theme.bg1,
-          title: const Text(
-            'Not enough coins',
-            style: TextStyle(color: Pal.text, fontWeight: FontWeight.w900),
+          title: Text(
+            tr('home.theme.not_enough'),
+            style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900),
           ),
           content: Text(
-            '${th.name} needs ${th.price} 🪙. Games khelo aur coins kamao!',
+            tr('home.theme.needs', {'theme': th.name, 'coins': th.price}),
             style: const TextStyle(color: Pal.textDim),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('OK'),
+              child: Text(tr('common.ok')),
             ),
           ],
         ),
@@ -272,7 +273,7 @@ class ThemePicker extends StatelessWidget {
       builder: (_, _, _) => ValueListenableBuilder<int>(
         valueListenable: AppThemeController.current,
         builder: (_, cur, _) => SizedBox(
-          height: 112,
+          height: 124,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -386,7 +387,9 @@ class _Swatch extends StatelessWidget {
               )
             else
               Text(
-                selected ? 'Active' : (theme.free ? 'Free' : 'Owned'),
+                selected
+                    ? tr('home.theme.active')
+                    : (theme.free ? tr('common.free') : tr('home.theme.owned')),
                 style: TextStyle(
                   color: selected ? theme.highlight : Pal.textDim,
                   fontSize: 10.5,
@@ -448,7 +451,7 @@ class _BuyDialog extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'Unlock this theme for ${theme.price} 🪙?',
+              tr('home.theme.unlock_q', {'coins': theme.price}),
               textAlign: TextAlign.center,
               style: const TextStyle(color: Pal.textDim),
             ),
@@ -458,9 +461,9 @@ class _BuyDialog extends StatelessWidget {
                 Expanded(
                   child: TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: Pal.textDim),
+                    child: Text(
+                      tr('common.cancel'),
+                      style: const TextStyle(color: Pal.textDim),
                     ),
                   ),
                 ),
@@ -475,7 +478,7 @@ class _BuyDialog extends StatelessWidget {
                     onPressed: () => Navigator.pop(context, true),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text('Unlock 🪙 ${theme.price}'),
+                      child: Text(tr('home.theme.unlock_btn', {'coins': theme.price})),
                     ),
                   ),
                 ),

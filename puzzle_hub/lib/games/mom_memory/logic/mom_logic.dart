@@ -1,5 +1,10 @@
 import 'dart:math';
 
+import '../../../core/i18n/i18n.dart';
+import 'mm_text.dart';
+
+export 'mm_text.dart';
+
 // ---------- Baby Items Match ----------
 const babyEmojis = [
   '🍼',
@@ -17,16 +22,17 @@ const babyEmojis = [
 ];
 
 class MatchLevel {
-  const MatchLevel(this.label, this.rows, this.cols);
-  final String label;
+  const MatchLevel(this.labelKey, this.rows, this.cols);
+  final String labelKey; // translation key
   final int rows, cols;
+  String get label => tr(labelKey);
   int get pairs => rows * cols ~/ 2;
 }
 
 const matchLevels = [
-  MatchLevel('Aasaan', 3, 4),
-  MatchLevel('Madhyam', 4, 4),
-  MatchLevel('Thoda alag', 4, 5),
+  MatchLevel('mom_memory.level_easy', 3, 4),
+  MatchLevel('mom_memory.level_medium', 4, 4),
+  MatchLevel('mom_memory.level_more', 4, 5),
 ];
 
 /// Shuffled deck of emoji indices, each appearing exactly twice.
@@ -47,31 +53,98 @@ int matchStars(int moves, int pairs) {
 
 // ---------- Hospital Bag Recall ----------
 class BagItem {
-  const BagItem(this.emoji, this.hi, this.en);
-  final String emoji, hi, en;
+  const BagItem(this.emoji, this.names);
+  final String emoji;
+  final MmL<String> names; // lang -> name
+
+  /// Name in the current language.
+  String get name => mmPick(names);
+
+  /// English name (shown as a small helper line in other languages).
+  String get en => names['en']!;
 }
 
 const bagItems = [
-  BagItem('👕', 'Kapde', 'Clothes'),
-  BagItem('🧼', 'Sabun', 'Soap'),
-  BagItem('🪥', 'Brush', 'Toothbrush'),
-  BagItem('📄', 'Kagaz', 'Documents'),
-  BagItem('📱', 'Phone', 'Phone'),
-  BagItem('🔌', 'Charger', 'Charger'),
-  BagItem('🧦', 'Moze', 'Socks'),
-  BagItem('🍼', 'Bottle', 'Baby bottle'),
-  BagItem('🧸', 'Khilona', 'Soft toy'),
-  BagItem('🧴', 'Lotion', 'Lotion'),
-  BagItem('🧣', 'Shawl', 'Shawl'),
-  BagItem('👶', 'Baby suit', 'Baby suit'),
-  BagItem('💧', 'Paani', 'Water'),
-  BagItem('🍪', 'Snacks', 'Snacks'),
-  BagItem('🪮', 'Kanghi', 'Comb'),
-  BagItem('👓', 'Chashma', 'Glasses'),
-  BagItem('🧻', 'Tissue', 'Tissues'),
-  BagItem('🩴', 'Chappal', 'Slippers'),
-  BagItem('📖', 'Kitaab', 'Book'),
-  BagItem('🧢', 'Topi', 'Baby cap'),
+  BagItem(
+    '👕',
+    {'en': 'Clothes', 'hi': 'कपड़े', 'hinglish': 'Kapde', 'te': 'బట్టలు', 'ta': 'உடைகள்', 'pa': 'ਕੱਪੜੇ', 'bho': 'कपड़ा'},
+  ),
+  BagItem(
+    '🧼',
+    {'en': 'Soap', 'hi': 'साबुन', 'hinglish': 'Sabun', 'te': 'సబ్బు', 'ta': 'சோப்பு', 'pa': 'ਸਾਬਣ', 'bho': 'साबुन'},
+  ),
+  BagItem(
+    '🪥',
+    {'en': 'Toothbrush', 'hi': 'टूथब्रश', 'hinglish': 'Brush', 'te': 'టూత్‌బ్రష్', 'ta': 'பல் துலக்கி', 'pa': 'ਟੁੱਥਬੁਰਸ਼', 'bho': 'टूथब्रश'},
+  ),
+  BagItem(
+    '📄',
+    {'en': 'Documents', 'hi': 'कागज़', 'hinglish': 'Kagaz', 'te': 'పత్రాలు', 'ta': 'ஆவணங்கள்', 'pa': 'ਕਾਗਜ਼', 'bho': 'कागज'},
+  ),
+  BagItem(
+    '📱',
+    {'en': 'Phone', 'hi': 'फ़ोन', 'hinglish': 'Phone', 'te': 'ఫోన్', 'ta': 'கைபேசி', 'pa': 'ਫ਼ੋਨ', 'bho': 'फोन'},
+  ),
+  BagItem(
+    '🔌',
+    {'en': 'Charger', 'hi': 'चार्जर', 'hinglish': 'Charger', 'te': 'ఛార్జర్', 'ta': 'சார்ஜர்', 'pa': 'ਚਾਰਜਰ', 'bho': 'चार्जर'},
+  ),
+  BagItem(
+    '🧦',
+    {'en': 'Socks', 'hi': 'मोज़े', 'hinglish': 'Moze', 'te': 'సాక్స్', 'ta': 'காலுறை', 'pa': 'ਜੁਰਾਬਾਂ', 'bho': 'मोजा'},
+  ),
+  BagItem(
+    '🍼',
+    {'en': 'Baby bottle', 'hi': 'दूध की बोतल', 'hinglish': 'Bottle', 'te': 'పాల సీసా', 'ta': 'பால் புட்டி', 'pa': 'ਦੁੱਧ ਦੀ ਬੋਤਲ', 'bho': 'दूध के बोतल'},
+  ),
+  BagItem(
+    '🧸',
+    {'en': 'Soft toy', 'hi': 'खिलौना', 'hinglish': 'Khilona', 'te': 'బొమ్మ', 'ta': 'பொம்மை', 'pa': 'ਖਿਡੌਣਾ', 'bho': 'खिलौना'},
+  ),
+  BagItem(
+    '🧴',
+    {'en': 'Lotion', 'hi': 'लोशन', 'hinglish': 'Lotion', 'te': 'లోషన్', 'ta': 'லோஷன்', 'pa': 'ਲੋਸ਼ਨ', 'bho': 'लोशन'},
+  ),
+  BagItem(
+    '🧣',
+    {'en': 'Shawl', 'hi': 'शॉल', 'hinglish': 'Shawl', 'te': 'శాలువా', 'ta': 'சால்வை', 'pa': 'ਸ਼ਾਲ', 'bho': 'साल'},
+  ),
+  BagItem(
+    '👶',
+    {'en': 'Baby suit', 'hi': 'बेबी सूट', 'hinglish': 'Baby suit', 'te': 'పాప బట్టలు', 'ta': 'குழந்தை உடை', 'pa': 'ਬੇਬੀ ਸੂਟ', 'bho': 'बबुआ के कपड़ा'},
+  ),
+  BagItem(
+    '💧',
+    {'en': 'Water', 'hi': 'पानी', 'hinglish': 'Paani', 'te': 'నీళ్లు', 'ta': 'தண்ணீர்', 'pa': 'ਪਾਣੀ', 'bho': 'पानी'},
+  ),
+  BagItem(
+    '🍪',
+    {'en': 'Snacks', 'hi': 'नाश्ता', 'hinglish': 'Snacks', 'te': 'చిరుతిండి', 'ta': 'தின்பண்டம்', 'pa': 'ਸਨੈਕਸ', 'bho': 'नास्ता'},
+  ),
+  BagItem(
+    '🪮',
+    {'en': 'Comb', 'hi': 'कंघी', 'hinglish': 'Kanghi', 'te': 'దువ్వెన', 'ta': 'சீப்பு', 'pa': 'ਕੰਘੀ', 'bho': 'ककही'},
+  ),
+  BagItem(
+    '👓',
+    {'en': 'Glasses', 'hi': 'चश्मा', 'hinglish': 'Chashma', 'te': 'కళ్లద్దాలు', 'ta': 'கண்ணாடி', 'pa': 'ਐਨਕ', 'bho': 'चस्मा'},
+  ),
+  BagItem(
+    '🧻',
+    {'en': 'Tissues', 'hi': 'टिश्यू', 'hinglish': 'Tissue', 'te': 'టిష్యూ', 'ta': 'டிஷ்யூ', 'pa': 'ਟਿਸ਼ੂ', 'bho': 'टिसू'},
+  ),
+  BagItem(
+    '🩴',
+    {'en': 'Slippers', 'hi': 'चप्पल', 'hinglish': 'Chappal', 'te': 'చెప్పులు', 'ta': 'செருப்பு', 'pa': 'ਚੱਪਲ', 'bho': 'चप्पल'},
+  ),
+  BagItem(
+    '📖',
+    {'en': 'Book', 'hi': 'किताब', 'hinglish': 'Kitaab', 'te': 'పుస్తకం', 'ta': 'புத்தகம்', 'pa': 'ਕਿਤਾਬ', 'bho': 'किताब'},
+  ),
+  BagItem(
+    '🧢',
+    {'en': 'Baby cap', 'hi': 'टोपी', 'hinglish': 'Topi', 'te': 'టోపీ', 'ta': 'தொப்பி', 'pa': 'ਟੋਪੀ', 'bho': 'टोपी'},
+  ),
 ];
 
 class BagLevel {
@@ -173,17 +246,33 @@ double breathScale(double seconds) {
 }
 
 class BreathColor {
-  const BreathColor(this.name, this.argb);
-  final String name;
+  const BreathColor(this.names, this.argb);
+  final MmL<String> names; // lang -> colour name
   final int argb;
+  String get name => mmPick(names);
 }
 
 const breathColors = [
-  BreathColor('Gulabi', 0xFFFF8FB8),
-  BreathColor('Jamuni', 0xFFB794FF),
-  BreathColor('Neela', 0xFF7CC4FF),
-  BreathColor('Hara', 0xFF7EE8B5),
-  BreathColor('Peela', 0xFFFFD98A),
+  BreathColor(
+    {'en': 'Pink', 'hi': 'गुलाबी', 'hinglish': 'Gulabi', 'te': 'గులాబీ', 'ta': 'இளஞ்சிவப்பு', 'pa': 'ਗੁਲਾਬੀ', 'bho': 'गुलाबी'},
+    0xFFFF8FB8,
+  ),
+  BreathColor(
+    {'en': 'Purple', 'hi': 'जामुनी', 'hinglish': 'Jamuni', 'te': 'ఊదా', 'ta': 'ஊதா', 'pa': 'ਜਾਮਣੀ', 'bho': 'बैंगनी'},
+    0xFFB794FF,
+  ),
+  BreathColor(
+    {'en': 'Blue', 'hi': 'नीला', 'hinglish': 'Neela', 'te': 'నీలం', 'ta': 'நீலம்', 'pa': 'ਨੀਲਾ', 'bho': 'नीला'},
+    0xFF7CC4FF,
+  ),
+  BreathColor(
+    {'en': 'Green', 'hi': 'हरा', 'hinglish': 'Hara', 'te': 'ఆకుపచ్చ', 'ta': 'பச்சை', 'pa': 'ਹਰਾ', 'bho': 'हरियर'},
+    0xFF7EE8B5,
+  ),
+  BreathColor(
+    {'en': 'Yellow', 'hi': 'पीला', 'hinglish': 'Peela', 'te': 'పసుపు', 'ta': 'மஞ்சள்', 'pa': 'ਪੀਲਾ', 'bho': 'पियर'},
+    0xFFFFD98A,
+  ),
 ];
 
 /// Question options: the correct color index plus 2 distractors, shuffled.
@@ -206,5 +295,5 @@ int nextStreak(String? lastDay, int streak, DateTime today) {
   return lastDay == dayKey(y) ? streak + 1 : 1;
 }
 
-const mmFootnote =
-    'Sirf manoranjan aur halki dimaagi kasrat ke liye, medical salah nahi.';
+/// Gentle disclaimer shown under every Mom Memory screen.
+String get mmFootnote => tr('mom_memory.footnote');

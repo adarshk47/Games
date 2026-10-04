@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -345,16 +346,16 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     final stars = _starsFor(g);
     showPremiumDialog(
       context,
-      title: win ? 'Solved!' : 'Game over',
+      title: win ? tr('sudoku.solved') : tr('common.game_over'),
       emoji: win ? '🏆' : '💔',
       color: win ? Pal.gold : Pal.danger,
       stars: win ? stars : null,
       message: win
-          ? 'Time ${fmtTime(g.elapsed)}${newBest ? '\nNew best time!' : ''}'
-          : 'You made ${g.mistakes} mistakes.',
+          ? '${tr('sudoku.win_time', {'time': fmtTime(g.elapsed)})}${newBest ? '\n${tr('sudoku.new_best')}' : ''}'
+          : tr('sudoku.lose_msg', {'n': g.mistakes}),
       actions: [
-        DialogAction('Menu', () => setState(() => _g = null)),
-        DialogAction('New game', () => _newGame(g.difficulty), primary: true),
+        DialogAction(tr('common.menu'), () => setState(() => _g = null)),
+        DialogAction(tr('common.new_game'), () => _newGame(g.difficulty), primary: true),
       ],
     );
   }
@@ -402,7 +403,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     final g = _g;
     if (g == null) return _menu(context);
     return GameScaffold(
-      title: '${g.difficulty.label}${g.daily ? ' · Daily' : ''}',
+      title: g.daily ? tr('sudoku.title_daily', {'tier': g.difficulty.label}) : g.difficulty.label,
       tint: _tint,
       onBack: () {
         _save();
@@ -411,7 +412,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
       actions: [
         BarAction(
           icon: Icons.refresh_rounded,
-          tooltip: 'New game',
+          tooltip: tr('common.new_game'),
           onTap: () => _newGame(g.difficulty, daily: g.daily),
         ),
       ],
@@ -421,7 +422,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
 
   Widget _loadingView() {
     return GameScaffold(
-      title: 'Sudoku',
+      title: tr('sudoku.title'),
       tint: _tint,
       body: Center(
         child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -450,8 +451,8 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
             ]),
           ),
           const SizedBox(height: 24),
-          const Text('Generating puzzle...',
-              style: TextStyle(color: Pal.textDim, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.4))
+          Text(tr('sudoku.generating'),
+              style: const TextStyle(color: Pal.textDim, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.4))
               .animate(onPlay: (a) => a.repeat(reverse: true))
               .fade(begin: 0.5, end: 1, duration: 900.ms),
         ]),
@@ -516,27 +517,29 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
       if (savedGame != null)
         _hero(
           icon: Icons.play_arrow_rounded,
-          title: 'Resume ${savedGame.difficulty.label}${savedGame.daily ? ' (Daily)' : ''}',
-          subtitle: '${fmtTime(savedGame.elapsed)}  ·  ${savedGame.mistakes} mistakes',
+          title: tr(savedGame.daily ? 'sudoku.resume_daily' : 'sudoku.resume', {'tier': savedGame.difficulty.label}),
+          subtitle: '${fmtTime(savedGame.elapsed)}  ·  ${tr('sudoku.mistakes_n', {'n': savedGame.mistakes})}',
           color: Pal.success,
           onTap: () => _resume(savedGame),
         ),
       _hero(
         icon: Icons.today_rounded,
-        title: 'Daily puzzle',
-        subtitle: dailyDone > 0 ? 'Completed in ${fmtTime(dailyDone)}' : 'Medium · same for everyone today',
+        title: tr('sudoku.daily_puzzle'),
+        subtitle: dailyDone > 0
+            ? tr('sudoku.daily_done', {'time': fmtTime(dailyDone)})
+            : tr('sudoku.daily_sub', {'tier': Difficulty.medium.label}),
         color: Pal.gold,
         onTap: () => _newGame(Difficulty.medium, daily: true),
       ),
-      const Padding(
-        padding: EdgeInsets.fromLTRB(4, 8, 0, 0),
-        child: Text('DIFFICULTY',
-            style: TextStyle(color: Pal.textDim, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 2)),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(4, 8, 0, 0),
+        child: Text(tr('sudoku.difficulty'),
+            style: const TextStyle(color: Pal.textDim, fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 2)),
       ),
       for (final d in Difficulty.values) _difficultyCard(d),
     ];
     return GameScaffold(
-      title: 'Sudoku',
+      title: tr('sudoku.title'),
       tint: _tint,
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -571,13 +574,13 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
             Text(d.label, style: const TextStyle(color: Pal.text, fontSize: 18, fontWeight: FontWeight.w800)),
             const SizedBox(height: 2),
             Text(
-                '${d.maxHints} ${d.maxHints == 1 ? 'hint' : 'hints'} · ${d.maxMistakes == 0 ? 'unlimited mistakes' : '${d.maxMistakes} mistakes'}',
+                '${tr(d.maxHints == 1 ? 'sudoku.hints_one' : 'sudoku.hints_n', {'n': d.maxHints})} · ${d.maxMistakes == 0 ? tr('sudoku.mistakes_unlimited') : tr('sudoku.mistakes_n', {'n': d.maxMistakes})}',
                 style: const TextStyle(color: Pal.textDim, fontSize: 12)),
             const SizedBox(height: 4),
             Row(children: [
               Icon(Icons.timer_outlined, size: 14, color: best > 0 ? color : Pal.textDim),
               const SizedBox(width: 4),
-              Text(best > 0 ? 'Best ${fmtTime(best)}' : 'No best time yet',
+              Text(best > 0 ? tr('sudoku.best_time', {'time': fmtTime(best)}) : tr('sudoku.no_best'),
                   style: TextStyle(color: best > 0 ? color : Pal.textDim, fontSize: 13, fontWeight: FontWeight.w600)),
             ]),
           ]),
@@ -669,15 +672,15 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _tool(Icons.undo_rounded, 'Undo', _undo),
-              _tool(Icons.backspace_rounded, 'Erase', _erase),
-              _tool(Icons.edit_rounded, _notesMode ? 'Notes on' : 'Notes',
+              _tool(Icons.undo_rounded, tr('common.undo'), _undo),
+              _tool(Icons.backspace_rounded, tr('sudoku.erase'), _erase),
+              _tool(Icons.edit_rounded, _notesMode ? tr('sudoku.notes_on') : tr('sudoku.notes'),
                   () {
                     AppAudio.play(Sound.tap);
                     setState(() => _notesMode = !_notesMode);
                   },
                   highlight: _notesMode),
-              _tool(Icons.lightbulb_rounded, 'Hint', _hint, badge: g.hintsLeft),
+              _tool(Icons.lightbulb_rounded, tr('common.hint'), _hint, badge: g.hintsLeft),
             ],
           ),
         ),
@@ -704,7 +707,7 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
       return Row(mainAxisSize: MainAxisSize.min, children: [
         const Icon(Icons.favorite_rounded, size: 22, color: Pal.danger),
         const SizedBox(width: 4),
-        Text('${g.mistakes} · no limit',
+        Text(tr('sudoku.no_limit', {'n': g.mistakes}),
             style: const TextStyle(color: Pal.text, fontSize: 14, fontWeight: FontWeight.w800)),
       ]);
     }

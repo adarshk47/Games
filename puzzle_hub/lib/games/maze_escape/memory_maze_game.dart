@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/ui/ui.dart';
 import 'logic/levels.dart';
@@ -201,18 +202,19 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
     await Future<void>.delayed(const Duration(milliseconds: 450));
     if (!mounted) return;
     final hasNext = widget.level < kLevelCount;
-    final peekTxt = peeksUsed > 0 ? ', $peeksUsed peek${peeksUsed == 1 ? '' : 's'}' : '';
     showPremiumDialog(
       context,
-      title: 'Yaad se nikal gaye!',
+      title: tr('maze_escape.mem_win_title'),
       emoji: '🧠',
       stars: stars,
-      message: 'Escaped in $moves moves with $bumps bump${bumps == 1 ? '' : 's'}$peekTxt.',
+      message: peeksUsed > 0
+          ? tr('maze_escape.mem_win_msg_peeks', {'moves': moves, 'bumps': bumps, 'peeks': peeksUsed})
+          : tr('maze_escape.mem_win_msg', {'moves': moves, 'bumps': bumps}),
       actions: [
-        DialogAction('Levels', () => Navigator.of(context).maybePop()),
-        DialogAction('Replay', _restart),
+        DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop()),
+        DialogAction(tr('common.replay'), _restart),
         if (hasNext)
-          DialogAction('Next', () => openMazeLevel(context, widget.tier, widget.level + 1, replace: true, mode: MazeMode.memory),
+          DialogAction(tr('common.next_level'), () => openMazeLevel(context, widget.tier, widget.level + 1, replace: true, mode: MazeMode.memory),
               primary: true),
       ],
     );
@@ -239,13 +241,13 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
     if (!mounted) return;
     showPremiumDialog(
       context,
-      title: 'Deewar se takra gaye!',
+      title: tr('maze_escape.mem_lose_title'),
       emoji: '💥',
       color: Pal.danger,
-      message: 'You bumped into $maxBumps walls. Study the map harder and try again.',
+      message: tr('maze_escape.mem_lose_msg', {'n': maxBumps}),
       actions: [
-        DialogAction('Levels', () => Navigator.of(context).maybePop()),
-        DialogAction('Retry', _restart, primary: true),
+        DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop()),
+        DialogAction(tr('common.retry'), _restart, primary: true),
       ],
     );
   }
@@ -253,10 +255,10 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
   @override
   Widget build(BuildContext context) {
     return GameScaffold(
-      title: 'Memory ${widget.tier.label} ${widget.level}',
+      title: tr('maze_escape.mem_title', {'tier': mazeTierLabel(widget.tier), 'n': widget.level}),
       tint: kMemColor,
       actions: [
-        BarAction(icon: Icons.refresh_rounded, tooltip: 'Restart', onTap: _restart),
+        BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: _restart),
       ],
       body: Column(children: [
         _hud(),
@@ -344,7 +346,7 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             gradient: Pal.accent(kMemColor),
             onTap: _ready,
-            child: const Text('Ready!', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 15)),
+            child: Text(tr('maze_escape.ready'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 15)),
           ),
         ]),
       ),
@@ -357,11 +359,13 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
           decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.28), borderRadius: BorderRadius.circular(20)),
           child: Text(t, style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 13)),
         );
-    final bumpTxt = maxBumps > 0 ? 'Bumps $bumps / $maxBumps' : 'Bumps $bumps';
+    final bumpTxt = maxBumps > 0
+        ? tr('maze_escape.bumps_max', {'n': bumps, 'max': maxBumps})
+        : tr('maze_escape.bumps', {'n': bumps});
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Wrap(spacing: 8, runSpacing: 6, alignment: WrapAlignment.center, children: [
-        chip(_started ? 'Moves $moves' : 'Memorise!', color: _started ? Pal.text : kMemColor),
+        chip(_started ? tr('maze_escape.hud_moves', {'n': moves}) : tr('maze_escape.memorise'), color: _started ? Pal.text : kMemColor),
         chip(bumpTxt, color: bumps > 0 ? Pal.danger : Pal.text),
         chip('${cfg.size}x${cfg.size}'),
       ]),
@@ -396,7 +400,7 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               const Icon(Icons.visibility_rounded, color: Pal.text, size: 24),
               const SizedBox(height: 2),
-              Text('Peek $peeksLeft', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 12)),
+              Text(tr('maze_escape.peek', {'n': peeksLeft}), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 12)),
             ]),
           ),
         ),

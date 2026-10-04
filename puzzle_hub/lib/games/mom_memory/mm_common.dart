@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/mom_logic.dart';
@@ -23,19 +24,14 @@ class Mm {
 final _rng = Random();
 String pick(List<String> l) => l[_rng.nextInt(l.length)];
 
-const praise = [
-  'Bahut badhiya!',
-  'Wah, kamaal!',
-  'Shabaash!',
-  'Bilkul sahi!',
-  'Aap to expert ho!',
-  'Pyaara!',
+/// Warm praise lines in the current language.
+List<String> get praise => [
+  for (var i = 1; i <= 6; i++) tr('mom_memory.praise_$i'),
 ];
-const gentle = [
-  'Aaram se, koi jaldi nahi',
-  'Koi baat nahi, phir se dekhte hain',
-  'Dheere dheere, sab theek hai',
-  'Gehri saans lijiye',
+
+/// Gentle, no-pressure lines in the current language.
+List<String> get gentle => [
+  for (var i = 1; i <= 4; i++) tr('mom_memory.gentle_$i'),
 ];
 
 void softTap() {
@@ -200,7 +196,7 @@ class MmIntro extends StatelessWidget {
           Text(emoji, style: const TextStyle(fontSize: 72)),
           const SizedBox(height: 14),
           Text(
-            'Level ${level + 1}',
+            tr('common.level_n', {'n': level + 1}),
             style: const TextStyle(
               color: Pal.text,
               fontSize: 26,
@@ -240,7 +236,7 @@ class MmIntro extends StatelessWidget {
           ),
           const SizedBox(height: 22),
           PremiumButton(
-            label: 'Shuru karein',
+            label: tr('mom_memory.start'),
             icon: Icons.favorite_rounded,
             color: Mm.rose,
             onTap: onStart,
@@ -326,13 +322,13 @@ class MmResult extends StatelessWidget {
             alignment: WrapAlignment.center,
             children: [
               PremiumButton(
-                label: 'Phir se',
+                label: tr('common.replay'),
                 compact: true,
                 color: const Color(0xFF6F63B8),
                 onTap: onAgain,
               ),
               PremiumButton(
-                label: 'Agla level',
+                label: tr('common.next_level'),
                 compact: true,
                 color: Mm.rose,
                 onTap: onNext,

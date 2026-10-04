@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -19,6 +20,8 @@ String _kTime(SlideTier t, int l) => 'sliding.${t.key}.bestTime.$l';
 int _stars(SlideTier t, int l) => Storage.getInt(_kStars(t, l));
 
 bool _unlocked(SlideTier t, int l) => l == 1 || _stars(t, l - 1) > 0;
+
+String _tierLabel(SlideTier t) => tr('common.tier.${t.name}');
 
 String _fmt(int s) => '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
 
@@ -48,7 +51,7 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
   Widget build(BuildContext context) {
     final playing = _level != null;
     return GameScaffold(
-      title: playing ? '${_tier.label} - Level $_level' : 'Sliding Puzzle',
+      title: playing ? '${_tierLabel(_tier)} - ${tr('common.level_n', {'n': _level})}' : tr('sliding_puzzle.title'),
       tint: _tint,
       onBack: playing ? _toMenu : null,
       body: playing ? _gameView() : _menu(),
@@ -94,7 +97,7 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
                         style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 18)),
                     const SizedBox(height: 2),
                     FittedBox(
-                      child: Text(t.label,
+                      child: Text(_tierLabel(t),
                           style: TextStyle(
                               color: t == _tier ? Pal.text : Pal.textDim, fontWeight: FontWeight.w700, fontSize: 12)),
                     ),
@@ -116,8 +119,8 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
           child: Row(children: [
             const Icon(Icons.image_rounded, color: _tint),
             const SizedBox(width: 10),
-            const Expanded(
-              child: Text('Picture mode', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w700, fontSize: 15)),
+            Expanded(
+              child: Text(tr('sliding_puzzle.picture_mode'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w700, fontSize: 15)),
             ),
             Switch(
               value: _picture,
@@ -130,7 +133,7 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
           ]),
         ),
         const SizedBox(height: 16),
-        const Text('Choose a level', style: TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 14)),
+        Text(tr('sliding_puzzle.choose_level'), style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 14)),
         const SizedBox(height: 10),
         GridView.count(
           crossAxisCount: 4,
@@ -295,15 +298,15 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       if (!mounted) return;
       showPremiumDialog(
         context,
-        title: 'Solved!',
+        title: tr('sliding_puzzle.solved'),
         emoji: '🧩',
         stars: stars,
         color: _tint,
-        message: '$_moves moves  -  ${_fmt(_seconds)}${newMoves ? '\nNew best moves!' : ''}\nPar $depth',
+        message: '${tr('sliding_puzzle.result', {'n': _moves, 'time': _fmt(_seconds)})}${newMoves ? '\n${tr('sliding_puzzle.new_best')}' : ''}\n${tr('sliding_puzzle.par_n', {'n': depth})}',
         actions: [
-          if (hasNext) DialogAction('Next', () => widget.onNext(l + 1), primary: true),
-          DialogAction('Retry', () => widget.onNext(l), primary: !hasNext),
-          DialogAction('Menu', widget.onMenu),
+          if (hasNext) DialogAction(tr('common.next_level'), () => widget.onNext(l + 1), primary: true),
+          DialogAction(tr('common.retry'), () => widget.onNext(l), primary: !hasNext),
+          DialogAction(tr('common.menu'), widget.onMenu),
         ],
       );
     });
@@ -325,13 +328,13 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
         child: Row(children: [
-          _stat('MOVES', '$_moves'),
+          _stat(tr('common.moves').toUpperCase(), '$_moves'),
           const SizedBox(width: 8),
-          _stat('TIME', _fmt(_seconds)),
+          _stat(tr('common.time').toUpperCase(), _fmt(_seconds)),
           const SizedBox(width: 8),
-          _stat('PAR', '$depth'),
+          _stat(tr('sliding_puzzle.par').toUpperCase(), '$depth'),
           const SizedBox(width: 8),
-          _stat('BEST', bestM == 0 ? '-' : '$bestM / ${_fmt(bestT)}'),
+          _stat(tr('common.best').toUpperCase(), bestM == 0 ? '-' : '$bestM / ${_fmt(bestT)}'),
         ]),
       ),
       Expanded(
@@ -348,15 +351,20 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          PremiumButton(
-            label: 'Undo',
-            icon: Icons.undo_rounded,
-            compact: true,
-            color: const Color(0xFF6F63B8),
-            onTap: _history.isEmpty || _won ? null : _undo,
+          Flexible(
+            child: PremiumButton(
+              label: tr('common.undo'),
+              icon: Icons.undo_rounded,
+              compact: true,
+              color: const Color(0xFF6F63B8),
+              onTap: _history.isEmpty || _won ? null : _undo,
+            ),
           ),
           const SizedBox(width: 14),
-          PremiumButton(label: 'Restart', icon: Icons.refresh_rounded, compact: true, color: _tint, onTap: _restart),
+          Flexible(
+            child: PremiumButton(
+                label: tr('common.restart'), icon: Icons.refresh_rounded, compact: true, color: _tint, onTap: _restart),
+          ),
         ]),
       ),
     ]);

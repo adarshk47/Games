@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../achievements/achievements.dart';
 import '../achievements/achievements_screen.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../ui/ui.dart';
 import 'daily_quests.dart';
@@ -58,7 +59,7 @@ class _DailyHubScreenState extends State<DailyHubScreen> with WidgetsBindingObse
             _StreakRow(tick: tick),
             const SizedBox(height: 22),
             _SectionTitle(
-              title: "Today's Quests",
+              title: tr('daily.todays_quests'),
               trailing: '${quests.where((q) => q.completed).length}/${quests.length}',
             ),
             const SizedBox(height: 10),
@@ -73,7 +74,7 @@ class _DailyHubScreenState extends State<DailyHubScreen> with WidgetsBindingObse
             const SizedBox(height: 4),
             _BonusCard(tick: tick),
             const SizedBox(height: 22),
-            const _SectionTitle(title: 'Achievements'),
+            _SectionTitle(title: tr('ach.title')),
             const SizedBox(height: 10),
             _AchievementsEntry(tick: tick),
           ],
@@ -91,8 +92,8 @@ class _Header extends StatelessWidget {
     return Row(children: [
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('Daily', style: TextStyle(color: Pal.text, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 0.3)),
-          Text('Roz khelo, coins jeeto 🪙', style: TextStyle(color: Pal.textDim.withValues(alpha: 0.9), fontSize: 13)),
+          Text(tr('daily.title'), style: const TextStyle(color: Pal.text, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 0.3)),
+          Text(tr('daily.tagline'), style: TextStyle(color: Pal.textDim.withValues(alpha: 0.9), fontSize: 13)),
         ]),
       ),
       const CoinPill(),
@@ -107,8 +108,12 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(children: [
-        Text(title, style: const TextStyle(color: Pal.text, fontSize: 19, fontWeight: FontWeight.w800)),
-        const Spacer(),
+        Expanded(
+          child: Text(title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Pal.text, fontSize: 19, fontWeight: FontWeight.w800)),
+        ),
         if (trailing != null)
           Text(trailing!, style: const TextStyle(color: Pal.gold, fontSize: 15, fontWeight: FontWeight.w800)),
       ]);
@@ -160,18 +165,23 @@ class _LoginRewardCardState extends State<_LoginRewardCard> {
           const SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(can ? 'Daily Reward' : 'Reward claimed!',
+              Text(can ? tr('daily.reward_title') : tr('daily.reward_claimed'),
                   style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
               const SizedBox(height: 4),
               Text(
                 can
-                    ? (broken ? 'Koi baat nahi! Naya streak shuru karte hain. Day $day: $reward coins' : 'Day $day of 7 · $reward coins')
-                    : 'Kal phir aana, Day ${DailyReward.cycleDay(DailyReward.streak + 1)} ka reward: ${DailyReward.rewardFor(DailyReward.streak + 1)} 🪙',
+                    ? (broken
+                        ? tr('daily.streak_restart', {'day': day, 'coins': reward})
+                        : tr('daily.day_of_7', {'day': day, 'coins': reward}))
+                    : tr('daily.come_back', {
+                        'day': DailyReward.cycleDay(DailyReward.streak + 1),
+                        'coins': DailyReward.rewardFor(DailyReward.streak + 1),
+                      }),
                 style: const TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3),
               ),
               const SizedBox(height: 10),
               if (can)
-                PremiumButton(label: 'Claim $reward 🪙', compact: true, onTap: _claiming ? null : _claim)
+                PremiumButton(label: tr('daily.claim', {'coins': reward}), compact: true, onTap: _claiming ? null : _claim)
                     .animate(onPlay: (c) => c.repeat(reverse: true))
                     .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05), duration: 800.ms),
             ]),
@@ -221,7 +231,7 @@ class _WeekStrip extends StatelessWidget {
         boxShadow: today && !claimedToday ? [BoxShadow(color: Pal.gold.withValues(alpha: 0.5), blurRadius: 12)] : null,
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text('D$d', style: TextStyle(color: done || today ? Colors.white : Pal.textDim, fontSize: 11, fontWeight: FontWeight.w800)),
+        Text(tr('daily.day_short', {'n': d}), style: TextStyle(color: done || today ? Colors.white : Pal.textDim, fontSize: 11, fontWeight: FontWeight.w800)),
         const SizedBox(height: 2),
         done
             ? const Icon(Icons.check_rounded, color: Colors.white, size: 17)
@@ -313,10 +323,11 @@ class _StreakRow extends StatelessWidget {
         );
     final s = DailyReward.streak;
     final c = DailyQuests.challengeStreak;
+    String days(int n) => tr(n == 1 ? 'daily.days_one' : 'daily.days_many', {'n': n});
     return Row(children: [
-      tile('🔥', '$s day${s == 1 ? '' : 's'}', 'Login streak · best ${DailyReward.bestStreak}', const Color(0xFFFB923C)),
+      tile('🔥', days(s), tr('daily.login_streak', {'n': DailyReward.bestStreak}), const Color(0xFFFB923C)),
       const SizedBox(width: 10),
-      tile('🏆', '$c day${c == 1 ? '' : 's'}', 'Daily Challenge · best ${DailyQuests.challengeBest}', Pal.gold),
+      tile('🏆', days(c), tr('daily.challenge_streak', {'n': DailyQuests.challengeBest}), Pal.gold),
     ]).animate().fadeIn(delay: 80.ms, duration: 300.ms);
   }
 }
@@ -381,7 +392,7 @@ class _QuestCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Pal.gold.withValues(alpha: q.claimed ? 0.2 : 0.5)),
             ),
-            child: Text(q.claimed ? 'Done' : '${t.reward} 🪙',
+            child: Text(q.claimed ? tr('daily.done') : '${t.reward} 🪙',
                 style: TextStyle(color: q.claimed ? Pal.success : Pal.gold, fontWeight: FontWeight.w800, fontSize: 13)),
           ),
       ]),
@@ -407,14 +418,14 @@ class _BonusCard extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Daily Challenge', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 16)),
+            Text(tr('daily.challenge'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 16)),
             const SizedBox(height: 3),
             Text(
               claimed
-                  ? 'Shabaash! Aaj ka challenge poora 🎉'
+                  ? tr('daily.challenge_done')
                   : done
-                      ? 'Teeno quests poore! Bonus le lijiye'
-                      : 'Teeno quests poore karo, +${DailyQuests.bonusCoins} bonus 🪙',
+                      ? tr('daily.challenge_ready')
+                      : tr('daily.challenge_todo', {'coins': DailyQuests.bonusCoins}),
               style: const TextStyle(color: Pal.textDim, fontSize: 12.5),
             ),
           ]),
@@ -454,9 +465,9 @@ class _AchievementsEntry extends StatelessWidget {
         const SizedBox(width: 14),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Achievements', style: TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 17)),
+            Text(tr('ach.title'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 17)),
             const SizedBox(height: 4),
-            Text('$have / $total badges unlocked', style: const TextStyle(color: Pal.textDim, fontSize: 12.5)),
+            Text(tr('daily.badges_unlocked', {'have': have, 'total': total}), style: const TextStyle(color: Pal.textDim, fontSize: 12.5)),
             const SizedBox(height: 8),
             ProgressBar(value: total == 0 ? 0 : have / total, color: Pal.gold, height: 6),
           ]),

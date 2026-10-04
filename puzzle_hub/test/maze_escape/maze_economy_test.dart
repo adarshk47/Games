@@ -72,7 +72,7 @@ void main() {
     await t.tap(find.text('Use 30 coins'));
     await _settle(t);
     expect(find.text('Bumps 3 / 6'), findsOneWidget);
-    expect(find.text('Deewar se takra gaye!'), findsNothing);
+    expect(find.text('Hit the walls!'), findsNothing);
     expect(Rewards.balance, 50);
 
     await t.pumpWidget(const SizedBox());

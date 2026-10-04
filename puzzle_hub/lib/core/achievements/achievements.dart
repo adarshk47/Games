@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../daily/daily_quests.dart';
 import '../daily/daily_reward.dart';
 import '../daily/daily_toast.dart';
+import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import '../ui/palette.dart';
@@ -105,33 +106,33 @@ class Achievements {
   static List<Achievement> all() {
     final titles = DailyQuests.gameTitles();
     return [
-      Achievement(id: 'first_win', title: 'First Win', desc: 'Win any game or level', emoji: '🎉', color: Pal.gold, reward: 5, target: 1, progress: (s) => s.totalWins),
-      Achievement(id: 'levels_10', title: 'Warming Up', desc: 'Complete 10 levels', emoji: '🔟', color: _blue, reward: 10, target: 10, progress: (s) => s.totalLevels),
-      Achievement(id: 'levels_50', title: 'Puzzle Pro', desc: 'Complete 50 levels', emoji: '🧠', color: _purple, reward: 20, target: 50, progress: (s) => s.totalLevels),
-      Achievement(id: 'levels_100', title: 'Centurion', desc: 'Complete 100 levels', emoji: '💯', color: _pink, reward: 30, target: 100, progress: (s) => s.totalLevels),
-      Achievement(id: 'levels_250', title: 'Grandmaster', desc: 'Complete 250 levels', emoji: '👑', color: Pal.gold, reward: 30, target: 250, progress: (s) => s.totalLevels),
-      Achievement(id: 'plays_25', title: 'Regular', desc: 'Play 25 times', emoji: '🎮', color: _green, reward: 10, target: 25, progress: (s) => s.totalPlays),
-      Achievement(id: 'explorer', title: 'Explorer', desc: 'Play 3 different games', emoji: '🧭', color: _blue, reward: 10, target: 3, progress: (s) => s.gamesPlayed),
-      Achievement(id: 'all_games', title: 'Globetrotter', desc: 'Play every game', emoji: '🌍', color: _green, reward: 20, target: titles.isEmpty ? 1 : titles.length, progress: (s) => s.gamesPlayed),
-      Achievement(id: 'all_tiers', title: 'Tier Taster', desc: 'Clear Easy, Medium, Hard & Extreme levels', emoji: '🎚️', color: _purple, reward: 20, target: 4, progress: (s) => s.tiers.length),
-      Achievement(id: 'hard_clear', title: 'Tough Cookie', desc: 'Clear a Hard level', emoji: '💪', color: _orange, reward: 10, target: 1, progress: (s) => s.hardClears),
-      Achievement(id: 'extreme_clear', title: 'Extreme!', desc: 'Clear an Extreme level', emoji: '🔥', color: _red, reward: 20, target: 1, progress: (s) => s.extremeClears),
-      Achievement(id: 'extreme_10', title: 'Fearless', desc: 'Clear 10 Extreme levels', emoji: '😤', color: _red, reward: 30, target: 10, progress: (s) => s.extremeClears),
-      Achievement(id: 'stars3_1', title: 'Perfectionist', desc: 'Get 3 stars on a level', emoji: '⭐', color: Pal.gold, reward: 5, target: 1, progress: (s) => s.stars3),
-      Achievement(id: 'stars3_25', title: 'Star Collector', desc: 'Get 3 stars on 25 levels', emoji: '🌟', color: Pal.gold, reward: 25, target: 25, progress: (s) => s.stars3),
-      Achievement(id: 'streak_3', title: 'Habit Forming', desc: 'Reach a 3 day login streak', emoji: '📅', color: _orange, reward: 10, target: 3, progress: (s) => s.bestStreak),
-      Achievement(id: 'streak_7', title: 'On Fire', desc: 'Reach a 7 day login streak', emoji: '🔥', color: _orange, reward: 25, target: 7, progress: (s) => s.bestStreak),
-      Achievement(id: 'streak_30', title: 'Unstoppable', desc: 'Reach a 30 day login streak', emoji: '🚀', color: _red, reward: 30, target: 30, progress: (s) => s.bestStreak),
-      Achievement(id: 'challenge_1', title: 'Daily Champion', desc: 'Complete all 3 daily quests', emoji: '🏅', color: _green, reward: 10, target: 1, progress: (s) => s.challengeBest),
-      Achievement(id: 'challenge_7', title: 'Week Warrior', desc: 'Daily Challenge 7 days in a row', emoji: '🗓️', color: _purple, reward: 30, target: 7, progress: (s) => s.challengeBest),
-      Achievement(id: 'quests_25', title: 'Quest Hunter', desc: 'Claim 25 daily quests', emoji: '📜', color: _blue, reward: 20, target: 25, progress: (s) => s.questsClaimed),
-      Achievement(id: 'coins_1000', title: 'Coin Hoarder', desc: 'Earn 1000 coins', emoji: '💰', color: Pal.gold, reward: 20, target: 1000, progress: (s) => s.coinsEarned),
-      Achievement(id: 'coins_5000', title: 'Treasure King', desc: 'Earn 5000 coins', emoji: '💎', color: _blue, reward: 30, target: 5000, progress: (s) => s.coinsEarned),
+      Achievement(id: 'first_win', title: tr('ach.first_win.title'), desc: tr('ach.first_win.desc'), emoji: '🎉', color: Pal.gold, reward: 5, target: 1, progress: (s) => s.totalWins),
+      Achievement(id: 'levels_10', title: tr('ach.levels_10.title'), desc: tr('ach.levels_n.desc', {'n': 10}), emoji: '🔟', color: _blue, reward: 10, target: 10, progress: (s) => s.totalLevels),
+      Achievement(id: 'levels_50', title: tr('ach.levels_50.title'), desc: tr('ach.levels_n.desc', {'n': 50}), emoji: '🧠', color: _purple, reward: 20, target: 50, progress: (s) => s.totalLevels),
+      Achievement(id: 'levels_100', title: tr('ach.levels_100.title'), desc: tr('ach.levels_n.desc', {'n': 100}), emoji: '💯', color: _pink, reward: 30, target: 100, progress: (s) => s.totalLevels),
+      Achievement(id: 'levels_250', title: tr('ach.levels_250.title'), desc: tr('ach.levels_n.desc', {'n': 250}), emoji: '👑', color: Pal.gold, reward: 30, target: 250, progress: (s) => s.totalLevels),
+      Achievement(id: 'plays_25', title: tr('ach.plays_25.title'), desc: tr('ach.plays_25.desc', {'n': 25}), emoji: '🎮', color: _green, reward: 10, target: 25, progress: (s) => s.totalPlays),
+      Achievement(id: 'explorer', title: tr('ach.explorer.title'), desc: tr('quest.variety_n', {'n': 3}), emoji: '🧭', color: _blue, reward: 10, target: 3, progress: (s) => s.gamesPlayed),
+      Achievement(id: 'all_games', title: tr('ach.all_games.title'), desc: tr('ach.all_games.desc'), emoji: '🌍', color: _green, reward: 20, target: titles.isEmpty ? 1 : titles.length, progress: (s) => s.gamesPlayed),
+      Achievement(id: 'all_tiers', title: tr('ach.all_tiers.title'), desc: tr('ach.all_tiers.desc'), emoji: '🎚️', color: _purple, reward: 20, target: 4, progress: (s) => s.tiers.length),
+      Achievement(id: 'hard_clear', title: tr('ach.hard_clear.title'), desc: tr('ach.hard_clear.desc'), emoji: '💪', color: _orange, reward: 10, target: 1, progress: (s) => s.hardClears),
+      Achievement(id: 'extreme_clear', title: tr('ach.extreme_clear.title'), desc: tr('ach.extreme_clear.desc'), emoji: '🔥', color: _red, reward: 20, target: 1, progress: (s) => s.extremeClears),
+      Achievement(id: 'extreme_10', title: tr('ach.extreme_10.title'), desc: tr('ach.extreme_10.desc', {'n': 10}), emoji: '😤', color: _red, reward: 30, target: 10, progress: (s) => s.extremeClears),
+      Achievement(id: 'stars3_1', title: tr('ach.stars3_1.title'), desc: tr('ach.stars3_1.desc'), emoji: '⭐', color: Pal.gold, reward: 5, target: 1, progress: (s) => s.stars3),
+      Achievement(id: 'stars3_25', title: tr('ach.stars3_25.title'), desc: tr('quest.stars_any', {'n': 25}), emoji: '🌟', color: Pal.gold, reward: 25, target: 25, progress: (s) => s.stars3),
+      Achievement(id: 'streak_3', title: tr('ach.streak_3.title'), desc: tr('ach.streak_n.desc', {'n': 3}), emoji: '📅', color: _orange, reward: 10, target: 3, progress: (s) => s.bestStreak),
+      Achievement(id: 'streak_7', title: tr('ach.streak_7.title'), desc: tr('ach.streak_n.desc', {'n': 7}), emoji: '🔥', color: _orange, reward: 25, target: 7, progress: (s) => s.bestStreak),
+      Achievement(id: 'streak_30', title: tr('ach.streak_30.title'), desc: tr('ach.streak_n.desc', {'n': 30}), emoji: '🚀', color: _red, reward: 30, target: 30, progress: (s) => s.bestStreak),
+      Achievement(id: 'challenge_1', title: tr('ach.challenge_1.title'), desc: tr('ach.challenge_1.desc'), emoji: '🏅', color: _green, reward: 10, target: 1, progress: (s) => s.challengeBest),
+      Achievement(id: 'challenge_7', title: tr('ach.challenge_7.title'), desc: tr('ach.challenge_7.desc', {'n': 7}), emoji: '🗓️', color: _purple, reward: 30, target: 7, progress: (s) => s.challengeBest),
+      Achievement(id: 'quests_25', title: tr('ach.quests_25.title'), desc: tr('ach.quests_25.desc', {'n': 25}), emoji: '📜', color: _blue, reward: 20, target: 25, progress: (s) => s.questsClaimed),
+      Achievement(id: 'coins_1000', title: tr('ach.coins_1000.title'), desc: tr('ach.coins_n.desc', {'n': 1000}), emoji: '💰', color: Pal.gold, reward: 20, target: 1000, progress: (s) => s.coinsEarned),
+      Achievement(id: 'coins_5000', title: tr('ach.coins_5000.title'), desc: tr('ach.coins_n.desc', {'n': 5000}), emoji: '💎', color: _blue, reward: 30, target: 5000, progress: (s) => s.coinsEarned),
       for (final e in titles.entries)
         if (e.key == 'game_2048')
-          Achievement(id: 'master_${e.key}', title: '${e.value} Master', desc: 'Score 10000+ in ${e.value}', emoji: '🏆', color: _pink, reward: 25, target: 10000, progress: (s) => s.best[e.key] ?? 0)
+          Achievement(id: 'master_${e.key}', title: tr('ach.master.title', {'game': e.value}), desc: tr('ach.master_score.desc', {'n': 10000, 'game': e.value}), emoji: '🏆', color: _pink, reward: 25, target: 10000, progress: (s) => s.best[e.key] ?? 0)
         else
-          Achievement(id: 'master_${e.key}', title: '${e.value} Master', desc: 'Win 20 times in ${e.value}', emoji: '🏆', color: _pink, reward: 25, target: 20, progress: (s) {
+          Achievement(id: 'master_${e.key}', title: tr('ach.master.title', {'game': e.value}), desc: tr('ach.master_wins.desc', {'n': 20, 'game': e.value}), emoji: '🏆', color: _pink, reward: 25, target: 20, progress: (s) {
             final l = s.levels[e.key] ?? 0, w = s.wins[e.key] ?? 0;
             return l > w ? l : w;
           }),
@@ -174,7 +175,7 @@ class Achievements {
         await Storage.setString(kUnlocked, have.join(','));
         for (final a in fresh) {
           out.add(a);
-          showDailyToast(emoji: a.emoji, title: 'Badge unlocked: ${a.title}', subtitle: a.desc, color: a.color);
+          showDailyToast(emoji: a.emoji, title: tr('ach.unlocked_toast', {'name': a.title}), subtitle: a.desc, color: a.color);
           if (reward) await Rewards.addCoins(a.reward, label: a.title);
         }
       }

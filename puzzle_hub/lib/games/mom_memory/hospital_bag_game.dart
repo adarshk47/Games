@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -67,7 +68,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
   @override
   Widget build(BuildContext context) {
     return MmPage(
-      title: 'Hospital Bag Recall',
+      title: tr('mom_memory.bag_title'),
       body: Column(
         children: [
           Expanded(
@@ -111,7 +112,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
               ),
           const SizedBox(height: 14),
           Text(
-            'Level ${_level + 1}',
+            tr('common.level_n', {'n': _level + 1}),
             style: const TextStyle(
               color: Pal.text,
               fontSize: 26,
@@ -120,7 +121,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
           ),
           const SizedBox(height: 8),
           Text(
-            '${_lv.count} cheezein dekhiye, phir yaad karke chuniye.\nAaram se, koi jaldi nahi.',
+            tr('mom_memory.bag_intro', {'n': _lv.count}),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Pal.textDim,
@@ -155,7 +156,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
           ),
           const SizedBox(height: 22),
           PremiumButton(
-            label: 'Shuru karein',
+            label: tr('mom_memory.start'),
             icon: Icons.favorite_rounded,
             color: Mm.rose,
             onTap: _begin,
@@ -185,33 +186,46 @@ class _HospitalBagGameState extends State<HospitalBagGame>
     ),
   );
 
-  Widget _label(BagItem it, {double size = 34}) => Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(it.emoji, style: TextStyle(fontSize: size)),
-      const SizedBox(height: 4),
-      Text(
-        it.hi,
-        style: const TextStyle(
-          color: Mm.ink,
-          fontWeight: FontWeight.w800,
-          fontSize: 13,
+  Widget _label(BagItem it, {double size = 34}) {
+    final name = it.name;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(it.emoji, style: TextStyle(fontSize: size)),
+        const SizedBox(height: 4),
+        Text(
+          name,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Mm.ink,
+            fontWeight: FontWeight.w800,
+            fontSize: 13,
+          ),
         ),
-      ),
-      Text(
-        it.en,
-        style: TextStyle(color: Mm.ink.withValues(alpha: 0.7), fontSize: 11),
-      ),
-    ],
-  );
+        // Small English helper line when the main name differs.
+        if (name != it.en)
+          Text(
+            it.en,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Mm.ink.withValues(alpha: 0.7),
+              fontSize: 11,
+            ),
+          ),
+      ],
+    );
+  }
 
   Widget _show() => Column(
     children: [
-      const Padding(
-        padding: EdgeInsets.fromLTRB(20, 8, 20, 4),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
         child: Text(
-          'Ye cheezein yaad kijiye',
-          style: TextStyle(
+          tr('mom_memory.remember_items'),
+          style: const TextStyle(
             color: Pal.text,
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -252,7 +266,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
       Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: PremiumButton(
-          label: 'Yaad ho gaya',
+          label: tr('mom_memory.memorized'),
           compact: true,
           color: Mm.lavender,
           onTap: _toPick,
@@ -266,7 +280,11 @@ class _HospitalBagGameState extends State<HospitalBagGame>
       Padding(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
         child: Text(
-          'Kaunsi cheezein dikhi thin? (${_picked.length}/${_lv.count})',
+          tr('mom_memory.bag_pick', {
+            'n': _picked.length,
+            'total': _lv.count,
+          }),
+          textAlign: TextAlign.center,
           style: const TextStyle(
             color: Pal.text,
             fontSize: 17,
@@ -293,7 +311,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
       Padding(
         padding: const EdgeInsets.only(bottom: 8),
         child: PremiumButton(
-          label: 'Ho gaya',
+          label: tr('mom_memory.done'),
           icon: Icons.check_rounded,
           color: Mm.rose,
           onTap: _picked.isEmpty ? null : _submit,
@@ -311,7 +329,7 @@ class _HospitalBagGameState extends State<HospitalBagGame>
       children: [
         const SizedBox(height: 8),
         Text(
-          '${r.correct}/$total yaad rahe',
+          tr('mom_memory.bag_result', {'n': r.correct, 'total': total}),
           style: const TextStyle(
             color: Pal.text,
             fontSize: 28,
@@ -324,7 +342,8 @@ class _HospitalBagGameState extends State<HospitalBagGame>
         Text(
           r.correct == total
               ? pick(praise)
-              : 'Bahut achha prayas! Aaram se phir koshish kijiye.',
+              : tr('mom_memory.good_try'),
+          textAlign: TextAlign.center,
           style: const TextStyle(color: Pal.textDim, fontSize: 14),
         ),
         Expanded(
@@ -365,13 +384,13 @@ class _HospitalBagGameState extends State<HospitalBagGame>
             spacing: 10,
             children: [
               PremiumButton(
-                label: 'Phir se',
+                label: tr('common.replay'),
                 compact: true,
                 color: const Color(0xFF6F63B8),
                 onTap: _begin,
               ),
               PremiumButton(
-                label: 'Agla level',
+                label: tr('common.next_level'),
                 compact: true,
                 color: Mm.rose,
                 onTap: _level < 6
