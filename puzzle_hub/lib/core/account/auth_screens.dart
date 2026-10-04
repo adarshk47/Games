@@ -7,6 +7,8 @@ import '../rewards.dart';
 import '../ui/app_logo.dart';
 import '../ui/ui.dart';
 import 'account_service.dart';
+import '../i18n/i18n.dart';
+import '../i18n/language_picker.dart';
 
 const int kPinLength = 4;
 
@@ -18,9 +20,10 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: AccountService.I,
+      listenable: Listenable.merge([AccountService.I, I18n.revision]),
       builder: (context, _) {
         final a = AccountService.I;
+        if (!I18n.chosen) return LanguageSelectScreen(onDone: () {});
         if (a.loggedIn) return home;
         return a.hasAccount ? const LockScreen() : const WelcomeScreen();
       },
@@ -296,7 +299,11 @@ class _LockScreenState extends State<LockScreen> {
                         await AccountService.I.loginWithoutPin(name);
                         Rewards.reload();
                       },
-                      icon: const Icon(Icons.flash_on_rounded, color: Pal.gold, size: 20),
+                      icon: const Icon(
+                        Icons.flash_on_rounded,
+                        color: Pal.gold,
+                        size: 20,
+                      ),
                       label: const Text(
                         'Play Without PIN',
                         style: TextStyle(
@@ -355,11 +362,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
   /// This screen is pushed from [WelcomeScreen]; once logged in, AuthGate
   /// shows home underneath, so close it.
   void _done() {
-    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).popUntil((r) => r.isFirst);
+    if (mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).popUntil((r) => r.isFirst);
+    }
   }
 
   Future<void> _guest() async {
-    await AccountService.I.loginWithoutPin(_name.text.trim().isEmpty ? 'Player' : _name.text.trim());
+    await AccountService.I.loginWithoutPin(
+      _name.text.trim().isEmpty ? 'Player' : _name.text.trim(),
+    );
     Rewards.reload();
     _done();
   }
@@ -479,7 +490,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: _guest,
-                      icon: const Icon(Icons.play_arrow_rounded, color: Pal.gold, size: 22),
+                      icon: const Icon(
+                        Icons.play_arrow_rounded,
+                        color: Pal.gold,
+                        size: 22,
+                      ),
                       label: const Text(
                         'Skip PIN & Play Directly',
                         style: TextStyle(
@@ -535,7 +550,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: _guest,
-                      icon: const Icon(Icons.play_arrow_rounded, color: Pal.gold, size: 22),
+                      icon: const Icon(
+                        Icons.play_arrow_rounded,
+                        color: Pal.gold,
+                        size: 22,
+                      ),
                       label: const Text(
                         'Skip PIN & Play Directly',
                         style: TextStyle(
@@ -573,36 +592,61 @@ class WelcomeScreen extends StatelessWidget {
                 children: [
                   const AppLogo(size: 88)
                       .animate(onPlay: (c) => c.repeat(reverse: true))
-                      .moveY(begin: -5, end: 5, duration: 1400.ms, curve: Curves.easeInOut),
+                      .moveY(
+                        begin: -5,
+                        end: 5,
+                        duration: 1400.ms,
+                        curve: Curves.easeInOut,
+                      ),
                   const SizedBox(height: 14),
                   const Text(
                     'Welcome to Master G',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Pal.text, fontSize: 30, fontWeight: FontWeight.w900),
+                    style: TextStyle(
+                      color: Pal.text,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ).animate().fadeIn(),
                   const SizedBox(height: 8),
                   const Text(
                     'Sign in to back up your progress and join the leaderboards, or just play on this phone.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Pal.textDim, fontSize: 14, height: 1.4),
+                    style: TextStyle(
+                      color: Pal.textDim,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 28),
                   const CloudSignInPanel(),
                   const SizedBox(height: 18),
-                  Row(children: [
-                    Expanded(child: Divider(color: Pal.textDim.withValues(alpha: 0.3))),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text('or', style: TextStyle(color: Pal.textDim)),
-                    ),
-                    Expanded(child: Divider(color: Pal.textDim.withValues(alpha: 0.3))),
-                  ]),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          color: Pal.textDim.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Text('or', style: TextStyle(color: Pal.textDim)),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          color: Pal.textDim.withValues(alpha: 0.3),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 18),
                   PremiumButton(
                     label: 'Play as guest / local',
                     icon: Icons.phone_android_rounded,
                     color: const Color(0xFF7C5CFF),
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RegisterScreen())),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -625,13 +669,18 @@ class CloudPendingNote extends StatelessWidget {
   const CloudPendingNote({super.key});
 
   @override
-  Widget build(BuildContext context) => const Row(children: [
-        Icon(Icons.cloud_off_rounded, color: Pal.textDim, size: 20),
-        SizedBox(width: 10),
-        Expanded(
-          child: Text(CloudService.pendingMessage, style: TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3)),
+  Widget build(BuildContext context) => const Row(
+    children: [
+      Icon(Icons.cloud_off_rounded, color: Pal.textDim, size: 20),
+      SizedBox(width: 10),
+      Expanded(
+        child: Text(
+          CloudService.pendingMessage,
+          style: TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3),
         ),
-      ]);
+      ),
+    ],
+  );
 }
 
 /// "Continue with Google" + "Continue with Email". Disabled with a friendly
@@ -660,32 +709,36 @@ class _CloudSignInPanelState extends State<CloudSignInPanel> {
   }
 
   Future<void> _email() async {
-    final ok = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const EmailAuthScreen()));
+    final ok = await Navigator.of(context)
+        .push<bool>(MaterialPageRoute(builder: (_) => const EmailAuthScreen()));
     if (ok == true && mounted) widget.onSignedIn?.call();
   }
 
   @override
   Widget build(BuildContext context) {
     final on = CloudService.available && !_busy;
-    return Column(mainAxisSize: MainAxisSize.min, children: [
-      PremiumButton(
-        label: _busy ? 'Signing in...' : 'Continue with Google',
-        icon: Icons.g_mobiledata_rounded,
-        color: const Color(0xFF4285F4),
-        onTap: on ? _google : null,
-      ),
-      const SizedBox(height: 12),
-      PremiumButton(
-        label: 'Continue with Email',
-        icon: Icons.email_rounded,
-        color: const Color(0xFF22B07D),
-        onTap: on ? _email : null,
-      ),
-      if (!CloudService.available) ...[
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PremiumButton(
+          label: _busy ? 'Signing in...' : 'Continue with Google',
+          icon: Icons.g_mobiledata_rounded,
+          color: const Color(0xFF4285F4),
+          onTap: on ? _google : null,
+        ),
         const SizedBox(height: 12),
-        const CloudPendingNote(),
+        PremiumButton(
+          label: 'Continue with Email',
+          icon: Icons.email_rounded,
+          color: const Color(0xFF22B07D),
+          onTap: on ? _email : null,
+        ),
+        if (!CloudService.available) ...[
+          const SizedBox(height: 12),
+          const CloudPendingNote(),
+        ],
       ],
-    ]);
+    );
   }
 }
 
@@ -726,13 +779,15 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
   static final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
   void _setMode(_EmailMode m) => setState(() {
-        _mode = m;
-        _error = null;
-      });
+    _mode = m;
+    _error = null;
+  });
 
   Future<void> _submit() async {
     final email = _email.text.trim();
-    if (!_emailRe.hasMatch(email)) return setState(() => _error = 'Enter a valid email address.');
+    if (!_emailRe.hasMatch(email)) {
+      return setState(() => _error = 'Enter a valid email address.');
+    }
     if (_mode != _EmailMode.reset && _pass.text.length < 6) {
       return setState(() => _error = 'Password must be at least 6 characters.');
     }
@@ -743,8 +798,15 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     });
     final mode = _mode;
     final err = switch (mode) {
-      _EmailMode.signIn => await CloudAuth.I.signInWithEmail(email: email, password: _pass.text),
-      _EmailMode.signUp => await CloudAuth.I.signUpWithEmail(email: email, password: _pass.text, name: _name.text),
+      _EmailMode.signIn => await CloudAuth.I.signInWithEmail(
+        email: email,
+        password: _pass.text,
+      ),
+      _EmailMode.signUp => await CloudAuth.I.signUpWithEmail(
+        email: email,
+        password: _pass.text,
+        name: _name.text,
+      ),
       _EmailMode.reset => await CloudAuth.I.sendPasswordReset(email),
     };
     if (!mounted) return;
@@ -759,14 +821,23 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     }
     if (mode == _EmailMode.signUp) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Welcome! We sent a verification link to $email.')),
+        SnackBar(
+          content: Text('Welcome! We sent a verification link to $email.'),
+        ),
       );
     }
     Navigator.of(context).pop(true);
   }
 
-  Widget _field(TextEditingController c, String hint, IconData icon,
-      {bool obscure = false, TextInputType? type, Widget? suffix, TextCapitalization cap = TextCapitalization.none}) {
+  Widget _field(
+    TextEditingController c,
+    String hint,
+    IconData icon, {
+    bool obscure = false,
+    TextInputType? type,
+    Widget? suffix,
+    TextCapitalization cap = TextCapitalization.none,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GlassCard(
@@ -801,57 +872,85 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     return GameScaffold(
       title: title,
       tint: const Color(0xFF22B07D),
-      body: ListView(padding: const EdgeInsets.fromLTRB(22, 12, 22, 28), children: [
-        if (!CloudService.available) ...[
-          const GlassCard(child: CloudPendingNote()),
-          const SizedBox(height: 16),
-        ],
-        if (_mode == _EmailMode.signUp) _field(_name, 'Your name', Icons.person_rounded, cap: TextCapitalization.words),
-        _field(_email, 'Email', Icons.email_rounded, type: TextInputType.emailAddress),
-        if (_mode != _EmailMode.reset)
-          _field(
-            _pass,
-            'Password',
-            Icons.lock_rounded,
-            obscure: _hide,
-            suffix: IconButton(
-              icon: Icon(_hide ? Icons.visibility_rounded : Icons.visibility_off_rounded, color: Pal.textDim),
-              onPressed: () => setState(() => _hide = !_hide),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(22, 12, 22, 28),
+        children: [
+          if (!CloudService.available) ...[
+            const GlassCard(child: CloudPendingNote()),
+            const SizedBox(height: 16),
+          ],
+          if (_mode == _EmailMode.signUp)
+            _field(
+              _name,
+              'Your name',
+              Icons.person_rounded,
+              cap: TextCapitalization.words,
             ),
+          _field(
+            _email,
+            'Email',
+            Icons.email_rounded,
+            type: TextInputType.emailAddress,
           ),
-        if (_error != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(_error!, style: const TextStyle(color: Pal.danger)),
+          if (_mode != _EmailMode.reset)
+            _field(
+              _pass,
+              'Password',
+              Icons.lock_rounded,
+              obscure: _hide,
+              suffix: IconButton(
+                icon: Icon(
+                  _hide
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  color: Pal.textDim,
+                ),
+                onPressed: () => setState(() => _hide = !_hide),
+              ),
+            ),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(_error!, style: const TextStyle(color: Pal.danger)),
+            ),
+          if (_info != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(_info!, style: const TextStyle(color: Pal.success)),
+            ),
+          const SizedBox(height: 6),
+          PremiumButton(
+            label: _busy ? 'Please wait...' : title,
+            icon: Icons.arrow_forward_rounded,
+            color: const Color(0xFF22B07D),
+            onTap: _busy || !CloudService.available ? null : _submit,
           ),
-        if (_info != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(_info!, style: const TextStyle(color: Pal.success)),
-          ),
-        const SizedBox(height: 6),
-        PremiumButton(
-          label: _busy ? 'Please wait...' : title,
-          icon: Icons.arrow_forward_rounded,
-          color: const Color(0xFF22B07D),
-          onTap: _busy || !CloudService.available ? null : _submit,
-        ),
-        const SizedBox(height: 14),
-        if (_mode == _EmailMode.signIn) ...[
-          TextButton(
-            onPressed: () => _setMode(_EmailMode.reset),
-            child: const Text('Forgot password?', style: TextStyle(color: Pal.gold)),
-          ),
-          TextButton(
-            onPressed: () => _setMode(_EmailMode.signUp),
-            child: const Text('New here? Create an account', style: TextStyle(color: Pal.gold, fontWeight: FontWeight.bold)),
-          ),
-        ] else
-          TextButton(
-            onPressed: () => _setMode(_EmailMode.signIn),
-            child: const Text('Already have an account? Sign in', style: TextStyle(color: Pal.gold, fontWeight: FontWeight.bold)),
-          ),
-      ]),
+          const SizedBox(height: 14),
+          if (_mode == _EmailMode.signIn) ...[
+            TextButton(
+              onPressed: () => _setMode(_EmailMode.reset),
+              child: const Text(
+                'Forgot password?',
+                style: TextStyle(color: Pal.gold),
+              ),
+            ),
+            TextButton(
+              onPressed: () => _setMode(_EmailMode.signUp),
+              child: const Text(
+                'New here? Create an account',
+                style: TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ] else
+            TextButton(
+              onPressed: () => _setMode(_EmailMode.signIn),
+              child: const Text(
+                'Already have an account? Sign in',
+                style: TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/account/auth_screens.dart';
 import 'core/ads/ads_service.dart';
 import 'core/audio.dart';
 import 'core/cloud/cloud_service.dart';
 import 'core/daily/reminder_service.dart';
+import 'core/i18n/i18n.dart';
 import 'core/rewards.dart';
 import 'core/storage.dart';
 import 'core/theme.dart';
@@ -16,10 +18,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Storage.init();
+  await I18n.init();
   await AppThemeController.init();
   await AppAudio.init();
   // Optional services: a failure here must never block the app from starting.
-  for (final init in [CloudService.init, AdsService.init, ReminderService.init]) {
+  for (final init in [
+    CloudService.init,
+    AdsService.init,
+    ReminderService.init,
+  ]) {
     try {
       await init();
     } catch (e) {
@@ -35,9 +42,21 @@ class PuzzleHubApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<int>(
-      valueListenable: AppThemeController.current,
-      builder: (_, _, _) => MaterialApp(
+    return ListenableBuilder(
+      listenable: Listenable.merge([AppThemeController.current, I18n.lang]),
+      builder: (_, _) => MaterialApp(
+        // Rebuild the whole app (back to home) when the language changes so every
+        // screen picks up the new strings.
+        key: ValueKey(I18n.lang.value),
+        locale: I18n.lang.value.materialLocale,
+        supportedLocales: const [
+          Locale('en'),
+          Locale('hi'),
+          Locale('te'),
+          Locale('ta'),
+          Locale('pa'),
+        ],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
         title: 'Master G',
         debugShowCheckedModeBanner: false,
         navigatorKey: Rewards.navKey,
