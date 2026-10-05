@@ -60,6 +60,13 @@ android {
             manifestPlaceholders["appLabel"] = "Master G Dev"
         }
         release {
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Local crash-testing only: `flutter build apk --release --android-project-arg=rtest=true`
+            // installs as a separate app next to the Play Store build.
+            if (project.hasProperty("rtest")) {
+                applicationIdSuffix = ".rtest"
+                manifestPlaceholders["appLabel"] = "Master G RTest"
+            }
             signingConfig = if (keystoreProperties.containsKey("storeFile"))
                 signingConfigs.getByName("release") else signingConfigs.getByName("debug")
         }
