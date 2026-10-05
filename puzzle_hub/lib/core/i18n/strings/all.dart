@@ -15,6 +15,8 @@ import 'maze_escape.dart';
 import 'memory_boost.dart';
 import 'minesweeper.dart';
 import 'mom_memory.dart';
+import 'parking_jam.dart';
+import 'screw_jam.dart';
 import 'shop.dart';
 import 'sliding_puzzle.dart';
 import 'sudoku.dart';
@@ -37,6 +39,8 @@ final Map<String, Map<String, String>> allStrings = {
   ...memoryBoostStrings,
   ...minesweeperStrings,
   ...momMemoryStrings,
+  ...parkingJamStrings,
+  ...screwJamStrings,
   ...shopStrings,
   ...slidingPuzzleStrings,
   ...sudokuStrings,

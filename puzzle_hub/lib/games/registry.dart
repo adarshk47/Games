@@ -12,6 +12,8 @@ import 'maze_escape/maze_escape_screen.dart';
 import 'memory_boost/memory_boost_screen.dart';
 import 'minesweeper/minesweeper_screen.dart';
 import 'mom_memory/mom_memory_screen.dart';
+import 'parking_jam/parking_jam_screen.dart';
+import 'screw_jam/screw_jam_screen.dart';
 import 'sliding_puzzle/sliding_puzzle_screen.dart';
 import 'sudoku/sudoku_screen.dart';
 
@@ -81,6 +83,24 @@ final List<GameInfo> allGames = [
     emoji: '➰',
     color: const Color(0xFF7C9CFF),
     builder: (_) => const ArrowMazeScreen(),
+  ),
+  GameInfo(
+    id: 'screw_jam',
+    title: 'Screw Jam',
+    subtitle: 'Screws nikalo, plates girao',
+    icon: Icons.hardware_rounded,
+    emoji: '🔩',
+    color: const Color(0xFF94A3B8),
+    builder: (_) => const ScrewJamScreen(),
+  ),
+  GameInfo(
+    id: 'parking_jam',
+    title: 'Parking Jam',
+    subtitle: 'Gaadiyan nikalo, parking khali karo',
+    icon: Icons.directions_car_rounded,
+    emoji: '🚗',
+    color: const Color(0xFFEF4444),
+    builder: (_) => const ParkingJamScreen(),
   ),
   GameInfo(
     id: 'maze_escape',
