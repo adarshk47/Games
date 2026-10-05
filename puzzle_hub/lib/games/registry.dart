@@ -18,7 +18,12 @@ import 'sliding_puzzle/sliding_puzzle_screen.dart';
 import 'sudoku/sudoku_screen.dart';
 
 /// Games shown in the hub (only those with `enabled: true`).
-final List<GameInfo> games = [for (final g in allGames) if (g.enabled) g];
+/// Test builds can show hidden games too:
+///   flutter build apk --debug --dart-define=SHOW_ALL_GAMES=true
+/// Release builds never set it, so hidden games stay hidden there.
+const bool kShowAllGames = bool.fromEnvironment('SHOW_ALL_GAMES');
+
+final List<GameInfo> games = [for (final g in allGames) if (g.enabled || kShowAllGames) g];
 
 /// Every game that exists in the codebase. To release a hidden game, flip its
 /// `enabled` flag to true (and bump the version).
