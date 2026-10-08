@@ -8,6 +8,7 @@ import 'cloud.dart';
 import 'common.dart';
 import 'daily.dart';
 import 'flow_pairs.dart';
+import 'hexa_sort.dart';
 import 'focus_color.dart';
 import 'game_2048.dart';
 import 'home.dart';
@@ -20,6 +21,7 @@ import 'screw_jam.dart';
 import 'shop.dart';
 import 'sliding_puzzle.dart';
 import 'sudoku.dart';
+import 'tile_match.dart';
 
 /// Every translation key in the app.
 final Map<String, Map<String, String>> allStrings = {
@@ -32,6 +34,7 @@ final Map<String, Map<String, String>> allStrings = {
   ...commonStrings,
   ...dailyStrings,
   ...flowPairsStrings,
+  ...hexaSortStrings,
   ...focusColorStrings,
   ...game2048Strings,
   ...homeStrings,
@@ -44,4 +47,5 @@ final Map<String, Map<String, String>> allStrings = {
   ...shopStrings,
   ...slidingPuzzleStrings,
   ...sudokuStrings,
+  ...tileMatchStrings,
 };

@@ -8,6 +8,7 @@ import 'block_puzzle/block_puzzle_screen.dart';
 import 'flow_pairs/flow_pairs_screen.dart';
 import 'focus_color/focus_color_screen.dart';
 import 'game_2048/game_2048_screen.dart';
+import 'hexa_sort/hexa_sort_screen.dart';
 import 'maze_escape/maze_escape_screen.dart';
 import 'memory_boost/memory_boost_screen.dart';
 import 'minesweeper/minesweeper_screen.dart';
@@ -16,6 +17,7 @@ import 'parking_jam/parking_jam_screen.dart';
 import 'screw_jam/screw_jam_screen.dart';
 import 'sliding_puzzle/sliding_puzzle_screen.dart';
 import 'sudoku/sudoku_screen.dart';
+import 'tile_match/tile_match_screen.dart';
 
 /// Games shown in the hub (only those with `enabled: true`).
 /// Test builds can show hidden games too:
@@ -47,7 +49,6 @@ final List<GameInfo> allGames = [
     icon: Icons.view_module_rounded,
     emoji: '🧱',
     color: const Color(0xFFFF6FB5),
-    enabled: false,
     builder: (_) => const BlockPuzzleScreen(),
   ),
   GameInfo(
@@ -57,7 +58,6 @@ final List<GameInfo> allGames = [
     icon: Icons.timeline_rounded,
     emoji: '🔗',
     color: const Color(0xFF5EEAD4),
-    enabled: false,
     builder: (_) => const FlowPairsScreen(),
   ),
   GameInfo(
@@ -67,7 +67,6 @@ final List<GameInfo> allGames = [
     icon: Icons.grid_view_rounded,
     emoji: '🧩',
     color: const Color(0xFFB794FF),
-    enabled: false,
     builder: (_) => const SlidingPuzzleScreen(),
   ),
   GameInfo(
@@ -77,7 +76,6 @@ final List<GameInfo> allGames = [
     icon: Icons.flag_rounded,
     emoji: '💣',
     color: const Color(0xFFFB923C),
-    enabled: false,
     builder: (_) => const MinesweeperScreen(),
   ),
   GameInfo(
@@ -106,6 +104,24 @@ final List<GameInfo> allGames = [
     emoji: '🚗',
     color: const Color(0xFFEF4444),
     builder: (_) => const ParkingJamScreen(),
+  ),
+  GameInfo(
+    id: 'tile_match',
+    title: 'Tile Match',
+    subtitle: 'Teen jaise tiles jodo',
+    icon: Icons.style_rounded,
+    emoji: '🀄',
+    color: const Color(0xFF34D399),
+    builder: (_) => const TileMatchScreen(),
+  ),
+  GameInfo(
+    id: 'hexa_sort',
+    title: 'Hexa Sort',
+    subtitle: 'Hexagon stacks rang se jodo',
+    icon: Icons.hexagon_rounded,
+    emoji: '⬢',
+    color: const Color(0xFFF472B6),
+    builder: (_) => const HexaSortScreen(),
   ),
   GameInfo(
     id: 'maze_escape',
