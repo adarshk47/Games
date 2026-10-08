@@ -14,10 +14,19 @@ enum SlideTier {
   final int baseDepth;
   final int depthStep;
 
-  static const levelCount = 20;
+  static const levelCount = 100;
 
   /// Number of random single-tile moves used to scramble [level] (1-based).
-  int depthFor(int level) => baseDepth + depthStep * level;
+  /// Levels 1-20 keep their original depth; after that the depth keeps
+  /// growing at half the step, so difficulty rises smoothly up to level 100.
+  int depthFor(int level) {
+    final l = level.clamp(1, levelCount);
+    if (l <= 20) return baseDepth + depthStep * l;
+    return baseDepth + depthStep * 20 + depthStep * (l - 20) ~/ 2;
+  }
+
+  /// Fixed scramble seed per tier and level, so a level is always the same board.
+  int seedFor(int level) => 7919 * level + index * 100003 + 17;
 }
 
 /// Pure sliding-puzzle rules. A board is a flat row-major list of length n*n;

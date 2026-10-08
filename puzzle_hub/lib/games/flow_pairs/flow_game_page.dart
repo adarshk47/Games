@@ -28,7 +28,7 @@ class FlowGamePage extends StatefulWidget {
 }
 
 class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMixin {
-  late int _level = widget.level;
+  late int _level;
   late FlowGame _game;
   late final AnimationController _pulse =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 1800))..repeat();
@@ -46,7 +46,37 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _load(_level);
+    final l = widget.level.clamp(1, FlowLevels.count);
+    _load(FlowProgress.canPlay(_tier, l) ? l : FlowProgress.frontier(_tier));
+    FlowProgress.start(_tier, _level);
+  }
+
+  /// Counts a play of a bought level; false (and a dialog) when its plays
+  /// are used up and it locked again.
+  bool _countPlay() {
+    if (!FlowProgress.canPlay(_tier, _level)) {
+      _failSound(force: true);
+      showPremiumDialog(
+        context,
+        title: tr('common.skip.title', {'n': _level}),
+        message: tr('flow_pairs.plays_over'),
+        emoji: '🔒',
+        color: Pal.gold,
+        actions: [DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop(), primary: true)],
+      );
+      return false;
+    }
+    FlowProgress.start(_tier, _level);
+    return true;
+  }
+
+  void _replay() {
+    if (_countPlay()) setState(() => _load(_level));
+  }
+
+  void _next() {
+    setState(() => _load(_level + 1));
+    FlowProgress.start(_tier, _level);
   }
 
   @override
@@ -182,8 +212,8 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
             : tr('flow_pairs.strokes', {'n': _game.moves, 'best': _game.puzzle.minMoves}),
         actions: [
           DialogAction(tr('common.levels'), () => Navigator.of(context).maybePop()),
-          DialogAction(tr('common.replay'), () => setState(() => _load(_level))),
-          if (_level < FlowLevels.count) DialogAction(tr('common.next_level'), () => setState(() => _load(_level + 1)), primary: true),
+          DialogAction(tr('common.replay'), _replay),
+          if (_level < FlowLevels.count) DialogAction(tr('common.next_level'), _next, primary: true),
         ],
       );
     });
@@ -213,7 +243,7 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
   }
 
   void _restart() {
-    if (_finished) return;
+    if (_finished || !_countPlay()) return;
     _game.restart();
     AppAudio.play(Sound.slide, volume: 0.4);
     _bump();

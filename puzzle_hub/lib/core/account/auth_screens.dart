@@ -9,6 +9,7 @@ import '../ui/ui.dart';
 import 'account_service.dart';
 import '../i18n/i18n.dart';
 import '../i18n/language_picker.dart';
+import 'country_select.dart';
 
 const int kPinLength = 4;
 
@@ -24,6 +25,7 @@ class AuthGate extends StatelessWidget {
       builder: (context, _) {
         final a = AccountService.I;
         if (!I18n.chosen) return LanguageSelectScreen(onDone: () {});
+        if (a.country == null) return const CountrySelectScreen();
         if (a.loggedIn) return home;
         return a.hasAccount ? const LockScreen() : const WelcomeScreen();
       },

@@ -26,7 +26,7 @@ enum SjTier {
 }
 
 /// Levels per tier.
-const kSjLevels = 30;
+const kSjLevels = 100;
 
 /// Screws per toolbox.
 const kSjBoxSize = 3;
@@ -52,10 +52,10 @@ class SjTierSpec {
 }
 
 SjTierSpec sjSpec(SjTier t) => switch (t) {
-      SjTier.easy => const SjTierSpec(cols: 6, rows: 7, minPlates: 3, maxPlates: 7, minColors: 3, maxColors: 4, tray: 7),
-      SjTier.medium => const SjTierSpec(cols: 6, rows: 8, minPlates: 6, maxPlates: 10, minColors: 4, maxColors: 5, tray: 6),
-      SjTier.hard => const SjTierSpec(cols: 7, rows: 9, minPlates: 9, maxPlates: 13, minColors: 5, maxColors: 6, tray: 5),
-      SjTier.extreme => const SjTierSpec(cols: 7, rows: 9, minPlates: 12, maxPlates: 16, minColors: 6, maxColors: 8, tray: 4),
+      SjTier.easy => const SjTierSpec(cols: 6, rows: 7, minPlates: 3, maxPlates: 9, minColors: 3, maxColors: 5, tray: 7),
+      SjTier.medium => const SjTierSpec(cols: 6, rows: 8, minPlates: 6, maxPlates: 12, minColors: 4, maxColors: 6, tray: 6),
+      SjTier.hard => const SjTierSpec(cols: 7, rows: 9, minPlates: 9, maxPlates: 15, minColors: 5, maxColors: 7, tray: 5),
+      SjTier.extreme => const SjTierSpec(cols: 7, rows: 9, minPlates: 12, maxPlates: 18, minColors: 6, maxColors: 8, tray: 4),
     };
 
 int _lerp(int a, int b, int level) {
@@ -435,9 +435,6 @@ SjLevel _build(SjTier tier, int level) {
   final plateCount = sjPlatesFor(tier, level);
   final colors = sjColorsFor(tier, level);
 
-  final plates = <SjPlate>[];
-  final screws = <SjScrew>[];
-  final used = <int>{}; // r * 100 + c of every screw
   int cellKey(int c, int r) => r * 100 + c;
 
   // Anchor cells (extremities) of a shape where screws look natural.
@@ -457,7 +454,7 @@ SjLevel _build(SjTier tier, int level) {
   }
 
   List<SjRect> randomShape() {
-    final kind = rng.nextInt(level < 4 && tier == SjTier.easy ? 3 : 4);
+    final kind = rng.nextInt(level < 8 && tier == SjTier.easy ? 3 : 4);
     switch (kind) {
       case 0: // horizontal bar
         final w = rng.range(3, cols - 1 < 5 ? cols - 1 : 5);
@@ -478,41 +475,94 @@ SjLevel _build(SjTier tier, int level) {
     }
   }
 
-  bool overlapsAny(List<SjRect> parts) {
-    final tmp = SjPlate(id: -1, parts: parts, material: 0, tint: 0);
-    for (final (c, r) in tmp.cells) {
-      for (final p in plates) {
-        if (p.covers(c, r)) return true;
-      }
-    }
-    return false;
-  }
+  // Lay the plates out. Candidates are scored so the pile spreads over the
+  // whole board (new cells, untouched edges) while still overlapping the
+  // plates below; a layout that does not reach all four edges is retried.
+  var plates = <SjPlate>[];
+  var screws = <SjScrew>[];
+  var used = <int>{}; // r * 100 + c of every screw
+  List<SjPlate>? bestPlates;
+  List<SjScrew>? bestScrews;
+  Set<int>? bestUsed;
+  var bestScore = -1;
 
-  var lastTint = -1;
-  for (var i = 0; i < plateCount; i++) {
-    for (var attempt = 0; attempt < 80; attempt++) {
-      final parts = randomShape();
-      // Keep the pile together: most plates overlap something below.
-      if (plates.isNotEmpty && attempt < 60 && !overlapsAny(parts) && !rng.chance(25)) continue;
-      final tmp = SjPlate(id: -1, parts: parts, material: 0, tint: 0);
-      final free = [for (final a in anchors(parts)) if (!used.contains(cellKey(a.$1, a.$2))) a];
+  for (var layout = 0; layout < 30; layout++) {
+    plates = <SjPlate>[];
+    screws = <SjScrew>[];
+    used = <int>{};
+    final covered = <int>{};
+    var lastTint = -1;
+    for (var i = 0; i < plateCount; i++) {
+      final loose = plates.isEmpty || rng.chance(15);
+      List<SjRect>? pick;
+      var pickScore = -1 << 30;
+      for (var attempt = 0; attempt < 40 && (pick == null || attempt < 14); attempt++) {
+        final parts = randomShape();
+        final tmp = SjPlate(id: -1, parts: parts, material: 0, tint: 0);
+        if (!anchors(parts).any((a) => !used.contains(cellKey(a.$1, a.$2)))) continue;
+        var fresh = 0, over = 0;
+        var top = false, bottom = false, left = false, right = false;
+        for (final (c, r) in tmp.cells) {
+          if (covered.contains(cellKey(c, r))) {
+            over++;
+          } else {
+            fresh++;
+          }
+          if (r == 0) top = true;
+          if (r == rows - 1) bottom = true;
+          if (c == 0) left = true;
+          if (c == cols - 1) right = true;
+        }
+        if (!loose && over == 0 && attempt < 30) continue;
+        bool edgeNew(bool hit, bool Function((int, int)) test) => hit && !covered.any((k) => test((k % 100, k ~/ 100)));
+        var edges = 0;
+        if (edgeNew(top, (x) => x.$2 == 0)) edges++;
+        if (edgeNew(bottom, (x) => x.$2 == rows - 1)) edges++;
+        if (edgeNew(left, (x) => x.$1 == 0)) edges++;
+        if (edgeNew(right, (x) => x.$1 == cols - 1)) edges++;
+        final score = fresh * 4 + edges * 7 + (over > 3 ? 3 : over) * 2 + rng.nextInt(6);
+        if (score > pickScore) {
+          pickScore = score;
+          pick = parts;
+        }
+      }
+      if (pick == null) continue;
+      final tmp = SjPlate(id: -1, parts: pick, material: 0, tint: 0);
+      final free = [for (final a in anchors(pick)) if (!used.contains(cellKey(a.$1, a.$2))) a];
       final cells = tmp.cells.length;
-      if (free.isEmpty) continue;
       final want = cells <= 3 ? 2 : (cells >= 6 ? rng.range(2, 4) : rng.range(2, 3));
       rng.shuffle(free);
-      final pick = free.take(want).toList();
       var tint = rng.nextInt(6);
       if (tint == lastTint) tint = (tint + 1) % 6;
       lastTint = tint;
-      final plate = SjPlate(id: plates.length, parts: parts, material: rng.chance(35) ? 1 : 0, tint: tint);
+      final plate = SjPlate(id: plates.length, parts: pick, material: rng.chance(35) ? 1 : 0, tint: tint);
       plates.add(plate);
-      for (final (c, r) in pick) {
+      for (final (c, r) in free.take(want)) {
         used.add(cellKey(c, r));
         screws.add(SjScrew(id: screws.length, plate: plate.id, c: c, r: r, color: 0));
       }
-      break;
+      for (final (c, r) in tmp.cells) {
+        covered.add(cellKey(c, r));
+      }
     }
+    final edges = [
+      covered.any((k) => k ~/ 100 == 0),
+      covered.any((k) => k ~/ 100 == rows - 1),
+      covered.any((k) => k % 100 == 0),
+      covered.any((k) => k % 100 == cols - 1),
+    ].where((e) => e).length;
+    final score = plates.length == plateCount ? edges * 1000 + covered.length : covered.length;
+    if (score > bestScore) {
+      bestScore = score;
+      bestPlates = plates;
+      bestScrews = screws;
+      bestUsed = used;
+    }
+    if (plates.length == plateCount && edges == 4) break;
   }
+  plates = bestPlates!;
+  screws = bestScrews!;
+  used = bestUsed!;
 
   // Total screws must fill whole boxes.
   var guard = 0;

@@ -24,6 +24,7 @@ class AccountService extends ChangeNotifier {
   static const _kCloudUid = 'acct.cloudUid';
   static const _kCloudEmail = 'acct.cloudEmail';
   static const _kNoPin = 'GUEST_NO_PIN';
+  static const _kCountry = 'acct.country';
 
   final LocalAuthentication _auth = LocalAuthentication();
 
@@ -42,6 +43,14 @@ class AccountService extends ChangeNotifier {
   String? get cloudUid => Storage.globalString(_kCloudUid);
   String? get cloudEmail => Storage.globalString(_kCloudEmail);
   bool get biometricEnabled => Storage.globalBool(_kBio);
+
+  /// ISO code of the player's country (asked before sign-in); null = not chosen yet.
+  String? get country => Storage.globalString(_kCountry);
+
+  Future<void> setCountry(String code) async {
+    await Storage.setGlobalString(_kCountry, code);
+    notifyListeners();
+  }
 
   /// True only for the very first session after registering (for "Welcome").
   bool justRegistered = false;

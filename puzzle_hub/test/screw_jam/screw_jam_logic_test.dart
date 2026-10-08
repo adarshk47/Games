@@ -127,6 +127,16 @@ void main() {
     }
     expect(sjSpec(SjTier.extreme).tray < sjSpec(SjTier.easy).tray, isTrue);
     expect(sjPlatesFor(SjTier.extreme, 30) > sjPlatesFor(SjTier.easy, 30), isTrue);
+    expect(kSjLevels, 100);
+    // Smooth: plates / colors never drop and never jump by more than one.
+    for (final t in SjTier.values) {
+      for (var n = 2; n <= kSjLevels; n++) {
+        final dp = sjPlatesFor(t, n) - sjPlatesFor(t, n - 1);
+        final dc = sjColorsFor(t, n) - sjColorsFor(t, n - 1);
+        expect(dp >= 0 && dp <= 1, isTrue, reason: '${t.id} L$n plates');
+        expect(dc >= 0 && dc <= 1, isTrue, reason: '${t.id} L$n colors');
+      }
+    }
   });
 
   test('generation is deterministic and differs per tier/level', () {
@@ -161,6 +171,17 @@ void main() {
         }
         for (final e in perColor.entries) {
           expect(lv.boxQueue.where((c) => c == e.key).length * kSjBoxSize, e.value, reason: why);
+        }
+        // Plates spread over the whole board: every edge row / column is
+        // reached and each third of the rows holds some plate.
+        final covered = {for (final p in lv.plates) ...p.cells};
+        expect(covered.any((x) => x.$2 == 0), isTrue, reason: '$why top');
+        expect(covered.any((x) => x.$2 == lv.rows - 1), isTrue, reason: '$why bottom');
+        expect(covered.any((x) => x.$1 == 0), isTrue, reason: '$why left');
+        expect(covered.any((x) => x.$1 == lv.cols - 1), isTrue, reason: '$why right');
+        for (var band = 0; band < 3; band++) {
+          final r0 = band * lv.rows ~/ 3, r1 = (band + 1) * lv.rows ~/ 3;
+          expect(covered.any((x) => x.$2 >= r0 && x.$2 < r1), isTrue, reason: '$why band $band');
         }
         // Built-in solution wins without ever losing.
         final g = SjGame(lv);

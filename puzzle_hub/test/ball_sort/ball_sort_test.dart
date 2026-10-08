@@ -55,11 +55,21 @@ void main() {
     expect(colorsForLevel(BsDifficulty.extreme, 100), 20);
     expect(emptyTubesForLevel(BsDifficulty.extreme, 1), 2);
     expect(emptyTubesForLevel(BsDifficulty.extreme, 30), 1);
+    expect(kBsLevelCount, 100);
+    // Smooth growth: colours never drop and rise by at most one per level;
+    // scramble depth keeps growing up to level 100.
+    for (final d in BsDifficulty.values) {
+      for (var l = 2; l <= kBsLevelCount; l++) {
+        final a = colorsForLevel(d, l - 1), b = colorsForLevel(d, l);
+        expect(b - a, inInclusiveRange(0, 1), reason: '${d.id} L$l');
+        expect(scrambleSteps(d, l), greaterThan(scrambleSteps(d, l - 1)));
+      }
+    }
   });
 
   test('every level of every difficulty is valid and solvable by its solution', () {
     for (final d in BsDifficulty.values) {
-      for (var level = 1; level <= 60; level++) {
+      for (var level = 1; level <= kBsLevelCount; level++) {
         final g = generateLevelWithSolution(d, level);
         final s = g.state;
         final counts = <int, int>{};

@@ -26,6 +26,10 @@ class AdIds {
 /// (web, desktop, widget tests, no consent, plugin errors); it then simply
 /// returns false / does nothing. Nothing here may ever throw or block startup.
 class AdsService {
+  /// Total rewarded ads fully watched by this account (shown in coin history).
+  static const kAdsWatched = 'ads.watched';
+  static int get adsWatched => Storage.getInt(kAdsWatched);
+
   AdsService._();
 
   // ---- Tunables --------------------------------------------------------------
@@ -226,6 +230,7 @@ class AdsService {
       _showing = false;
       _loadRewarded();
       _notify();
+      if (earned) Storage.setInt(kAdsWatched, Storage.getInt(kAdsWatched) + 1);
       return earned;
     } catch (e) {
       debugPrint('rewarded show failed: $e');
@@ -256,7 +261,7 @@ class AdsService {
     final count = rewardedToday + 1;
     await Storage.setString(_kRewardDay, today);
     await Storage.setInt(_kRewardCount, count);
-    await Rewards.addCoins(rewardedCoins, label: tr('ads.reward_label'));
+    await Rewards.addCoins(rewardedCoins, label: tr('ads.reward_label'), source: 'ad');
     _notify();
     return rewardedCoins;
   }
@@ -288,7 +293,7 @@ class AdsService {
 
   /// Buys (or extends) the pass for [adFreePrice] coins. False if unaffordable.
   static Future<bool> buyAdFree() async {
-    if (!await Rewards.spend(adFreePrice)) return false;
+    if (!await Rewards.spend(adFreePrice, reason: 'adfree')) return false;
     final now = clock();
     final base = adFree ? adFreeUntil! : now;
     await Storage.setInt(kAdFreeUntil, base.add(adFreeDuration).millisecondsSinceEpoch);

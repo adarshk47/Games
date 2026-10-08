@@ -20,21 +20,32 @@ enum BsDifficulty {
       BsDifficulty.values.firstWhere((d) => d.id == id, orElse: () => BsDifficulty.easy);
 }
 
-/// Number of colors for a level (1-based).
-/// Easy 3-5, Medium 6-9, Hard 10-14, Extreme 15-20.
+/// Levels per difficulty.
+const int kBsLevelCount = 100;
+
+/// Colour range per difficulty: Easy 3-5, Medium 6-9, Hard 10-14, Extreme 15-20.
+const Map<BsDifficulty, (int, int)> _colorRange = {
+  BsDifficulty.easy: (3, 5),
+  BsDifficulty.medium: (6, 9),
+  BsDifficulty.hard: (10, 14),
+  BsDifficulty.extreme: (15, 20),
+};
+
+/// Level at which a difficulty reaches its most colours; later levels grow
+/// harder through deeper scrambles instead.
+const int _kFullColorsAt = 70;
+
+/// Number of colors for a level (1-based). Rises step by step over the first
+/// [_kFullColorsAt] levels from the tier's minimum to its maximum.
 int colorsForLevel(BsDifficulty d, int level) {
-  final l = max(1, level) - 1;
-  switch (d) {
-    case BsDifficulty.easy:
-      return min(5, 3 + l ~/ 4);
-    case BsDifficulty.medium:
-      return min(9, 6 + l ~/ 4);
-    case BsDifficulty.hard:
-      return min(14, 10 + l ~/ 3);
-    case BsDifficulty.extreme:
-      return min(20, 15 + l ~/ 3);
-  }
+  final (lo, hi) = _colorRange[d]!;
+  final l = level.clamp(1, kBsLevelCount) - 1;
+  return min(hi, lo + l * (hi - lo + 1) ~/ _kFullColorsAt);
 }
+
+/// Number of reverse moves used to scramble a level: grows with both the
+/// number of colours and the level, so difficulty keeps rising to level 100.
+int scrambleSteps(BsDifficulty d, int level) => 80 + colorsForLevel(d, level) * 50 + level.clamp(1, kBsLevelCount) * 4;
 
 /// Number of empty tubes for a level.
 /// Extreme starts with two spare tubes, then drops to a single one.
@@ -159,7 +170,7 @@ BallSortLevel generateLevelWithSolution(BsDifficulty d, int level) {
       for (var e = 0; e < empties; e++) <int>[],
     ];
     final rev = <List<int>>[]; // reverse moves [from, to] (ball taken from `from`, put on `to`)
-    final steps = 80 + colors * 50;
+    final steps = scrambleSteps(d, level);
     for (var s = 0; s < steps; s++) {
       final from = rng.nextInt(total);
       final to = rng.nextInt(total);

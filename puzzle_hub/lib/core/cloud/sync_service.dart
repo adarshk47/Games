@@ -269,7 +269,7 @@ class SyncService with WidgetsBindingObserver {
       // The user may have locked/switched while we were busy.
       if (Storage.userPrefix != prefix) return;
       Rewards.reload();
-      if (credits > 0) await Rewards.addCoins(credits, label: tr('cloud.invite_bonus'));
+      if (credits > 0) await Rewards.addCoins(credits, label: tr('cloud.invite_bonus'), source: 'invite');
       final now = DateTime.now();
       lastSynced.value = now;
       lastError.value = null;

@@ -13,14 +13,26 @@ void main() {
         expect(List.of(b)..sort(), [for (var i = 0; i < b.length; i++) i]);
         expect(SlidingLogic.isSolvable(b, tier.size), isTrue, reason: '${tier.key} L$l');
         expect(SlidingLogic.isSolved(b), isFalse);
+        // Deterministic per tier/level seed.
+        final a1 = SlidingLogic.shuffle(tier.size, tier.depthFor(l), Random(tier.seedFor(l)));
+        final a2 = SlidingLogic.shuffle(tier.size, tier.depthFor(l), Random(tier.seedFor(l)));
+        expect(a1, a2);
+        expect(SlidingLogic.isSolvable(a1, tier.size), isTrue);
+        expect(SlidingLogic.isSolved(a1), isFalse);
       }
     }
   });
 
   test('depth increases with level and tiers have the right sizes', () {
     expect(SlideTier.values.map((t) => t.size), [3, 4, 5, 6]);
+    expect(SlideTier.levelCount, 100);
     for (final t in SlideTier.values) {
       expect(t.depthFor(20), greaterThan(t.depthFor(1)));
+      for (var l = 2; l <= SlideTier.levelCount; l++) {
+        expect(t.depthFor(l), greaterThan(t.depthFor(l - 1)), reason: '${t.key} L$l');
+      }
+      // Original first 20 levels unchanged.
+      expect(t.depthFor(20), t.baseDepth + t.depthStep * 20);
     }
   });
 

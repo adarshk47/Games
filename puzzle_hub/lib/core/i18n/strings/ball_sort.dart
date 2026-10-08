@@ -191,4 +191,13 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'pa': "ਟਿਊਬ +🪙",
     'bho': "ट्यूब +🪙",
   },
+  'ball_sort.bought': {
+    'en': "BOUGHT",
+    'hi': "खरीदा",
+    'hinglish': "KHARIDA",
+    'te': "కొన్నారు",
+    'ta': "வாங்கியது",
+    'pa': "ਖਰੀਦਿਆ",
+    'bho': "खरीदल",
+  },
 };

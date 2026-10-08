@@ -1,5 +1,5 @@
 /// Level definitions + star rules (pure Dart).
-const int kLevelCount = 30;
+const int kLevelCount = 100;
 
 /// Difficulty tier, for the Labyrinth.
 enum MazeTier {
@@ -14,6 +14,9 @@ enum MazeTier {
 
 /// Linear interpolation of [a]..[b] over levels 1..[kLevelCount].
 int _lerp(int a, int b, int level) => a + ((level - 1) * (b - a) / (kLevelCount - 1)).round();
+
+/// Same as [_lerp] for fractional values.
+double _lerpD(double a, double b, int level) => a + (level - 1) * (b - a) / (kLevelCount - 1);
 
 class LabLevel {
   const LabLevel(this.tier, this.level, this.size, this.fogRadius, this.limitFactor, this.torches, this.seed);
@@ -37,16 +40,20 @@ class LabLevel {
     final seed = 1000 + level * 7919 + tier.index * 100003;
     switch (tier) {
       case MazeTier.easy:
-        return LabLevel(tier, level, _lerp(7, 11, level), 0, 0, 3, seed);
+        return LabLevel(tier, level, _lerp(7, 13, level), 0, 0, 3, seed);
       case MazeTier.medium:
-        return LabLevel(tier, level, _lerp(9, 15, level), level < 10 ? 0 : 4, level % 5 == 0 ? 4 : 0, 3, seed);
+        // Fog from level 10 (tighter from 60); every 5th level has a move limit.
+        final fog = level < 10 ? 0 : (level < 60 ? 4 : 3);
+        return LabLevel(tier, level, _lerp(9, 17, level), fog, level % 5 == 0 ? 4 : 0, 3, seed);
       case MazeTier.hard:
-        return LabLevel(tier, level, _lerp(11, 19, level), 3, 3.0, 2, seed);
+        return LabLevel(tier, level, _lerp(11, 21, level), level < 60 ? 3 : 2, _round1(_lerpD(3.0, 2.5, level)), 2, seed);
       case MazeTier.extreme:
-        return LabLevel(tier, level, _lerp(15, 25, level), 2, 2.5, 1, seed);
+        return LabLevel(tier, level, _lerp(15, 27, level), 2, _round1(_lerpD(2.5, 2.0, level)), 1, seed);
     }
   }
 }
+
+double _round1(double v) => (v * 10).round() / 10;
 
 /// Stars by moves vs optimal. Using a torch caps the result at 2 stars.
 int labStars(int moves, int optimal, {int torchesUsed = 0}) {
@@ -89,7 +96,7 @@ class MemLevel {
   static const int peekMs = 1500;
 
   static const _minSize = {MazeTier.easy: 5, MazeTier.medium: 7, MazeTier.hard: 9, MazeTier.extreme: 11};
-  static const _maxSize = {MazeTier.easy: 7, MazeTier.medium: 9, MazeTier.hard: 11, MazeTier.extreme: 13};
+  static const _maxSize = {MazeTier.easy: 8, MazeTier.medium: 10, MazeTier.hard: 12, MazeTier.extreme: 14};
   static const _baseSec = {MazeTier.easy: 6, MazeTier.medium: 5, MazeTier.hard: 4, MazeTier.extreme: 3};
   static const _peeks = {MazeTier.easy: 3, MazeTier.medium: 2, MazeTier.hard: 1, MazeTier.extreme: 0};
 

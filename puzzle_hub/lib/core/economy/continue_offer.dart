@@ -91,7 +91,7 @@ class _OfferDialogState extends State<_OfferDialog> {
 
   Future<void> _useCoins() async {
     setState(() => _busy = true);
-    final ok = await Rewards.spend(widget.price);
+    final ok = await Rewards.spend(widget.price, reason: widget.kind.name);
     if (!mounted) return;
     if (ok) {
       Navigator.of(context).pop(true);

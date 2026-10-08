@@ -1,7 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../core/economy/continue_offer.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -103,8 +104,11 @@ class _DiffCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unlocked = Storage.getInt(bsKey(difficulty, 'unlocked'), 1);
-    final done = unlocked - 1;
+    var cleared = 0;
+    for (var l = 1; l <= kBsLevelCount; l++) {
+      if (bsStars(difficulty, l) > 0) cleared++;
+    }
+    final done = math.max(math.min(bsUnlockedInSequence(difficulty), kBsLevelCount + 1) - 1, cleared);
     return GlassCard(
       onTap: onTap,
       glow: last ? color : null,
@@ -173,26 +177,22 @@ class _LevelGridScreenState extends State<_LevelGridScreen> {
 
   bool _offerOpen = false;
 
-  /// Buy the next locked level (coins / ad), persist it and open it.
-  Future<void> _unlockNext(int level) async {
-    final unlocked = Storage.getInt(bsKey(_d, 'unlocked'), 1);
-    if (level != unlocked + 1 || _offerOpen) return;
+  /// Tapping a locked level: skip ahead with coins (100 per skipped level, a
+  /// limited number of plays), then open it.
+  Future<void> _buy(int level) async {
+    if (_offerOpen) return;
     _offerOpen = true;
-    final paid = await showContinueOffer(context, OfferKind.unlockLevel);
+    final ok = await bsEnsurePlayable(context, _d, level);
     _offerOpen = false;
-    if (!mounted || !paid) return;
-    if (Storage.getInt(bsKey(_d, 'unlocked'), 1) < level) {
-      await Storage.setInt(bsKey(_d, 'unlocked'), level);
-    }
     if (!mounted) return;
     setState(() {});
-    await _play(level);
+    if (ok) await _play(level);
   }
 
   @override
   Widget build(BuildContext context) {
-    final unlocked = Storage.getInt(bsKey(_d, 'unlocked'), 1);
-    final current = Storage.getInt(bsKey(_d, 'level'), 1).clamp(1, unlocked);
+    final free = bsFreeUpTo(_d);
+    final current = Storage.getInt(bsKey(_d, 'level'), 1).clamp(1, free);
     return GameScaffold(
       title: tr('ball_sort.title_tier', {'tier': bsTierName(_d)}),
       tint: bsAccent,
@@ -211,17 +211,22 @@ class _LevelGridScreenState extends State<_LevelGridScreen> {
             padding: const EdgeInsets.all(18),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 80, mainAxisSpacing: 12, crossAxisSpacing: 12),
-            itemCount: unlocked + 9,
+            itemCount: kBsLevelCount,
             itemBuilder: (_, i) {
               final lv = i + 1;
+              final unlocked = bsUnlocked(_d, lv);
+              final plays = unlocked ? 0 : bsPlaysLeft(_d, lv);
+              final stars = bsStars(_d, lv);
               return _LevelTile(
+                key: ValueKey('bs-level-$lv'),
                 level: lv,
-                locked: lv > unlocked,
-                stars: Storage.getInt(bsKey(_d, 'stars.$lv')),
-                done: lv < unlocked,
+                locked: !unlocked && plays == 0,
+                playsLeft: plays,
+                stars: stars,
+                done: stars > 0 || lv < free,
                 current: lv == current,
                 onTap: () => _play(lv),
-                onLockedTap: lv == unlocked + 1 ? () => _unlockNext(lv) : null,
+                onLockedTap: () => _buy(lv),
               );
             },
           ),
@@ -233,25 +238,32 @@ class _LevelGridScreenState extends State<_LevelGridScreen> {
 
 class _LevelTile extends StatelessWidget {
   const _LevelTile({
+    super.key,
     required this.level,
     required this.locked,
     required this.done,
     required this.current,
     required this.stars,
     required this.onTap,
-    this.onLockedTap,
+    required this.onLockedTap,
+    this.playsLeft = 0,
   });
   final int level, stars;
   final bool locked, done, current;
   final VoidCallback onTap;
 
-  /// Set only for the next locked level, which can be bought.
-  final VoidCallback? onLockedTap;
+  /// Locked levels can be skipped to with coins.
+  final VoidCallback onLockedTap;
+
+  /// Plays left on a bought (skipped) level; 0 = not bought.
+  final int playsLeft;
 
   @override
   Widget build(BuildContext context) {
+    final bought = playsLeft > 0;
     final tile = Container(
       alignment: Alignment.center,
+      padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         gradient: locked
@@ -262,21 +274,34 @@ class _LevelTile extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [bsAccent.withValues(alpha: 0.28), bsAccent.withValues(alpha: 0.08)]),
-        border: Border.all(color: current ? Colors.white.withValues(alpha: 0.7) : Pal.glassBorder),
+        border: Border.all(
+            color: bought ? Pal.gold : (current ? Colors.white.withValues(alpha: 0.7) : Pal.glassBorder),
+            width: bought ? 1.5 : 1),
         boxShadow: locked
             ? null
             : [BoxShadow(color: bsAccent.withValues(alpha: current ? 0.55 : 0.2), blurRadius: current ? 16 : 8, spreadRadius: -2)],
       ),
-      child: locked
-          ? Icon(onLockedTap != null ? Icons.lock_open_rounded : Icons.lock_rounded,
-              size: 18, color: onLockedTap != null ? Pal.gold : Pal.textDim)
-          : Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text('$level',
-                  style: TextStyle(color: current ? Colors.white : Pal.text, fontWeight: FontWeight.w800, fontSize: 18)),
-              if (done) StarRow(stars: stars, size: 12),
-            ]),
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: locked
+            ? Column(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.lock_rounded, size: 18, color: Pal.textDim),
+                Text('$level', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 11)),
+              ])
+            : Column(mainAxisSize: MainAxisSize.min, children: [
+                if (bought)
+                  Text(tr('ball_sort.bought'),
+                      style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                Text('$level',
+                    style: TextStyle(color: current ? Colors.white : Pal.text, fontWeight: FontWeight.w800, fontSize: 18)),
+                if (bought)
+                  Text(tr('common.skip.plays_left', {'n': playsLeft}),
+                      style: const TextStyle(color: Pal.gold, fontSize: 10, fontWeight: FontWeight.w800))
+                else if (done)
+                  StarRow(stars: stars, size: 12),
+              ]),
+      ),
     );
-    if (locked) return onLockedTap == null ? tile : Pressable(onTap: onLockedTap!, child: tile);
-    return Pressable(onTap: onTap, child: tile);
+    return Pressable(onTap: locked ? onLockedTap : onTap, child: tile);
   }
 }

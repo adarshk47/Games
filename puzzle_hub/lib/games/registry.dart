@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
-import 'arrows/arrows_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
 import 'block_puzzle/block_puzzle_screen.dart';
 import 'flow_pairs/flow_pairs_screen.dart';
@@ -13,7 +12,6 @@ import 'maze_escape/maze_escape_screen.dart';
 import 'memory_boost/memory_boost_screen.dart';
 import 'minesweeper/minesweeper_screen.dart';
 import 'mom_memory/mom_memory_screen.dart';
-import 'parking_jam/parking_jam_screen.dart';
 import 'screw_jam/screw_jam_screen.dart';
 import 'sliding_puzzle/sliding_puzzle_screen.dart';
 import 'sudoku/sudoku_screen.dart';
@@ -97,15 +95,6 @@ final List<GameInfo> allGames = [
     builder: (_) => const ScrewJamScreen(),
   ),
   GameInfo(
-    id: 'parking_jam',
-    title: 'Parking Jam',
-    subtitle: 'Gaadiyan nikalo, parking khali karo',
-    icon: Icons.directions_car_rounded,
-    emoji: '🚗',
-    color: const Color(0xFFEF4444),
-    builder: (_) => const ParkingJamScreen(),
-  ),
-  GameInfo(
     id: 'tile_match',
     title: 'Tile Match',
     subtitle: 'Teen jaise tiles jodo',
@@ -176,14 +165,5 @@ final List<GameInfo> allGames = [
     emoji: '🎨',
     color: const Color(0xFF5EEAD4),
     builder: (_) => const FocusColorScreen(),
-  ),
-  GameInfo(
-    id: 'arrows',
-    title: 'Arrows',
-    subtitle: 'Saare arrows bahar nikalo',
-    icon: Icons.arrow_upward_rounded,
-    emoji: '🏹',
-    color: const Color(0xFFFF7A59),
-    builder: (_) => const ArrowsScreen(),
   ),
 ];

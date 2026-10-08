@@ -11,6 +11,7 @@ import '../ui/ui.dart';
 import 'daily_quests.dart';
 import 'daily_reward.dart';
 import 'reminder_service.dart';
+import '../features.dart';
 
 /// Daily tab body (no Scaffold): login reward, streaks, today's quests,
 /// all-done bonus and the achievements entry.
@@ -21,7 +22,8 @@ class DailyHubScreen extends StatefulWidget {
   State<DailyHubScreen> createState() => _DailyHubScreenState();
 }
 
-class _DailyHubScreenState extends State<DailyHubScreen> with WidgetsBindingObserver {
+class _DailyHubScreenState extends State<DailyHubScreen>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -55,28 +57,41 @@ class _DailyHubScreenState extends State<DailyHubScreen> with WidgetsBindingObse
             const _Header(),
             const SizedBox(height: 16),
             _LoginRewardCard(tick: tick),
-            const SizedBox(height: 14),
-            _StreakRow(tick: tick),
+            if (kStreaksEnabled) ...[
+              const SizedBox(height: 14),
+              _StreakRow(tick: tick),
+            ],
             const SizedBox(height: 22),
             _SectionTitle(
               title: tr('daily.todays_quests'),
-              trailing: '${quests.where((q) => q.completed).length}/${quests.length}',
+              trailing:
+                  '${quests.where((q) => q.completed).length}/${quests.length}',
             ),
             const SizedBox(height: 10),
             for (var i = 0; i < quests.length; i++)
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: _QuestCard(q: quests[i], color: Pal.accents[(i * 3 + 2) % Pal.accents.length])
-                    .animate()
-                    .fadeIn(delay: (120 + 80 * i).ms, duration: 350.ms)
-                    .slideX(begin: 0.08, end: 0, curve: Curves.easeOutCubic),
+                child:
+                    _QuestCard(
+                          q: quests[i],
+                          color: Pal.accents[(i * 3 + 2) % Pal.accents.length],
+                        )
+                        .animate()
+                        .fadeIn(delay: (120 + 80 * i).ms, duration: 350.ms)
+                        .slideX(
+                          begin: 0.08,
+                          end: 0,
+                          curve: Curves.easeOutCubic,
+                        ),
               ),
             const SizedBox(height: 4),
             _BonusCard(tick: tick),
-            const SizedBox(height: 22),
-            _SectionTitle(title: tr('ach.title')),
-            const SizedBox(height: 10),
-            _AchievementsEntry(tick: tick),
+            if (kAchievementsEnabled) ...[
+              const SizedBox(height: 22),
+              _SectionTitle(title: tr('ach.title')),
+              const SizedBox(height: 10),
+              _AchievementsEntry(tick: tick),
+            ],
           ],
         );
       },
@@ -89,15 +104,34 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      Expanded(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(tr('daily.title'), style: const TextStyle(color: Pal.text, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 0.3)),
-          Text(tr('daily.tagline'), style: TextStyle(color: Pal.textDim.withValues(alpha: 0.9), fontSize: 13)),
-        ]),
-      ),
-      const CoinPill(),
-    ]).animate().fadeIn(duration: 300.ms).slideY(begin: -0.2, end: 0);
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                tr('daily.title'),
+                style: const TextStyle(
+                  color: Pal.text,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              Text(
+                tr('daily.tagline'),
+                style: TextStyle(
+                  color: Pal.textDim.withValues(alpha: 0.9),
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const CoinPill(),
+      ],
+    ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.2, end: 0);
   }
 }
 
@@ -107,16 +141,31 @@ class _SectionTitle extends StatelessWidget {
   final String? trailing;
 
   @override
-  Widget build(BuildContext context) => Row(children: [
-        Expanded(
-          child: Text(title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Pal.text, fontSize: 19, fontWeight: FontWeight.w800)),
+  Widget build(BuildContext context) => Row(
+    children: [
+      Expanded(
+        child: Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Pal.text,
+            fontSize: 19,
+            fontWeight: FontWeight.w800,
+          ),
         ),
-        if (trailing != null)
-          Text(trailing!, style: const TextStyle(color: Pal.gold, fontSize: 15, fontWeight: FontWeight.w800)),
-      ]);
+      ),
+      if (trailing != null)
+        Text(
+          trailing!,
+          style: const TextStyle(
+            color: Pal.gold,
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+    ],
+  );
 }
 
 // ---------------------------------------------------------------- login reward
@@ -157,39 +206,79 @@ class _LoginRewardCardState extends State<_LoginRewardCard> {
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Pal.goldDeep.withValues(alpha: can ? 0.30 : 0.14), const Color(0x0DFFFFFF)],
+        colors: [
+          Pal.goldDeep.withValues(alpha: can ? 0.30 : 0.14),
+          const Color(0x0DFFFFFF),
+        ],
       ),
-      child: Column(children: [
-        Row(children: [
-          _Chest(open: !can, burst: _burst),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(can ? tr('daily.reward_title') : tr('daily.reward_claimed'),
-                  style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              Text(
-                can
-                    ? (broken
-                        ? tr('daily.streak_restart', {'day': day, 'coins': reward})
-                        : tr('daily.day_of_7', {'day': day, 'coins': reward}))
-                    : tr('daily.come_back', {
-                        'day': DailyReward.cycleDay(DailyReward.streak + 1),
-                        'coins': DailyReward.rewardFor(DailyReward.streak + 1),
-                      }),
-                style: const TextStyle(color: Pal.textDim, fontSize: 13, height: 1.3),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _Chest(open: !can, burst: _burst),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      can
+                          ? tr('daily.reward_title')
+                          : tr('daily.reward_claimed'),
+                      style: const TextStyle(
+                        color: Pal.text,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      can
+                          ? (broken
+                                ? tr('daily.streak_restart', {
+                                    'day': day,
+                                    'coins': reward,
+                                  })
+                                : tr('daily.day_of_7', {
+                                    'day': day,
+                                    'coins': reward,
+                                  }))
+                          : tr('daily.come_back', {
+                              'day': DailyReward.cycleDay(
+                                DailyReward.streak + 1,
+                              ),
+                              'coins': DailyReward.rewardFor(
+                                DailyReward.streak + 1,
+                              ),
+                            }),
+                      style: const TextStyle(
+                        color: Pal.textDim,
+                        fontSize: 13,
+                        height: 1.3,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    if (can)
+                      PremiumButton(
+                            label: tr('daily.claim', {'coins': reward}),
+                            compact: true,
+                            onTap: _claiming ? null : _claim,
+                          )
+                          .animate(onPlay: (c) => c.repeat(reverse: true))
+                          .scale(
+                            begin: const Offset(1, 1),
+                            end: const Offset(1.05, 1.05),
+                            duration: 800.ms,
+                          ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 10),
-              if (can)
-                PremiumButton(label: tr('daily.claim', {'coins': reward}), compact: true, onTap: _claiming ? null : _claim)
-                    .animate(onPlay: (c) => c.repeat(reverse: true))
-                    .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05), duration: 800.ms),
-            ]),
+            ],
           ),
-        ]),
-        const SizedBox(height: 14),
-        _WeekStrip(currentDay: day, claimedToday: !can),
-      ]),
+          const SizedBox(height: 14),
+          _WeekStrip(currentDay: day, claimedToday: !can),
+        ],
+      ),
     );
   }
 }
@@ -201,15 +290,17 @@ class _WeekStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      for (var d = 1; d <= 7; d++)
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.5),
-            child: _dayPill(d),
+    return Row(
+      children: [
+        for (var d = 1; d <= 7; d++)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2.5),
+              child: _dayPill(d),
+            ),
           ),
-        ),
-    ]);
+      ],
+    );
   }
 
   Widget _dayPill(int d) {
@@ -224,23 +315,48 @@ class _WeekStrip extends StatelessWidget {
         gradient: done
             ? Pal.accent(Pal.success)
             : today
-                ? Pal.accent(Pal.goldDeep)
-                : null,
+            ? Pal.accent(Pal.goldDeep)
+            : null,
         color: done || today ? null : Colors.black.withValues(alpha: 0.25),
-        border: Border.all(color: today ? Colors.white.withValues(alpha: 0.7) : Pal.glassBorder),
-        boxShadow: today && !claimedToday ? [BoxShadow(color: Pal.gold.withValues(alpha: 0.5), blurRadius: 12)] : null,
-      ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(tr('daily.day_short', {'n': d}), style: TextStyle(color: done || today ? Colors.white : Pal.textDim, fontSize: 11, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 2),
-        done
-            ? const Icon(Icons.check_rounded, color: Colors.white, size: 17)
-            : Text(big ? '🎁' : '🪙', style: const TextStyle(fontSize: 14)),
-        FittedBox(
-          child: Text('${DailyReward.rewards[d - 1]}',
-              style: TextStyle(color: done || today ? Colors.white : Pal.gold, fontSize: 12, fontWeight: FontWeight.w900)),
+        border: Border.all(
+          color: today ? Colors.white.withValues(alpha: 0.7) : Pal.glassBorder,
         ),
-      ]),
+        boxShadow: today && !claimedToday
+            ? [
+                BoxShadow(
+                  color: Pal.gold.withValues(alpha: 0.5),
+                  blurRadius: 12,
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            tr('daily.day_short', {'n': d}),
+            style: TextStyle(
+              color: done || today ? Colors.white : Pal.textDim,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 2),
+          done
+              ? const Icon(Icons.check_rounded, color: Colors.white, size: 17)
+              : Text(big ? '🎁' : '🪙', style: const TextStyle(fontSize: 14)),
+          FittedBox(
+            child: Text(
+              '${DailyReward.rewards[d - 1]}',
+              style: TextStyle(
+                color: done || today ? Colors.white : Pal.gold,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -259,40 +375,59 @@ class _Chest extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: RadialGradient(colors: [
-          Pal.gold.withValues(alpha: open ? 0.25 : 0.55),
-          Pal.goldDeep.withValues(alpha: 0.0),
-        ]),
+        gradient: RadialGradient(
+          colors: [
+            Pal.gold.withValues(alpha: open ? 0.25 : 0.55),
+            Pal.goldDeep.withValues(alpha: 0.0),
+          ],
+        ),
       ),
       child: Text(open ? '🪙' : '🎁', style: const TextStyle(fontSize: 46)),
     );
     if (!open) {
       chest = chest
           .animate(onPlay: (c) => c.repeat())
-          .rotate(begin: -0.02, end: 0.02, duration: 180.ms, curve: Curves.easeInOut)
+          .rotate(
+            begin: -0.02,
+            end: 0.02,
+            duration: 180.ms,
+            curve: Curves.easeInOut,
+          )
           .then()
           .rotate(begin: 0.02, end: -0.02, duration: 180.ms)
           .then(delay: 1400.ms);
     } else if (burst) {
-      chest = chest.animate().scale(begin: const Offset(0.4, 0.4), end: const Offset(1, 1), curve: Curves.elasticOut, duration: 900.ms);
+      chest = chest.animate().scale(
+        begin: const Offset(0.4, 0.4),
+        end: const Offset(1, 1),
+        curve: Curves.elasticOut,
+        duration: 900.ms,
+      );
     }
     return SizedBox(
       width: 86,
       height: 86,
-      child: Stack(alignment: Alignment.center, clipBehavior: Clip.none, children: [
-        chest,
-        if (burst)
-          for (var i = 0; i < 8; i++)
-            Text('🪙', style: const TextStyle(fontSize: 16))
-                .animate()
-                .move(
-                  begin: Offset.zero,
-                  end: Offset(math.cos(i * math.pi / 4) * 52, math.sin(i * math.pi / 4) * 52),
-                  duration: 650.ms,
-                  curve: Curves.easeOutCubic,
-                )
-                .fadeOut(delay: 400.ms, duration: 400.ms),
-      ]),
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          chest,
+          if (burst)
+            for (var i = 0; i < 8; i++)
+              Text('🪙', style: const TextStyle(fontSize: 16))
+                  .animate()
+                  .move(
+                    begin: Offset.zero,
+                    end: Offset(
+                      math.cos(i * math.pi / 4) * 52,
+                      math.sin(i * math.pi / 4) * 52,
+                    ),
+                    duration: 650.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .fadeOut(delay: 400.ms, duration: 400.ms),
+        ],
+      ),
     );
   }
 }
@@ -306,29 +441,59 @@ class _StreakRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget tile(String emoji, String value, String label, Color c) => Expanded(
-          child: GlassCard(
-            blur: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Row(children: [
-              Text(emoji, style: const TextStyle(fontSize: 28)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(value, style: TextStyle(color: c, fontSize: 20, fontWeight: FontWeight.w900)),
-                  Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Pal.textDim, fontSize: 11)),
-                ]),
+      child: GlassCard(
+        blur: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        child: Row(
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 28)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      color: c,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Pal.textDim, fontSize: 11),
+                  ),
+                ],
               ),
-            ]),
-          ),
-        );
+            ),
+          ],
+        ),
+      ),
+    );
     final s = DailyReward.streak;
     final c = DailyQuests.challengeStreak;
-    String days(int n) => tr(n == 1 ? 'daily.days_one' : 'daily.days_many', {'n': n});
-    return Row(children: [
-      tile('🔥', days(s), tr('daily.login_streak', {'n': DailyReward.bestStreak}), const Color(0xFFFB923C)),
-      const SizedBox(width: 10),
-      tile('🏆', days(c), tr('daily.challenge_streak', {'n': DailyQuests.challengeBest}), Pal.gold),
-    ]).animate().fadeIn(delay: 80.ms, duration: 300.ms);
+    String days(int n) =>
+        tr(n == 1 ? 'daily.days_one' : 'daily.days_many', {'n': n});
+    return Row(
+      children: [
+        tile(
+          '🔥',
+          days(s),
+          tr('daily.login_streak', {'n': DailyReward.bestStreak}),
+          const Color(0xFFFB923C),
+        ),
+        const SizedBox(width: 10),
+        tile(
+          '🏆',
+          days(c),
+          tr('daily.challenge_streak', {'n': DailyQuests.challengeBest}),
+          Pal.gold,
+        ),
+      ],
+    ).animate().fadeIn(delay: 80.ms, duration: 300.ms);
   }
 }
 
@@ -346,56 +511,94 @@ class _QuestCard extends StatelessWidget {
       blur: 0,
       glow: q.claimable ? color : null,
       padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-      child: Row(children: [
-        Container(
-          width: 48,
-          height: 48,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: q.claimed ? Pal.accent(Pal.success) : Pal.accent(color),
-          ),
-          child: q.claimed
-              ? const Icon(Icons.check_rounded, color: Colors.white, size: 28)
-              : Text(t.emoji, style: const TextStyle(fontSize: 24)),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(t.title,
-                style: TextStyle(
-                  color: q.claimed ? Pal.textDim : Pal.text,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 14.5,
-                  decoration: q.claimed ? TextDecoration.lineThrough : null,
-                  decorationColor: Pal.textDim,
-                )),
-            const SizedBox(height: 8),
-            Row(children: [
-              Expanded(child: ProgressBar(value: q.fraction, color: q.completed ? Pal.success : color, height: 7)),
-              const SizedBox(width: 8),
-              Text('${q.progress}/${t.target}',
-                  style: const TextStyle(color: Pal.textDim, fontSize: 12, fontWeight: FontWeight.w700)),
-            ]),
-          ]),
-        ),
-        const SizedBox(width: 10),
-        if (q.claimable)
-          PremiumButton(label: '+${t.reward}', icon: Icons.redeem_rounded, compact: true, onTap: () => DailyQuests.claim(t.id))
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .scale(begin: const Offset(1, 1), end: const Offset(1.06, 1.06), duration: 700.ms)
-        else
+      child: Row(
+        children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            width: 48,
+            height: 48,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.25),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Pal.gold.withValues(alpha: q.claimed ? 0.2 : 0.5)),
+              borderRadius: BorderRadius.circular(16),
+              gradient: q.claimed ? Pal.accent(Pal.success) : Pal.accent(color),
             ),
-            child: Text(q.claimed ? tr('daily.done') : '${t.reward} 🪙',
-                style: TextStyle(color: q.claimed ? Pal.success : Pal.gold, fontWeight: FontWeight.w800, fontSize: 13)),
+            child: q.claimed
+                ? const Icon(Icons.check_rounded, color: Colors.white, size: 28)
+                : Text(t.emoji, style: const TextStyle(fontSize: 24)),
           ),
-      ]),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  t.title,
+                  style: TextStyle(
+                    color: q.claimed ? Pal.textDim : Pal.text,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14.5,
+                    decoration: q.claimed ? TextDecoration.lineThrough : null,
+                    decorationColor: Pal.textDim,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ProgressBar(
+                        value: q.fraction,
+                        color: q.completed ? Pal.success : color,
+                        height: 7,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${q.progress}/${t.target}',
+                      style: const TextStyle(
+                        color: Pal.textDim,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          if (q.claimable)
+            PremiumButton(
+                  label: '+${t.reward}',
+                  icon: Icons.redeem_rounded,
+                  compact: true,
+                  onTap: () => DailyQuests.claim(t.id),
+                )
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .scale(
+                  begin: const Offset(1, 1),
+                  end: const Offset(1.06, 1.06),
+                  duration: 700.ms,
+                )
+          else
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Pal.gold.withValues(alpha: q.claimed ? 0.2 : 0.5),
+                ),
+              ),
+              child: Text(
+                q.claimed ? tr('daily.done') : '${t.reward} 🪙',
+                style: TextStyle(
+                  color: q.claimed ? Pal.success : Pal.gold,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -411,30 +614,52 @@ class _BonusCard extends StatelessWidget {
     return GlassCard(
       glow: done && !claimed ? Pal.gold : null,
       gradient: LinearGradient(
-        colors: [const Color(0xFFB794FF).withValues(alpha: done ? 0.32 : 0.14), const Color(0x0DFFFFFF)],
+        colors: [
+          const Color(0xFFB794FF).withValues(alpha: done ? 0.32 : 0.14),
+          const Color(0x0DFFFFFF),
+        ],
       ),
-      child: Row(children: [
-        Text(claimed ? '🏆' : '🎯', style: const TextStyle(fontSize: 34)),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(tr('daily.challenge'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 16)),
-            const SizedBox(height: 3),
-            Text(
-              claimed
-                  ? tr('daily.challenge_done')
-                  : done
+      child: Row(
+        children: [
+          Text(claimed ? '🏆' : '🎯', style: const TextStyle(fontSize: 34)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tr('daily.challenge'),
+                  style: const TextStyle(
+                    color: Pal.text,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  claimed
+                      ? tr('daily.challenge_done')
+                      : done
                       ? tr('daily.challenge_ready')
-                      : tr('daily.challenge_todo', {'coins': DailyQuests.bonusCoins}),
-              style: const TextStyle(color: Pal.textDim, fontSize: 12.5),
+                      : tr('daily.challenge_todo', {
+                          'coins': DailyQuests.bonusCoins,
+                        }),
+                  style: const TextStyle(color: Pal.textDim, fontSize: 12.5),
+                ),
+              ],
             ),
-          ]),
-        ),
-        if (done && !claimed)
-          PremiumButton(label: '+${DailyQuests.bonusCoins}', compact: true, color: const Color(0xFFB794FF), onTap: DailyQuests.claimBonus)
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .shimmer(duration: 1400.ms),
-      ]),
+          ),
+          if (done && !claimed)
+            PremiumButton(
+                  label: '+${DailyQuests.bonusCoins}',
+                  compact: true,
+                  color: const Color(0xFFB794FF),
+                  onTap: DailyQuests.claimBonus,
+                )
+                .animate(onPlay: (c) => c.repeat(reverse: true))
+                .shimmer(duration: 1400.ms),
+        ],
+      ),
     );
   }
 }
@@ -451,30 +676,56 @@ class _AchievementsEntry extends StatelessWidget {
     final have = Achievements.unlocked.length.clamp(0, total);
     return GlassCard(
       glow: Pal.gold,
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AchievementsScreen())),
-      child: Row(children: [
-        Container(
-          width: 56,
-          height: 56,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(shape: BoxShape.circle, gradient: Pal.accent(Pal.goldDeep)),
-          child: const Text('🏅', style: TextStyle(fontSize: 30)),
-        )
-            .animate(onPlay: (c) => c.repeat(reverse: true))
-            .shimmer(duration: 2400.ms, color: Colors.white.withValues(alpha: 0.4)),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(tr('ach.title'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 17)),
-            const SizedBox(height: 4),
-            Text(tr('daily.badges_unlocked', {'have': have, 'total': total}), style: const TextStyle(color: Pal.textDim, fontSize: 12.5)),
-            const SizedBox(height: 8),
-            ProgressBar(value: total == 0 ? 0 : have / total, color: Pal.gold, height: 6),
-          ]),
-        ),
-        const SizedBox(width: 8),
-        const Icon(Icons.chevron_right_rounded, color: Pal.textDim, size: 28),
-      ]),
+      onTap: () => Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const AchievementsScreen())),
+      child: Row(
+        children: [
+          Container(
+                width: 56,
+                height: 56,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: Pal.accent(Pal.goldDeep),
+                ),
+                child: const Text('🏅', style: TextStyle(fontSize: 30)),
+              )
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .shimmer(
+                duration: 2400.ms,
+                color: Colors.white.withValues(alpha: 0.4),
+              ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tr('ach.title'),
+                  style: const TextStyle(
+                    color: Pal.text,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 17,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  tr('daily.badges_unlocked', {'have': have, 'total': total}),
+                  style: const TextStyle(color: Pal.textDim, fontSize: 12.5),
+                ),
+                const SizedBox(height: 8),
+                ProgressBar(
+                  value: total == 0 ? 0 : have / total,
+                  color: Pal.gold,
+                  height: 6,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.chevron_right_rounded, color: Pal.textDim, size: 28),
+        ],
+      ),
     );
   }
 }

@@ -92,4 +92,22 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'pa': "ਗਰਿੱਡ",
     'bho': "ग्रिड",
   },
+  'flow_pairs.bought': {
+    'en': "Bought",
+    'hi': "खरीदा",
+    'hinglish': "Kharida",
+    'te': "కొన్నది",
+    'ta': "வாங்கியது",
+    'pa': "ਖਰੀਦਿਆ",
+    'bho': "खरीदल",
+  },
+  'flow_pairs.plays_over': {
+    'en': "No plays left on this level, so it is locked again. Play the levels in order for free, or unlock it again.",
+    'hi': "इस लेवल के खेल खत्म हो गए, इसलिए यह फिर से बंद है। लेवल क्रम से मुफ़्त खेलें, या इसे फिर से खोलें।",
+    'hinglish': "Is level ke plays khatam, isliye ye phir se lock hai. Levels order mein free khelo, ya ise phir se kholo.",
+    'te': "ఈ స్థాయికి ఆటలు అయిపోయాయి, అందుకే ఇది మళ్ళీ లాక్ అయింది. స్థాయిలను వరుసగా ఉచితంగా ఆడండి, లేదా మళ్ళీ తెరవండి.",
+    'ta': "இந்த நிலைக்கு வாய்ப்புகள் முடிந்தன, அதனால் மீண்டும் பூட்டப்பட்டது. நிலைகளை வரிசையாக இலவசமாக விளையாடுங்கள், அல்லது மீண்டும் திறங்கள்.",
+    'pa': "ਇਸ ਲੈਵਲ ਦੀਆਂ ਖੇਡਾਂ ਖਤਮ ਹੋ ਗਈਆਂ, ਇਸ ਲਈ ਇਹ ਫਿਰ ਬੰਦ ਹੈ। ਲੈਵਲ ਕ੍ਰਮ ਵਿੱਚ ਮੁਫ਼ਤ ਖੇਡੋ, ਜਾਂ ਇਸਨੂੰ ਫਿਰ ਖੋਲ੍ਹੋ।",
+    'bho': "एह लेवल के खेल खतम हो गइल, एही से ई फेर से बंद बा। लेवल क्रम से मुफ्त खेलीं, भा एकरा के फेर से खोलीं।",
+  },
 };

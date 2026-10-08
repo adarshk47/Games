@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/level_gate.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
@@ -19,13 +20,40 @@ String _kTime(SlideTier t, int l) => 'sliding.${t.key}.bestTime.$l';
 
 int _stars(SlideTier t, int l) => Storage.getInt(_kStars(t, l));
 
-bool _unlocked(SlideTier t, int l) => l == 1 || _stars(t, l - 1) > 0;
+/// Unlocked through progress: level 1, a cleared level, or the one after it.
+bool _unlocked(SlideTier t, int l) => l == 1 || _stars(t, l) > 0 || _stars(t, l - 1) > 0;
+
+/// [LevelGate] prefix, e.g. `sliding.easy`.
+String slideGatePrefix(SlideTier t) => 'sliding.${t.key}';
+
+/// Next unbeaten level in sequence: the furthest level that is free to open.
+int slideFreeUpTo(SlideTier t) {
+  for (var l = 1; l <= SlideTier.levelCount; l++) {
+    if (_stars(t, l) == 0) return l;
+  }
+  return SlideTier.levelCount;
+}
+
+/// Plays left on a level skipped to with coins (0 for unlocked levels).
+int slidePlaysLeft(SlideTier t, int l) => _unlocked(t, l) ? 0 : LevelGate.playsLeft(slideGatePrefix(t), l);
+
+bool slideCanPlay(SlideTier t, int l) => _unlocked(t, l) || slidePlaysLeft(t, l) > 0;
+
+/// Counts one play of a bought level (no-op for unlocked levels).
+Future<void> slideOnStart(SlideTier t, int l) =>
+    LevelGate.onStart(slideGatePrefix(t), _unlocked(t, l) ? l : slideFreeUpTo(t), l);
+
+/// Makes sure level [l] may be played; a locked level must be bought first.
+Future<bool> _ensurePlayable(BuildContext context, SlideTier t, int l) async {
+  if (slideCanPlay(t, l)) return true;
+  return LevelGate.buy(context, prefix: slideGatePrefix(t), freeUpTo: slideFreeUpTo(t), level: l);
+}
 
 String _tierLabel(SlideTier t) => tr('common.tier.${t.name}');
 
 String _fmt(int s) => '${s ~/ 60}:${(s % 60).toString().padLeft(2, '0')}';
 
-/// Sliding (15) puzzle with four tiers and 20 scramble-depth levels each.
+/// Sliding (15) puzzle with four tiers and 100 scramble-depth levels each.
 class SlidingPuzzleScreen extends StatefulWidget {
   const SlidingPuzzleScreen({super.key, this.debugStart, this.debugRng});
 
@@ -42,8 +70,25 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
   int? _level; // null = menu
   late bool _picture = Storage.getBool('sliding.picture');
   bool _usedDebug = false;
+  int _attempt = 0;
 
-  void _open(int level) => setState(() => _level = level);
+  void _open(int level) => setState(() {
+        _level = level;
+        _attempt++;
+      });
+
+  /// Tapping a level tile: free levels open; locked ones can be skipped to
+  /// with coins (100 per skipped level, a limited number of plays).
+  Future<void> _tapLevel(int level) async {
+    final ok = await _ensurePlayable(context, _tier, level);
+    if (!mounted) return;
+    if (ok) {
+      _open(level);
+    } else {
+      AppAudio.play(Sound.fail, volume: 0.4);
+      setState(() {});
+    }
+  }
 
   void _toMenu() => setState(() => _level = null);
 
@@ -62,7 +107,7 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
     final dbg = !_usedDebug ? widget.debugStart : null;
     _usedDebug = true;
     return _SlideGame(
-      key: ValueKey('${_tier.key}-$_level-$_picture'),
+      key: ValueKey('${_tier.key}-$_level-$_picture-$_attempt'),
       tier: _tier,
       level: _level!,
       picture: _picture,
@@ -75,98 +120,117 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
 
   Widget _menu() {
     int total(SlideTier t) => [for (var l = 1; l <= SlideTier.levelCount; l++) _stars(t, l)].fold(0, (a, b) => a + b);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      children: [
-        Row(children: [
-          for (final t in SlideTier.values)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: GlassCard(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                  radius: 18,
-                  blur: 0,
-                  glow: t == _tier ? _tint : null,
-                  gradient: t == _tier
-                      ? LinearGradient(colors: [_tint.withValues(alpha: 0.5), _tint.withValues(alpha: 0.18)])
-                      : null,
-                  onTap: () => setState(() => _tier = t),
-                  child: Column(children: [
-                    Text('${t.size}x${t.size}',
-                        style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 18)),
-                    const SizedBox(height: 2),
-                    FittedBox(
-                      child: Text(_tierLabel(t),
-                          style: TextStyle(
-                              color: t == _tier ? Pal.text : Pal.textDim, fontWeight: FontWeight.w700, fontSize: 12)),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.star_rounded, size: 12, color: Pal.gold),
-                      Text(' ${total(t)}', style: const TextStyle(color: Pal.gold, fontSize: 11, fontWeight: FontWeight.w800)),
-                    ]),
+    final header = <Widget>[
+      Row(children: [
+        for (final t in SlideTier.values)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: GlassCard(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                radius: 18,
+                blur: 0,
+                glow: t == _tier ? _tint : null,
+                gradient: t == _tier
+                    ? LinearGradient(colors: [_tint.withValues(alpha: 0.5), _tint.withValues(alpha: 0.18)])
+                    : null,
+                onTap: () => setState(() => _tier = t),
+                child: Column(children: [
+                  Text('${t.size}x${t.size}',
+                      style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 18)),
+                  const SizedBox(height: 2),
+                  FittedBox(
+                    child: Text(_tierLabel(t),
+                        style: TextStyle(
+                            color: t == _tier ? Pal.text : Pal.textDim, fontWeight: FontWeight.w700, fontSize: 12)),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.star_rounded, size: 12, color: Pal.gold),
+                    Text(' ${total(t)}', style: const TextStyle(color: Pal.gold, fontSize: 11, fontWeight: FontWeight.w800)),
                   ]),
-                ),
+                ]),
               ),
             ),
-        ]).animate().fadeIn(duration: 350.ms).slideY(begin: 0.1, end: 0),
-        const SizedBox(height: 12),
-        GlassCard(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          radius: 20,
-          blur: 0,
-          child: Row(children: [
-            const Icon(Icons.image_rounded, color: _tint),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(tr('sliding_puzzle.picture_mode'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w700, fontSize: 15)),
-            ),
-            Switch(
-              value: _picture,
-              activeThumbColor: _tint,
-              onChanged: (v) {
-                Storage.setBool('sliding.picture', v);
-                setState(() => _picture = v);
-              },
-            ),
-          ]),
+          ),
+      ]).animate().fadeIn(duration: 350.ms).slideY(begin: 0.1, end: 0),
+      const SizedBox(height: 12),
+      GlassCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        radius: 20,
+        blur: 0,
+        child: Row(children: [
+          const Icon(Icons.image_rounded, color: _tint),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(tr('sliding_puzzle.picture_mode'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w700, fontSize: 15)),
+          ),
+          Switch(
+            value: _picture,
+            activeThumbColor: _tint,
+            onChanged: (v) {
+              Storage.setBool('sliding.picture', v);
+              setState(() => _picture = v);
+            },
+          ),
+        ]),
+      ),
+      const SizedBox(height: 16),
+      Text(tr('sliding_puzzle.choose_level'), style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 14)),
+      const SizedBox(height: 10),
+    ];
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          sliver: SliverList(delegate: SliverChildListDelegate(header)),
         ),
-        const SizedBox(height: 16),
-        Text(tr('sliding_puzzle.choose_level'), style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 14)),
-        const SizedBox(height: 10),
-        GridView.count(
-          crossAxisCount: 4,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          childAspectRatio: 0.95,
-          children: [
-            for (var l = 1; l <= SlideTier.levelCount; l++) _levelTile(l),
-          ],
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 0.95),
+            delegate: SliverChildBuilderDelegate((_, i) => _levelTile(i + 1), childCount: SlideTier.levelCount),
+          ),
         ),
       ],
     );
   }
 
   Widget _levelTile(int l) {
-    final open = _unlocked(_tier, l);
+    final free = _unlocked(_tier, l);
+    final plays = free ? 0 : slidePlaysLeft(_tier, l);
+    final open = free || plays > 0;
     final s = _stars(_tier, l);
     return Opacity(
+      key: ValueKey('slide-level-$l'),
       opacity: open ? 1 : 0.5,
       child: GlassCard(
         padding: const EdgeInsets.all(6),
         radius: 18,
         blur: 0,
-        onTap: open ? () => _open(l) : () => AppAudio.play(Sound.fail, volume: 0.4),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          open
-              ? Text('$l', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 20))
-              : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 20),
-          const SizedBox(height: 4),
-          StarRow(stars: s, size: 13),
-        ]),
+        glow: plays > 0 ? Pal.gold : null,
+        onTap: () => _tapLevel(l),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            if (plays > 0)
+              Text(tr('sliding_puzzle.bought'),
+                  style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+            open
+                ? Text('$l', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 20))
+                : Column(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.lock_rounded, color: Pal.textDim, size: 20),
+                    Text('$l', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 10)),
+                  ]),
+            const SizedBox(height: 4),
+            if (plays > 0)
+              Text(tr('common.skip.plays_left', {'n': plays}),
+                  style: const TextStyle(color: Pal.gold, fontSize: 10, fontWeight: FontWeight.w800))
+            else
+              StarRow(stars: s, size: 13),
+          ]),
+        ),
       ),
     );
   }
@@ -198,7 +262,7 @@ class _SlideGame extends StatefulWidget {
 class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMixin {
   late final int n = widget.tier.size;
   late final int depth = widget.tier.depthFor(widget.level);
-  late final Random _rng = widget.rng ?? Random();
+  late final Random _rng = widget.rng ?? Random(widget.tier.seedFor(widget.level));
   late List<int> _start;
   late List<int> _board;
   final List<List<int>> _history = [];
@@ -211,6 +275,7 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
   @override
   void initState() {
     super.initState();
+    slideOnStart(widget.tier, widget.level);
     _start = widget.startBoard ?? SlidingLogic.shuffle(n, depth, _rng);
     _board = List.of(_start);
   }
@@ -267,7 +332,16 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
     AppAudio.play(Sound.slide, volume: 0.3);
   }
 
-  void _restart() {
+  /// Restart: a bought level spends one of its plays; when none are left the
+  /// skip offer is shown again, otherwise back to the menu.
+  Future<void> _restart() async {
+    final ok = await _ensurePlayable(context, widget.tier, widget.level);
+    if (!mounted) return;
+    if (!ok) {
+      widget.onMenu();
+      return;
+    }
+    slideOnStart(widget.tier, widget.level);
     _timer?.cancel();
     _timer = null;
     _wave.reset();
@@ -290,6 +364,7 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
     final prevTime = Storage.getInt(_kTime(t, l));
     if (prevTime == 0 || _seconds < prevTime) Storage.setInt(_kTime(t, l), max(1, _seconds));
     if (stars > _stars(t, l)) Storage.setInt(_kStars(t, l), stars);
+    LevelGate.onCleared(slideGatePrefix(t), l);
     Rewards.onLevelComplete('sliding_puzzle', '${t.key}-L$l', stars: stars);
     setState(() => _won = true);
     _wave.forward(from: 0);

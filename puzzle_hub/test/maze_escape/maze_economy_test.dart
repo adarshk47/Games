@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/economy/level_gate.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
 import 'package:puzzle_hub/games/maze_escape/labyrinth_game.dart';
@@ -34,14 +35,36 @@ void main() {
     await Storage.init();
   });
 
-  test('bought levels are per mode and only the first locked one', () async {
-    expect(MazeProgress.firstLocked(MazeTier.easy), 2);
-    await MazeProgress.buyUnlock(MazeTier.easy, 2);
-    expect(MazeProgress.unlocked(MazeTier.easy, 2), isTrue);
-    expect(MazeProgress.unlocked(MazeTier.easy, 3), isFalse);
-    expect(MazeProgress.unlocked(MazeTier.easy, 2, mode: MazeMode.memory), isFalse);
-    expect(MazeProgress.firstLocked(MazeTier.easy), 3);
-    expect(MazeProgress.completed(MazeTier.easy), 0);
+  test('skip gate: free in sequence, bought plays per mode, clearing unlocks', () async {
+    const t = MazeTier.easy;
+    expect(MazeProgress.freeUpTo(t), 1);
+    expect(MazeProgress.canPlay(t, 1), isTrue);
+    expect(MazeProgress.canPlay(t, 2), isFalse);
+    expect(MazeProgress.gatePrefix(t), 'maze.lab.easy');
+    await Storage.setInt('maze.lab.easy.skip.40', LevelGate.maxPlays);
+    expect(MazeProgress.canPlay(t, 40), isTrue);
+    expect(MazeProgress.playsLeft(t, 40), 10);
+    expect(MazeProgress.canPlay(t, 40, mode: MazeMode.memory), isFalse);
+    await MazeProgress.onStart(t, 40);
+    expect(MazeProgress.playsLeft(t, 40), 9);
+    await MazeProgress.onStart(t, 1); // free levels never use plays
+    MazeProgress.save(t, 40, 3);
+    await Future<void>.delayed(Duration.zero);
+    expect(LevelGate.playsLeft('maze.lab.easy', 40), 0);
+    expect(MazeProgress.unlocked(t, 40), isTrue);
+    expect(MazeProgress.unlocked(t, 41), isTrue);
+    expect(MazeProgress.unlocked(t, 39), isFalse);
+    expect(MazeProgress.freeUpTo(t), 1);
+    // Legacy one-time unlocks stay valid.
+    await Storage.setBool('maze.lab.easy.unlockedBought.2', true);
+    expect(MazeProgress.unlocked(t, 2), isTrue);
+  });
+
+  test('plays running out locks the level again', () async {
+    await Storage.setInt('maze.mem.hard.skip.7', 1);
+    expect(MazeProgress.canPlay(MazeTier.hard, 7, mode: MazeMode.memory), isTrue);
+    await MazeProgress.onStart(MazeTier.hard, 7, mode: MazeMode.memory);
+    expect(MazeProgress.canPlay(MazeTier.hard, 7, mode: MazeMode.memory), isFalse);
   });
 
   testWidgets('memory extreme: paid continue adds 3 bumps, paid peek', (t) async {
@@ -100,26 +123,68 @@ void main() {
     await t.pump(const Duration(seconds: 4));
   });
 
-  testWidgets('level grid: next locked level can be unlocked', (t) async {
-    await t.binding.setSurfaceSize(const Size(800, 1200));
-    await _coins(150);
+  Future<void> openGrid(WidgetTester t) async {
     await t.pumpWidget(const MaterialApp(home: MazeEscapeScreen()));
     await t.pump(const Duration(seconds: 1));
     await t.tap(find.byKey(const ValueKey('mode-labyrinth')));
     await _settle(t);
     await t.tap(find.text('Easy'));
     await _settle(t);
-    final locks = find.byIcon(Icons.lock_rounded);
-    await t.tap(locks.at(1));
+  }
+
+  testWidgets('level grid: far-ahead level bought with coins gets 10 plays', (t) async {
+    await t.binding.setSurfaceSize(const Size(800, 1200));
+    await _coins(1000);
+    await openGrid(t);
+    await t.tap(find.byKey(const ValueKey('maze-level-10')));
     await _settle(t);
-    expect(find.text('Unlock level?'), findsNothing);
-    await t.tap(locks.first);
+    expect(find.text('Unlock level 10?'), findsOneWidget);
+    await t.tap(find.text('Unlock for 900 coins'));
     await _settle(t);
-    expect(find.text('Unlock level?'), findsOneWidget);
-    await t.tap(find.text('Use 150 coins'));
+    expect(Rewards.balance, 100);
+    expect(find.text('Labyrinth Easy 10'), findsOneWidget);
+    expect(MazeProgress.playsLeft(MazeTier.easy, 10), 9); // first play counted
+
+    // Restart spends another play.
+    await t.tap(find.byIcon(Icons.refresh_rounded));
     await _settle(t);
-    expect(MazeProgress.isBought(MazeTier.easy, 2), isTrue);
+    expect(MazeProgress.playsLeft(MazeTier.easy, 10), 8);
+
+    Navigator.of(t.element(find.text('Labyrinth Easy 10'))).pop();
+    await _settle(t);
+    expect(find.text('8 plays left'), findsOneWidget);
+    expect(find.text('BOUGHT'), findsOneWidget);
+
+    // Not enough coins: refused, nothing granted.
+    await t.tap(find.byKey(const ValueKey('maze-level-20')));
+    await _settle(t);
+    await t.tap(find.text('Unlock for 1900 coins'));
+    await _settle(t);
+    expect(find.text('Not enough coins'), findsOneWidget);
+    await t.tap(find.text('OK'));
+    await _settle(t);
+    expect(Rewards.balance, 100);
+    expect(MazeProgress.canPlay(MazeTier.easy, 20), isFalse);
+    expect(find.text('Labyrinth Easy 20'), findsNothing);
+
+    // Clearing the bought level unlocks it and the next one for good.
+    MazeProgress.save(MazeTier.easy, 10, 2);
+    await _settle(t);
+    expect(find.text('8 plays left'), findsNothing);
+    expect(MazeProgress.unlocked(MazeTier.easy, 11), isTrue);
+
+    await t.pumpWidget(const SizedBox());
+    await t.pump(const Duration(seconds: 4));
+  });
+
+  testWidgets('level grid: the next level in sequence is free', (t) async {
+    await t.binding.setSurfaceSize(const Size(800, 1200));
+    MazeProgress.save(MazeTier.easy, 1, 3);
+    await openGrid(t);
+    await t.tap(find.byKey(const ValueKey('maze-level-2')));
+    await _settle(t);
     expect(find.text('Labyrinth Easy 2'), findsOneWidget);
+    expect(Rewards.balance, 0);
 
     await t.pumpWidget(const SizedBox());
     await t.pump(const Duration(seconds: 4));

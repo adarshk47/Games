@@ -74,4 +74,13 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'pa': "ਟੀਚਾ {n}",
     'bho': "लक्ष्य {n}",
   },
+  'sliding_puzzle.bought': {
+    'en': "BOUGHT",
+    'hi': "खरीदा",
+    'hinglish': "KHARIDA",
+    'te': "కొన్నారు",
+    'ta': "வாங்கியது",
+    'pa': "ਖਰੀਦਿਆ",
+    'bho': "खरीदल",
+  },
 };

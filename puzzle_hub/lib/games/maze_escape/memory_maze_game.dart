@@ -63,6 +63,7 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
   @override
   void initState() {
     super.initState();
+    MazeProgress.onStart(widget.tier, widget.level, mode: MazeMode.memory);
     _setup();
   }
 
@@ -132,7 +133,18 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
     return max(preview, peek);
   }
 
-  void _restart() => setState(_setup);
+  /// Restart / replay: a bought level spends one of its plays; when none are
+  /// left the skip offer is shown again, otherwise back to the level grid.
+  Future<void> _restart() async {
+    final ok = await ensureMazeLevel(context, widget.tier, widget.level, mode: MazeMode.memory);
+    if (!mounted) return;
+    if (!ok) {
+      Navigator.of(context).maybePop();
+      return;
+    }
+    MazeProgress.onStart(widget.tier, widget.level, mode: MazeMode.memory);
+    setState(_setup);
+  }
 
   Future<void> _step(int dir) async {
     if (!_started || _walking || _done) return;

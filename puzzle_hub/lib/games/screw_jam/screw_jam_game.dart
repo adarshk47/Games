@@ -83,7 +83,9 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
   @override
   void initState() {
     super.initState();
-    _load(widget.level.clamp(1, SjProgress.unlocked(_tier)));
+    final l = widget.level.clamp(1, kSjLevels);
+    _load(SjProgress.canPlay(_tier, l) ? l : SjProgress.unlocked(_tier));
+    SjProgress.start(_tier, _level);
   }
 
   void _load(int level) {
@@ -105,9 +107,33 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
     _shake = -1;
   }
 
+  /// Restart / replay / try again: each one counts as a play of a bought
+  /// level; when its plays are used up the level locks again.
   void _restart() {
+    if (!SjProgress.canPlay(_tier, _level)) {
+      _playsOver();
+      return;
+    }
     AppAudio.play(Sound.tap);
+    SjProgress.start(_tier, _level);
     setState(() => _load(_level));
+  }
+
+  void _playsOver() {
+    AppAudio.play(Sound.fail);
+    showPremiumDialog(
+      context,
+      title: tr('common.skip.title', {'n': _level}),
+      message: tr('screw_jam.plays_over'),
+      emoji: '🔒',
+      color: Pal.gold,
+      actions: [DialogAction(tr('common.menu'), () => Navigator.of(context).maybePop(), primary: true)],
+    );
+  }
+
+  void _next() {
+    setState(() => _load(_level + 1));
+    SjProgress.start(_tier, _level);
   }
 
   /// Runs [f] after [ms] if the same level attempt is still on screen.
@@ -298,7 +324,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
         if (last)
           DialogAction(tr('common.menu'), () => Navigator.of(context).maybePop(), primary: true)
         else
-          DialogAction(tr('common.next_level'), () => setState(() => _load(_level + 1)), primary: true),
+          DialogAction(tr('common.next_level'), _next, primary: true),
       ],
     );
   }

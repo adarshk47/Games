@@ -39,12 +39,14 @@ void main() {
     }
   });
 
+  test('there are 100 levels per tier', () => expect(kLevelCount, 100));
+
   test('memory tier params', () {
     const sizes = {
-      MazeTier.easy: [5, 7],
-      MazeTier.medium: [7, 9],
-      MazeTier.hard: [9, 11],
-      MazeTier.extreme: [11, 13],
+      MazeTier.easy: [5, 8],
+      MazeTier.medium: [7, 10],
+      MazeTier.hard: [9, 12],
+      MazeTier.extreme: [11, 14],
     };
     const secs = {MazeTier.easy: 6, MazeTier.medium: 5, MazeTier.hard: 4, MazeTier.extreme: 3};
     const peeks = {MazeTier.easy: 3, MazeTier.medium: 2, MazeTier.hard: 1, MazeTier.extreme: 0};
@@ -57,6 +59,10 @@ void main() {
         expect(c.previewMs, greaterThanOrEqualTo(secs[t]! * 1000));
         expect(c.previewMs, lessThan((secs[t]! + 1) * 1000));
         expect(c.maxBumps, t == MazeTier.extreme ? 3 : 0);
+      }
+      // Difficulty never drops from one level to the next.
+      for (var l = 2; l <= kLevelCount; l++) {
+        expect(MemLevel.of(t, l).size, greaterThanOrEqualTo(MemLevel.of(t, l - 1).size));
       }
       // Bigger mazes get a little more preview time.
       expect(MemLevel.of(t, kLevelCount).previewMs, greaterThan(MemLevel.of(t, 1).previewMs));

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../core/economy/continue_offer.dart';
+import '../../core/economy/level_gate.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
@@ -186,28 +186,45 @@ class ScrewJamLevels extends StatefulWidget {
 
 class _ScrewJamLevelsState extends State<ScrewJamLevels> {
   SjTier get _t => widget.tier;
-  bool _offerOpen = false;
+  bool _buying = false;
+  ScrollController? _scroll;
+
+  @override
+  void dispose() {
+    _scroll?.dispose();
+    super.dispose();
+  }
 
   Future<void> _play(int level) async {
+    if (!SjProgress.canPlay(_t, level)) return _buy(level);
     await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ScrewJamGame(tier: _t, level: level)));
     if (mounted) setState(() {});
   }
 
-  Future<void> _unlockNext(int level) async {
-    if (level != SjProgress.unlocked(_t) + 1 || _offerOpen) return;
-    _offerOpen = true;
-    final paid = await showContinueOffer(context, OfferKind.unlockLevel);
-    _offerOpen = false;
-    if (!mounted || !paid) return;
-    await SjProgress.buyUnlock(_t, level);
+  /// Skip ahead: any locked level can be bought (100 coins per skipped level).
+  Future<void> _buy(int level) async {
+    if (_buying) return;
+    _buying = true;
+    final ok = await LevelGate.buy(context, prefix: SjProgress.gate(_t), freeUpTo: SjProgress.freeUpTo(_t, level), level: level);
+    _buying = false;
     if (!mounted) return;
     setState(() {});
-    await _play(level);
+    if (ok && SjProgress.canPlay(_t, level)) await _play(level);
+  }
+
+  /// Starts the grid scrolled so the current level is in view.
+  ScrollController _controllerFor(double width, int current) {
+    if (_scroll != null) return _scroll!;
+    const gap = 12.0, pad = 18.0, extent = 80.0;
+    final inner = width - pad * 2;
+    final cols = ((inner + gap) / (extent + gap)).ceil().clamp(1, 100);
+    final tile = (inner - gap * (cols - 1)) / cols;
+    final row = (current - 1) ~/ cols;
+    return _scroll = ScrollController(initialScrollOffset: row <= 1 ? 0 : (row - 1) * (tile + gap));
   }
 
   @override
   Widget build(BuildContext context) {
-    final unlocked = SjProgress.unlocked(_t);
     final current = SjProgress.current(_t);
     return GameScaffold(
       title: tr('screw_jam.title_tier', {'tier': sjTierName(_t)}),
@@ -224,22 +241,33 @@ class _ScrewJamLevelsState extends State<ScrewJamLevels> {
           ),
         ),
         Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(18),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 80, mainAxisSpacing: 12, crossAxisSpacing: 12),
-            itemCount: kSjLevels,
-            itemBuilder: (_, i) {
-              final lv = i + 1;
-              return _LevelTile(
-                level: lv,
-                locked: lv > unlocked,
-                stars: SjProgress.stars(_t, lv),
-                current: lv == current,
-                onTap: () => _play(lv),
-                onLockedTap: lv == unlocked + 1 ? () => _unlockNext(lv) : null,
-              ).animate().fadeIn(duration: 250.ms, delay: (12 * i).ms).scale(begin: const Offset(0.85, 0.85), end: const Offset(1, 1));
-            },
+          child: LayoutBuilder(
+            builder: (context, c) => GridView.builder(
+              controller: _controllerFor(c.maxWidth, current),
+              padding: const EdgeInsets.all(18),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 80, mainAxisSpacing: 12, crossAxisSpacing: 12),
+              itemCount: kSjLevels,
+              itemBuilder: (_, i) {
+                final lv = i + 1;
+                final free = SjProgress.isFree(_t, lv);
+                final left = SjProgress.playsLeft(_t, lv);
+                final tile = _LevelTile(
+                  key: ValueKey('sj_level_$lv'),
+                  level: lv,
+                  locked: !free && left == 0,
+                  playsLeft: left,
+                  stars: SjProgress.stars(_t, lv),
+                  current: lv == current,
+                  onTap: () => _play(lv),
+                );
+                // Only the first screenful animates in; later tiles appear
+                // instantly so scrolling 100 levels stays smooth.
+                return i < 24
+                    ? tile.animate().fadeIn(duration: 250.ms, delay: (12 * i).ms).scale(begin: const Offset(0.85, 0.85), end: const Offset(1, 1))
+                    : tile;
+              },
+            ),
           ),
         ),
       ]),
@@ -249,23 +277,25 @@ class _ScrewJamLevelsState extends State<ScrewJamLevels> {
 
 class _LevelTile extends StatelessWidget {
   const _LevelTile({
+    super.key,
     required this.level,
     required this.locked,
+    required this.playsLeft,
     required this.current,
     required this.stars,
     required this.onTap,
-    this.onLockedTap,
   });
-  final int level, stars;
+  final int level, stars, playsLeft;
   final bool locked, current;
   final VoidCallback onTap;
-  final VoidCallback? onLockedTap;
 
   @override
   Widget build(BuildContext context) {
     const a = sjAccentHot;
+    final bought = playsLeft > 0;
     final tile = Container(
       alignment: Alignment.center,
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
         gradient: locked
@@ -276,24 +306,35 @@ class _LevelTile extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [a.withValues(alpha: 0.28), a.withValues(alpha: 0.08)]),
-        border: Border.all(color: current ? Colors.white.withValues(alpha: 0.7) : Pal.glassBorder),
+        border: Border.all(
+            color: bought ? Pal.gold : (current ? Colors.white.withValues(alpha: 0.7) : Pal.glassBorder),
+            width: bought ? 1.5 : 1),
         boxShadow: locked
             ? null
             : [BoxShadow(color: a.withValues(alpha: current ? 0.55 : 0.2), blurRadius: current ? 16 : 8, spreadRadius: -2)],
       ),
       child: locked
-          ? Icon(onLockedTap != null ? Icons.lock_open_rounded : Icons.lock_rounded,
-              size: 18, color: onLockedTap != null ? Pal.gold : Pal.textDim)
+          ? const Icon(Icons.lock_rounded, size: 18, color: Pal.textDim)
           : FittedBox(
               fit: BoxFit.scaleDown,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
+                if (bought)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    decoration: BoxDecoration(color: Pal.gold, borderRadius: BorderRadius.circular(8)),
+                    child: Text(tr('screw_jam.bought'),
+                        style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.w900)),
+                  ),
                 Text('$level',
                     style: TextStyle(color: current ? Colors.white : Pal.text, fontWeight: FontWeight.w800, fontSize: 18)),
-                if (stars > 0) StarRow(stars: stars, size: 12),
+                if (bought)
+                  Text(tr('common.skip.plays_left', {'n': playsLeft}),
+                      style: const TextStyle(color: Pal.gold, fontSize: 10, fontWeight: FontWeight.w700))
+                else if (stars > 0)
+                  StarRow(stars: stars, size: 12),
               ]),
             ),
     );
-    if (locked) return onLockedTap == null ? tile : Pressable(onTap: onLockedTap!, child: tile);
     return Pressable(onTap: onTap, child: tile);
   }
 }

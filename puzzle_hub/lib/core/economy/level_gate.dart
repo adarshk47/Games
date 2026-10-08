@@ -65,7 +65,7 @@ class LevelGate {
       ],
     );
     if (!confirmed) return false;
-    final bought = await Rewards.spend(price);
+    final bought = await Rewards.spend(price, reason: 'skip');
     if (bought) {
       await Storage.setInt(_key(prefix, level), maxPlays);
     } else if (context.mounted) {

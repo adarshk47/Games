@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/economy/level_gate.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
@@ -15,6 +16,37 @@ const _kMarkersKey = 'ball_sort.markers';
 
 /// Storage key helpers: everything is per difficulty.
 String bsKey(BsDifficulty d, String what) => 'ball_sort.${d.id}.$what';
+
+/// Highest level unlocked in sequence (stored), at least 1.
+int bsUnlockedInSequence(BsDifficulty d) => Storage.getInt(bsKey(d, 'unlocked'), 1);
+
+int bsStars(BsDifficulty d, int level) => Storage.getInt(bsKey(d, 'stars.$level'));
+
+/// [LevelGate] prefix, e.g. `ball_sort.easy`.
+String bsGatePrefix(BsDifficulty d) => 'ball_sort.${d.id}';
+
+/// Next unbeaten level in sequence: the furthest level that is free to open.
+int bsFreeUpTo(BsDifficulty d) => bsUnlockedInSequence(d).clamp(1, kBsLevelCount);
+
+/// Unlocked through progress: up to the next level in sequence, a cleared
+/// level, or the level right after a cleared one.
+bool bsUnlocked(BsDifficulty d, int level) =>
+    level <= bsUnlockedInSequence(d) || bsStars(d, level) > 0 || (level > 1 && bsStars(d, level - 1) > 0);
+
+/// Plays left on a level skipped to with coins (0 for unlocked levels).
+int bsPlaysLeft(BsDifficulty d, int level) => bsUnlocked(d, level) ? 0 : LevelGate.playsLeft(bsGatePrefix(d), level);
+
+bool bsCanPlay(BsDifficulty d, int level) => bsUnlocked(d, level) || bsPlaysLeft(d, level) > 0;
+
+/// Counts one play of a bought level (no-op for unlocked levels).
+Future<void> bsOnStart(BsDifficulty d, int level) =>
+    LevelGate.onStart(bsGatePrefix(d), bsUnlocked(d, level) ? level : bsFreeUpTo(d), level);
+
+/// Makes sure [level] may be played; a locked level must be bought first.
+Future<bool> bsEnsurePlayable(BuildContext context, BsDifficulty d, int level) async {
+  if (bsCanPlay(d, level)) return true;
+  return LevelGate.buy(context, prefix: bsGatePrefix(d), freeUpTo: bsFreeUpTo(d), level: level);
+}
 
 /// Localized difficulty name.
 String bsTierName(BsDifficulty d) => tr('common.tier.${d.id}');
@@ -76,7 +108,6 @@ class BallSortGame extends StatefulWidget {
 
 class _BallSortGameState extends State<BallSortGame> {
   late int _level;
-  late int _unlocked;
   late bool _markers;
   late BallSortState _state;
   final List<BallSortState> _history = [];
@@ -93,9 +124,8 @@ class _BallSortGameState extends State<BallSortGame> {
   @override
   void initState() {
     super.initState();
-    _unlocked = Storage.getInt(bsKey(_diff, 'unlocked'), 1);
     _markers = Storage.getBool(_kMarkersKey, _diff == BsDifficulty.hard || _diff == BsDifficulty.extreme);
-    _load(widget.level.clamp(1, _unlocked));
+    _load(widget.level.clamp(1, kBsLevelCount));
   }
 
   GlobalKey _keyFor(int i) {
@@ -114,6 +144,7 @@ class _BallSortGameState extends State<BallSortGame> {
 
   void _load(int level) {
     _level = level;
+    bsOnStart(_diff, level);
     Storage.setInt(bsKey(_diff, 'level'), level);
     _state = generateLevel(_diff, level);
     _history.clear();
@@ -123,8 +154,16 @@ class _BallSortGameState extends State<BallSortGame> {
     _won = false;
   }
 
-  void _restart() {
+  /// Restart / replay: a bought level spends one of its plays; when none are
+  /// left the skip offer is shown again, otherwise back to the level grid.
+  Future<void> _restart() async {
     AppAudio.play(Sound.tap);
+    final ok = await bsEnsurePlayable(context, _diff, _level);
+    if (!mounted) return;
+    if (!ok) {
+      Navigator.of(context).maybePop();
+      return;
+    }
     setState(() => _load(_level));
   }
 
@@ -203,9 +242,16 @@ class _BallSortGameState extends State<BallSortGame> {
 
   void _onWin() {
     _won = true;
-    if (_level >= _unlocked) {
-      _unlocked = _level + 1;
-      Storage.setInt(bsKey(_diff, 'unlocked'), _unlocked);
+    LevelGate.onCleared(bsGatePrefix(_diff), _level);
+    // Advance the free-in-sequence level past every cleared level (skipped
+    // levels that were bought and cleared count too).
+    var unlocked = bsUnlockedInSequence(_diff);
+    if (_level >= unlocked) {
+      if (_level == unlocked) unlocked++;
+      while (unlocked <= kBsLevelCount && bsStars(_diff, unlocked) > 0) {
+        unlocked++;
+      }
+      Storage.setInt(bsKey(_diff, 'unlocked'), unlocked);
     }
     final key = bsKey(_diff, 'best.$_level');
     final best = Storage.getInt(key, 0);
@@ -229,7 +275,8 @@ class _BallSortGameState extends State<BallSortGame> {
       stars: stars,
       actions: [
         DialogAction(tr('common.replay'), _restart),
-        DialogAction(tr('common.next_level'), () => setState(() => _load(_level + 1)), primary: true),
+        if (_level < kBsLevelCount)
+          DialogAction(tr('common.next_level'), () => setState(() => _load(_level + 1)), primary: true),
       ],
     );
   }

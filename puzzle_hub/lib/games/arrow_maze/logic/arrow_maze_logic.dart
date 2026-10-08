@@ -122,19 +122,49 @@ class ArrowMazeBoard {
     }
     return b.isCleared ? order : null;
   }
+
+  BoardStats stats() {
+    final b = ArrowMazeBoard(rows, cols, snakes);
+    var blocked = 0;
+    for (final s in snakes) {
+      if (!b.canEscape(s.id)) blocked++;
+    }
+    var rounds = 0;
+    while (!b.isCleared) {
+      final free = [
+        for (final s in snakes)
+          if (b.canEscape(s.id)) s.id
+      ];
+      if (free.isEmpty) break;
+      free.forEach(b._remove);
+      rounds++;
+    }
+    return BoardStats(snakes.isEmpty ? 0 : blocked / snakes.length, rounds);
+  }
+}
+
+class BoardStats {
+  const BoardStats(this.blockedFraction, this.depth);
+
+  /// Share of arrows that cannot leave at the start.
+  final double blockedFraction;
+
+  /// Rounds needed when every free arrow is removed at once (length of the
+  /// longest dependency chain).
+  final int depth;
 }
 
 class LevelSpec {
-  const LevelSpec(this.rows, this.cols, this.maxLen);
-  final int rows, cols, maxLen;
+  const LevelSpec(this.rows, this.cols, this.minLen, this.maxLen);
+  final int rows, cols, minLen, maxLen;
 }
 
 enum MazeTier {
-  easy('Easy', 'easy', 30, 3, 5, 5, 7, 8, 11, 3, 6, 'Small boards, short arrows'),
-  medium('Medium', 'medium', 60, 3, 3, 8, 6, 20, 14, 5, 14, 'Classic tangle'),
-  hard('Hard', 'hard', 40, 2, 2, 12, 8, 22, 15, 6, 18, 'Big, dense, 2 lives'),
-  extreme('Extreme', 'extreme', 40, 1, 1, 16, 10, 24, 16, 8, 26,
-      'Giant mazes, one life');
+  easy('Easy', 'easy', 100, 3, 5, 7, 5, 12, 9, 2, 5, 'Small boards, short arrows'),
+  medium('Medium', 'medium', 100, 3, 3, 10, 7, 20, 14, 3, 9, 'Classic tangle'),
+  hard('Hard', 'hard', 100, 2, 2, 16, 11, 26, 17, 3, 14, 'Big, dense, 2 lives'),
+  extreme('Extreme', 'extreme', 100, 1, 1, 20, 14, 30, 20, 4, 22,
+      'Giant tangles, tons of arrows, one life');
 
   const MazeTier(this.label, this.key, this.count, this.lives, this.hints,
       this.minRows, this.minCols, this.maxRows, this.maxCols, this.minLen,
@@ -142,6 +172,15 @@ enum MazeTier {
   final String label, key, blurb;
   final int count, lives, hints;
   final int minRows, minCols, maxRows, maxCols, minLen, maxLen;
+
+  /// Hard and Extreme build heavily interlocked boards.
+  bool get tangled => index >= MazeTier.hard.index;
+
+  /// Chance to aim an arrow so it lengthens the dependency chain.
+  double get deepBias => const [0.1, 0.45, 0.85, 0.97][index];
+
+  /// Target board density (Easy/Medium are thinned to open free lanes).
+  double get thinTo => const [0.88, 0.85, 1.0, 1.0][index];
 }
 
 class ArrowMazeLevels {
@@ -149,199 +188,379 @@ class ArrowMazeLevels {
     final t = ((level - 1) / (tier.count - 1)).clamp(0.0, 1.0);
     int lerp(int a, int b) => (a + (b - a) * t).round();
     return LevelSpec(lerp(tier.minRows, tier.maxRows),
-        lerp(tier.minCols, tier.maxCols), lerp(tier.minLen, tier.maxLen));
+        lerp(tier.minCols, tier.maxCols), tier.minLen,
+        lerp(tier.minLen, tier.maxLen));
   }
 
+  static final Map<int, List<Snake>> _cache = {};
+
+  /// Snakes of a level (cached; snakes are immutable).
+  static List<Snake> snakesFor(MazeTier tier, int level) {
+    final key = tier.index * 100000 + level;
+    final hit = _cache[key];
+    if (hit != null) return hit;
+    if (_cache.length > 48) _cache.clear();
+    return _cache[key] = _build(tier, level);
+  }
+
+  /// Fresh (mutable) board for a level. Deterministic and always solvable.
   static ArrowMazeBoard generate(MazeTier tier, int level) {
     final sp = spec(tier, level);
-    // Several deterministic candidates; keep the densest solvable one.
-    final cands = sp.rows * sp.cols > 120 ? 4 : 6;
-    ArrowMazeBoard? best;
-    for (var attempt = 0; attempt < cands + 16; attempt++) {
-      final rng = math.Random(
-          level * 7919 + 13 + attempt * 104729 + tier.index * 1299709);
-      final b = ArrowMazeBoard(
-          sp.rows, sp.cols, generateSnakes(sp.rows, sp.cols, sp.maxLen, rng));
-      if (b.solve() == null) continue;
-      if (best == null || b.density > best.density) best = b;
-      if (attempt >= cands - 1) break;
+    return ArrowMazeBoard(sp.rows, sp.cols, snakesFor(tier, level));
+  }
+
+  static int _seed(MazeTier tier, int level, int attempt) =>
+      level * 7919 + 13 + attempt * 104729 + tier.index * 1299709;
+
+  static List<Snake> _build(MazeTier tier, int level) {
+    final sp = spec(tier, level);
+    // Deterministic candidates. Easy/Medium take the first one (thinned out
+    // so free lanes appear); Hard/Extreme keep the most interlocked of three.
+    final tries = tier.tangled ? 3 : 1;
+    List<Snake>? best;
+    var bestScore = -1.0;
+    for (var attempt = 0; attempt < tries + 4; attempt++) {
+      final rng = math.Random(_seed(tier, level, attempt));
+      var snakes = generateTangle(sp.rows, sp.cols, sp.minLen, sp.maxLen, rng,
+          deepBias: tier.deepBias);
+      if (tier.thinTo < 1) {
+        snakes = thinOut(sp.rows, sp.cols, snakes, tier.thinTo);
+      }
+      final b = ArrowMazeBoard(sp.rows, sp.cols, snakes);
+      if (snakes.isEmpty || b.solve() == null) continue;
+      final st = b.stats();
+      final score = st.depth / 4 + st.blockedFraction * 4 + b.density * 6;
+      if (score > bestScore) {
+        bestScore = score;
+        best = snakes;
+      }
+      if (attempt >= tries - 1) break;
     }
-    if (best != null) return best;
-    // Practically unreachable: construction guarantees solvability.
+    if (best != null) return List.unmodifiable(best);
+    // Unreachable: construction guarantees solvability.
     throw StateError('Could not generate ${tier.key} level $level');
   }
 
-  /// Snakes are placed one by one; each snake's head ray must be clear of all
-  /// previously placed snakes. Therefore removing snakes in reverse placement
-  /// order is always possible -> the level is solvable.
-  static List<Snake> generateSnakes(
-      int rows, int cols, int maxLen, math.Random rng) {
-    final n = rows * cols;
-    final occ = List<bool>.filled(n, false);
-    final snakes = <Snake>[];
+  /// Removes the arrows that block the most others until the board density
+  /// drops to about [target]. Removing arrows never makes a level unsolvable.
+  static List<Snake> thinOut(
+      int rows, int cols, List<Snake> snakes, double target) {
+    var list = snakes;
+    final total = rows * cols;
+    var occ = list.fold<int>(0, (a, s) => a + s.length);
+    while (occ / total > target && list.length > 2) {
+      final b = ArrowMazeBoard(rows, cols, list);
+      final blocks = List<int>.filled(list.length, 0);
+      for (final s in list) {
+        final hit = <int>{};
+        for (final c in b.rayCells(s)) {
+          final o = b.owner[c];
+          if (o >= 0 && o != s.id) hit.add(o);
+        }
+        for (final o in hit) {
+          blocks[o]++;
+        }
+      }
+      var pick = -1;
+      for (final s in list) {
+        if ((occ - s.length) / total < target - 0.03) continue;
+        if (pick < 0 || blocks[s.id] > blocks[pick]) pick = s.id;
+      }
+      if (pick < 0) break;
+      occ -= list[pick].length;
+      list = [
+        for (final s in list)
+          if (s.id != pick) s
+      ];
+      list = [
+        for (var i = 0; i < list.length; i++)
+          Snake(i, list[i].cells, list[i].dir)
+      ];
+    }
+    return list;
+  }
 
-    int freeNeighbors(int i, Set<int>? inPath) {
+  /// Interlocking generator. The board is first tiled with long snake paths
+  /// (cramped cells first, so almost no holes are left), then every path gets
+  /// a head end such that the "is blocked by" graph stays acyclic. An acyclic
+  /// graph always has a free arrow, and removing arrows never blocks others,
+  /// so the level is solvable by construction. Paths whose both ends would
+  /// close a cycle (or hit their own body) are split, or dropped when tiny.
+  static List<Snake> generateTangle(
+      int rows, int cols, int minLen, int maxLen, math.Random rng,
+      {double deepBias = 0.9}) {
+    final n = rows * cols;
+    const hole = -2;
+    final own = List<int>.filled(n, -1);
+    final pieces = <List<int>>[];
+
+    int freeN(int i) {
       final r = i ~/ cols, c = i % cols;
       var k = 0;
-      for (final d in Dir.values) {
-        final nr = r + d.dr, nc = c + d.dc;
-        if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-        final j = nr * cols + nc;
-        if (!occ[j] && !(inPath?.contains(j) ?? false)) k++;
-      }
+      if (r > 0 && own[i - cols] == -1) k++;
+      if (r < rows - 1 && own[i + cols] == -1) k++;
+      if (c > 0 && own[i - 1] == -1) k++;
+      if (c < cols - 1 && own[i + 1] == -1) k++;
       return k;
     }
 
-    bool rayClear(int head, Dir d, Set<int> own) {
-      var r = head ~/ cols + d.dr;
-      var c = head % cols + d.dc;
+    List<int> nbrs(int i) {
+      final r = i ~/ cols, c = i % cols;
+      return [
+        if (r > 0) i - cols,
+        if (r < rows - 1) i + cols,
+        if (c > 0) i - 1,
+        if (c < cols - 1) i + 1,
+      ];
+    }
+
+    // ---- 1. tile the board with paths.
+    while (true) {
+      var start = -1, bestK = 9, ties = 0;
+      for (var i = 0; i < n; i++) {
+        if (own[i] != -1) continue;
+        final k = freeN(i);
+        if (k < bestK) {
+          bestK = k;
+          start = i;
+          ties = 1;
+        } else if (k == bestK && rng.nextInt(++ties) == 0) {
+          start = i;
+        }
+      }
+      if (start < 0) break;
+      final id = pieces.length;
+      final target = minLen + rng.nextInt(math.max(1, maxLen - minLen + 1));
+      final path = [start];
+      own[start] = id;
+      var last = -1;
+      final straight = 0.25 + rng.nextDouble() * 0.35;
+      while (path.length < target) {
+        final cur = path.last;
+        final opts = [
+          for (final j in nbrs(cur))
+            if (own[j] == -1) j
+        ];
+        if (opts.isEmpty) break;
+        int pick;
+        final ahead = last < 0 ? -1 : cur + (cur - last);
+        if (opts.contains(ahead) &&
+            rng.nextDouble() < straight &&
+            freeN(ahead) > 0) {
+          pick = ahead;
+        } else {
+          // Hug walls / other paths so no isolated cells are left behind.
+          var bk = 99.0;
+          pick = opts.first;
+          for (final j in opts) {
+            final k = freeN(j) + rng.nextDouble() * 1.2;
+            if (k < bk) {
+              bk = k;
+              pick = j;
+            }
+          }
+        }
+        last = cur;
+        path.add(pick);
+        own[pick] = id;
+      }
+      if (path.length >= 2) {
+        pieces.add(path);
+        continue;
+      }
+      // A lone cell: glue it to the end of a neighbouring path if possible.
+      own[start] = hole;
+      for (final j in nbrs(start)) {
+        final p = own[j];
+        if (p < 0) continue;
+        final cells = pieces[p];
+        if (cells.length >= maxLen + 2) continue;
+        if (cells.first == j) {
+          cells.insert(0, start);
+        } else if (cells.last == j) {
+          cells.add(start);
+        } else {
+          continue;
+        }
+        own[start] = p;
+        break;
+      }
+    }
+
+    // ---- 2. choose heads keeping the blocked-by graph acyclic.
+    final rays = <int, List<int>>{}; // piece -> ray cells (oriented pieces)
+    final orient = <int, List<int>>{}; // piece -> cells tail..head
+    var stamp = 0;
+    final seen = <int>[];
+
+    Dir dirOf(int from, int to) {
+      final d = to - from;
+      if (d == -cols) return Dir.up;
+      if (d == cols) return Dir.down;
+      return d < 0 ? Dir.left : Dir.right;
+    }
+
+    List<int>? ray(List<int> cells, int self) {
+      final h = cells.last;
+      final d = dirOf(cells[cells.length - 2], h);
+      var r = h ~/ cols + d.dr, c = h % cols + d.dc;
+      final out = <int>[];
       while (r >= 0 && r < rows && c >= 0 && c < cols) {
         final i = r * cols + c;
-        if (occ[i] || own.contains(i)) return false;
+        if (own[i] == self) return null; // would hit its own body
+        out.add(i);
         r += d.dr;
         c += d.dc;
       }
+      return out;
+    }
+
+    // Can [from] reach [p] following blocked-by edges?
+    bool reaches(int from, int p) {
+      stamp++;
+      while (seen.length < pieces.length) {
+        seen.add(0);
+      }
+      final stack = [from];
+      seen[from] = stamp;
+      while (stack.isNotEmpty) {
+        final u = stack.removeLast();
+        if (u == p) return true;
+        final rc = rays[u];
+        if (rc == null) continue;
+        for (final i in rc) {
+          final v = own[i];
+          if (v < 0 || v == u || seen[v] == stamp) continue;
+          seen[v] = stamp;
+          stack.add(v);
+        }
+      }
+      return false;
+    }
+
+    // Longest blocked-by chain starting at u (memoised per query).
+    final depthMemo = <int, int>{};
+    int depth(int u) {
+      final m = depthMemo[u];
+      if (m != null) return m;
+      depthMemo[u] = 0; // graph is acyclic; guards re-entry anyway
+      final rc = rays[u];
+      var best = 0;
+      if (rc != null) {
+        for (final i in rc) {
+          final v = own[i];
+          if (v < 0 || v == u) continue;
+          best = math.max(best, 1 + depth(v));
+        }
+      }
+      return depthMemo[u] = best;
+    }
+
+    bool orientPiece(int p) {
+      final cells = pieces[p];
+      final opts = <(List<int>, List<int>, int)>[];
+      for (final cand in [cells, cells.reversed.toList()]) {
+        final rc = ray(cand, p);
+        if (rc == null) continue;
+        final targets = <int>{
+          for (final i in rc)
+            if (own[i] >= 0) own[i]
+        };
+        if (targets.any((t) => reaches(t, p))) continue;
+        depthMemo.clear();
+        var dep = 0;
+        for (final t in targets) {
+          dep = math.max(dep, 1 + depth(t));
+        }
+        opts.add((cand, rc, dep));
+      }
+      if (opts.isEmpty) return false;
+      var pick = opts.first;
+      if (opts.length == 2) {
+        final a = opts[0], b = opts[1];
+        final deep = a.$3 >= b.$3 ? a : b;
+        final shallow = identical(deep, a) ? b : a;
+        pick = rng.nextDouble() < deepBias ? deep : shallow;
+      }
+      orient[p] = pick.$1;
+      rays[p] = pick.$2;
       return true;
     }
 
-    Dir dirOf(int from, int to) {
-      final dr = to ~/ cols - from ~/ cols;
-      final dc = to % cols - from % cols;
-      if (dr < 0) return Dir.up;
-      if (dr > 0) return Dir.down;
-      return dc < 0 ? Dir.left : Dir.right;
-    }
-
-    // Walks hug walls / existing snakes (fewest free neighbours first) so the
-    // board packs tightly, with some randomness for variety.
-    List<int> walk(int start, int target) {
-      final path = [start];
-      final inPath = {start};
-      var lastDir = Dir.values[rng.nextInt(4)];
-      final hug = rng.nextDouble() * 0.85;
-      while (path.length < target) {
-        final cur = path.last;
-        final r = cur ~/ cols, c = cur % cols;
-        final opts = <Dir>[];
-        for (final d in Dir.values) {
-          final nr = r + d.dr, nc = c + d.dc;
-          if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-          final i = nr * cols + nc;
-          if (occ[i] || inPath.contains(i)) continue;
-          opts.add(d);
+    final queue = [for (var i = 0; i < pieces.length; i++) i]..shuffle(rng);
+    var qi = 0;
+    while (qi < queue.length) {
+      final p = queue[qi++];
+      if (orientPiece(p)) continue;
+      final cells = pieces[p];
+      if (cells.length >= 4) {
+        // Split into two paths and try again.
+        final cut = 2 + rng.nextInt(cells.length - 3);
+        final tail = cells.sublist(cut);
+        cells.removeRange(cut, cells.length);
+        final q = pieces.length;
+        pieces.add(tail);
+        for (final i in tail) {
+          own[i] = q;
         }
-        if (opts.isEmpty) break;
-        Dir pick;
-        final roll = rng.nextDouble();
-        if (path.length > 1 && opts.contains(lastDir) && roll < 0.35) {
-          pick = lastDir;
-        } else if (roll < 0.35 + hug) {
-          var bestK = 99.0;
-          pick = opts.first;
-          for (final d in opts) {
-            final k = freeNeighbors((r + d.dr) * cols + (c + d.dc), inPath) +
-                rng.nextDouble() * 0.9;
-            if (k < bestK) {
-              bestK = k;
-              pick = d;
-            }
-          }
-        } else {
-          pick = opts[rng.nextInt(opts.length)];
+        queue.insert(qi, q);
+        queue.insert(qi, p);
+      } else if (cells.length == 3) {
+        own[cells.removeAt(rng.nextInt(2) * 2)] = hole;
+        queue.insert(qi, p);
+      } else {
+        for (final i in cells) {
+          own[i] = hole;
         }
-        lastDir = pick;
-        final nxt = (r + pick.dr) * cols + (c + pick.dc);
-        path.add(nxt);
-        inPath.add(nxt);
-      }
-      return path;
-    }
-
-    void place(List<int> cells, Dir d) {
-      snakes.add(Snake(snakes.length, cells, d));
-      for (final c in cells) {
-        occ[c] = true;
       }
     }
 
-    final phases = <List<int>>[
-      [maxLen, math.max(4, (maxLen * 0.5).round())],
-      [(maxLen * 0.6).round().clamp(3, maxLen), 3],
-      [5, 3],
-      [4, 3],
-      [3, 2],
-      [2, 2],
-    ];
-    final tries = n > 200 ? 40 : 28;
-    for (final ph in phases) {
-      final hi = ph[0], lo = ph[1];
-      var fails = 0;
-      final maxFails = n ~/ 2 + 8;
-      while (fails < maxFails) {
-        final empty = [
-          for (var i = 0; i < n; i++)
-            if (!occ[i]) i
-        ];
-        if (empty.length < 2) break;
-        // Start in a cramped spot: best of a few random empty cells.
-        var start = empty[rng.nextInt(empty.length)];
-        var startK = freeNeighbors(start, null);
-        for (var s = 0; s < 4; s++) {
-          final cand = empty[rng.nextInt(empty.length)];
-          final k = freeNeighbors(cand, null);
-          if (k < startK) {
-            start = cand;
-            startK = k;
-          }
-        }
-        List<int>? best;
-        Dir? bestDir;
-        for (var t = 0; t < tries; t++) {
-          final target = lo + rng.nextInt(math.max(1, hi - lo + 1));
-          final w = walk(start, target);
-          if (w.length < lo) continue;
-          if (best != null && w.length <= best.length) continue;
-          final own = w.toSet();
-          // Try both ends as the head.
-          final cands = [w, w.reversed.toList()]..shuffle(rng);
-          for (final cand in cands) {
-            final d = dirOf(cand[cand.length - 2], cand.last);
-            if (rayClear(cand.last, d, own)) {
-              best = cand;
-              bestDir = d;
+    // ---- 3. plug holes: grow tails into them, or drop in new dominoes.
+    var grew = true;
+    while (grew) {
+      grew = false;
+      for (var x = 0; x < n; x++) {
+        if (own[x] != hole) continue;
+        for (final j in nbrs(x)) {
+          final t = own[j];
+          if (t < 0) continue;
+          final cells = orient[t];
+          if (cells == null || cells.first != j) continue;
+          if (cells.length >= maxLen + 4 || rays[t]!.contains(x)) continue;
+          var ok = true;
+          for (final e in rays.entries) {
+            if (e.key != t && e.value.contains(x) && reaches(t, e.key)) {
+              ok = false;
               break;
             }
           }
-        }
-        if (best == null) {
-          fails++;
-        } else {
-          place(best, bestDir!);
-          fails = 0;
+          if (!ok) continue;
+          cells.insert(0, x);
+          own[x] = t;
+          grew = true;
+          break;
         }
       }
     }
-    // Final exhaustive sweep: squeeze in any domino that still fits.
-    for (final len in [3, 2]) {
-      final order = [for (var i = 0; i < n; i++) i]..shuffle(rng);
-      for (final start in order) {
-        if (occ[start]) continue;
-        for (var t = 0; t < 12; t++) {
-          final w = walk(start, len);
-          if (w.length < len) continue;
-          final own = w.toSet();
-          var done = false;
-          for (final cand in [w, w.reversed.toList()]) {
-            final d = dirOf(cand[cand.length - 2], cand.last);
-            if (rayClear(cand.last, d, own)) {
-              place(cand, d);
-              done = true;
-              break;
-            }
-          }
-          if (done) break;
-        }
+    for (var x = 0; x < n; x++) {
+      if (own[x] != hole) continue;
+      for (final y in nbrs(x)) {
+        if (own[y] != hole) continue;
+        final q = pieces.length;
+        pieces.add([x, y]);
+        own[x] = own[y] = q;
+        if (orientPiece(q)) break;
+        own[x] = own[y] = hole;
+        pieces.removeLast();
       }
+    }
+
+    final snakes = <Snake>[];
+    for (var p = 0; p < pieces.length; p++) {
+      final cells = orient[p];
+      if (cells == null || own[cells.first] != p) continue;
+      snakes.add(Snake(snakes.length, List.unmodifiable(cells),
+          dirOf(cells[cells.length - 2], cells.last)));
     }
     return snakes;
   }

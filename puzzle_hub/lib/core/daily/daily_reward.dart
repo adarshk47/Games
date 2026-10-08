@@ -91,7 +91,7 @@ class DailyReward {
     await Storage.setString(_kLast, dateKey(DailyClock.today()));
     await Storage.setInt(_kStreak, s);
     if (s > bestStreak) await Storage.setInt(_kBest, s);
-    await Rewards.addCoins(coins, label: tr('daily.day_reward_label', {'n': cycleDay(s)}));
+    await Rewards.addCoins(coins, label: tr('daily.day_reward_label', {'n': cycleDay(s)}), source: 'daily');
     notifyDailyChanged();
     return coins;
   }

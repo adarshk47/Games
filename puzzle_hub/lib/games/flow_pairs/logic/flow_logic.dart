@@ -18,7 +18,7 @@ enum FlowTier {
       FlowTier.values.firstWhere((t) => t.id == id, orElse: () => FlowTier.easy);
 
   String get sizeLabel => switch (this) {
-        FlowTier.easy => '5x5',
+        FlowTier.easy => '5x5 - 6x6',
         FlowTier.medium => '6x6 - 7x7',
         FlowTier.hard => '8x8 - 9x9',
         FlowTier.extreme => '10x10 - 12x12',
@@ -53,20 +53,22 @@ class FlowPuzzle {
 
 class FlowLevels {
   FlowLevels._();
-  static const count = 30;
+  static const count = 100;
   static final Map<String, FlowPuzzle> _cache = {};
 
+  /// Grid side: grows in steps through the tier (difficulty rises with the
+  /// size and, within one size, with fewer = longer pairs).
   static int sizeFor(FlowTier t, int level) => switch (t) {
-        FlowTier.easy => 5,
-        FlowTier.medium => level <= 15 ? 6 : 7,
-        FlowTier.hard => level <= 15 ? 8 : 9,
-        FlowTier.extreme => 10 + (level - 1) ~/ 10,
+        FlowTier.easy => level <= 50 ? 5 : 6,
+        FlowTier.medium => level <= 50 ? 6 : 7,
+        FlowTier.hard => level <= 50 ? 8 : 9,
+        FlowTier.extreme => 10 + ((level - 1) * 3 ~/ count).clamp(0, 2),
       };
 
   static int pairCountFor(FlowTier t, int level) {
     final s = sizeFor(t, level);
     return switch (t) {
-      FlowTier.easy => level < 10 ? 4 : 5,
+      FlowTier.easy => s == 5 ? (level <= 20 ? 4 : 5) : (level <= 75 ? 5 : 6),
       FlowTier.medium => s - 1 + (level % 2),
       FlowTier.hard => s - 1 + (level % 3 == 0 ? 1 : 0),
       FlowTier.extreme => s - 1 + (level % 3),

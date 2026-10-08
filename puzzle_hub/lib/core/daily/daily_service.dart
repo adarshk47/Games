@@ -6,6 +6,7 @@ import '../achievements/achievements.dart';
 import '../rewards.dart';
 import 'daily_quests.dart';
 import 'daily_reward.dart';
+import '../features.dart';
 
 /// Wires [Rewards.events] into daily quests and achievements. Idempotent.
 class DailyService {
@@ -23,7 +24,7 @@ class DailyService {
   static Future<void> _onEvent(RewardEvent e) async {
     try {
       await DailyQuests.onEvent(e);
-      await Achievements.onEvent(e);
+      if (kAchievementsEnabled) await Achievements.onEvent(e);
     } catch (err) {
       debugPrint('daily event failed: $err');
     }
@@ -31,7 +32,7 @@ class DailyService {
 
   /// Streak / quest changes may unlock badges (e.g. 7-day streak).
   static void _scheduleEval() {
-    if (_evalPending) return;
+    if (!kAchievementsEnabled || _evalPending) return;
     _evalPending = true;
     Future.microtask(() async {
       _evalPending = false;

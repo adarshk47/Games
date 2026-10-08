@@ -52,6 +52,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
+    MazeProgress.onStart(widget.tier, widget.level);
     _setup();
   }
 
@@ -103,7 +104,16 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     }
   }
 
-  void _restart() {
+  /// Restart / replay: a bought level spends one of its plays; when none are
+  /// left the skip offer is shown again, otherwise back to the level grid.
+  Future<void> _restart() async {
+    final ok = await ensureMazeLevel(context, widget.tier, widget.level);
+    if (!mounted) return;
+    if (!ok) {
+      Navigator.of(context).maybePop();
+      return;
+    }
+    MazeProgress.onStart(widget.tier, widget.level);
     setState(_setup);
   }
 

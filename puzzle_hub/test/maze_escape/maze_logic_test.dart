@@ -57,18 +57,34 @@ void main() {
 
   test('tier scaling', () {
     expect(LabLevel.of(MazeTier.easy, 1).size, 7);
-    expect(LabLevel.of(MazeTier.easy, kLevelCount).size, 11);
+    expect(LabLevel.of(MazeTier.easy, kLevelCount).size, 13);
     expect(LabLevel.of(MazeTier.easy, kLevelCount).fogRadius, 0);
     expect(LabLevel.of(MazeTier.easy, 1).torches, 3);
-    expect(LabLevel.of(MazeTier.medium, kLevelCount).size, 15);
-    expect(LabLevel.of(MazeTier.hard, kLevelCount).size, 19);
+    expect(LabLevel.of(MazeTier.medium, kLevelCount).size, 17);
+    expect(LabLevel.of(MazeTier.hard, kLevelCount).size, 21);
     expect(LabLevel.of(MazeTier.hard, 5).fogRadius, 3);
     expect(LabLevel.of(MazeTier.hard, 5).torches, 2);
     expect(LabLevel.of(MazeTier.hard, 5).limited, isTrue);
-    expect(LabLevel.of(MazeTier.extreme, kLevelCount).size, 25);
+    expect(LabLevel.of(MazeTier.extreme, kLevelCount).size, 27);
+    expect(kLevelCount, 100);
     expect(LabLevel.of(MazeTier.extreme, 5).fogRadius, 2);
     expect(LabLevel.of(MazeTier.extreme, 5).torches, 1);
     expect(LabLevel.of(MazeTier.extreme, 5).limitFactor, lessThan(LabLevel.of(MazeTier.hard, 5).limitFactor));
+  });
+
+  test('difficulty grows smoothly over the 100 levels', () {
+    for (final t in MazeTier.values) {
+      for (var l = 2; l <= kLevelCount; l++) {
+        final a = LabLevel.of(t, l - 1), b = LabLevel.of(t, l);
+        expect(b.size, greaterThanOrEqualTo(a.size), reason: '${t.name} L$l');
+        expect(b.size - a.size, lessThanOrEqualTo(1));
+        if (t != MazeTier.medium) {
+          expect(b.limitFactor, lessThanOrEqualTo(a.limitFactor));
+          expect(b.fogRadius, lessThanOrEqualTo(a.fogRadius));
+        }
+      }
+    }
+    expect(LabLevel.of(MazeTier.hard, kLevelCount).limitFactor, lessThan(LabLevel.of(MazeTier.hard, 1).limitFactor));
   });
 
   test('stars', () {

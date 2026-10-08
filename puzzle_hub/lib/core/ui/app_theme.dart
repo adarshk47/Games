@@ -165,7 +165,7 @@ class AppThemeController {
       await select(i);
       return ThemeBuyResult.alreadyOwned;
     }
-    if (!await Rewards.spend(themes[i].price)) return ThemeBuyResult.notEnoughCoins;
+    if (!await Rewards.spend(themes[i].price, reason: 'theme')) return ThemeBuyResult.notEnoughCoins;
     final ids = _unlockedIds..add(themes[i].id);
     await Storage.setString(_kUnlocked, ids.join(','));
     unlocks.value++;

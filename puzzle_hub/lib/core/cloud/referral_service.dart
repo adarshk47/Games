@@ -118,7 +118,7 @@ class ReferralService {
         credited = await run(false);
       }
       await Storage.removeGlobal(_kPending);
-      if (credited) await Rewards.addCoins(inviteeBonus, label: tr('cloud.invite_bonus'));
+      if (credited) await Rewards.addCoins(inviteeBonus, label: tr('cloud.invite_bonus'), source: 'invite');
     } catch (e) {
       debugPrint('referral credit: $e');
     } finally {

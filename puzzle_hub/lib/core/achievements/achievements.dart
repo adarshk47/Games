@@ -176,7 +176,7 @@ class Achievements {
         for (final a in fresh) {
           out.add(a);
           showDailyToast(emoji: a.emoji, title: tr('ach.unlocked_toast', {'name': a.title}), subtitle: a.desc, color: a.color);
-          if (reward) await Rewards.addCoins(a.reward, label: a.title);
+          if (reward) await Rewards.addCoins(a.reward, label: a.title, source: 'achievement');
         }
       }
     } finally {

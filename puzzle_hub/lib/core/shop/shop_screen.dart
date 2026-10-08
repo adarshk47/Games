@@ -7,6 +7,7 @@ import '../economy/continue_offer.dart';
 import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../ui/ui.dart';
+import '../economy/coin_history_screen.dart';
 
 /// Coin shop body. Shown as a tab inside the home's bottom navigation (the
 /// animated background is already behind it), so no Scaffold / back button.
@@ -237,6 +238,17 @@ class _ShopScreenState extends State<ShopScreen> {
           ]),
           const SizedBox(height: 10),
           Text(tr('shop.earn_tip'), style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+          const SizedBox(height: 12),
+          Center(
+            child: PremiumButton(
+              key: const ValueKey('coin_history_btn'),
+              label: tr('shop.history.open'),
+              icon: Icons.receipt_long_rounded,
+              compact: true,
+              color: const Color(0xFF6F63B8),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const CoinHistoryScreen())),
+            ),
+          ),
         ]),
       );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../core/economy/level_gate.dart';
 import '../../core/storage.dart';
 import 'logic/levels.dart';
 
@@ -18,27 +19,45 @@ class MazeProgress {
   static int stars(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) =>
       Storage.getInt(key(t, level, mode: mode));
 
+  /// Unlocked through progress: level 1, the level after a cleared one, a
+  /// cleared level itself, or a level bought under the old one-time unlock.
   static bool unlocked(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) =>
-      level <= 1 || stars(t, level - 1, mode: mode) > 0 || isBought(t, level, mode: mode);
+      level <= 1 ||
+      stars(t, level, mode: mode) > 0 ||
+      stars(t, level - 1, mode: mode) > 0 ||
+      isBought(t, level, mode: mode);
 
   static String _boughtKey(MazeTier t, int level, MazeMode mode) =>
       'maze.${mode.keyPrefix}.${t.name}.unlockedBought.$level';
 
-  /// Levels unlocked early with coins / a rewarded ad.
+  /// Legacy: levels unlocked permanently by the old "buy next level" offer.
   static bool isBought(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) =>
       Storage.getBool(_boughtKey(t, level, mode));
 
-  static Future<void> buyUnlock(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) async {
-    await Storage.setBool(_boughtKey(t, level, mode), true);
-    tick.value++;
+  /// [LevelGate] prefix, e.g. `maze.lab.easy`.
+  static String gatePrefix(MazeTier t, {MazeMode mode = MazeMode.labyrinth}) => 'maze.${mode.keyPrefix}.${t.name}';
+
+  /// Next unbeaten level in sequence: the furthest level that is free to open.
+  static int freeUpTo(MazeTier t, {MazeMode mode = MazeMode.labyrinth}) {
+    for (var l = 1; l <= kLevelCount; l++) {
+      if (stars(t, l, mode: mode) == 0) return l;
+    }
+    return kLevelCount;
   }
 
-  /// The first locked level (the only one that can be bought), or null.
-  static int? firstLocked(MazeTier t, {MazeMode mode = MazeMode.labyrinth}) {
-    for (var l = 1; l <= kLevelCount; l++) {
-      if (!unlocked(t, l, mode: mode)) return l;
-    }
-    return null;
+  /// Plays left on a level skipped to with coins (0 for free levels).
+  static int playsLeft(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) =>
+      unlocked(t, level, mode: mode) ? 0 : LevelGate.playsLeft(gatePrefix(t, mode: mode), level);
+
+  /// True when the level can be opened right now (free or bought plays left).
+  static bool canPlay(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) =>
+      unlocked(t, level, mode: mode) || LevelGate.canPlay(gatePrefix(t, mode: mode), freeUpTo(t, mode: mode), level);
+
+  /// Counts one play of a bought level (no-op for free levels).
+  static Future<void> onStart(MazeTier t, int level, {MazeMode mode = MazeMode.labyrinth}) async {
+    final free = unlocked(t, level, mode: mode) ? level : freeUpTo(t, mode: mode);
+    await LevelGate.onStart(gatePrefix(t, mode: mode), free, level);
+    tick.value++;
   }
 
   static int totalStars(MazeTier t, {MazeMode mode = MazeMode.labyrinth}) {
@@ -70,6 +89,7 @@ class MazeProgress {
 
   static void save(MazeTier t, int level, int stars, {MazeMode mode = MazeMode.labyrinth}) {
     if (stars > MazeProgress.stars(t, level, mode: mode)) Storage.setInt(key(t, level, mode: mode), stars);
+    LevelGate.onCleared(gatePrefix(t, mode: mode), level);
     tick.value++;
   }
 

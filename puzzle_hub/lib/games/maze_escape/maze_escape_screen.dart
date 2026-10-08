@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../core/economy/continue_offer.dart';
+import '../../core/economy/level_gate.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/ui/ui.dart';
 import 'labyrinth_game.dart';
@@ -33,14 +33,21 @@ void openMazeLevel(BuildContext context, MazeTier tier, int level, {bool replace
   replace ? nav.pushReplacement(route) : nav.push(route);
 }
 
-/// Tapping a locked tile: only the first locked level can be bought (coins
-/// or a rewarded ad); it is then unlocked permanently and opened.
+/// Makes sure [level] may be played: free levels pass; a locked level must be
+/// bought with coins via [LevelGate] (or still have bought plays left).
+Future<bool> ensureMazeLevel(BuildContext context, MazeTier tier, int level, {MazeMode mode = MazeMode.labyrinth}) async {
+  if (MazeProgress.canPlay(tier, level, mode: mode)) return true;
+  final ok = await LevelGate.buy(context,
+      prefix: MazeProgress.gatePrefix(tier, mode: mode), freeUpTo: MazeProgress.freeUpTo(tier, mode: mode), level: level);
+  MazeProgress.tick.value++;
+  return ok;
+}
+
+/// Tapping a locked tile: skip ahead with coins (100 per skipped level, a
+/// limited number of plays), then open it.
 Future<void> buyMazeLevel(BuildContext context, MazeTier tier, int level, {MazeMode mode = MazeMode.labyrinth}) async {
-  if (MazeProgress.firstLocked(tier, mode: mode) != level) return;
-  final ok = await showContinueOffer(context, OfferKind.unlockLevel);
+  final ok = await ensureMazeLevel(context, tier, level, mode: mode);
   if (!ok || !context.mounted) return;
-  await MazeProgress.buyUnlock(tier, level, mode: mode);
-  if (!context.mounted) return;
   openMazeLevel(context, tier, level, mode: mode);
 }
 
@@ -294,11 +301,12 @@ class _TierSelectState extends State<_TierSelect> {
             const SizedBox(height: 3),
             Text(_tierBlurb(mode, t), style: const TextStyle(color: Pal.textDim, fontSize: 12.5, height: 1.3)),
             const SizedBox(height: 8),
-            Row(children: [
-              const Icon(Icons.star_rounded, color: Pal.gold, size: 16),
-              const SizedBox(width: 3),
-              Text('$stars / ${kLevelCount * 3}', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w800, fontSize: 12.5)),
-              const SizedBox(width: 12),
+            Wrap(spacing: 12, runSpacing: 2, crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.star_rounded, color: Pal.gold, size: 16),
+                const SizedBox(width: 3),
+                Text('$stars / ${kLevelCount * 3}', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w800, fontSize: 12.5)),
+              ]),
               Text('$done / $kLevelCount', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w600, fontSize: 12.5)),
             ]),
           ]),
@@ -333,29 +341,40 @@ class _LevelSelect extends StatelessWidget {
           itemCount: kLevelCount,
           itemBuilder: (context, i) {
             final level = i + 1;
-            final open = MazeProgress.unlocked(tier, level, mode: mode);
+            final free = MazeProgress.unlocked(tier, level, mode: mode);
+            final plays = free ? 0 : MazeProgress.playsLeft(tier, level, mode: mode);
+            final open = free || plays > 0;
             final stars = MazeProgress.stars(tier, level, mode: mode);
             final size = _levelSize(mode, tier, level);
             return Opacity(
+              key: ValueKey('maze-level-$level'),
               opacity: open ? 1 : 0.45,
               child: GlassCard(
                 blur: 0,
                 radius: 20,
                 padding: const EdgeInsets.all(8),
-                glow: stars > 0 ? color : null,
+                glow: stars > 0 ? color : (plays > 0 ? Pal.gold : null),
                 onTap: open
                     ? () => openMazeLevel(context, tier, level, mode: mode)
                     : () => buyMazeLevel(context, tier, level, mode: mode),
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  open
-                      ? Text('$level', style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900))
-                      : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 24),
-                  const SizedBox(height: 2),
-                  Text('${size}x$size', style: const TextStyle(color: Pal.textDim, fontSize: 11)),
-                  const SizedBox(height: 4),
-                  StarRow(stars: stars, size: 14),
+                    if (plays > 0) _boughtBadge(),
+                    open
+                        ? Text('$level', style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900))
+                        : Column(mainAxisSize: MainAxisSize.min, children: [
+                            const Icon(Icons.lock_rounded, color: Pal.textDim, size: 22),
+                            Text('$level', style: const TextStyle(color: Pal.textDim, fontSize: 11, fontWeight: FontWeight.w800)),
+                          ]),
+                    const SizedBox(height: 2),
+                    Text('${size}x$size', style: const TextStyle(color: Pal.textDim, fontSize: 11)),
+                    const SizedBox(height: 4),
+                    if (plays > 0)
+                      Text(tr('common.skip.plays_left', {'n': plays}),
+                          style: const TextStyle(color: Pal.gold, fontSize: 11, fontWeight: FontWeight.w800))
+                    else
+                      StarRow(stars: stars, size: 14),
                   ]),
                 ),
               ),
@@ -366,3 +385,12 @@ class _LevelSelect extends StatelessWidget {
     );
   }
 }
+
+Widget _boughtBadge() => Container(
+      margin: const EdgeInsets.only(bottom: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      decoration: BoxDecoration(
+          color: Pal.gold.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8), border: Border.all(color: Pal.gold)),
+      child: Text(tr('maze_escape.bought'),
+          style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.6)),
+    );

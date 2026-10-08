@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -97,7 +98,10 @@ class Rewards {
     coins.value = e - s;
   }
 
-  static Future<void> addCoins(int n, {String? label, bool playSound = true}) async {
+  /// [source] says where coins came from ('game', 'ad', 'daily', 'quest',
+  /// 'achievement', 'invite', ...); [gameId] credits a specific game. Both feed
+  /// the coin history screen.
+  static Future<void> addCoins(int n, {String? label, bool playSound = true, String source = 'other', String? gameId}) async {
     if (n <= 0) return;
     if (playSound) AppAudio.play(Sound.coin);
     _normalizeLedger();
@@ -105,11 +109,14 @@ class Rewards {
     final s = spent;
     _writeLedger(e, s);
     coins.value = e - s;
+    CoinHistory.record(n, source: source, gameId: gameId);
     _toast('+$n 🪙${label == null ? '' : '  $label'}');
   }
 
   /// Returns false (and spends nothing) if the user cannot afford it.
-  static Future<bool> spend(int n) async {
+  /// [reason] says what the coins were spent on ('hint', 'undo', 'extraLife',
+  /// 'skip', 'theme', 'adfree', ...) for the coin history screen.
+  static Future<bool> spend(int n, {String reason = 'other', String? gameId}) async {
     if (n < 0) return false;
     _normalizeLedger();
     final e = earned;
@@ -118,6 +125,7 @@ class Rewards {
     if (n == 0) return true;
     _writeLedger(e, s + n);
     coins.value = e - s - n;
+    CoinHistory.record(-n, source: reason, gameId: gameId);
     return true;
   }
 
@@ -135,7 +143,7 @@ class Rewards {
     final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     AppAudio.play(Sound.win);
-    addCoins(reward, label: first ? tr('common.level_complete') : null, playSound: false);
+    addCoins(reward, label: first ? tr('common.level_complete') : null, playSound: false, source: 'game', gameId: gameId);
     _events.add(RewardEvent(gameId: gameId, type: 'level', levelKey: levelKey, stars: stars, score: score, won: true, firstTime: first));
     try {
       AdsService.onLevelCompleted(gameId: gameId);
@@ -146,7 +154,7 @@ class Rewards {
   /// A run ended (score based games). Winning pays 2 coins.
   static void onGameEnd(String gameId, {int? score, bool won = false}) {
     _record(gameId, won: won, score: score);
-    if (won) addCoins(runWinReward);
+    if (won) addCoins(runWinReward, source: 'game', gameId: gameId);
     _events.add(RewardEvent(gameId: gameId, type: 'run', score: score, won: won));
   }
 
@@ -233,4 +241,60 @@ class CoinPill extends StatelessWidget {
     );
     return onTap == null ? pill : GestureDetector(onTap: onTap, child: pill);
   }
+}
+
+
+/// Per-game / per-source coin totals plus a capped log of recent transactions.
+/// Everything is stored through [Storage], so it is per account and synced.
+class CoinHistory {
+  CoinHistory._();
+
+  static const _log = 'coins.log';
+  static const maxLog = 200;
+
+  static void record(int amount, {required String source, String? gameId}) {
+    if (amount == 0) return;
+    if (amount > 0) {
+      Storage.setInt('coins.src.$source', Storage.getInt('coins.src.$source') + amount);
+      if (gameId != null) Storage.setInt('coins.game.$gameId', Storage.getInt('coins.game.$gameId') + amount);
+    } else {
+      Storage.setInt('coins.use.$source', Storage.getInt('coins.use.$source') - amount);
+    }
+    final list = entries();
+    list.insert(0, CoinTx(DateTime.now(), amount, source, gameId));
+    if (list.length > maxLog) list.removeRange(maxLog, list.length);
+    Storage.setString(_log, jsonEncode([for (final t in list) t.toJson()]));
+  }
+
+  /// Coins earned from one game (levels + runs).
+  static int earnedFromGame(String gameId) => Storage.getInt('coins.game.$gameId');
+
+  /// Coins earned from a source ('game', 'ad', 'daily', ...).
+  static int earnedFrom(String source) => Storage.getInt('coins.src.$source');
+
+  /// Coins spent on a reason ('hint', 'skip', 'theme', ...).
+  static int spentOn(String reason) => Storage.getInt('coins.use.$reason');
+
+  static List<CoinTx> entries() {
+    final raw = Storage.getString(_log);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      return [for (final e in jsonDecode(raw) as List) CoinTx.fromJson(e as Map<String, dynamic>)];
+    } catch (_) {
+      return [];
+    }
+  }
+}
+
+class CoinTx {
+  CoinTx(this.time, this.amount, this.source, this.gameId);
+  final DateTime time;
+  final int amount;
+  final String source;
+  final String? gameId;
+
+  Map<String, dynamic> toJson() => {'t': time.millisecondsSinceEpoch, 'a': amount, 's': source, if (gameId != null) 'g': gameId};
+
+  factory CoinTx.fromJson(Map<String, dynamic> j) =>
+      CoinTx(DateTime.fromMillisecondsSinceEpoch(j['t'] as int), j['a'] as int, j['s'] as String, j['g'] as String?);
 }

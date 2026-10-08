@@ -1,7 +1,6 @@
 // GENERATED list of all module string tables. Add new modules here.
 import 'account.dart';
 import 'arrow_maze.dart';
-import 'arrows.dart';
 import 'ball_sort.dart';
 import 'block_puzzle.dart';
 import 'cloud.dart';
@@ -16,7 +15,6 @@ import 'maze_escape.dart';
 import 'memory_boost.dart';
 import 'minesweeper.dart';
 import 'mom_memory.dart';
-import 'parking_jam.dart';
 import 'screw_jam.dart';
 import 'shop.dart';
 import 'sliding_puzzle.dart';
@@ -27,7 +25,6 @@ import 'tile_match.dart';
 final Map<String, Map<String, String>> allStrings = {
   ...accountStrings,
   ...arrowMazeStrings,
-  ...arrowsStrings,
   ...ballSortStrings,
   ...blockPuzzleStrings,
   ...cloudStrings,
@@ -42,7 +39,6 @@ final Map<String, Map<String, String>> allStrings = {
   ...memoryBoostStrings,
   ...minesweeperStrings,
   ...momMemoryStrings,
-  ...parkingJamStrings,
   ...screwJamStrings,
   ...shopStrings,
   ...slidingPuzzleStrings,

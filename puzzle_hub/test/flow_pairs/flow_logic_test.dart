@@ -54,10 +54,20 @@ void main() {
         expect(identical(a, b) || a.solution.toString() == b.solution.toString(), isTrue);
       }
       expect(FlowLevels.generate(FlowTier.easy, 1).size, 5);
+      expect(FlowLevels.count, 100);
       expect(FlowLevels.generate(FlowTier.easy, 30).pairs.length, inInclusiveRange(4, 5));
-      expect(FlowLevels.generate(FlowTier.medium, 30).size, 7);
-      expect(FlowLevels.generate(FlowTier.hard, 30).size, 9);
-      expect(FlowLevels.generate(FlowTier.extreme, 30).size, 12);
+      expect(FlowLevels.generate(FlowTier.easy, 100).size, 6);
+      expect(FlowLevels.generate(FlowTier.medium, 30).size, 6);
+      expect(FlowLevels.generate(FlowTier.medium, 100).size, 7);
+      expect(FlowLevels.generate(FlowTier.hard, 100).size, 9);
+      expect(FlowLevels.generate(FlowTier.extreme, 1).size, 10);
+      expect(FlowLevels.generate(FlowTier.extreme, 100).size, 12);
+      // Grid size never shrinks within a tier.
+      for (final tier in FlowTier.values) {
+        for (var l = 2; l <= FlowLevels.count; l++) {
+          expect(FlowLevels.sizeFor(tier, l), greaterThanOrEqualTo(FlowLevels.sizeFor(tier, l - 1)));
+        }
+      }
       expect(FlowLevels.generate(FlowTier.easy, 1).requireFill, isFalse);
       expect(FlowLevels.generate(FlowTier.hard, 1).requireFill, isTrue);
       expect(FlowLevels.generate(FlowTier.extreme, 1).requireFill, isTrue);

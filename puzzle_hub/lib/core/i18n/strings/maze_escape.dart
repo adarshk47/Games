@@ -371,4 +371,13 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'pa': "ਝਾਤ {n}",
     'bho': "झलक {n}",
   },
+  'maze_escape.bought': {
+    'en': "BOUGHT",
+    'hi': "खरीदा",
+    'hinglish': "KHARIDA",
+    'te': "కొన్నారు",
+    'ta': "வாங்கியது",
+    'pa': "ਖਰੀਦਿਆ",
+    'bho': "खरीदल",
+  },
 };

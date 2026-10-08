@@ -14,6 +14,8 @@ import '../core/rewards.dart';
 import '../core/storage.dart';
 import '../core/ui/ui.dart';
 import '../games/registry.dart';
+import '../core/account/countries.dart';
+import '../core/account/country_select.dart';
 
 /// Account, cloud, coins and per-game records (pushed full screen).
 class ProfileScreen extends StatelessWidget {
@@ -429,6 +431,16 @@ class _ProfileBodyState extends State<_ProfileBody> {
             title: Text(tr('home.rename'), style: const TextStyle(color: Pal.text)),
             subtitle: Text(a.name, style: const TextStyle(color: Pal.textDim)),
             onTap: _rename,
+          ),
+          ListTile(
+            key: const ValueKey('profile_country'),
+            leading: Text(countryByCode(a.country)?.flag ?? '🌍', style: const TextStyle(fontSize: 22)),
+            title: Text(tr('account.country.label'), style: const TextStyle(color: Pal.text)),
+            subtitle: Text(countryByCode(a.country)?.name ?? '-', style: const TextStyle(color: Pal.textDim)),
+            onTap: () async {
+              await showCountrySheet(context);
+              if (mounted) setState(() {});
+            },
           ),
           if (a.hasPin) ...[
             FutureBuilder<bool>(

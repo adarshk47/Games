@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
 import '../../core/economy/continue_offer.dart';
+import '../../core/economy/level_gate.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
@@ -265,6 +267,9 @@ class _LevelGridPageState extends State<_LevelGridPage> {
   MazeTier get tier => widget.tier;
 
   Future<void> _open(int level) async {
+    if (!ArrowMazeProgress.canPlay(tier, level)) return _skip(level);
+    await ArrowMazeProgress.onStart(tier, level);
+    if (!mounted) return;
     await Navigator.of(context).push(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 380),
@@ -278,18 +283,13 @@ class _LevelGridPageState extends State<_LevelGridPage> {
     if (mounted) setState(() {});
   }
 
-  /// Only the first locked level can be bought; others stay locked.
-  Future<void> _buy(int level) async {
-    if (ArrowMazeProgress.firstLocked(tier) != level) {
-      AppAudio.haptic();
-      return;
-    }
-    final ok = await showContinueOffer(context, OfferKind.unlockLevel);
-    if (!ok || !mounted) return;
-    await ArrowMazeProgress.buyUnlock(tier, level);
-    if (!mounted) return;
-    setState(() {});
-    await _open(level);
+  /// Any locked level can be skipped to with coins (LevelGate rules).
+  Future<void> _skip(int level) async {
+    await LevelGate.buy(context,
+        prefix: ArrowMazeProgress.gatePrefix(tier),
+        freeUpTo: ArrowMazeProgress.freeUpTo(tier),
+        level: level);
+    if (mounted) setState(() {});
   }
 
   @override
@@ -305,15 +305,17 @@ class _LevelGridPageState extends State<_LevelGridPage> {
         itemCount: tier.count,
         itemBuilder: (context, i) {
           final level = i + 1;
+          final plays = ArrowMazeProgress.skipPlaysLeft(tier, level);
           final unlocked = ArrowMazeProgress.isUnlocked(tier, level);
           final done = ArrowMazeProgress.isDone(tier, level);
           return _LevelTile(
             level: level,
             color: color,
-            unlocked: unlocked,
+            unlocked: unlocked || plays > 0,
+            playsLeft: plays,
             done: done,
             stars: ArrowMazeProgress.stars(tier, level),
-            onTap: () => unlocked ? _open(level) : _buy(level),
+            onTap: () => _open(level),
           )
               .animate(delay: (math.min(i, 24) * 30).ms)
               .fadeIn(duration: 350.ms)
@@ -335,15 +337,29 @@ class _LevelTile extends StatelessWidget {
       required this.unlocked,
       required this.done,
       required this.stars,
-      required this.onTap});
+      required this.onTap,
+      this.playsLeft = 0});
   final int level, stars;
+
+  /// Plays left on a level bought with coins (0 = not a bought level).
+  final int playsLeft;
   final Color color;
   final bool unlocked, done;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final Gradient gradient = unlocked
+    final bought = playsLeft > 0;
+    final Gradient gradient = bought
+        ? LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Pal.gold.withValues(alpha: 0.42),
+              color.withValues(alpha: 0.14),
+            ],
+          )
+        : unlocked
         ? (done
             ? Pal.accent(color)
             : LinearGradient(
@@ -360,13 +376,17 @@ class _LevelTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         gradient: gradient,
         border: Border.all(
-            color: unlocked
-                ? Colors.white.withValues(alpha: 0.4)
-                : Pal.glassBorder),
+            color: bought
+                ? Pal.gold
+                : unlocked
+                    ? Colors.white.withValues(alpha: 0.4)
+                    : Pal.glassBorder,
+            width: bought ? 2 : 1),
         boxShadow: unlocked
             ? [
                 BoxShadow(
-                    color: color.withValues(alpha: done ? 0.5 : 0.28),
+                    color: (bought ? Pal.gold : color)
+                        .withValues(alpha: done ? 0.5 : 0.28),
                     blurRadius: done ? 18 : 12,
                     spreadRadius: -2)
               ]
@@ -383,7 +403,19 @@ class _LevelTile extends StatelessWidget {
                           fontSize: 24,
                           fontWeight: FontWeight.w900)),
                   const SizedBox(height: 2),
-                  if (done)
+                  if (bought)
+                    SizedBox(
+                      height: 15,
+                      child: FittedBox(
+                        child: Text(
+                            tr('common.skip.plays_left', {'n': playsLeft}),
+                            style: const TextStyle(
+                                color: Pal.gold,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800)),
+                      ),
+                    )
+                  else if (done)
                     StarRow(stars: stars, size: 15)
                   else
                     const SizedBox(height: 15),
@@ -392,8 +424,25 @@ class _LevelTile extends StatelessWidget {
             : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 24),
       ),
     );
+    final badged = bought
+        ? Stack(clipBehavior: Clip.none, children: [
+            Positioned.fill(child: tile),
+            Positioned(
+              key: ValueKey('skip_badge_$level'),
+              top: -5,
+              right: -5,
+              child: Container(
+                padding: const EdgeInsets.all(3),
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Pal.gold),
+                child: const Icon(Icons.confirmation_number_rounded,
+                    size: 13, color: Colors.black87),
+              ),
+            ),
+          ])
+        : tile;
     return unlocked
-        ? Pressable(onTap: onTap, child: tile)
+        ? Pressable(onTap: onTap, child: badged)
         : GestureDetector(
             onTap: onTap,
             child: Opacity(opacity: 0.7, child: tile));
@@ -511,7 +560,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     if (board.isCleared) {
       over = true;
       final stars = _stars;
-      ArrowMazeProgress.complete(tier, level, stars);
+      unawaited(ArrowMazeProgress.complete(tier, level, stars));
       Rewards.onLevelComplete('arrow_maze', '${tier.key}-L$level',
           stars: stars);
       Future.delayed(const Duration(milliseconds: 900), _showWin);
@@ -576,6 +625,20 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
 
   int get _stars => (3 - (maxLives - lives)).clamp(1, 3);
 
+  /// Restart / retry / replay. A bought (skipped) level spends one of its
+  /// plays; when none are left it has to be bought again.
+  Future<void> _restart() async {
+    if (!ArrowMazeProgress.canPlay(tier, level)) {
+      final ok = await LevelGate.buy(context,
+          prefix: ArrowMazeProgress.gatePrefix(tier),
+          freeUpTo: ArrowMazeProgress.freeUpTo(tier),
+          level: level);
+      if (!ok || !mounted) return;
+    }
+    await ArrowMazeProgress.onStart(tier, level);
+    if (mounted) setState(_load);
+  }
+
   void _showWin() {
     if (!mounted) return;
     final hasNext = level < tier.count;
@@ -589,7 +652,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
       color: _tierColor(tier),
       actions: [
         DialogAction(tr('common.levels'), () => Navigator.pop(context)),
-        DialogAction(tr('common.replay'), () => setState(_load)),
+        DialogAction(tr('common.replay'), _restart),
         if (hasNext)
           DialogAction(tr('common.next_level'), () {
             setState(() {
@@ -611,7 +674,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
       color: Pal.danger,
       actions: [
         DialogAction(tr('common.levels'), () => Navigator.pop(context)),
-        DialogAction(tr('common.retry'), () => setState(_load), primary: true),
+        DialogAction(tr('common.retry'), _restart, primary: true),
       ],
     );
   }
@@ -805,7 +868,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
         BarAction(
             icon: Icons.refresh_rounded,
             tooltip: tr('common.restart'),
-            onTap: () => setState(_load)),
+            onTap: _restart),
       ],
       body: Column(
         children: [
@@ -908,7 +971,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                 );
                 return InteractiveViewer(
                   minScale: 1,
-                  maxScale: 4,
+                  maxScale: board.rows > 20 ? 6 : 4,
                   child: SizedBox(
                       width: box.maxWidth,
                       height: box.maxHeight,

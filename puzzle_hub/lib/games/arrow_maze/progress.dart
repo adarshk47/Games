@@ -1,3 +1,4 @@
+import '../../core/economy/level_gate.dart';
 import '../../core/storage.dart';
 import 'logic/arrow_maze_logic.dart';
 
@@ -5,25 +6,39 @@ import 'logic/arrow_maze_logic.dart';
 class ArrowMazeProgress {
   static String _k(MazeTier t, String s) => 'arrow_maze.${t.key}.$s';
 
+  /// LevelGate prefix of a tier, e.g. `arrow_maze.easy`.
+  static String gatePrefix(MazeTier t) => 'arrow_maze.${t.key}';
+
   static int stars(MazeTier t, int level) =>
       Storage.getInt(_k(t, 'stars.$level'));
   static bool isDone(MazeTier t, int level) => stars(t, level) > 0;
-  static bool isUnlocked(MazeTier t, int level) =>
-      level <= 1 || isDone(t, level - 1) || isBought(t, level);
 
-  /// Levels unlocked early with coins / a rewarded ad.
+  /// Unlocked for good: in sequence, cleared, after a cleared level, or bought with
+  /// the old one-off unlock (legacy key kept valid).
+  static bool isUnlocked(MazeTier t, int level) =>
+      level <= 1 ||
+      isDone(t, level) ||
+      isDone(t, level - 1) ||
+      isBought(t, level);
+
+  /// Legacy: levels unlocked early by the old unlock offer.
   static bool isBought(MazeTier t, int level) =>
       Storage.getBool(_k(t, 'unlockedBought.$level'));
-  static Future<void> buyUnlock(MazeTier t, int level) =>
-      Storage.setBool(_k(t, 'unlockedBought.$level'), true);
 
-  /// The first locked level of the tier (the only one that can be bought),
-  /// or null when every level is unlocked.
-  static int? firstLocked(MazeTier t) {
-    for (var l = 1; l <= t.count; l++) {
-      if (!isUnlocked(t, l)) return l;
-    }
-    return null;
+  /// Highest level that is free in sequence (the next unbeaten one).
+  static int freeUpTo(MazeTier t) => nextLevel(t);
+
+  /// Plays left on a level skipped to with coins (0 when free / not bought).
+  static int skipPlaysLeft(MazeTier t, int level) =>
+      isUnlocked(t, level) ? 0 : LevelGate.playsLeft(gatePrefix(t), level);
+
+  static bool canPlay(MazeTier t, int level) =>
+      isUnlocked(t, level) || skipPlaysLeft(t, level) > 0;
+
+  /// Counts one play of a bought level (free levels are unaffected).
+  static Future<void> onStart(MazeTier t, int level) async {
+    if (isUnlocked(t, level)) return;
+    await LevelGate.onStart(gatePrefix(t), freeUpTo(t), level);
   }
 
   static int completed(MazeTier t) {
@@ -42,13 +57,14 @@ class ArrowMazeProgress {
     return t.count;
   }
 
-  static void complete(MazeTier t, int level, int stars) {
+  static Future<void> complete(MazeTier t, int level, int stars) async {
     if (stars > ArrowMazeProgress.stars(t, level)) {
-      Storage.setInt(_k(t, 'stars.$level'), stars);
+      await Storage.setInt(_k(t, 'stars.$level'), stars);
     }
     if (level > Storage.getInt(_k(t, 'best'))) {
-      Storage.setInt(_k(t, 'best'), level);
+      await Storage.setInt(_k(t, 'best'), level);
     }
+    await LevelGate.onCleared(gatePrefix(t), level);
   }
 
   static MazeTier? get lastTier {

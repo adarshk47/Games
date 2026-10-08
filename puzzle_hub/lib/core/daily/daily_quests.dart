@@ -69,7 +69,7 @@ List<QuestTemplate> questTemplates(Map<String, String> titles) {
         id: 'stars_any', category: 'stars', title: tr('quest.stars_any', {'n': 2}), emoji: '🌟',
         target: 2, reward: 20, matches: (e) => e.type == 'level' && e.stars >= 3),
   ];
-  const winGames = ['sudoku', 'ball_sort', 'maze_escape', 'arrows', 'arrow_maze', 'minesweeper', 'flow_pairs', 'sliding_puzzle', 'block_puzzle'];
+  const winGames = ['sudoku', 'ball_sort', 'maze_escape', 'arrow_maze', 'screw_jam', 'minesweeper', 'flow_pairs', 'sliding_puzzle', 'block_puzzle'];
   for (final g in winGames) {
     final name = titles[g];
     if (name == null) continue;
@@ -77,7 +77,7 @@ List<QuestTemplate> questTemplates(Map<String, String> titles) {
         id: 'win_$g', category: 'win', title: tr('quest.win_game', {'game': name}), emoji: '🏆',
         target: 1, reward: 15, matches: (e) => e.gameId == g && e.won));
   }
-  const starGames = ['arrow_maze', 'arrows', 'ball_sort', 'maze_escape', 'memory_boost', 'flow_pairs', 'sliding_puzzle'];
+  const starGames = ['arrow_maze', 'screw_jam', 'ball_sort', 'maze_escape', 'memory_boost', 'flow_pairs', 'sliding_puzzle'];
   for (final g in starGames) {
     final name = titles[g];
     if (name == null) continue;
@@ -249,7 +249,7 @@ class DailyQuests {
     s['c'] = [...c, id];
     await _save(s);
     await Storage.setInt(kClaimedTotal, claimedTotal + 1);
-    await Rewards.addCoins(t.reward, label: tr('daily.quest_complete'));
+    await Rewards.addCoins(t.reward, label: tr('daily.quest_complete'), source: 'quest');
     notifyDailyChanged();
     return t.reward;
   }
@@ -260,7 +260,7 @@ class DailyQuests {
     final s = _load();
     s['b'] = true;
     await _save(s);
-    await Rewards.addCoins(bonusCoins, label: tr('daily.challenge_bonus_label'));
+    await Rewards.addCoins(bonusCoins, label: tr('daily.challenge_bonus_label'), source: 'quest');
     notifyDailyChanged();
     return bonusCoins;
   }

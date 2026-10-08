@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
+import '../../core/economy/level_gate.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/ui/ui.dart';
 import 'flow_game_page.dart';
@@ -93,7 +94,7 @@ class _TierCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _tierColors[tier]!;
-    final done = FlowProgress.completed(tier);
+    final done = FlowProgress.doneCount(tier);
     final stars = FlowProgress.totalStars(tier);
     return GlassCard(
       onTap: onTap,
@@ -140,7 +141,7 @@ class _TierCard extends StatelessWidget {
   }
 }
 
-/// 30-level grid with locks and stars.
+/// 100-level grid with locks, stars and skip-ahead.
 class FlowLevelsPage extends StatefulWidget {
   const FlowLevelsPage({super.key, required this.tier});
   final FlowTier tier;
@@ -150,13 +151,45 @@ class FlowLevelsPage extends StatefulWidget {
 }
 
 class _FlowLevelsPageState extends State<FlowLevelsPage> {
+  bool _buying = false;
+  ScrollController? _scroll;
+
+  @override
+  void dispose() {
+    _scroll?.dispose();
+    super.dispose();
+  }
+
   Future<void> _play(int level) async {
-    if (!FlowProgress.isUnlocked(widget.tier, level)) {
-      AppAudio.play(Sound.fail, volume: 0.4);
-      return;
-    }
+    if (!FlowProgress.canPlay(widget.tier, level)) return _buy(level);
     await Navigator.of(context).push(_fadeRoute(FlowGamePage(tier: widget.tier, level: level)));
     if (mounted) setState(() {});
+  }
+
+  /// Skip ahead: any locked level can be bought (100 coins per skipped level).
+  Future<void> _buy(int level) async {
+    if (_buying) return;
+    _buying = true;
+    final t = widget.tier;
+    final ok = await LevelGate.buy(context, prefix: FlowProgress.gate(t), freeUpTo: FlowProgress.freeUpTo(t, level), level: level);
+    _buying = false;
+    if (!mounted) return;
+    setState(() {});
+    if (ok && FlowProgress.canPlay(t, level)) {
+      await _play(level);
+    } else if (!ok) {
+      AppAudio.play(Sound.fail, volume: 0.4);
+    }
+  }
+
+  /// Starts the grid scrolled so the next level to play is in view.
+  ScrollController _controllerFor(double width) {
+    if (_scroll != null) return _scroll!;
+    const cols = 4, gap = 12.0;
+    final tileW = (width - 32 - gap * (cols - 1)) / cols;
+    final rowH = tileW / 0.82 + gap;
+    final row = (FlowProgress.frontier(widget.tier) - 1) ~/ cols;
+    return _scroll = ScrollController(initialScrollOffset: row <= 1 ? 0 : (row - 1) * rowH);
   }
 
   @override
@@ -179,38 +212,58 @@ class _FlowLevelsPageState extends State<FlowLevelsPage> {
           ]),
         ),
         Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 0.82),
-            itemCount: FlowLevels.count,
-            itemBuilder: (_, i) {
-              final level = i + 1;
-              final unlocked = FlowProgress.isUnlocked(tier, level);
-              final done = FlowProgress.isDone(tier, level);
-              return GlassCard(
-                key: ValueKey('flow_level_$level'),
-                blur: 0,
-                radius: 18,
-                padding: const EdgeInsets.all(6),
-                onTap: () => _play(level),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: unlocked
-                      ? [color.withValues(alpha: done ? 0.35 : 0.22), color.withValues(alpha: 0.06)]
-                      : const [Color(0x14FFFFFF), Color(0x08FFFFFF)],
-                ),
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  if (unlocked)
-                    Text('$level', style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900))
-                  else
-                    const Icon(Icons.lock_rounded, color: Pal.textDim, size: 22),
-                  const SizedBox(height: 4),
-                  if (unlocked) StarRow(stars: FlowProgress.stars(tier, level), size: 13),
-                ]),
-              );
-            },
+          child: LayoutBuilder(
+            builder: (context, c) => GridView.builder(
+              controller: _controllerFor(c.maxWidth),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 0.82),
+              itemCount: FlowLevels.count,
+              itemBuilder: (_, i) {
+                final level = i + 1;
+                final left = FlowProgress.playsLeft(tier, level);
+                final bought = left > 0;
+                final unlocked = FlowProgress.isFree(tier, level) || bought;
+                final done = FlowProgress.isDone(tier, level);
+                return GlassCard(
+                  key: ValueKey('flow_level_$level'),
+                  blur: 0,
+                  radius: 18,
+                  padding: const EdgeInsets.all(6),
+                  onTap: () => _play(level),
+                  glow: bought ? Pal.gold : null,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: unlocked
+                        ? [color.withValues(alpha: done ? 0.35 : 0.22), color.withValues(alpha: 0.06)]
+                        : const [Color(0x14FFFFFF), Color(0x08FFFFFF)],
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      if (bought)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                          decoration: BoxDecoration(color: Pal.gold, borderRadius: BorderRadius.circular(8)),
+                          child: Text(tr('flow_pairs.bought'),
+                              style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.w900)),
+                        ),
+                      if (unlocked)
+                        Text('$level', style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900))
+                      else
+                        const Icon(Icons.lock_rounded, color: Pal.textDim, size: 22),
+                      const SizedBox(height: 4),
+                      if (bought)
+                        Text(tr('common.skip.plays_left', {'n': left}),
+                            style: const TextStyle(color: Pal.gold, fontSize: 11, fontWeight: FontWeight.w700))
+                      else if (unlocked)
+                        StarRow(stars: FlowProgress.stars(tier, level), size: 13),
+                    ]),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ]),
