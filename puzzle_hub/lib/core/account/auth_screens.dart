@@ -24,8 +24,9 @@ class AuthGate extends StatelessWidget {
       listenable: Listenable.merge([AccountService.I, I18n.revision]),
       builder: (context, _) {
         final a = AccountService.I;
-        if (!I18n.chosen) return LanguageSelectScreen(onDone: () {});
+        // Country first, then languages ordered for that country.
         if (a.country == null) return const CountrySelectScreen();
+        if (!I18n.chosen) return LanguageSelectScreen(onDone: () {});
         if (a.loggedIn) return home;
         return a.hasAccount ? const LockScreen() : const WelcomeScreen();
       },

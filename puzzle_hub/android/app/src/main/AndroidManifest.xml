@@ -35,6 +35,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <!-- AdMob app id. This is Google's public TEST id; replace with your real
              AdMob app id (ca-app-pub-XXXX~YYYY) before going live. -->
         <meta-data

@@ -85,7 +85,12 @@ class CountrySelectScreen extends StatelessWidget {
               Text(tr('account.country.sub'),
                   textAlign: TextAlign.center, style: const TextStyle(color: Pal.textDim, fontSize: 13)),
               const SizedBox(height: 14),
-              Expanded(child: CountryList(onPicked: (_) {})),
+              // Pre-select the country's main language for the next (language) step.
+              Expanded(
+                child: CountryList(onPicked: (c) {
+                  if (!I18n.chosen) I18n.lang.value = languagesFor(c.code).first;
+                }),
+              ),
             ]),
           ),
         ),

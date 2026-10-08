@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../ui/app_logo.dart';
 import '../ui/ui.dart';
 import 'i18n.dart';
+import '../account/account_service.dart';
 
 /// Grid of language chips (native name + English name). Used in the first-run
 /// screen and in the settings sheet.
@@ -20,7 +21,7 @@ class LanguagePicker extends StatelessWidget {
         runSpacing: 10,
         alignment: WrapAlignment.center,
         children: [
-          for (final l in AppLang.values)
+          for (final l in languagesFor(AccountService.I.country))
             Pressable(
               key: ValueKey('lang_${l.code}'),
               onTap: () async {

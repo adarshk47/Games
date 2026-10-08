@@ -11,7 +11,9 @@ enum AppLang {
   te('te', 'తెలుగు', 'Telugu'),
   ta('ta', 'தமிழ்', 'Tamil'),
   pa('pa', 'ਪੰਜਾਬੀ', 'Punjabi'),
-  bho('bho', 'भोजपुरी', 'Bhojpuri');
+  bho('bho', 'भोजपुरी', 'Bhojpuri'),
+  mr('mr', 'मराठी', 'Marathi'),
+  sa('sa', 'संस्कृतम्', 'Sanskrit');
 
   const AppLang(this.code, this.nativeName, this.englishName);
   final String code;
@@ -21,7 +23,7 @@ enum AppLang {
   /// Locale used for Flutter's built-in widget texts (date picker etc.).
   /// Bhojpuri falls back to Hindi and Hinglish to English.
   Locale get materialLocale => switch (this) {
-        AppLang.bho => const Locale('hi'),
+        AppLang.bho || AppLang.sa => const Locale('hi'),
         AppLang.hinglish => const Locale('en'),
         _ => Locale(code),
       };
@@ -29,6 +31,8 @@ enum AppLang {
   /// Where to look when a string is missing in this language.
   List<String> get fallbacks => switch (this) {
         AppLang.bho => const ['bho', 'hi', 'en'],
+        AppLang.mr => const ['mr', 'hi', 'en'],
+        AppLang.sa => const ['sa', 'hi', 'en'],
         AppLang.hinglish => const ['hinglish', 'en'],
         AppLang.en => const ['en'],
         _ => [code, 'en'],
@@ -76,4 +80,19 @@ String tr(String key, [Map<String, Object?> args = const {}, String? fallback]) 
   s ??= fallback ?? key;
   if (args.isEmpty) return s;
   return s.replaceAllMapped(RegExp(r'\{(\w+)\}'), (m) => '${args[m.group(1)] ?? m.group(0)}');
+}
+
+/// Languages to show first for a country (the rest follow). India gets its
+/// Indian languages first; elsewhere English leads.
+List<AppLang> languagesFor(String? countryCode) {
+  final first = switch (countryCode) {
+    'IN' => const [AppLang.hi, AppLang.hinglish, AppLang.en, AppLang.mr, AppLang.te, AppLang.ta, AppLang.pa, AppLang.bho, AppLang.sa],
+    'NP' => const [AppLang.hi, AppLang.bho, AppLang.en],
+    'PK' => const [AppLang.pa, AppLang.en, AppLang.hi],
+    'LK' || 'SG' || 'MY' => const [AppLang.en, AppLang.ta],
+    'FJ' || 'MU' || 'TT' || 'GY' || 'SR' => const [AppLang.en, AppLang.hi, AppLang.bho],
+    'AE' || 'SA' || 'QA' || 'KW' || 'OM' || 'BH' => const [AppLang.en, AppLang.hi, AppLang.hinglish, AppLang.te, AppLang.ta, AppLang.mr],
+    _ => const [AppLang.en],
+  };
+  return [...first, ...AppLang.values.where((l) => !first.contains(l))];
 }

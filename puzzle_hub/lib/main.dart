@@ -55,6 +55,7 @@ class PuzzleHubApp extends StatelessWidget {
           Locale('te'),
           Locale('ta'),
           Locale('pa'),
+          Locale('mr'),
         ],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         title: 'Master G',
