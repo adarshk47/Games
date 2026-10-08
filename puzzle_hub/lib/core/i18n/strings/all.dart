@@ -3,6 +3,8 @@ import 'account.dart';
 import 'arrow_maze.dart';
 import 'ball_sort.dart';
 import 'block_puzzle.dart';
+import 'bus_jam.dart';
+import 'chess.dart';
 import 'cloud.dart';
 import 'common.dart';
 import 'daily.dart';
@@ -27,6 +29,8 @@ final Map<String, Map<String, String>> allStrings = {
   ...arrowMazeStrings,
   ...ballSortStrings,
   ...blockPuzzleStrings,
+  ...busJamStrings,
+  ...chessStrings,
   ...cloudStrings,
   ...commonStrings,
   ...dailyStrings,

@@ -4,6 +4,8 @@ import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
 import 'block_puzzle/block_puzzle_screen.dart';
+import 'bus_jam/bus_jam_screen.dart';
+import 'chess/chess_screen.dart';
 import 'flow_pairs/flow_pairs_screen.dart';
 import 'focus_color/focus_color_screen.dart';
 import 'game_2048/game_2048_screen.dart';
@@ -93,6 +95,24 @@ final List<GameInfo> allGames = [
     emoji: '🔩',
     color: const Color(0xFF94A3B8),
     builder: (_) => const ScrewJamScreen(),
+  ),
+  GameInfo(
+    id: 'chess',
+    title: 'Chess',
+    subtitle: 'Blitz 2, 3, 5, 10 min',
+    icon: Icons.castle_rounded,
+    emoji: '♟️',
+    color: const Color(0xFFE5E7EB),
+    builder: (_) => const ChessScreen(),
+  ),
+  GameInfo(
+    id: 'bus_jam',
+    title: 'Bus Jam',
+    subtitle: 'Passengers ko sahi bus mein bithao',
+    icon: Icons.directions_bus_rounded,
+    emoji: '🚌',
+    color: const Color(0xFFF59E0B),
+    builder: (_) => const BusJamScreen(),
   ),
   GameInfo(
     id: 'tile_match',
