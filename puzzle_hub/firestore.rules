@@ -120,6 +120,14 @@ service cloud.firestore {
     }
 
     // Everything else is closed.
+    // --------------------------------------------------------------- coupons
+    // Created by the developer in the console: coupons/{CODE} = {active: true}.
+    // Players can read a code only if they know it; no listing, no writes.
+    match /coupons/{code} {
+      allow get: if true;
+      allow list, write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

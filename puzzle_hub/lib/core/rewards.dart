@@ -71,6 +71,14 @@ class Rewards {
   static const replayReward = 1;
   static const runWinReward = 2;
 
+  /// Coins for a finished run: 1 per 250 points (1..10) plus [runWinReward] for a win.
+  static int runReward({int? score, bool won = false}) {
+    final fromScore = (score == null || score <= 0)
+        ? 0
+        : (score ~/ 250).clamp(1, 10);
+    return fromScore + (won ? runWinReward : 0);
+  }
+
   static int get earned => Storage.getInt(kEarned);
   static int get spent => Storage.getInt(kSpent);
   static int get balance => Storage.getInt(kBalance);
@@ -199,8 +207,12 @@ class Rewards {
   /// A run ended (score based games). Winning pays 2 coins.
   static void onGameEnd(String gameId, {int? score, bool won = false}) {
     _record(gameId, won: won, score: score);
-    if (won) addCoins(runWinReward, source: 'game', gameId: gameId);
+    final pay = runReward(score: score, won: won);
+    if (pay > 0) addCoins(pay, source: 'game', gameId: gameId);
     won ? Cheer.win() : Cheer.lose();
+    try {
+      AdsService.onLevelCompleted(gameId: gameId);
+    } catch (_) {}
     _events.add(
       RewardEvent(gameId: gameId, type: 'run', score: score, won: won),
     );

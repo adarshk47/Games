@@ -8,6 +8,7 @@ import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../ui/ui.dart';
 import '../economy/coin_history_screen.dart';
+import '../ads/coupon_service.dart';
 
 /// Coin shop body. Shown as a tab inside the home's bottom navigation (the
 /// animated background is already behind it), so no Scaffold / back button.
@@ -114,6 +115,8 @@ class _ShopScreenState extends State<ShopScreen> {
             _pricesCard(),
             const SizedBox(height: 14),
             _historyCard(),
+            const SizedBox(height: 14),
+            const _CouponCard(),
           ],
         ),
       ),
@@ -382,4 +385,108 @@ class _ShopScreenState extends State<ShopScreen> {
       ],
     ),
   );
+}
+
+/// "Have a coupon?" – redeems a no-ads coupon created in Firestore.
+class _CouponCard extends StatefulWidget {
+  const _CouponCard();
+
+  @override
+  State<_CouponCard> createState() => _CouponCardState();
+}
+
+class _CouponCardState extends State<_CouponCard> {
+  final _ctrl = TextEditingController();
+  bool _busy = false;
+  String? _msg;
+  bool _good = false;
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _apply() async {
+    setState(() => _busy = true);
+    final r = await CouponService.redeem(_ctrl.text);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      _good = r == CouponResult.ok;
+      _msg = tr('shop.coupon.${r.name == 'ok' ? 'ok' : r.name}');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: CouponService.noAds,
+      builder: (_, active, _) => GlassCard(
+        key: const ValueKey('coupon_card'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              tr('shop.coupon.title'),
+              style: const TextStyle(
+                color: Pal.text,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 10),
+            if (active)
+              Text(
+                tr('shop.coupon.active'),
+                style: const TextStyle(
+                  color: Pal.success,
+                  fontWeight: FontWeight.w800,
+                ),
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _ctrl,
+                      textCapitalization: TextCapitalization.characters,
+                      style: const TextStyle(
+                        color: Pal.text,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: tr('shop.coupon.hint'),
+                        hintStyle: const TextStyle(color: Pal.textDim),
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  PremiumButton(
+                    label: _busy ? '…' : tr('shop.coupon.apply'),
+                    compact: true,
+                    onTap: _busy ? null : _apply,
+                  ),
+                ],
+              ),
+            if (_msg != null && !active) ...[
+              const SizedBox(height: 8),
+              Text(
+                _msg!,
+                style: TextStyle(
+                  color: _good ? Pal.success : Pal.danger,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
 }

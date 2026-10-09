@@ -77,10 +77,15 @@ void main() {
       _expectInvariant();
     });
 
-    test('winning a run pays 2, losing pays 0', () {
+    test('runs pay 1 per 250 points (1..10) plus 2 for a win', () {
+      expect(Rewards.runReward(score: 0), 0);
+      expect(Rewards.runReward(score: 5), 1);
+      expect(Rewards.runReward(score: 1000), 4);
+      expect(Rewards.runReward(score: 99999), 10);
+      expect(Rewards.runReward(score: 5, won: true), 3);
       Rewards.onGameEnd('g', score: 5, won: true);
       Rewards.onGameEnd('g', score: 5);
-      expect(Rewards.balance, 2);
+      expect(Rewards.balance, 4);
     });
   });
 
@@ -135,20 +140,16 @@ void main() {
   });
 
   group('interstitial rules', () {
-    test('every 3rd level, not in first 2 minutes, 3 min gap', () {
-      now = now.add(const Duration(minutes: 1));
-      for (var i = 0; i < 3; i++) {
-        AdsService.onLevelCompleted();
-      }
+    test('after every game end, not in first 30s, 45s gap', () {
+      now = now.add(const Duration(seconds: 10));
+      AdsService.onLevelCompleted();
       expect(AdsService.interstitialAllowed(), isFalse); // session grace
-      now = now.add(const Duration(minutes: 2));
+      now = now.add(const Duration(seconds: 30));
       expect(AdsService.interstitialAllowed(), isTrue);
       AdsService.debugMarkInterstitialShown();
-      for (var i = 0; i < 3; i++) {
-        AdsService.onLevelCompleted();
-      }
+      AdsService.onLevelCompleted();
       expect(AdsService.interstitialAllowed(), isFalse); // gap
-      now = now.add(const Duration(minutes: 3));
+      now = now.add(const Duration(seconds: 45));
       expect(AdsService.interstitialAllowed(), isTrue);
     });
 

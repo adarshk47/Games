@@ -14,6 +14,7 @@ import 'core/theme.dart';
 import 'core/ui/app_theme.dart';
 import 'home/home_screen.dart';
 import 'core/cheer.dart';
+import 'core/ads/coupon_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,7 @@ Future<void> main() async {
   // Optional services: a failure here must never block the app from starting.
   for (final init in [
     CloudService.init,
+    CouponService.refresh,
     AdsService.init,
     ReminderService.init,
   ]) {

@@ -75,7 +75,10 @@ Future<bool> showContinueOffer(
     pageBuilder: (_, _, _) => _OfferDialog(kind: kind, price: cost),
   );
   // Declining an extra chance means the game is lost.
-  if (r != true && kind == OfferKind.extraLife) Cheer.lose();
+  if (r != true && kind == OfferKind.extraLife) {
+    Cheer.lose();
+    AdsService.onLevelCompleted();
+  }
   return r ?? false;
 }
 

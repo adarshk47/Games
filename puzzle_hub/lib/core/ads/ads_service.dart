@@ -9,6 +9,7 @@ import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import '../features.dart';
+import 'coupon_service.dart';
 
 /// Ad unit ids.
 ///
@@ -53,9 +54,9 @@ class AdsService {
   static const rewardedCooldown = Duration(minutes: 5);
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
-  static const levelsPerInterstitial = 3;
-  static const minInterstitialGap = Duration(minutes: 3);
-  static const sessionGrace = Duration(minutes: 2);
+  static const levelsPerInterstitial = 1; // after every game end
+  static const minInterstitialGap = Duration(seconds: 45); // never back-to-back
+  static const sessionGrace = Duration(seconds: 30);
   static const interstitialDelay = Duration(milliseconds: 1200);
 
   static const kAdFreeUntil = 'ads.adfree.until';
@@ -334,6 +335,7 @@ class AdsService {
   /// True while the 24h ad-free pass is active.
   static bool get adFree {
     try {
+      if (CouponService.noAds.value) return true;
       final u = adFreeUntil;
       return u != null && u.isAfter(clock());
     } catch (_) {
