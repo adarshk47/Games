@@ -30,7 +30,7 @@ void main() {
   tearDown(() => I18n.lang.value = AppLang.en);
 
   group('focus_color strings', () {
-    test('every key is prefixed and has all 7 languages with identical placeholders', () {
+    test('every key is prefixed and has all languages with identical placeholders', () {
       final langs = AppLang.values.map((l) => l.code).toSet();
       expect(focusColorStrings, isNotEmpty);
       focusColorStrings.forEach((key, entry) {

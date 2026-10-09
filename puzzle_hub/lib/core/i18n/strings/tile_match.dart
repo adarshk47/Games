@@ -1,5 +1,5 @@
 // Translations for the tile_match module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 const Map<String, Map<String, String>> tileMatchStrings = {
   'tile_match.title': {
     'en': "Tile Match",
@@ -9,6 +9,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "டைல் மேட்ச்",
     'pa': "ਟਾਈਲ ਮੈਚ",
     'bho': "टाइल मैच",
+    'mr': "टाइल मॅच",
+    'sa': "टाइल मैच",
   },
   'tile_match.title_tier': {
     'en': "Tile Match · {tier}",
@@ -18,6 +20,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "டைல் மேட்ச் · {tier}",
     'pa': "ਟਾਈਲ ਮੈਚ · {tier}",
     'bho': "टाइल मैच · {tier}",
+    'mr': "टाइल मॅच · {tier}",
+    'sa': "टाइल मैच · {tier}",
   },
   'tile_match.choose': {
     'en': "Choose difficulty",
@@ -27,6 +31,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "சிரமத்தைத் தேர்ந்தெடுக்கவும்",
     'pa': "ਮੁਸ਼ਕਲ ਚੁਣੋ",
     'bho': "कठिनाई चुनीं",
+    'mr': "काठिण्य निवडा",
+    'sa': "काठिन्यं चिनुत",
   },
   'tile_match.choose_sub': {
     'en': "Match 3 identical tiles and clear the board",
@@ -36,6 +42,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "3 ஒரே மாதிரி டைல்களைப் பொருத்தி பலகையைக் காலி செய்யுங்கள்",
     'pa': "3 ਇੱਕੋ ਜਿਹੀਆਂ ਟਾਈਲਾਂ ਮਿਲਾਓ ਅਤੇ ਬੋਰਡ ਸਾਫ਼ ਕਰੋ",
     'bho': "3 गो एके जइसन टाइल मिलाईं आ बोर्ड साफ करीं",
+    'mr': "3 सारख्या टाइल्स जुळवा आणि बोर्ड साफ करा",
+    'sa': "3 समानानि पटलानि मेलयत, फलकं स्वच्छं कुरुत च",
   },
   'tile_match.how': {
     'en': "Tap a bright tile to move it to the tray. Three alike vanish. Dark tiles are covered. Don't fill all 7 slots!",
@@ -45,6 +53,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "ஒளிரும் டைலைத் தட்டினால் அது தட்டுக்குச் செல்லும். மூன்று ஒன்றானவை மறையும். இருண்ட டைல்கள் மூடப்பட்டவை. 7 இடங்களும் நிரம்ப விடாதீர்கள்!",
     'pa': "ਚਮਕਦੀ ਟਾਈਲ ਟੈਪ ਕਰੋ, ਉਹ ਟ੍ਰੇ ਵਿੱਚ ਜਾਵੇਗੀ। ਤਿੰਨ ਇੱਕੋ ਜਿਹੀਆਂ ਗਾਇਬ ਹੋ ਜਾਂਦੀਆਂ ਹਨ। ਗੂੜ੍ਹੀਆਂ ਟਾਈਲਾਂ ਢਕੀਆਂ ਹਨ। ਸੱਤੇ ਖਾਨੇ ਨਾ ਭਰਨ ਦਿਓ!",
     'bho': "चमकत टाइल टैप करीं, ऊ ट्रे में जाई। तीन गो एके जइसन गायब हो जाला। गहिर टाइल ढंकल बा। सातों खाना भरे मत दीं!",
+    'mr': "चमकणारी टाइल टॅप करा, ती ट्रेमध्ये जाईल. तीन सारख्या टाइल्स गायब होतात. गडद टाइल्स झाकलेल्या आहेत. सातही जागा भरू देऊ नका!",
+    'sa': "दीप्तं पटलं स्पृशत, तत् पात्रं गच्छति। त्रीणि समानानि पटलानि अन्तर्धीयन्ते। श्यामानि पटलानि आवृतानि। सप्त स्थानानि पूर्णानि मा भवन्तु!",
   },
   'tile_match.desc.easy': {
     'en': "Few tiles, low stacks",
@@ -54,6 +64,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "குறைந்த டைல்கள், தாழ்ந்த அடுக்குகள்",
     'pa': "ਘੱਟ ਟਾਈਲਾਂ, ਨੀਵੇਂ ਢੇਰ",
     'bho': "कम टाइल, छोट ढेर",
+    'mr': "कमी टाइल्स, कमी थर",
+    'sa': "अल्पानि पटलानि, नीचाः राशयः",
   },
   'tile_match.desc.medium': {
     'en': "More layers, more kinds",
@@ -63,6 +75,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "அதிக அடுக்குகள், அதிக வகைகள்",
     'pa': "ਵੱਧ ਪਰਤਾਂ, ਵੱਧ ਕਿਸਮਾਂ",
     'bho': "ढेर परत, ढेर किसिम",
+    'mr': "अधिक थर, अधिक प्रकार",
+    'sa': "अधिकाः स्तराः, अधिकाः प्रकाराः",
   },
   'tile_match.desc.hard': {
     'en': "Tall towers, plan ahead",
@@ -72,6 +86,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "உயரமான அடுக்குகள், முன்கூட்டியே திட்டமிடுங்கள்",
     'pa': "ਉੱਚੇ ਢੇਰ, ਅੱਗੇ ਦੀ ਸੋਚੋ",
     'bho': "ऊँच ढेर, आगे के सोचीं",
+    'mr': "उंच मनोरे, पुढचा विचार करा",
+    'sa': "उन्नताः गोपुराः, अग्रे चिन्तयत",
   },
   'tile_match.desc.extreme': {
     'en': "Huge boards for masters",
@@ -81,6 +97,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "வல்லுநர்களுக்கான பெரிய பலகைகள்",
     'pa': "ਮਾਹਿਰਾਂ ਲਈ ਵੱਡੇ ਬੋਰਡ",
     'bho': "उस्ताद लोग खातिर बड़ बोर्ड",
+    'mr': "उस्तादांसाठी विशाल बोर्ड",
+    'sa': "निपुणेभ्यः विशालानि फलकानि",
   },
   'tile_match.tiles_range': {
     'en': "{range} tiles · {types} kinds",
@@ -90,6 +108,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "{range} டைல்கள் · {types} வகைகள்",
     'pa': "{range} ਟਾਈਲਾਂ · {types} ਕਿਸਮਾਂ",
     'bho': "{range} टाइल · {types} किसिम",
+    'mr': "{range} टाइल्स · {types} प्रकार",
+    'sa': "{range} पटलानि · {types} प्रकाराः",
   },
   'tile_match.last': {
     'en': "LAST",
@@ -99,6 +119,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "கடைசி",
     'pa': "ਪਿਛਲਾ",
     'bho': "पिछला",
+    'mr': "मागील",
+    'sa': "पूर्वतनम्",
   },
   'tile_match.not_started': {
     'en': "Not started",
@@ -108,6 +130,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "தொடங்கவில்லை",
     'pa': "ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤਾ",
     'bho': "सुरू ना भइल",
+    'mr': "सुरू केले नाही",
+    'sa': "न आरब्धम्",
   },
   'tile_match.cleared': {
     'en': "{n}/{total} cleared",
@@ -117,6 +141,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "{n}/{total} முடிந்தது",
     'pa': "{n}/{total} ਪੂਰੇ",
     'bho': "{n}/{total} पूरा",
+    'mr': "{n}/{total} पूर्ण",
+    'sa': "{n}/{total} पूर्णानि",
   },
   'tile_match.continue_tier': {
     'en': "Continue {tier}",
@@ -126,6 +152,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "{tier} தொடரவும்",
     'pa': "{tier} ਜਾਰੀ ਰੱਖੋ",
     'bho': "{tier} जारी राखीं",
+    'mr': "{tier} सुरू ठेवा",
+    'sa': "{tier} अनुवर्तयत",
   },
   'tile_match.play_level': {
     'en': "Play level {n}",
@@ -135,6 +163,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "நிலை {n} விளையாடு",
     'pa': "ਲੈਵਲ {n} ਖੇਡੋ",
     'bho': "लेवल {n} खेलीं",
+    'mr': "लेव्हल {n} खेळा",
+    'sa': "स्तरं {n} क्रीडत",
   },
   'tile_match.tiles_left': {
     'en': "{n} tiles left",
@@ -144,6 +174,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "{n} டைல்கள் மீதம்",
     'pa': "{n} ਟਾਈਲਾਂ ਬਾਕੀ",
     'bho': "{n} टाइल बाकी",
+    'mr': "{n} टाइल्स बाकी",
+    'sa': "{n} पटलानि अवशिष्टानि",
   },
   'tile_match.covered': {
     'en': "Covered! Clear the tiles on top first.",
@@ -153,6 +185,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "மூடப்பட்டுள்ளது! முதலில் மேலே உள்ள டைல்களை எடுங்கள்.",
     'pa': "ਢਕੀ ਹੋਈ ਹੈ! ਪਹਿਲਾਂ ਉੱਪਰ ਵਾਲੀਆਂ ਟਾਈਲਾਂ ਹਟਾਓ।",
     'bho': "ढंकल बा! पहिले ऊपर वाला टाइल हटाईं।",
+    'mr': "झाकलेली आहे! आधी वरच्या टाइल्स काढा.",
+    'sa': "आवृतम्! प्रथमम् उपरितनानि पटलानि निष्कासयत।",
   },
   'tile_match.shuffle': {
     'en': "Shuffle",
@@ -162,6 +196,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "கலக்கு",
     'pa': "ਰਲਾਓ",
     'bho': "फेंटीं",
+    'mr': "पिसा",
+    'sa': "मिश्रयत",
   },
   'tile_match.shuffled': {
     'en': "Tiles shuffled!",
@@ -171,6 +207,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "டைல்கள் கலக்கப்பட்டன!",
     'pa': "ਟਾਈਲਾਂ ਰਲਾ ਦਿੱਤੀਆਂ!",
     'bho': "टाइल फेंटा गइल!",
+    'mr': "टाइल्स पिसल्या!",
+    'sa': "पटलानि मिश्रितानि!",
   },
   'tile_match.win_msg': {
     'en': "Board cleared in {moves} moves!",
@@ -180,6 +218,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "{moves} நகர்வுகளில் பலகை காலி!",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ ਬੋਰਡ ਸਾਫ਼!",
     'bho': "{moves} चाल में बोर्ड साफ!",
+    'mr': "{moves} चालींमध्ये बोर्ड साफ!",
+    'sa': "{moves} चालेषु फलकं स्वच्छम्!",
   },
   'tile_match.tier_done': {
     'en': "You finished every level of this tier!",
@@ -189,6 +229,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "இந்தப் பிரிவின் எல்லா நிலைகளையும் முடித்துவிட்டீர்கள்!",
     'pa': "ਤੁਸੀਂ ਇਸ ਪੱਧਰ ਦੇ ਸਾਰੇ ਲੈਵਲ ਪੂਰੇ ਕਰ ਲਏ!",
     'bho': "रउआ एह स्तर के सगरी लेवल पूरा कर लेनी!",
+    'mr': "तुम्ही या स्तराच्या सर्व लेव्हल पूर्ण केल्या!",
+    'sa': "भवन्तः अस्य वर्गस्य सर्वान् स्तरान् समापितवन्तः!",
   },
   'tile_match.tray_full': {
     'en': "Tray full!",
@@ -198,6 +240,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "தட்டு நிரம்பியது!",
     'pa': "ਟ੍ਰੇ ਭਰ ਗਈ!",
     'bho': "ट्रे भर गइल!",
+    'mr': "ट्रे भरला!",
+    'sa': "पात्रं पूर्णम्!",
   },
   'tile_match.tray_full_msg': {
     'en': "All 7 slots are filled without a match.",
@@ -207,6 +251,8 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "பொருத்தம் இல்லாமல் 7 இடங்களும் நிரம்பின.",
     'pa': "ਸੱਤੇ ਖਾਨੇ ਬਿਨਾਂ ਜੋੜ ਦੇ ਭਰ ਗਏ।",
     'bho': "सातों खाना बिना जोड़ी के भर गइल।",
+    'mr': "जोडी न जुळता सातही जागा भरल्या.",
+    'sa': "मेलनं विना सप्त स्थानानि पूर्णानि।",
   },
   'tile_match.returned': {
     'en': "3 tiles went back to the board",
@@ -216,5 +262,7 @@ const Map<String, Map<String, String>> tileMatchStrings = {
     'ta': "3 டைல்கள் பலகைக்குத் திரும்பின",
     'pa': "3 ਟਾਈਲਾਂ ਬੋਰਡ 'ਤੇ ਵਾਪਸ ਗਈਆਂ",
     'bho': "3 गो टाइल बोर्ड पर लवट गइल",
+    'mr': "3 टाइल्स बोर्डवर परत गेल्या",
+    'sa': "3 पटलानि फलकं प्रति प्रत्यागतानि",
   },
 };

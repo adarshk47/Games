@@ -1,5 +1,5 @@
 // Translations for the shop module (shop, economy / continue offer, ads).
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> shopStrings = {
   // ------------------------------------------------------------ shop
@@ -11,6 +11,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "கடை",
     'pa': "ਦੁਕਾਨ",
     'bho': "दोकान",
+    'mr': "दुकान",
+    'sa': "आपणः",
   },
   'shop.no_ad': {
     'en': "No ad available right now. Try again later.",
@@ -20,6 +22,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இப்போது விளம்பரம் இல்லை. பிறகு முயற்சிக்கவும்.",
     'pa': "ਹੁਣ ਕੋਈ ਵਿਗਿਆਪਨ ਉਪਲਬਧ ਨਹੀਂ। ਬਾਅਦ ਵਿੱਚ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "अभी कवनो विज्ञापन नइखे। बाद में कोसिस करीं।",
+    'mr': "आत्ता कोणतीही जाहिरात उपलब्ध नाही. नंतर प्रयत्न करा.",
+    'sa': "अधुना विज्ञापनं नोपलभ्यते। पश्चात् प्रयतताम्।",
   },
   'shop.not_enough_pass': {
     'en': "Not enough coins for the pass yet.",
@@ -29,6 +33,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "பாஸுக்கு இன்னும் போதுமான நாணயங்கள் இல்லை.",
     'pa': "ਪਾਸ ਲਈ ਹਾਲੇ ਸਿੱਕੇ ਘੱਟ ਹਨ।",
     'bho': "पास खातिर अभी सिक्का कम बा।",
+    'mr': "पाससाठी अजून नाणी कमी आहेत.",
+    'sa': "पत्रकाय अधुना मुद्राः अपर्याप्ताः।",
   },
   'shop.watch_ad_title': {
     'en': "Watch ad: +{coins} coins",
@@ -38,6 +44,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளம்பரம் பார்: +{coins} நாணயங்கள்",
     'pa': "ਵਿਗਿਆਪਨ ਦੇਖੋ: +{coins} ਸਿੱਕੇ",
     'bho': "विज्ञापन देखीं: +{coins} सिक्का",
+    'mr': "जाहिरात पाहा: +{coins} नाणी",
+    'sa': "विज्ञापनं पश्यतु: +{coins} मुद्राः",
   },
   'shop.ads_left': {
     'en': "{left} of {cap} left today",
@@ -47,6 +55,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இன்று {cap} இல் {left} மீதம்",
     'pa': "ਅੱਜ {cap} ਵਿੱਚੋਂ {left} ਬਾਕੀ",
     'bho': "आज {cap} में से {left} बाकी बा",
+    'mr': "आज {cap} पैकी {left} बाकी",
+    'sa': "अद्य {cap} मध्ये {left} अवशिष्टानि",
   },
   'shop.come_back': {
     'en': "Come back tomorrow for more",
@@ -56,6 +66,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "மேலும் பெற நாளை வா",
     'pa': "ਹੋਰ ਲਈ ਕੱਲ੍ਹ ਆਓ",
     'bho': "अउर खातिर काल्ह आईं",
+    'mr': "आणखीसाठी उद्या परत या",
+    'sa': "अधिकाय श्वः पुनः आगच्छतु",
   },
   'shop.watch': {
     'en': "Watch",
@@ -65,6 +77,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "பார்",
     'pa': "ਦੇਖੋ",
     'bho': "देखीं",
+    'mr': "पाहा",
+    'sa': "पश्यतु",
   },
   'shop.pass_title': {
     'en': "24h Ad-free pass",
@@ -74,6 +88,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "24 மணி நேர விளம்பரமில்லா பாஸ்",
     'pa': "24 ਘੰਟੇ ਐਡ-ਫ੍ਰੀ ਪਾਸ",
     'bho': "24 घंटा के ऐड-फ्री पास",
+    'mr': "24 तासांचा जाहिरात-मुक्त पास",
+    'sa': "24 होरात्मकं विज्ञापन-मुक्त-पत्रकम्",
   },
   'shop.pass_active': {
     'en': "Active - {time} left",
@@ -83,6 +99,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "செயலில் - {time} மீதம்",
     'pa': "ਚਾਲੂ - {time} ਬਾਕੀ",
     'bho': "चालू बा - {time} बाकी",
+    'mr': "सुरू - {time} बाकी",
+    'sa': "सक्रियम् - {time} अवशिष्टम्",
   },
   'shop.pass_price': {
     'en': "{coins} coins - no interstitial ads",
@@ -92,6 +110,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "{coins} நாணயங்கள் - இடையில் விளம்பரங்கள் இல்லை",
     'pa': "{coins} ਸਿੱਕੇ - ਵਿਚਕਾਰ ਕੋਈ ਵਿਗਿਆਪਨ ਨਹੀਂ",
     'bho': "{coins} सिक्का - बीच में कवनो विज्ञापन ना",
+    'mr': "{coins} नाणी - मध्ये जाहिराती नाहीत",
+    'sa': "{coins} मुद्राः - मध्ये विज्ञापनानि न",
   },
   'shop.extend': {
     'en': "Extend",
@@ -101,6 +121,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நீட்டி",
     'pa': "ਵਧਾਓ",
     'bho': "बढ़ाईं",
+    'mr': "वाढवा",
+    'sa': "वर्धयतु",
   },
   'shop.buy': {
     'en': "Buy",
@@ -110,6 +132,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "வாங்கு",
     'pa': "ਖਰੀਦੋ",
     'bho': "खरीदीं",
+    'mr': "खरेदी करा",
+    'sa': "क्रीणातु",
   },
   'shop.spend_title': {
     'en': "Spend coins in games",
@@ -119,6 +143,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளையாட்டுகளில் நாணயங்களைச் செலவிடு",
     'pa': "ਗੇਮਾਂ ਵਿੱਚ ਸਿੱਕੇ ਖਰਚੋ",
     'bho': "गेम में सिक्का खरचा करीं",
+    'mr': "गेममध्ये नाणी खर्च करा",
+    'sa': "क्रीडासु मुद्राः व्ययतु",
   },
   'shop.spend_sub': {
     'en': "When you run out of free help, use coins or watch an ad.",
@@ -128,6 +154,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இலவச உதவி தீர்ந்தால், நாணயங்களைப் பயன்படுத்து அல்லது விளம்பரம் பார்.",
     'pa': "ਮੁਫ਼ਤ ਮਦਦ ਖਤਮ ਹੋਣ 'ਤੇ ਸਿੱਕੇ ਵਰਤੋ ਜਾਂ ਵਿਗਿਆਪਨ ਦੇਖੋ।",
     'bho': "मुफ्त मदद खतम हो जाव त सिक्का लगाईं भा विज्ञापन देखीं।",
+    'mr': "मोफत मदत संपल्यावर नाणी वापरा किंवा जाहिरात पाहा.",
+    'sa': "निःशुल्क-साहाय्ये समाप्ते मुद्राः उपयुङ्क्ताम् अथवा विज्ञापनं पश्यतु।",
   },
   'shop.extra_life': {
     'en': "Extra life",
@@ -137,6 +165,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "கூடுதல் உயிர்",
     'pa': "ਵਾਧੂ ਜਾਨ",
     'bho': "एगो अउर जान",
+    'mr': "अतिरिक्त जीव",
+    'sa': "अतिरिक्तं जीवनम्",
   },
   'shop.unlock_level': {
     'en': "Unlock level",
@@ -146,6 +176,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நிலையைத் திற",
     'pa': "ਲੈਵਲ ਅਨਲੌਕ ਕਰੋ",
     'bho': "लेवल खोलीं",
+    'mr': "लेव्हल अनलॉक करा",
+    'sa': "स्तरम् उद्घाटयतु",
   },
   'shop.history': {
     'en': "Coin history",
@@ -155,6 +187,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நாணய வரலாறு",
     'pa': "ਸਿੱਕਿਆਂ ਦਾ ਹਿਸਾਬ",
     'bho': "सिक्का के हिसाब",
+    'mr': "नाण्यांचा हिशोब",
+    'sa': "मुद्रा-विवरणम्",
   },
   'shop.earned': {
     'en': "Earned",
@@ -164,6 +198,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "சம்பாதித்தது",
     'pa': "ਕਮਾਏ",
     'bho': "कमाइल",
+    'mr': "कमावले",
+    'sa': "अर्जितम्",
   },
   'shop.spent': {
     'en': "Spent",
@@ -173,6 +209,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "செலவிட்டது",
     'pa': "ਖਰਚੇ",
     'bho': "खरचा भइल",
+    'mr': "खर्च केले",
+    'sa': "व्ययितम्",
   },
   'shop.balance': {
     'en': "Balance",
@@ -182,6 +220,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இருப்பு",
     'pa': "ਬਕਾਇਆ",
     'bho': "बैलेंस",
+    'mr': "शिल्लक",
+    'sa': "शेषः",
   },
   'shop.earn_tip': {
     'en': "Earn coins by clearing new levels (more stars = more coins).",
@@ -191,6 +231,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "புதிய நிலைகளை முடித்து நாணயங்களைச் சம்பாதி (அதிக நட்சத்திரம் = அதிக நாணயம்).",
     'pa': "ਨਵੇਂ ਲੈਵਲ ਪਾਰ ਕਰਕੇ ਸਿੱਕੇ ਕਮਾਓ (ਵੱਧ ਤਾਰੇ = ਵੱਧ ਸਿੱਕੇ)।",
     'bho': "नया लेवल पार क के सिक्का कमाईं (जादा स्टार = जादा सिक्का)।",
+    'mr': "नवीन लेव्हल पार करून नाणी कमवा (जास्त तारे = जास्त नाणी).",
+    'sa': "नूतनस्तरान् समाप्य मुद्राः अर्जयतु (अधिकाः तारकाः = अधिकाः मुद्राः)।",
   },
 
   // ------------------------------------------------------------ continue offer
@@ -202,6 +244,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "குறிப்பு வேண்டுமா?",
     'pa': "ਸੰਕੇਤ ਚਾਹੀਦਾ?",
     'bho': "संकेत चाहीं?",
+    'mr': "संकेत हवा?",
+    'sa': "सङ्केतः आवश्यकः?",
   },
   'offer.hint.msg': {
     'en': "Reveal a helpful move.",
@@ -211,6 +255,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "உதவும் ஒரு நகர்வைக் காண்.",
     'pa': "ਇੱਕ ਮਦਦਗਾਰ ਚਾਲ ਦੇਖੋ।",
     'bho': "एगो काम के चाल देखीं।",
+    'mr': "एक उपयुक्त चाल पाहा.",
+    'sa': "एकम् उपयोगिनं चालं पश्यतु।",
   },
   'offer.undo.title': {
     'en': "Undo move?",
@@ -220,6 +266,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நகர்வைத் திரும்பப் பெறவா?",
     'pa': "ਚਾਲ ਵਾਪਸ ਲਓ?",
     'bho': "चाल वापस लीं?",
+    'mr': "चाल मागे घ्यायची?",
+    'sa': "चालः प्रत्याह्रियताम्?",
   },
   'offer.undo.msg': {
     'en': "Take back your last move.",
@@ -229,6 +277,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "உன் கடைசி நகர்வைத் திரும்பப் பெறு.",
     'pa': "ਆਪਣੀ ਪਿਛਲੀ ਚਾਲ ਵਾਪਸ ਲਓ।",
     'bho': "आपन पिछला चाल वापस लीं।",
+    'mr': "तुमची शेवटची चाल मागे घ्या.",
+    'sa': "स्वकीयम् अन्तिमं चालं प्रत्याहरतु।",
   },
   'offer.life.title': {
     'en': "Keep going?",
@@ -238,6 +288,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "தொடரவா?",
     'pa': "ਅੱਗੇ ਖੇਡੀਏ?",
     'bho': "आगे खेलल जाव?",
+    'mr': "पुढे खेळायचे?",
+    'sa': "अग्रे क्रीडतु?",
   },
   'offer.life.msg': {
     'en': "Get an extra life and continue.",
@@ -247,6 +299,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "கூடுதல் உயிர் பெற்றுத் தொடர்.",
     'pa': "ਇੱਕ ਵਾਧੂ ਜਾਨ ਲਓ ਅਤੇ ਜਾਰੀ ਰੱਖੋ।",
     'bho': "एगो अउर जान लीं आ खेलत रहीं।",
+    'mr': "एक अतिरिक्त जीव मिळवा आणि सुरू ठेवा.",
+    'sa': "एकम् अतिरिक्तं जीवनं प्राप्य अनुवर्तताम्।",
   },
   'offer.unlock.title': {
     'en': "Unlock level?",
@@ -256,6 +310,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நிலையைத் திறக்கவா?",
     'pa': "ਲੈਵਲ ਅਨਲੌਕ ਕਰੀਏ?",
     'bho': "लेवल खोलल जाव?",
+    'mr': "लेव्हल अनलॉक करायचे?",
+    'sa': "स्तरः उद्घाट्यताम्?",
   },
   'offer.unlock.msg': {
     'en': "Jump ahead and play it now.",
@@ -265,6 +321,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "முன்னே தாவி இப்போதே விளையாடு.",
     'pa': "ਅੱਗੇ ਵਧੋ ਅਤੇ ਹੁਣੇ ਖੇਡੋ।",
     'bho': "आगे बढ़ीं आ अबहीं खेलीं।",
+    'mr': "पुढे जा आणि आत्ताच खेळा.",
+    'sa': "अग्रे गत्वा अधुना एव क्रीडतु।",
   },
   'offer.balance': {
     'en': "Balance",
@@ -274,6 +332,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இருப்பு",
     'pa': "ਬਕਾਇਆ",
     'bho': "बैलेंस",
+    'mr': "शिल्लक",
+    'sa': "शेषः",
   },
   'offer.use_coins': {
     'en': "Use {coins} coins",
@@ -283,6 +343,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "{coins} நாணயங்களைப் பயன்படுத்து",
     'pa': "{coins} ਸਿੱਕੇ ਵਰਤੋ",
     'bho': "{coins} सिक्का लगाईं",
+    'mr': "{coins} नाणी वापरा",
+    'sa': "{coins} मुद्राः उपयुङ्क्ताम्",
   },
   'offer.watch_ad': {
     'en': "Watch ad",
@@ -292,6 +354,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளம்பரம் பார்",
     'pa': "ਵਿਗਿਆਪਨ ਦੇਖੋ",
     'bho': "विज्ञापन देखीं",
+    'mr': "जाहिरात पाहा",
+    'sa': "विज्ञापनं पश्यतु",
   },
   'offer.loading': {
     'en': "Loading…",
@@ -301,6 +365,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "ஏற்றுகிறது…",
     'pa': "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…",
     'bho': "लोड होत बा…",
+    'mr': "लोड होत आहे…",
+    'sa': "आनीयते…",
   },
   'offer.not_enough': {
     'en': "Not enough coins",
@@ -310,6 +376,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "போதுமான நாணயங்கள் இல்லை",
     'pa': "ਸਿੱਕੇ ਘੱਟ ਹਨ",
     'bho': "सिक्का कम बा",
+    'mr': "नाणी कमी आहेत",
+    'sa': "मुद्राः अपर्याप्ताः",
   },
   'offer.need_more': {
     'en': "Need {n} more coins",
@@ -319,6 +387,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இன்னும் {n} நாணயங்கள் வேண்டும்",
     'pa': "{n} ਸਿੱਕੇ ਹੋਰ ਚਾਹੀਦੇ ਹਨ",
     'bho': "{n} सिक्का अउर चाहीं",
+    'mr': "आणखी {n} नाणी हवीत",
+    'sa': "अन्याः {n} मुद्राः आवश्यकाः",
   },
 
   // ------------------------------------------------------------ ads
@@ -330,6 +400,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளம்பரப் பரிசு",
     'pa': "ਵਿਗਿਆਪਨ ਇਨਾਮ",
     'bho': "विज्ञापन इनाम",
+    'mr': "जाहिरात बक्षीस",
+    'sa': "विज्ञापन-पुरस्कारः",
   },
   'shop.history.title': {
     'en': "Coin history",
@@ -339,6 +411,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நாணய வரலாறு",
     'pa': "ਸਿੱਕਿਆਂ ਦਾ ਹਿਸਾਬ",
     'bho': "सिक्का के हिसाब",
+    'mr': "नाण्यांचा हिशोब",
+    'sa': "मुद्रा-विवरणम्",
   },
   'shop.history.open': {
     'en': "See coin history",
@@ -348,6 +422,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நாணய வரலாற்றைப் பார்",
     'pa': "ਸਿੱਕਿਆਂ ਦਾ ਹਿਸਾਬ ਵੇਖੋ",
     'bho': "सिक्का के हिसाब देखीं",
+    'mr': "नाण्यांचा हिशोब पाहा",
+    'sa': "मुद्रा-विवरणं पश्यतु",
   },
   'shop.history.balance': {
     'en': "Balance",
@@ -357,6 +433,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இருப்பு",
     'pa': "ਬਕਾਇਆ",
     'bho': "बाकी सिक्का",
+    'mr': "शिल्लक नाणी",
+    'sa': "शेषमुद्राः",
   },
   'shop.history.earned': {
     'en': "Total earned",
@@ -366,6 +444,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "மொத்த வருவாய்",
     'pa': "ਕੁੱਲ ਕਮਾਈ",
     'bho': "कुल कमाई",
+    'mr': "एकूण कमाई",
+    'sa': "आहत्य अर्जितम्",
   },
   'shop.history.spent': {
     'en': "Total spent",
@@ -375,6 +455,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "மொத்த செலவு",
     'pa': "ਕੁੱਲ ਖ਼ਰਚ",
     'bho': "कुल खरचा",
+    'mr': "एकूण खर्च",
+    'sa': "आहत्य व्ययितम्",
   },
   'shop.history.ads': {
     'en': "Ads watched",
@@ -384,6 +466,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "பார்த்த விளம்பரங்கள்",
     'pa': "ਵੇਖੇ ਇਸ਼ਤਿਹਾਰ",
     'bho': "देखल विज्ञापन",
+    'mr': "पाहिलेल्या जाहिराती",
+    'sa': "दृष्टानि विज्ञापनानि",
   },
   'shop.history.by_game': {
     'en': "Earned from each game",
@@ -393,6 +477,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "ஒவ்வொரு விளையாட்டிலிருந்தும் வருவாய்",
     'pa': "ਹਰ ਗੇਮ ਤੋਂ ਕਮਾਈ",
     'bho': "हर खेल से कमाई",
+    'mr': "प्रत्येक गेममधून कमाई",
+    'sa': "प्रतिक्रीडम् अर्जितम्",
   },
   'shop.history.by_source': {
     'en': "Earned from",
@@ -402,6 +488,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "எங்கிருந்து வந்தது",
     'pa': "ਕਿੱਥੋਂ ਕਮਾਏ",
     'bho': "कहाँ से कमइनी",
+    'mr': "कुठून कमावले",
+    'sa': "कुतः अर्जितम्",
   },
   'shop.history.by_use': {
     'en': "Spent on",
@@ -411,6 +499,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "எதற்குச் செலவு",
     'pa': "ਕਿੱਥੇ ਖ਼ਰਚੇ",
     'bho': "कहाँ खरचा कइनी",
+    'mr': "कुठे खर्च केले",
+    'sa': "कुत्र व्ययितम्",
   },
   'shop.history.recent': {
     'en': "Recent activity",
@@ -420,6 +510,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "சமீபத்திய செயல்பாடு",
     'pa': "ਹਾਲੀਆ ਗਤੀਵਿਧੀ",
     'bho': "हाल के हिसाब",
+    'mr': "अलीकडील हालचाल",
+    'sa': "नूतन-गतिविधिः",
   },
   'shop.history.empty': {
     'en': "Nothing yet. Play a game to earn coins!",
@@ -429,6 +521,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "இன்னும் எதுவும் இல்லை. நாணயங்கள் சம்பாதிக்க விளையாடுங்கள்!",
     'pa': "ਹਾਲੇ ਕੁਝ ਨਹੀਂ। ਸਿੱਕੇ ਕਮਾਉਣ ਲਈ ਗੇਮ ਖੇਡੋ!",
     'bho': "अबहीं कुछो ना। सिक्का कमाए खातिर खेल खेलीं!",
+    'mr': "अजून काही नाही. नाणी कमावण्यासाठी गेम खेळा!",
+    'sa': "अधुना किमपि नास्ति। मुद्राः अर्जयितुं क्रीडतु!",
   },
   'shop.src.game': {
     'en': "Games",
@@ -438,6 +532,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளையாட்டுகள்",
     'pa': "ਗੇਮਾਂ",
     'bho': "खेल",
+    'mr': "गेम",
+    'sa': "क्रीडाः",
   },
   'shop.src.ad': {
     'en': "Ads",
@@ -447,6 +543,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளம்பரங்கள்",
     'pa': "ਇਸ਼ਤਿਹਾਰ",
     'bho': "विज्ञापन",
+    'mr': "जाहिराती",
+    'sa': "विज्ञापनानि",
   },
   'shop.src.daily': {
     'en': "Daily reward",
@@ -456,6 +554,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "தினசரி பரிசு",
     'pa': "ਰੋਜ਼ਾਨਾ ਇਨਾਮ",
     'bho': "रोज के इनाम",
+    'mr': "दैनिक बक्षीस",
+    'sa': "दैनिकपुरस्कारः",
   },
   'shop.src.quest': {
     'en': "Daily quests",
@@ -465,6 +565,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "தினசரி பணிகள்",
     'pa': "ਰੋਜ਼ਾਨਾ ਕੰਮ",
     'bho': "रोज के काम",
+    'mr': "दैनिक क्वेस्ट",
+    'sa': "दैनिककार्याणि",
   },
   'shop.src.achievement': {
     'en': "Achievements",
@@ -474,6 +576,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "சாதனைகள்",
     'pa': "ਪ੍ਰਾਪਤੀਆਂ",
     'bho': "उपलब्धि",
+    'mr': "कामगिरी",
+    'sa': "उपलब्धयः",
   },
   'shop.src.invite': {
     'en': "Invites",
@@ -483,6 +587,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "அழைப்புகள்",
     'pa': "ਸੱਦੇ",
     'bho': "नेवता",
+    'mr': "आमंत्रणे",
+    'sa': "आमन्त्रणानि",
   },
   'shop.src.other': {
     'en': "Other",
@@ -492,6 +598,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "மற்றவை",
     'pa': "ਹੋਰ",
     'bho': "दोसर",
+    'mr': "इतर",
+    'sa': "अन्यत्",
   },
   'shop.use.hint': {
     'en': "Hints",
@@ -501,6 +609,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "குறிப்புகள்",
     'pa': "ਸੰਕੇਤ",
     'bho': "हिंट",
+    'mr': "संकेत",
+    'sa': "सङ्केताः",
   },
   'shop.use.undo': {
     'en': "Undo",
@@ -510,6 +620,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "செயல்தவிர்",
     'pa': "ਵਾਪਸ",
     'bho': "वापस",
+    'mr': "मागे घेणे",
+    'sa': "प्रत्याहरणम्",
   },
   'shop.use.extraLife': {
     'en': "Extra chances",
@@ -519,6 +631,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "கூடுதல் வாய்ப்புகள்",
     'pa': "ਵਾਧੂ ਮੌਕੇ",
     'bho': "अउरी मौका",
+    'mr': "अतिरिक्त संधी",
+    'sa': "अतिरिक्ताः अवसराः",
   },
   'shop.use.unlockLevel': {
     'en': "Level unlocks",
@@ -528,6 +642,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நிலை திறப்பு",
     'pa': "ਲੈਵਲ ਖੋਲ੍ਹਣਾ",
     'bho': "लेवल खोलल",
+    'mr': "लेव्हल उघडणे",
+    'sa': "स्तर-उद्घाटनम्",
   },
   'shop.use.skip': {
     'en': "Level skips",
@@ -537,6 +653,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "நிலை தவிர்ப்பு",
     'pa': "ਲੈਵਲ ਛੱਡਣਾ",
     'bho': "लेवल छोड़ल",
+    'mr': "लेव्हल वगळणे",
+    'sa': "स्तर-लङ्घनम्",
   },
   'shop.use.theme': {
     'en': "Themes",
@@ -546,6 +664,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "தீம்கள்",
     'pa': "ਥੀਮਾਂ",
     'bho': "थीम",
+    'mr': "थीम",
+    'sa': "विषयरूपाणि",
   },
   'shop.use.adfree': {
     'en': "Ad-free pass",
@@ -555,6 +675,8 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "விளம்பரமில்லா பாஸ்",
     'pa': "ਇਸ਼ਤਿਹਾਰ-ਮੁਕਤ ਪਾਸ",
     'bho': "बिना विज्ञापन पास",
+    'mr': "जाहिरात-मुक्त पास",
+    'sa': "विज्ञापन-मुक्त-पत्रकम्",
   },
   'shop.use.other': {
     'en': "Other",
@@ -564,5 +686,7 @@ const Map<String, Map<String, String>> shopStrings = {
     'ta': "மற்றவை",
     'pa': "ਹੋਰ",
     'bho': "दोसर",
+    'mr': "इतर",
+    'sa': "अन्यत्",
   },
 };

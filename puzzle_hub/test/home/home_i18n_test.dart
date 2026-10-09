@@ -12,7 +12,7 @@ import 'package:puzzle_hub/games/registry.dart';
 import 'package:puzzle_hub/home/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _langs = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'];
+const _langs = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho', 'mr', 'sa'];
 
 Set<String> _placeholders(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toSet();
 

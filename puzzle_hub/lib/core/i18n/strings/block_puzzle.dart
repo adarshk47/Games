@@ -1,5 +1,5 @@
 // Translations for the block_puzzle module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> blockPuzzleStrings = {
   'block_puzzle.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "பிளாக் புதிர்",
     'pa': "ਬਲਾਕ ਪਜ਼ਲ",
     'bho': "ब्लॉक पज़ल",
+    'mr': "ब्लॉक पझल",
+    'sa': "ब्लॉक पज़ल",
   },
   'block_puzzle.choose': {
     'en': "Choose your challenge",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "உங்கள் சவாலைத் தேர்ந்தெடுங்கள்",
     'pa': "ਆਪਣੀ ਚੁਣੌਤੀ ਚੁਣੋ",
     'bho': "आपन चुनौती चुनीं",
+    'mr': "तुमचे आव्हान निवडा",
+    'sa': "स्वस्य आह्वानं चिनुत",
   },
   'block_puzzle.desc.easy': {
     'en': "Friendly pieces, always a move available",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "எளிய துண்டுகள், எப்போதும் ஒரு நகர்வு உண்டு",
     'pa': "ਆਸਾਨ ਟੁਕੜੇ, ਹਮੇਸ਼ਾ ਇੱਕ ਚਾਲ ਮੌਜੂਦ",
     'bho': "आसान टुकड़ा, हमेसा एगो चाल मिली",
+    'mr': "सोपे तुकडे, नेहमी एक चाल उपलब्ध",
+    'sa': "सरलाः खण्डाः, सर्वदा एका चालः उपलब्धा",
   },
   'block_puzzle.desc.medium': {
     'en': "Classic 8x8, any shape can show up",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "கிளாசிக் 8x8, எந்த வடிவமும் வரலாம்",
     'pa': "ਕਲਾਸਿਕ 8x8, ਕੋਈ ਵੀ ਆਕਾਰ ਆ ਸਕਦਾ ਹੈ",
     'bho': "क्लासिक 8x8, कवनो आकार आ सकेला",
+    'mr': "क्लासिक 8x8, कोणताही आकार येऊ शकतो",
+    'sa': "पारम्परिकः 8x8, कोऽपि आकारः आगन्तुं शक्नोति",
   },
   'block_puzzle.desc.hard': {
     'en': "Pre-filled blocks and bigger shapes",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "முன்பே நிரப்பிய பிளாக்குகள், பெரிய வடிவங்கள்",
     'pa': "ਪਹਿਲਾਂ ਤੋਂ ਭਰੇ ਬਲਾਕ ਅਤੇ ਵੱਡੇ ਆਕਾਰ",
     'bho': "पहिले से भरल ब्लॉक आ बड़ आकार",
+    'mr': "आधीच भरलेले ब्लॉक आणि मोठे आकार",
+    'sa': "पूर्वपूरिताः खण्डाः बृहत् आकाराः च",
   },
   'block_puzzle.desc.extreme': {
     'en': "10x10 board, crowded start, no mercy",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "10x10 பலகை, நெரிசலான தொடக்கம், இரக்கம் இல்லை",
     'pa': "10x10 ਬੋਰਡ, ਭਰੀ ਸ਼ੁਰੂਆਤ, ਕੋਈ ਰਹਿਮ ਨਹੀਂ",
     'bho': "10x10 बोर्ड, भरल सुरुआत, कवनो रहम ना",
+    'mr': "10x10 बोर्ड, भरलेली सुरुवात, दया नाही",
+    'sa': "10x10 फलकम्, पूर्णः आरम्भः, दया नास्ति",
   },
   'block_puzzle.lines': {
     'en': "{n} LINES!",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "{n} வரிகள்!",
     'pa': "{n} ਲਾਈਨਾਂ!",
     'bho': "{n} लाइन!",
+    'mr': "{n} ओळी!",
+    'sa': "{n} पङ्क्तयः!",
   },
   'block_puzzle.combo': {
     'en': "COMBO x{n}",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "காம்போ x{n}",
     'pa': "ਕੰਬੋ x{n}",
     'bho': "कॉम्बो x{n}",
+    'mr': "कॉम्बो x{n}",
+    'sa': "संयोगः x{n}",
   },
   'block_puzzle.no_moves': {
     'en': "No more moves",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "இனி நகர்வுகள் இல்லை",
     'pa': "ਹੁਣ ਕੋਈ ਚਾਲ ਨਹੀਂ",
     'bho': "अब कवनो चाल नइखे",
+    'mr': "आता चाल शिल्लक नाही",
+    'sa': "अधुना चालः नास्ति",
   },
   'block_puzzle.result': {
     'en': "Score {score}\nBest {best}  ({tier})",
@@ -91,5 +109,7 @@ const Map<String, Map<String, String>> blockPuzzleStrings = {
     'ta': "மதிப்பெண் {score}\nசிறந்தது {best}  ({tier})",
     'pa': "ਸਕੋਰ {score}\nਬੈਸਟ {best}  ({tier})",
     'bho': "स्कोर {score}\nबेस्ट {best}  ({tier})",
+    'mr': "स्कोअर {score}\nसर्वोत्तम {best}  ({tier})",
+    'sa': "अङ्काः {score}\nसर्वोत्तमम् {best}  ({tier})",
   },
 };

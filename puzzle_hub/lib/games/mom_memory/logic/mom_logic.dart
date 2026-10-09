@@ -67,83 +67,83 @@ class BagItem {
 const bagItems = [
   BagItem(
     '👕',
-    {'en': 'Clothes', 'hi': 'कपड़े', 'hinglish': 'Kapde', 'te': 'బట్టలు', 'ta': 'உடைகள்', 'pa': 'ਕੱਪੜੇ', 'bho': 'कपड़ा'},
+    {'en': 'Clothes', 'hi': 'कपड़े', 'hinglish': 'Kapde', 'te': 'బట్టలు', 'ta': 'உடைகள்', 'pa': 'ਕੱਪੜੇ', 'bho': 'कपड़ा', 'mr': "कपडे", 'sa': "वस्त्राणि"},
   ),
   BagItem(
     '🧼',
-    {'en': 'Soap', 'hi': 'साबुन', 'hinglish': 'Sabun', 'te': 'సబ్బు', 'ta': 'சோப்பு', 'pa': 'ਸਾਬਣ', 'bho': 'साबुन'},
+    {'en': 'Soap', 'hi': 'साबुन', 'hinglish': 'Sabun', 'te': 'సబ్బు', 'ta': 'சோப்பு', 'pa': 'ਸਾਬਣ', 'bho': 'साबुन', 'mr': "साबण", 'sa': "फेनकम्"},
   ),
   BagItem(
     '🪥',
-    {'en': 'Toothbrush', 'hi': 'टूथब्रश', 'hinglish': 'Brush', 'te': 'టూత్‌బ్రష్', 'ta': 'பல் துலக்கி', 'pa': 'ਟੁੱਥਬੁਰਸ਼', 'bho': 'टूथब्रश'},
+    {'en': 'Toothbrush', 'hi': 'टूथब्रश', 'hinglish': 'Brush', 'te': 'టూత్‌బ్రష్', 'ta': 'பல் துலக்கி', 'pa': 'ਟੁੱਥਬੁਰਸ਼', 'bho': 'टूथब्रश', 'mr': "टूथब्रश", 'sa': "दन्तकूर्चः"},
   ),
   BagItem(
     '📄',
-    {'en': 'Documents', 'hi': 'कागज़', 'hinglish': 'Kagaz', 'te': 'పత్రాలు', 'ta': 'ஆவணங்கள்', 'pa': 'ਕਾਗਜ਼', 'bho': 'कागज'},
+    {'en': 'Documents', 'hi': 'कागज़', 'hinglish': 'Kagaz', 'te': 'పత్రాలు', 'ta': 'ஆவணங்கள்', 'pa': 'ਕਾਗਜ਼', 'bho': 'कागज', 'mr': "कागदपत्रे", 'sa': "पत्राणि"},
   ),
   BagItem(
     '📱',
-    {'en': 'Phone', 'hi': 'फ़ोन', 'hinglish': 'Phone', 'te': 'ఫోన్', 'ta': 'கைபேசி', 'pa': 'ਫ਼ੋਨ', 'bho': 'फोन'},
+    {'en': 'Phone', 'hi': 'फ़ोन', 'hinglish': 'Phone', 'te': 'ఫోన్', 'ta': 'கைபேசி', 'pa': 'ਫ਼ੋਨ', 'bho': 'फोन', 'mr': "फोन", 'sa': "दूरवाणी"},
   ),
   BagItem(
     '🔌',
-    {'en': 'Charger', 'hi': 'चार्जर', 'hinglish': 'Charger', 'te': 'ఛార్జర్', 'ta': 'சார்ஜர்', 'pa': 'ਚਾਰਜਰ', 'bho': 'चार्जर'},
+    {'en': 'Charger', 'hi': 'चार्जर', 'hinglish': 'Charger', 'te': 'ఛార్జర్', 'ta': 'சார்ஜர்', 'pa': 'ਚਾਰਜਰ', 'bho': 'चार्जर', 'mr': "चार्जर", 'sa': "आवेशकः"},
   ),
   BagItem(
     '🧦',
-    {'en': 'Socks', 'hi': 'मोज़े', 'hinglish': 'Moze', 'te': 'సాక్స్', 'ta': 'காலுறை', 'pa': 'ਜੁਰਾਬਾਂ', 'bho': 'मोजा'},
+    {'en': 'Socks', 'hi': 'मोज़े', 'hinglish': 'Moze', 'te': 'సాక్స్', 'ta': 'காலுறை', 'pa': 'ਜੁਰਾਬਾਂ', 'bho': 'मोजा', 'mr': "मोजे", 'sa': "पादावरणे"},
   ),
   BagItem(
     '🍼',
-    {'en': 'Baby bottle', 'hi': 'दूध की बोतल', 'hinglish': 'Bottle', 'te': 'పాల సీసా', 'ta': 'பால் புட்டி', 'pa': 'ਦੁੱਧ ਦੀ ਬੋਤਲ', 'bho': 'दूध के बोतल'},
+    {'en': 'Baby bottle', 'hi': 'दूध की बोतल', 'hinglish': 'Bottle', 'te': 'పాల సీసా', 'ta': 'பால் புட்டி', 'pa': 'ਦੁੱਧ ਦੀ ਬੋਤਲ', 'bho': 'दूध के बोतल', 'mr': "दुधाची बाटली", 'sa': "दुग्धकूपी"},
   ),
   BagItem(
     '🧸',
-    {'en': 'Soft toy', 'hi': 'खिलौना', 'hinglish': 'Khilona', 'te': 'బొమ్మ', 'ta': 'பொம்மை', 'pa': 'ਖਿਡੌਣਾ', 'bho': 'खिलौना'},
+    {'en': 'Soft toy', 'hi': 'खिलौना', 'hinglish': 'Khilona', 'te': 'బొమ్మ', 'ta': 'பொம்மை', 'pa': 'ਖਿਡੌਣਾ', 'bho': 'खिलौना', 'mr': "खेळणे", 'sa': "क्रीडनकम्"},
   ),
   BagItem(
     '🧴',
-    {'en': 'Lotion', 'hi': 'लोशन', 'hinglish': 'Lotion', 'te': 'లోషన్', 'ta': 'லோஷன்', 'pa': 'ਲੋਸ਼ਨ', 'bho': 'लोशन'},
+    {'en': 'Lotion', 'hi': 'लोशन', 'hinglish': 'Lotion', 'te': 'లోషన్', 'ta': 'லோஷன்', 'pa': 'ਲੋਸ਼ਨ', 'bho': 'लोशन', 'mr': "लोशन", 'sa': "लेपः"},
   ),
   BagItem(
     '🧣',
-    {'en': 'Shawl', 'hi': 'शॉल', 'hinglish': 'Shawl', 'te': 'శాలువా', 'ta': 'சால்வை', 'pa': 'ਸ਼ਾਲ', 'bho': 'साल'},
+    {'en': 'Shawl', 'hi': 'शॉल', 'hinglish': 'Shawl', 'te': 'శాలువా', 'ta': 'சால்வை', 'pa': 'ਸ਼ਾਲ', 'bho': 'साल', 'mr': "शाल", 'sa': "शाटिका"},
   ),
   BagItem(
     '👶',
-    {'en': 'Baby suit', 'hi': 'बेबी सूट', 'hinglish': 'Baby suit', 'te': 'పాప బట్టలు', 'ta': 'குழந்தை உடை', 'pa': 'ਬੇਬੀ ਸੂਟ', 'bho': 'बबुआ के कपड़ा'},
+    {'en': 'Baby suit', 'hi': 'बेबी सूट', 'hinglish': 'Baby suit', 'te': 'పాప బట్టలు', 'ta': 'குழந்தை உடை', 'pa': 'ਬੇਬੀ ਸੂਟ', 'bho': 'बबुआ के कपड़ा', 'mr': "बाळाचे कपडे", 'sa': "शिशुवस्त्रम्"},
   ),
   BagItem(
     '💧',
-    {'en': 'Water', 'hi': 'पानी', 'hinglish': 'Paani', 'te': 'నీళ్లు', 'ta': 'தண்ணீர்', 'pa': 'ਪਾਣੀ', 'bho': 'पानी'},
+    {'en': 'Water', 'hi': 'पानी', 'hinglish': 'Paani', 'te': 'నీళ్లు', 'ta': 'தண்ணீர்', 'pa': 'ਪਾਣੀ', 'bho': 'पानी', 'mr': "पाणी", 'sa': "जलम्"},
   ),
   BagItem(
     '🍪',
-    {'en': 'Snacks', 'hi': 'नाश्ता', 'hinglish': 'Snacks', 'te': 'చిరుతిండి', 'ta': 'தின்பண்டம்', 'pa': 'ਸਨੈਕਸ', 'bho': 'नास्ता'},
+    {'en': 'Snacks', 'hi': 'नाश्ता', 'hinglish': 'Snacks', 'te': 'చిరుతిండి', 'ta': 'தின்பண்டம்', 'pa': 'ਸਨੈਕਸ', 'bho': 'नास्ता', 'mr': "खाऊ", 'sa': "अल्पाहारः"},
   ),
   BagItem(
     '🪮',
-    {'en': 'Comb', 'hi': 'कंघी', 'hinglish': 'Kanghi', 'te': 'దువ్వెన', 'ta': 'சீப்பு', 'pa': 'ਕੰਘੀ', 'bho': 'ककही'},
+    {'en': 'Comb', 'hi': 'कंघी', 'hinglish': 'Kanghi', 'te': 'దువ్వెన', 'ta': 'சீப்பு', 'pa': 'ਕੰਘੀ', 'bho': 'ककही', 'mr': "कंगवा", 'sa': "कङ्कतम्"},
   ),
   BagItem(
     '👓',
-    {'en': 'Glasses', 'hi': 'चश्मा', 'hinglish': 'Chashma', 'te': 'కళ్లద్దాలు', 'ta': 'கண்ணாடி', 'pa': 'ਐਨਕ', 'bho': 'चस्मा'},
+    {'en': 'Glasses', 'hi': 'चश्मा', 'hinglish': 'Chashma', 'te': 'కళ్లద్దాలు', 'ta': 'கண்ணாடி', 'pa': 'ਐਨਕ', 'bho': 'चस्मा', 'mr': "चष्मा", 'sa': "उपनेत्रम्"},
   ),
   BagItem(
     '🧻',
-    {'en': 'Tissues', 'hi': 'टिश्यू', 'hinglish': 'Tissue', 'te': 'టిష్యూ', 'ta': 'டிஷ்யூ', 'pa': 'ਟਿਸ਼ੂ', 'bho': 'टिसू'},
+    {'en': 'Tissues', 'hi': 'टिश्यू', 'hinglish': 'Tissue', 'te': 'టిష్యూ', 'ta': 'டிஷ்யூ', 'pa': 'ਟਿਸ਼ੂ', 'bho': 'टिसू', 'mr': "टिश्यू", 'sa': "मार्जनपत्रम्"},
   ),
   BagItem(
     '🩴',
-    {'en': 'Slippers', 'hi': 'चप्पल', 'hinglish': 'Chappal', 'te': 'చెప్పులు', 'ta': 'செருப்பு', 'pa': 'ਚੱਪਲ', 'bho': 'चप्पल'},
+    {'en': 'Slippers', 'hi': 'चप्पल', 'hinglish': 'Chappal', 'te': 'చెప్పులు', 'ta': 'செருப்பு', 'pa': 'ਚੱਪਲ', 'bho': 'चप्पल', 'mr': "चप्पल", 'sa': "पादुके"},
   ),
   BagItem(
     '📖',
-    {'en': 'Book', 'hi': 'किताब', 'hinglish': 'Kitaab', 'te': 'పుస్తకం', 'ta': 'புத்தகம்', 'pa': 'ਕਿਤਾਬ', 'bho': 'किताब'},
+    {'en': 'Book', 'hi': 'किताब', 'hinglish': 'Kitaab', 'te': 'పుస్తకం', 'ta': 'புத்தகம்', 'pa': 'ਕਿਤਾਬ', 'bho': 'किताब', 'mr': "पुस्तक", 'sa': "पुस्तकम्"},
   ),
   BagItem(
     '🧢',
-    {'en': 'Baby cap', 'hi': 'टोपी', 'hinglish': 'Topi', 'te': 'టోపీ', 'ta': 'தொப்பி', 'pa': 'ਟੋਪੀ', 'bho': 'टोपी'},
+    {'en': 'Baby cap', 'hi': 'टोपी', 'hinglish': 'Topi', 'te': 'టోపీ', 'ta': 'தொப்பி', 'pa': 'ਟੋਪੀ', 'bho': 'टोपी', 'mr': "टोपी", 'sa': "शिरस्त्रम्"},
   ),
 ];
 
@@ -254,23 +254,23 @@ class BreathColor {
 
 const breathColors = [
   BreathColor(
-    {'en': 'Pink', 'hi': 'गुलाबी', 'hinglish': 'Gulabi', 'te': 'గులాబీ', 'ta': 'இளஞ்சிவப்பு', 'pa': 'ਗੁਲਾਬੀ', 'bho': 'गुलाबी'},
+    {'en': 'Pink', 'hi': 'गुलाबी', 'hinglish': 'Gulabi', 'te': 'గులాబీ', 'ta': 'இளஞ்சிவப்பு', 'pa': 'ਗੁਲਾਬੀ', 'bho': 'गुलाबी', 'mr': "गुलाबी", 'sa': "पाटलः"},
     0xFFFF8FB8,
   ),
   BreathColor(
-    {'en': 'Purple', 'hi': 'जामुनी', 'hinglish': 'Jamuni', 'te': 'ఊదా', 'ta': 'ஊதா', 'pa': 'ਜਾਮਣੀ', 'bho': 'बैंगनी'},
+    {'en': 'Purple', 'hi': 'जामुनी', 'hinglish': 'Jamuni', 'te': 'ఊదా', 'ta': 'ஊதா', 'pa': 'ਜਾਮਣੀ', 'bho': 'बैंगनी', 'mr': "जांभळा", 'sa': "धूम्रवर्णः"},
     0xFFB794FF,
   ),
   BreathColor(
-    {'en': 'Blue', 'hi': 'नीला', 'hinglish': 'Neela', 'te': 'నీలం', 'ta': 'நீலம்', 'pa': 'ਨੀਲਾ', 'bho': 'नीला'},
+    {'en': 'Blue', 'hi': 'नीला', 'hinglish': 'Neela', 'te': 'నీలం', 'ta': 'நீலம்', 'pa': 'ਨੀਲਾ', 'bho': 'नीला', 'mr': "निळा", 'sa': "नीलः"},
     0xFF7CC4FF,
   ),
   BreathColor(
-    {'en': 'Green', 'hi': 'हरा', 'hinglish': 'Hara', 'te': 'ఆకుపచ్చ', 'ta': 'பச்சை', 'pa': 'ਹਰਾ', 'bho': 'हरियर'},
+    {'en': 'Green', 'hi': 'हरा', 'hinglish': 'Hara', 'te': 'ఆకుపచ్చ', 'ta': 'பச்சை', 'pa': 'ਹਰਾ', 'bho': 'हरियर', 'mr': "हिरवा", 'sa': "हरितः"},
     0xFF7EE8B5,
   ),
   BreathColor(
-    {'en': 'Yellow', 'hi': 'पीला', 'hinglish': 'Peela', 'te': 'పసుపు', 'ta': 'மஞ்சள்', 'pa': 'ਪੀਲਾ', 'bho': 'पियर'},
+    {'en': 'Yellow', 'hi': 'पीला', 'hinglish': 'Peela', 'te': 'పసుపు', 'ta': 'மஞ்சள்', 'pa': 'ਪੀਲਾ', 'bho': 'पियर', 'mr': "पिवळा", 'sa': "पीतः"},
     0xFFFFD98A,
   ),
 ];

@@ -1,5 +1,5 @@
 // Translations for the screw_jam module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 const Map<String, Map<String, String>> screwJamStrings = {
   'screw_jam.title': {
     'en': "Screw Jam",
@@ -9,6 +9,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "ஸ்க்ரூ ஜாம்",
     'pa': "ਸਕ੍ਰੂ ਜੈਮ",
     'bho': "स्क्रू जैम",
+    'mr': "स्क्रू जॅम",
+    'sa': "स्क्रू जैम",
   },
   'screw_jam.title_tier': {
     'en': "Screw Jam · {tier}",
@@ -18,6 +20,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "ஸ்க்ரூ ஜாம் · {tier}",
     'pa': "ਸਕ੍ਰੂ ਜੈਮ · {tier}",
     'bho': "स्क्रू जैम · {tier}",
+    'mr': "स्क्रू जॅम · {tier}",
+    'sa': "स्क्रू जैम · {tier}",
   },
   'screw_jam.choose': {
     'en': "Choose difficulty",
@@ -27,6 +31,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "சிரமத்தைத் தேர்ந்தெடுக்கவும்",
     'pa': "ਮੁਸ਼ਕਲ ਚੁਣੋ",
     'bho': "कठिनाई चुनीं",
+    'mr': "काठिण्य निवडा",
+    'sa': "काठिन्यं चिनुत",
   },
   'screw_jam.choose_sub': {
     'en': "Unscrew the bolts and drop every plate",
@@ -36,6 +42,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "திருகுகளைக் கழற்றி எல்லா தட்டுகளையும் விழ வையுங்கள்",
     'pa': "ਪੇਚ ਖੋਲ੍ਹੋ ਅਤੇ ਹਰ ਪਲੇਟ ਸੁੱਟੋ",
     'bho': "पेंच खोलीं आ हर प्लेट गिराईं",
+    'mr': "स्क्रू उघडा आणि प्रत्येक प्लेट खाली पाडा",
+    'sa': "कीलान् उन्मोचयत, प्रत्येकं फलकं पातयत च",
   },
   'screw_jam.how': {
     'en': "Tap a screw that nothing covers. It flies into the box of its color, or into the tray. Don't let the tray fill up!",
@@ -45,6 +53,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "எதுவும் மூடாத திருகைத் தட்டுங்கள். அது தன் நிறப் பெட்டிக்கோ தட்டுக்கோ செல்லும். தட்டு நிரம்ப விடாதீர்கள்!",
     'pa': "ਉਹ ਪੇਚ ਟੈਪ ਕਰੋ ਜਿਸ ਉੱਤੇ ਕੁਝ ਨਾ ਹੋਵੇ। ਉਹ ਆਪਣੇ ਰੰਗ ਦੇ ਡੱਬੇ ਜਾਂ ਟ੍ਰੇ ਵਿੱਚ ਜਾਵੇਗਾ। ਟ੍ਰੇ ਭਰਨ ਨਾ ਦਿਓ!",
     'bho': "अइसन पेंच टैप करीं जेकरा ऊपर कुछ ना होखे। ऊ अपना रंग के डिब्बा भा ट्रे में जाई। ट्रे भरे मत दीं!",
+    'mr': "ज्यावर काहीही नाही असा स्क्रू टॅप करा. तो त्याच्या रंगाच्या डब्यात किंवा ट्रेमध्ये जाईल. ट्रे भरू देऊ नका!",
+    'sa': "यस्य उपरि किमपि नास्ति तं कीलं स्पृशत। सः स्ववर्णस्य पेटिकां पात्रं वा गच्छति। पात्रं पूर्णं मा भवतु!",
   },
   'screw_jam.desc.easy': {
     'en': "Few plates, roomy tray",
@@ -54,6 +64,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "குறைந்த தட்டுகள், பெரிய தட்டு",
     'pa': "ਘੱਟ ਪਲੇਟਾਂ, ਵੱਡੀ ਟ੍ਰੇ",
     'bho': "कम प्लेट, बड़ ट्रे",
+    'mr': "कमी प्लेट्स, मोठा ट्रे",
+    'sa': "अल्पानि फलकानि, विशालं पात्रम्",
   },
   'screw_jam.desc.medium': {
     'en': "More layers to plan",
@@ -63,6 +75,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "திட்டமிட அதிக அடுக்குகள்",
     'pa': "ਯੋਜਨਾ ਲਈ ਹੋਰ ਪਰਤਾਂ",
     'bho': "सोचे खातिर अउरी परत",
+    'mr': "नियोजनासाठी अधिक थर",
+    'sa': "योजनायै अधिकाः स्तराः",
   },
   'screw_jam.desc.hard': {
     'en': "Deep stacks, tight tray",
@@ -72,6 +86,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "ஆழமான அடுக்குகள், சிறிய தட்டு",
     'pa': "ਉੱਚੇ ਢੇਰ, ਛੋਟੀ ਟ੍ਰੇ",
     'bho': "ऊँच ढेर, छोट ट्रे",
+    'mr': "उंच ढीग, लहान ट्रे",
+    'sa': "उन्नताः राशयः, लघु पात्रम्",
   },
   'screw_jam.desc.extreme': {
     'en': "For true screw masters",
@@ -81,6 +97,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "உண்மையான திருகு வல்லுநர்களுக்கு",
     'pa': "ਅਸਲੀ ਪੇਚ ਉਸਤਾਦਾਂ ਲਈ",
     'bho': "असली पेंच उस्ताद लोग खातिर",
+    'mr': "खऱ्या स्क्रू उस्तादांसाठी",
+    'sa': "सत्यकील-निपुणेभ्यः",
   },
   'screw_jam.plates_range': {
     'en': "{range} plates · tray {tray}",
@@ -90,6 +108,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "{range} தட்டுகள் · தட்டு {tray}",
     'pa': "{range} ਪਲੇਟਾਂ · ਟ੍ਰੇ {tray}",
     'bho': "{range} प्लेट · ट्रे {tray}",
+    'mr': "{range} प्लेट्स · ट्रे {tray}",
+    'sa': "{range} फलकानि · पात्रम् {tray}",
   },
   'screw_jam.last': {
     'en': "LAST",
@@ -99,6 +119,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "கடைசி",
     'pa': "ਪਿਛਲਾ",
     'bho': "पिछला",
+    'mr': "मागील",
+    'sa': "पूर्वतनम्",
   },
   'screw_jam.not_started': {
     'en': "Not started yet",
@@ -108,6 +130,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "இன்னும் தொடங்கவில்லை",
     'pa': "ਹਾਲੇ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤਾ",
     'bho': "अबहीं सुरू ना भइल",
+    'mr': "अजून सुरू केले नाही",
+    'sa': "अद्यापि न आरब्धम्",
   },
   'screw_jam.cleared': {
     'en': "{n}/{total} cleared",
@@ -117,6 +141,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "{n}/{total} முடிந்தது",
     'pa': "{n}/{total} ਪੂਰੇ",
     'bho': "{n}/{total} पूरा",
+    'mr': "{n}/{total} पूर्ण",
+    'sa': "{n}/{total} पूर्णानि",
   },
   'screw_jam.continue_tier': {
     'en': "Continue {tier}",
@@ -126,6 +152,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "{tier} தொடரவும்",
     'pa': "{tier} ਜਾਰੀ ਰੱਖੋ",
     'bho': "{tier} आगे बढ़ाईं",
+    'mr': "{tier} सुरू ठेवा",
+    'sa': "{tier} अनुवर्तयत",
   },
   'screw_jam.play_level': {
     'en': "Play level {n}",
@@ -135,6 +163,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "நிலை {n} விளையாடு",
     'pa': "ਲੈਵਲ {n} ਖੇਡੋ",
     'bho': "लेवल {n} खेलीं",
+    'mr': "लेव्हल {n} खेळा",
+    'sa': "स्तरं {n} क्रीडत",
   },
   'screw_jam.boxes_left': {
     'en': "{n} boxes left",
@@ -144,6 +174,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "{n} பெட்டிகள் மீதம்",
     'pa': "{n} ਡੱਬੇ ਬਾਕੀ",
     'bho': "{n} डिब्बा बाकी",
+    'mr': "{n} डबे बाकी",
+    'sa': "{n} पेटिकाः अवशिष्टाः",
   },
   'screw_jam.tray': {
     'en': "Tray",
@@ -153,6 +185,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "தட்டு",
     'pa': "ਟ੍ਰੇ",
     'bho': "ट्रे",
+    'mr': "ट्रे",
+    'sa': "पात्रम्",
   },
   'screw_jam.blocked': {
     'en': "Covered! Clear the plate above first.",
@@ -162,6 +196,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "மூடப்பட்டுள்ளது! முதலில் மேல் தட்டை அகற்றுங்கள்.",
     'pa': "ਢੱਕਿਆ ਹੋਇਆ! ਪਹਿਲਾਂ ਉੱਪਰਲੀ ਪਲੇਟ ਹਟਾਓ।",
     'bho': "तोपाइल बा! पहिले ऊपर वाला प्लेट हटाईं।",
+    'mr': "झाकलेला! आधी वरची प्लेट काढा.",
+    'sa': "आवृतम्! प्रथमम् उपरितनं फलकं निष्कासयत।",
   },
   'screw_jam.tray_full': {
     'en': "Tray full!",
@@ -171,6 +207,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "தட்டு நிரம்பியது!",
     'pa': "ਟ੍ਰੇ ਭਰ ਗਈ!",
     'bho': "ट्रे भर गइल!",
+    'mr': "ट्रे भरला!",
+    'sa': "पात्रं पूर्णम्!",
   },
   'screw_jam.tray_full_msg': {
     'en': "No room left for more screws.",
@@ -180,6 +218,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "மேலும் திருகுகளுக்கு இடமில்லை.",
     'pa': "ਹੋਰ ਪੇਚਾਂ ਲਈ ਥਾਂ ਨਹੀਂ ਬਚੀ।",
     'bho': "अउरी पेंच खातिर जगह ना बाचल।",
+    'mr': "आणखी स्क्रूसाठी जागा उरली नाही.",
+    'sa': "अधिककीलेभ्यः स्थानं नावशिष्टम्।",
   },
   'screw_jam.win_msg': {
     'en': "Every plate dropped in {moves} taps!",
@@ -189,6 +229,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "{moves} தட்டல்களில் எல்லா தட்டுகளும் விழுந்தன!",
     'pa': "{moves} ਟੈਪਾਂ ਵਿੱਚ ਹਰ ਪਲੇਟ ਡਿੱਗ ਗਈ!",
     'bho': "{moves} टैप में हर प्लेट गिर गइल!",
+    'mr': "{moves} टॅपमध्ये प्रत्येक प्लेट पडली!",
+    'sa': "{moves} स्पर्शेषु सर्वाणि फलकानि पतितानि!",
   },
   'screw_jam.tier_done': {
     'en': "Tier complete! Try a harder one.",
@@ -198,6 +240,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "படிநிலை முடிந்தது! கடினமானதை முயற்சிக்கவும்.",
     'pa': "ਪੱਧਰ ਪੂਰਾ! ਹੁਣ ਔਖਾ ਅਜ਼ਮਾਓ।",
     'bho': "स्तर पूरा! अब कठिन वाला आजमाईं।",
+    'mr': "स्तर पूर्ण! आता कठीण स्तर खेळून पहा.",
+    'sa': "स्तरः पूर्णः! अधुना कठिनतरं प्रयतध्वम्।",
   },
   'screw_jam.free_n': {
     'en': "{n} free",
@@ -207,6 +251,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "{n} இலவசம்",
     'pa': "{n} ਮੁਫ਼ਤ",
     'bho': "{n} मुफ्त",
+    'mr': "{n} मोफत",
+    'sa': "{n} निःशुल्कम्",
   },
   'screw_jam.bought': {
     'en': "Bought",
@@ -216,6 +262,8 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "வாங்கியது",
     'pa': "ਖਰੀਦਿਆ",
     'bho': "खरीदल",
+    'mr': "विकत घेतले",
+    'sa': "क्रीतम्",
   },
   'screw_jam.plays_over': {
     'en': "No plays left on this level, so it is locked again. Play the levels in order for free, or unlock it again.",
@@ -225,5 +273,7 @@ const Map<String, Map<String, String>> screwJamStrings = {
     'ta': "இந்த நிலைக்கு வாய்ப்புகள் முடிந்தன, அதனால் மீண்டும் பூட்டப்பட்டது. நிலைகளை வரிசையாக இலவசமாக விளையாடுங்கள், அல்லது மீண்டும் திறங்கள்.",
     'pa': "ਇਸ ਲੈਵਲ ਦੀਆਂ ਖੇਡਾਂ ਖਤਮ ਹੋ ਗਈਆਂ, ਇਸ ਲਈ ਇਹ ਫਿਰ ਬੰਦ ਹੈ। ਲੈਵਲ ਕ੍ਰਮ ਵਿੱਚ ਮੁਫ਼ਤ ਖੇਡੋ, ਜਾਂ ਇਸਨੂੰ ਫਿਰ ਖੋਲ੍ਹੋ।",
     'bho': "एह लेवल के खेल खतम हो गइल, एही से ई फेर से बंद बा। लेवल क्रम से मुफ्त खेलीं, भा एकरा के फेर से खोलीं।",
+    'mr': "या लेव्हलचे खेळ संपले, म्हणून ती पुन्हा बंद झाली आहे. लेव्हल क्रमाने मोफत खेळा, किंवा ती पुन्हा उघडा.",
+    'sa': "अस्य स्तरस्य क्रीडाः समाप्ताः, अतः सः पुनः पिहितः। स्तरान् क्रमेण निःशुल्कं क्रीडत, अथवा तं पुनः उद्घाटयत।",
   },
 };

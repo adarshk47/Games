@@ -1,5 +1,5 @@
 // Translations for the hexa_sort module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 const Map<String, Map<String, String>> hexaSortStrings = {
   'hexa_sort.title': {
     'en': "Hexa Sort",
@@ -9,6 +9,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "ஹெக்சா சார்ட்",
     'pa': "ਹੈਕਸਾ ਸੌਰਟ",
     'bho': "हेक्सा सॉर्ट",
+    'mr': "हेक्सा सॉर्ट",
+    'sa': "हेक्सा सॉर्ट",
   },
   'hexa_sort.title_tier': {
     'en': "Hexa Sort · {tier}",
@@ -18,6 +20,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "ஹெக்சா சார்ட் · {tier}",
     'pa': "ਹੈਕਸਾ ਸੌਰਟ · {tier}",
     'bho': "हेक्सा सॉर्ट · {tier}",
+    'mr': "हेक्सा सॉर्ट · {tier}",
+    'sa': "हेक्सा सॉर्ट · {tier}",
   },
   'hexa_sort.choose': {
     'en': "Choose difficulty",
@@ -27,6 +31,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "சிரமத்தைத் தேர்ந்தெடுக்கவும்",
     'pa': "ਮੁਸ਼ਕਲ ਚੁਣੋ",
     'bho': "कठिनाई चुनीं",
+    'mr': "काठिण्य निवडा",
+    'sa': "काठिन्यं चिनुत",
   },
   'hexa_sort.choose_sub': {
     'en': "Bigger boards and more colours as you climb",
@@ -36,6 +42,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "முன்னேறும்போது பெரிய பலகை, அதிக நிறங்கள்",
     'pa': "ਅੱਗੇ ਵਧਦਿਆਂ ਵੱਡਾ ਬੋਰਡ ਅਤੇ ਵੱਧ ਰੰਗ",
     'bho': "आगे बढ़ला पर बड़ बोर्ड आ ढेर रंग",
+    'mr': "पुढे जाताच मोठा बोर्ड आणि अधिक रंग",
+    'sa': "अग्रे गच्छत्सु बृहत्तरं फलकम् अधिकाः वर्णाः च",
   },
   'hexa_sort.how': {
     'en': "Drag or tap a stack onto an empty cell. Touching stacks with the same top colour slide together, and 10 of one colour clear!",
@@ -45,6 +53,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "அடுக்கை காலி கட்டத்தில் இழுக்கவும் அல்லது தட்டவும். ஒரே மேல் நிறமுள்ள அருகிலுள்ள அடுக்குகள் சேரும், ஒரு நிறம் 10 ஆனால் அழியும்!",
     'pa': "ਸਟੈਕ ਨੂੰ ਖਾਲੀ ਖਾਨੇ ਉੱਤੇ ਖਿੱਚੋ ਜਾਂ ਟੈਪ ਕਰੋ। ਇੱਕੋ ਉੱਪਰਲੇ ਰੰਗ ਵਾਲੇ ਨੇੜਲੇ ਸਟੈਕ ਮਿਲ ਜਾਂਦੇ ਹਨ, ਅਤੇ ਇੱਕ ਰੰਗ ਦੇ 10 ਹੁੰਦੇ ਹੀ ਸਾਫ਼!",
     'bho': "स्टैक के खाली खाना पर खींचीं भा टैप करीं। एके ऊपरी रंग वाला पास के स्टैक आपस में मिल जाला, आ एक रंग के 10 होते साफ़!",
+    'mr': "स्टॅक रिकाम्या जागेवर ओढा किंवा टॅप करा. वरचा रंग सारखा असलेले शेजारचे स्टॅक एकत्र सरकतात, आणि एका रंगाचे 10 होताच साफ!",
+    'sa': "राशिं रिक्तकोष्ठे कर्षत स्पृशत वा। समानोपरिवर्णाः समीपस्थाः राशयः मिलन्ति, एकवर्णस्य 10 भवन्ति चेत् स्वच्छम्!",
   },
   'hexa_sort.last': {
     'en': "LAST",
@@ -54,6 +64,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "கடைசி",
     'pa': "ਪਿਛਲਾ",
     'bho': "पिछला",
+    'mr': "मागील",
+    'sa': "पूर्वतनम्",
   },
   'hexa_sort.board_info': {
     'en': "{cells} cells · {colors} colours",
@@ -63,6 +75,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "{cells} கட்டங்கள் · {colors} நிறங்கள்",
     'pa': "{cells} ਖਾਨੇ · {colors} ਰੰਗ",
     'bho': "{cells} खाना · {colors} रंग",
+    'mr': "{cells} जागा · {colors} रंग",
+    'sa': "{cells} कोष्ठाः · {colors} वर्णाः",
   },
   'hexa_sort.desc.easy': {
     'en': "Small board, few colours. Learn the flow.",
@@ -72,6 +86,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "சிறிய பலகை, குறைந்த நிறங்கள். விளையாட்டைக் கற்றுக்கொள்ளுங்கள்.",
     'pa': "ਛੋਟਾ ਬੋਰਡ, ਘੱਟ ਰੰਗ। ਖੇਡ ਸਮਝੋ।",
     'bho': "छोट बोर्ड, कम रंग। खेल समझीं।",
+    'mr': "लहान बोर्ड, कमी रंग. खेळ समजून घ्या.",
+    'sa': "लघु फलकम्, अल्पाः वर्णाः। क्रीडां जानीत।",
   },
   'hexa_sort.desc.medium': {
     'en': "More colours and taller stacks.",
@@ -81,6 +97,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "அதிக நிறங்கள், உயரமான அடுக்குகள்.",
     'pa': "ਵੱਧ ਰੰਗ ਅਤੇ ਉੱਚੇ ਸਟੈਕ।",
     'bho': "ढेर रंग आ ऊँच स्टैक।",
+    'mr': "अधिक रंग आणि उंच स्टॅक.",
+    'sa': "अधिकाः वर्णाः उन्नताः राशयः च।",
   },
   'hexa_sort.desc.hard': {
     'en': "Mixed stacks and stone cells in the way.",
@@ -90,6 +108,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "கலந்த அடுக்குகள், வழியில் கல் கட்டங்கள்.",
     'pa': "ਰਲੇ-ਮਿਲੇ ਸਟੈਕ ਅਤੇ ਰਾਹ ਵਿੱਚ ਪੱਥਰ ਦੇ ਖਾਨੇ।",
     'bho': "मिलल-जुलल स्टैक आ रास्ता में पत्थर के खाना।",
+    'mr': "मिश्र स्टॅक आणि वाटेत दगडी जागा.",
+    'sa': "मिश्रराशयः मार्गे पाषाणकोष्ठाः च।",
   },
   'hexa_sort.desc.extreme': {
     'en': "Up to 8 colours. Every cell counts.",
@@ -99,6 +119,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "8 நிறங்கள் வரை. ஒவ்வொரு கட்டமும் முக்கியம்.",
     'pa': "8 ਰੰਗਾਂ ਤੱਕ। ਹਰ ਖਾਨਾ ਕੀਮਤੀ।",
     'bho': "8 रंग ले। हर खाना कीमती।",
+    'mr': "8 रंगांपर्यंत. प्रत्येक जागा मोलाची.",
+    'sa': "8 वर्णाः यावत्। प्रत्येकं कोष्ठं मूल्यवत्।",
   },
   'hexa_sort.not_started': {
     'en': "Not started",
@@ -108,6 +130,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "இன்னும் தொடங்கவில்லை",
     'pa': "ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤਾ",
     'bho': "शुरू ना भइल",
+    'mr': "सुरू केले नाही",
+    'sa': "न आरब्धम्",
   },
   'hexa_sort.cleared': {
     'en': "{n}/{total} cleared",
@@ -117,6 +141,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "{n}/{total} முடிந்தது",
     'pa': "{n}/{total} ਪੂਰੇ",
     'bho': "{n}/{total} पूरा",
+    'mr': "{n}/{total} पूर्ण",
+    'sa': "{n}/{total} पूर्णानि",
   },
   'hexa_sort.continue_tier': {
     'en': "Continue {tier}",
@@ -126,6 +152,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "{tier} தொடரவும்",
     'pa': "{tier} ਜਾਰੀ ਰੱਖੋ",
     'bho': "{tier} जारी राखीं",
+    'mr': "{tier} सुरू ठेवा",
+    'sa': "{tier} अनुवर्तयत",
   },
   'hexa_sort.play_level': {
     'en': "Play level {n}",
@@ -135,6 +163,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "நிலை {n} விளையாடு",
     'pa': "ਲੈਵਲ {n} ਖੇਡੋ",
     'bho': "लेवल {n} खेलीं",
+    'mr': "लेव्हल {n} खेळा",
+    'sa': "स्तरं {n} क्रीडत",
   },
   'hexa_sort.goal': {
     'en': "Goal {n}/{total}",
@@ -144,6 +174,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "இலக்கு {n}/{total}",
     'pa': "ਟੀਚਾ {n}/{total}",
     'bho': "लक्ष्य {n}/{total}",
+    'mr': "लक्ष्य {n}/{total}",
+    'sa': "लक्ष्यम् {n}/{total}",
   },
   'hexa_sort.moves': {
     'en': "{n} moves",
@@ -153,6 +185,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "{n} நகர்வுகள்",
     'pa': "{n} ਚਾਲਾਂ",
     'bho': "{n} चाल",
+    'mr': "{n} चाली",
+    'sa': "{n} चालाः",
   },
   'hexa_sort.refresh': {
     'en': "New stacks",
@@ -162,6 +196,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "புதிய அடுக்குகள்",
     'pa': "ਨਵੇਂ ਸਟੈਕ",
     'bho': "नया स्टैक",
+    'mr': "नवे स्टॅक",
+    'sa': "नूतनाः राशयः",
   },
   'hexa_sort.free_n': {
     'en': "{n} free",
@@ -171,6 +207,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "{n} இலவசம்",
     'pa': "{n} ਮੁਫ਼ਤ",
     'bho': "{n} मुफ़्त",
+    'mr': "{n} मोफत",
+    'sa': "{n} निःशुल्कम्",
   },
   'hexa_sort.blocked': {
     'en': "That cell is stone!",
@@ -180,6 +218,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "அந்தக் கட்டம் கல்!",
     'pa': "ਇਹ ਖਾਨਾ ਪੱਥਰ ਦਾ ਹੈ!",
     'bho': "ई खाना पत्थर के बा!",
+    'mr': "ही जागा दगडाची आहे!",
+    'sa': "एतत् कोष्ठं पाषाणमयम्!",
   },
   'hexa_sort.occupied': {
     'en': "Pick an empty cell",
@@ -189,6 +229,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "காலி கட்டத்தைத் தேர்ந்தெடுக்கவும்",
     'pa': "ਕੋਈ ਖਾਲੀ ਖਾਨਾ ਚੁਣੋ",
     'bho': "कवनो खाली खाना चुनीं",
+    'mr': "एखादी रिकामी जागा निवडा",
+    'sa': "रिक्तं कोष्ठं चिनुत",
   },
   'hexa_sort.combo': {
     'en': "Combo x{n}!",
@@ -198,6 +240,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "காம்போ x{n}!",
     'pa': "ਕੌਂਬੋ x{n}!",
     'bho': "कॉम्बो x{n}!",
+    'mr': "कॉम्बो x{n}!",
+    'sa': "संयोगः x{n}!",
   },
   'hexa_sort.win_msg': {
     'en': "Cleared {n} tiles in {moves} moves.",
@@ -207,6 +251,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "{moves} நகர்வுகளில் {n} ஓடுகளை அழித்தீர்கள்.",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ {n} ਟਾਈਲਾਂ ਸਾਫ਼ ਕੀਤੀਆਂ।",
     'bho': "{moves} चाल में {n} टाइल साफ़ कइलीं।",
+    'mr': "{moves} चालींमध्ये {n} टाइल्स साफ केल्या.",
+    'sa': "{moves} चालेषु {n} पटलानि स्वच्छीकृतानि।",
   },
   'hexa_sort.tier_done': {
     'en': "Tier complete! You're a hexa master.",
@@ -216,6 +262,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "இந்த நிலை முடிந்தது! நீங்கள் ஹெக்சா மாஸ்டர்.",
     'pa': "ਇਹ ਪੱਧਰ ਪੂਰਾ! ਤੁਸੀਂ ਹੈਕਸਾ ਮਾਸਟਰ ਹੋ।",
     'bho': "ई स्तर पूरा! रउआ हेक्सा मास्टर बानी।",
+    'mr': "स्तर पूर्ण! तुम्ही हेक्सा उस्ताद आहात.",
+    'sa': "स्तरः पूर्णः! भवान् षट्कोण-निपुणः।",
   },
   'hexa_sort.board_full': {
     'en': "Board full!",
@@ -225,6 +273,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "பலகை நிரம்பியது!",
     'pa': "ਬੋਰਡ ਭਰ ਗਿਆ!",
     'bho': "बोर्ड भर गइल!",
+    'mr': "बोर्ड भरला!",
+    'sa': "फलकं पूर्णम्!",
   },
   'hexa_sort.board_full_msg': {
     'en': "No empty cell left. You cleared {n} of {total} tiles.",
@@ -234,6 +284,8 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "காலி கட்டம் இல்லை. {total}-இல் {n} ஓடுகளை அழித்தீர்கள்.",
     'pa': "ਕੋਈ ਖਾਲੀ ਖਾਨਾ ਨਹੀਂ ਬਚਿਆ। ਤੁਸੀਂ {total} ਵਿੱਚੋਂ {n} ਟਾਈਲਾਂ ਸਾਫ਼ ਕੀਤੀਆਂ।",
     'bho': "कवनो खाली खाना ना बचल। रउआ {total} में से {n} टाइल साफ़ कइलीं।",
+    'mr': "एकही रिकामी जागा उरली नाही. तुम्ही {total} पैकी {n} टाइल्स साफ केल्या.",
+    'sa': "रिक्तं कोष्ठं नावशिष्टम्। भवता {total} मध्ये {n} पटलानि स्वच्छीकृतानि।",
   },
   'hexa_sort.revived': {
     'en': "Space cleared! Keep going",
@@ -243,5 +295,7 @@ const Map<String, Map<String, String>> hexaSortStrings = {
     'ta': "இடம் காலியானது! தொடருங்கள்",
     'pa': "ਥਾਂ ਖਾਲੀ ਹੋਈ! ਖੇਡਦੇ ਰਹੋ",
     'bho': "जगह खाली भइल! खेलत रहीं",
+    'mr': "जागा मोकळी झाली! खेळत रहा",
+    'sa': "स्थानं रिक्तम्! क्रीडत एव",
   },
 };

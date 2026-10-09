@@ -1,5 +1,5 @@
 // Translations for the arrow_maze module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> arrowMazeStrings = {
   'arrow_maze.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "அம்புப் புதிர்ப்பாதை",
     'pa': "ਤੀਰ ਭੁੱਲ-ਭੁਲੱਈਆ",
     'bho': "तीर भूलभुलैया",
+    'mr': "बाण भुलभुलैया",
+    'sa': "बाणव्यूहः",
   },
   'arrow_maze.choose_challenge': {
     'en': "Choose your challenge",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "உங்கள் சவாலைத் தேர்ந்தெடுங்கள்",
     'pa': "ਆਪਣੀ ਚੁਣੌਤੀ ਚੁਣੋ",
     'bho': "आपन चुनौती चुनीं",
+    'mr': "तुमचे आव्हान निवडा",
+    'sa': "स्वस्य आह्वानं चिनुत",
   },
   'arrow_maze.blurb.easy': {
     'en': "Small boards, short arrows",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "சிறிய பலகைகள், குட்டை அம்புகள்",
     'pa': "ਛੋਟੇ ਬੋਰਡ, ਛੋਟੇ ਤੀਰ",
     'bho': "छोट बोर्ड, छोट तीर",
+    'mr': "लहान बोर्ड, लहान बाण",
+    'sa': "लघुफलकानि, ह्रस्वबाणाः",
   },
   'arrow_maze.blurb.medium': {
     'en': "Classic tangle",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "வழக்கமான சிக்கல்",
     'pa': "ਕਲਾਸਿਕ ਉਲਝਣ",
     'bho': "क्लासिक अझुरहट",
+    'mr': "पारंपरिक गुंता",
+    'sa': "पारम्परिकः जटिलव्यूहः",
   },
   'arrow_maze.blurb.hard': {
     'en': "Big, dense, 2 lives",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "பெரியது, அடர்த்தியானது, 2 உயிர்கள்",
     'pa': "ਵੱਡਾ, ਸੰਘਣਾ, 2 ਜਾਨਾਂ",
     'bho': "बड़हन, घना, 2 जान",
+    'mr': "मोठे, दाट, 2 जीव",
+    'sa': "बृहत्, सघनम्, 2 प्राणाः",
   },
   'arrow_maze.blurb.extreme': {
     'en': "Giant tangles, tons of arrows, one life",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "மாபெரும் சிக்கல்கள், ஏராளமான அம்புகள், ஒரே உயிர்",
     'pa': "ਵਿਸ਼ਾਲ ਉਲਝਣ, ਬਹੁਤ ਸਾਰੇ ਤੀਰ, ਇੱਕ ਜਾਨ",
     'bho': "बहुत बड़ अझुरहट, ढेर सारा तीर, एके गो जान",
+    'mr': "प्रचंड गुंता, ढीगभर बाण, एकच जीव",
+    'sa': "महाजटिलता, असङ्ख्याः बाणाः, एकः प्राणः",
   },
   'arrow_maze.levels_progress': {
     'en': "{done} / {total} levels",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "{done} / {total} நிலைகள்",
     'pa': "{done} / {total} ਲੈਵਲ",
     'bho': "{done} / {total} लेवल",
+    'mr': "{done} / {total} स्तर",
+    'sa': "{done} / {total} स्तराः",
   },
   'arrow_maze.grid_title': {
     'en': "Arrow Maze - {tier}",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "அம்புப் புதிர்ப்பாதை - {tier}",
     'pa': "ਤੀਰ ਭੁੱਲ-ਭੁਲੱਈਆ - {tier}",
     'bho': "तीर भूलभुलैया - {tier}",
+    'mr': "बाण भुलभुलैया - {tier}",
+    'sa': "बाणव्यूहः - {tier}",
   },
   'arrow_maze.game_title': {
     'en': "{tier} - Level {n}",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "{tier} - நிலை {n}",
     'pa': "{tier} - ਲੈਵਲ {n}",
     'bho': "{tier} - लेवल {n}",
+    'mr': "{tier} - स्तर {n}",
+    'sa': "{tier} - स्तरः {n}",
   },
   'arrow_maze.win_title': {
     'en': "Maze cleared!",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "புதிர்ப்பாதை முடிந்தது!",
     'pa': "ਭੁੱਲ-ਭੁਲੱਈਆ ਸਾਫ਼!",
     'bho': "भूलभुलैया साफ हो गइल!",
+    'mr': "भुलभुलैया पार!",
+    'sa': "व्यूहः उत्तीर्णः!",
   },
   'arrow_maze.win_msg': {
     'en': "Lives left: {lives}  |  Moves: {moves}",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "மீதி உயிர்கள்: {lives}  |  நகர்வுகள்: {moves}",
     'pa': "ਬਚੀਆਂ ਜਾਨਾਂ: {lives}  |  ਚਾਲਾਂ: {moves}",
     'bho': "बाचल जान: {lives}  |  चाल: {moves}",
+    'mr': "उरलेले जीव: {lives}  |  चाली: {moves}",
+    'sa': "शेषप्राणाः: {lives}  |  चालाः: {moves}",
   },
   'arrow_maze.lose_title': {
     'en': "Out of lives",
@@ -109,6 +131,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "உயிர்கள் தீர்ந்தன",
     'pa': "ਜਾਨਾਂ ਖ਼ਤਮ",
     'bho': "जान खतम हो गइल",
+    'mr': "जीव संपले",
+    'sa': "प्राणाः समाप्ताः",
   },
   'arrow_maze.lose_msg': {
     'en': "Those arrows were blocked. Try again!",
@@ -118,6 +142,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "அந்த அம்புகள் தடுக்கப்பட்டிருந்தன. மீண்டும் முயலுங்கள்!",
     'pa': "ਉਹ ਤੀਰ ਰੁਕੇ ਹੋਏ ਸਨ। ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ!",
     'bho': "ऊ तीर अटकल रहे। फेर से कोसिस करीं!",
+    'mr': "ते बाण अडकलेले होते. पुन्हा प्रयत्न करा!",
+    'sa': "ते बाणाः अवरुद्धाः आसन्। पुनः प्रयत्नं कुरुत!",
   },
   'arrow_maze.colors_title': {
     'en': "Customize Colors 🎨",
@@ -127,6 +153,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "வண்ணங்களை மாற்று 🎨",
     'pa': "ਰੰਗ ਬਦਲੋ 🎨",
     'bho': "रंग बदलीं 🎨",
+    'mr': "रंग बदला 🎨",
+    'sa': "वर्णान् परिवर्तयत 🎨",
   },
   'arrow_maze.bg_theme': {
     'en': "Background Theme",
@@ -136,6 +164,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "பின்னணி தீம்",
     'pa': "ਬੈਕਗ੍ਰਾਊਂਡ ਥੀਮ",
     'bho': "बैकग्राउंड थीम",
+    'mr': "पार्श्वभूमी थीम",
+    'sa': "पृष्ठभूमि-शैली",
   },
   'arrow_maze.palette': {
     'en': "Arrow Color Palette",
@@ -145,6 +175,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "அம்பு வண்ணங்கள்",
     'pa': "ਤੀਰਾਂ ਦੇ ਰੰਗ",
     'bho': "तीर के रंग",
+    'mr': "बाणांचे रंग",
+    'sa': "बाणवर्णाः",
   },
   'arrow_maze.colors': {
     'en': "Colors",
@@ -154,6 +186,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "வண்ணங்கள்",
     'pa': "ਰੰਗ",
     'bho': "रंग",
+    'mr': "रंग",
+    'sa': "वर्णाः",
   },
   'arrow_maze.hint_left': {
     'en': "Hint ({n} left)",
@@ -163,6 +197,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "குறிப்பு ({n} மீதம்)",
     'pa': "ਸੰਕੇਤ ({n} ਬਾਕੀ)",
     'bho': "हिंट ({n} बाचल)",
+    'mr': "संकेत ({n} उरले)",
+    'sa': "सङ्केतः ({n} शेषाः)",
   },
   'arrow_maze.hud': {
     'en': "Hints {hints}  |  Moves {moves}  |  Left {left}",
@@ -172,6 +208,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "குறிப்புகள் {hints}  |  நகர்வுகள் {moves}  |  மீதம் {left}",
     'pa': "ਸੰਕੇਤ {hints}  |  ਚਾਲਾਂ {moves}  |  ਬਾਕੀ {left}",
     'bho': "हिंट {hints}  |  चाल {moves}  |  बाचल {left}",
+    'mr': "संकेत {hints}  |  चाली {moves}  |  उरले {left}",
+    'sa': "सङ्केताः {hints}  |  चालाः {moves}  |  शेषाः {left}",
   },
   // Background themes (index matches kMazeThemes).
   'arrow_maze.theme.0': {
@@ -182,6 +220,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "இருண்ட விண்வெளி",
     'pa': "ਹਨੇਰਾ ਪੁਲਾੜ",
     'bho': "अन्हार अंतरिक्ष",
+    'mr': "अंधारे अवकाश",
+    'sa': "अन्धकाराकाशम्",
   },
   'arrow_maze.theme.1': {
     'en': "Midnight Slate",
@@ -191,6 +231,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "நள்ளிரவு",
     'pa': "ਅੱਧੀ ਰਾਤ",
     'bho': "आधा रात",
+    'mr': "मध्यरात्र",
+    'sa': "मध्यरात्रिः",
   },
   'arrow_maze.theme.2': {
     'en': "Neon Cyber",
@@ -200,6 +242,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "நியான் சைபர்",
     'pa': "ਨਿਓਨ ਸਾਈਬਰ",
     'bho': "नियॉन साइबर",
+    'mr': "निऑन सायबर",
+    'sa': "निऑन सायबर",
   },
   'arrow_maze.theme.3': {
     'en': "Emerald Dark",
@@ -209,6 +253,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "மரகத இருள்",
     'pa': "ਗੂੜ੍ਹਾ ਪੰਨਾ",
     'bho': "गहिरा पन्ना",
+    'mr': "गडद पाचू",
+    'sa': "गाढमरकतम्",
   },
   'arrow_maze.theme.4': {
     'en': "Deep Velvet",
@@ -218,6 +264,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "அடர் வெல்வெட்",
     'pa': "ਗੂੜ੍ਹੀ ਮਖ਼ਮਲ",
     'bho': "गहिरा मखमल",
+    'mr': "गडद मखमल",
+    'sa': "गाढमृदुवस्त्रम्",
   },
   'arrow_maze.theme.5': {
     'en': "Pure AMOLED",
@@ -227,6 +275,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "தூய AMOLED",
     'pa': "ਸ਼ੁੱਧ AMOLED",
     'bho': "सुद्ध AMOLED",
+    'mr': "शुद्ध AMOLED",
+    'sa': "शुद्धम् AMOLED",
   },
   // Arrow palettes (index matches kMazePalettes).
   'arrow_maze.palette.0': {
@@ -237,6 +287,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "நியான் நிறமாலை",
     'pa': "ਨਿਓਨ ਸਪੈਕਟ੍ਰਮ",
     'bho': "नियॉन स्पेक्ट्रम",
+    'mr': "निऑन वर्णपट",
+    'sa': "निऑन वर्णपटः",
   },
   'arrow_maze.palette.1': {
     'en': "Pastel Soft",
@@ -246,6 +298,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "மென் பேஸ்டல்",
     'pa': "ਹਲਕੇ ਪੇਸਟਲ",
     'bho': "हलुक पेस्टल",
+    'mr': "सौम्य पेस्टल",
+    'sa': "मृदुवर्णाः",
   },
   'arrow_maze.palette.2': {
     'en': "Rainbow Glow",
@@ -255,6 +309,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "வானவில் ஒளி",
     'pa': "ਸਤਰੰਗੀ ਚਮਕ",
     'bho': "इंद्रधनुष चमक",
+    'mr': "इंद्रधनुषी चमक",
+    'sa': "इन्द्रधनुर्दीप्तिः",
   },
   'arrow_maze.palette.3': {
     'en': "Gold & Amber",
@@ -264,6 +320,8 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "தங்கம் & அம்பர்",
     'pa': "ਸੋਨਾ ਤੇ ਅੰਬਰ",
     'bho': "सोना आ अंबर",
+    'mr': "सोनेरी आणि अंबर",
+    'sa': "सुवर्णं तृणमणिश्च",
   },
   'arrow_maze.palette.4': {
     'en': "Cyan Breeze",
@@ -273,5 +331,7 @@ const Map<String, Map<String, String>> arrowMazeStrings = {
     'ta': "சியான் தென்றல்",
     'pa': "ਸਿਆਨ ਹਵਾ",
     'bho': "सियान बयार",
+    'mr': "आकाशी झुळूक",
+    'sa': "नीलसमीरः",
   },
 };

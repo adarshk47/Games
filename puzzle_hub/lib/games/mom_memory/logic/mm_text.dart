@@ -1,7 +1,7 @@
 import '../../../core/i18n/i18n.dart';
 
 /// Language codes every Mom Memory text must provide.
-const mmLangs = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'];
+const mmLangs = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho', 'mr', 'sa'];
 
 /// A piece of content in all languages: lang code -> value.
 typedef MmL<T> = Map<String, T>;

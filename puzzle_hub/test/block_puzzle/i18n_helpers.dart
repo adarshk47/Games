@@ -9,11 +9,11 @@ import 'package:puzzle_hub/core/i18n/strings/all.dart';
 import 'package:puzzle_hub/core/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const langCodes = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'];
+final langCodes = [for (final l in AppLang.values) l.code];
 
 Set<String> _placeholders(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toSet();
 
-/// Every key has [prefix], all 7 languages, non-empty text and the same placeholders as English.
+/// Every key has [prefix], all 9 languages, non-empty text and the same placeholders as English.
 void checkTable(String prefix, Map<String, Map<String, String>> table) {
   expect(table, isNotEmpty);
   for (final MapEntry(:key, :value) in table.entries) {

@@ -7,7 +7,7 @@ import 'package:puzzle_hub/core/i18n/strings/mom_memory.dart';
 import 'package:puzzle_hub/games/mom_memory/logic/mom_extra_logic.dart';
 import 'package:puzzle_hub/games/mom_memory/logic/mom_logic.dart';
 
-const langs = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'];
+const langs = ['en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho', 'mr', 'sa'];
 
 List<String> placeholders(String s) =>
     RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toList()

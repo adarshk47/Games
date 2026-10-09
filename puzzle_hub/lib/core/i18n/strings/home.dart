@@ -1,6 +1,6 @@
 // Translations for the home module (home tabs, profile, settings, themes) and
 // every game's title / subtitle ('game.<id>.title' / 'game.<id>.subtitle').
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> homeStrings = {
   // ------------------------------------------------------------ bottom nav
@@ -12,6 +12,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "விளையாட்டுகள்",
     'pa': "ਗੇਮਾਂ",
     'bho': "खेल",
+    'mr': "गेम्स",
+    'sa': "क्रीडाः",
   },
   'home.nav.daily': {
     'en': "Daily",
@@ -21,6 +23,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "தினசரி",
     'pa': "ਰੋਜ਼ਾਨਾ",
     'bho': "रोज",
+    'mr': "दैनिक",
+    'sa': "दैनिकम्",
   },
   'home.nav.shop': {
     'en': "Shop",
@@ -30,6 +34,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கடை",
     'pa': "ਦੁਕਾਨ",
     'bho': "दोकान",
+    'mr': "दुकान",
+    'sa': "आपणः",
   },
   'home.nav.profile': {
     'en': "Profile",
@@ -39,6 +45,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "சுயவிவரம்",
     'pa': "ਪ੍ਰੋਫਾਈਲ",
     'bho': "प्रोफाइल",
+    'mr': "प्रोफाइल",
+    'sa': "परिचयः",
   },
 
   // -------------------------------------------------------------- games tab
@@ -50,6 +58,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இன்றைய விளையாட்டு",
     'pa': "ਅੱਜ ਦੀ ਗੇਮ",
     'bho': "आज के खेल",
+    'mr': "आजचा गेम",
+    'sa': "अद्यतनी क्रीडा",
   },
   'home.featured': {
     'en': "FEATURED",
@@ -59,6 +69,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "சிறப்பு",
     'pa': "ਖ਼ਾਸ",
     'bho': "खास",
+    'mr': "खास",
+    'sa': "विशिष्टम्",
   },
   'home.all_games': {
     'en': "All Games",
@@ -68,6 +80,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "எல்லா விளையாட்டுகளும்",
     'pa': "ਸਾਰੀਆਂ ਗੇਮਾਂ",
     'bho': "सगरी खेल",
+    'mr': "सर्व गेम्स",
+    'sa': "सर्वाः क्रीडाः",
   },
   'home.player': {
     'en': "Player",
@@ -77,6 +91,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "வீரர்",
     'pa': "ਖਿਡਾਰੀ",
     'bho': "खिलाड़ी",
+    'mr': "खेळाडू",
+    'sa': "क्रीडकः",
   },
   'home.welcome_new': {
     'en': "Welcome, {name}! 🎉",
@@ -86,6 +102,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "வருக, {name}! 🎉",
     'pa': "ਜੀ ਆਇਆਂ ਨੂੰ, {name}! 🎉",
     'bho': "स्वागत बा, {name}! 🎉",
+    'mr': "स्वागत आहे, {name}! 🎉",
+    'sa': "स्वागतम्, {name}! 🎉",
   },
   'home.welcome_back': {
     'en': "Welcome back, {name} 👋",
@@ -95,6 +113,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மீண்டும் வருக, {name} 👋",
     'pa': "ਮੁੜ ਜੀ ਆਇਆਂ ਨੂੰ, {name} 👋",
     'bho': "फेर से स्वागत बा, {name} 👋",
+    'mr': "पुन्हा स्वागत आहे, {name} 👋",
+    'sa': "पुनः स्वागतम्, {name} 👋",
   },
   'home.tagline': {
     'en': "Play. Think. Boost your memory ✨",
@@ -104,6 +124,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "விளையாடு. யோசி. நினைவாற்றலை வளர் ✨",
     'pa': "ਖੇਡੋ। ਸੋਚੋ। ਯਾਦਦਾਸ਼ਤ ਵਧਾਓ ✨",
     'bho': "खेलीं। सोचीं। याददास्त बढ़ाईं ✨",
+    'mr': "खेळा. विचार करा. स्मरणशक्ती वाढवा ✨",
+    'sa': "क्रीडतु। चिन्तयतु। स्मृतिं वर्धयतु ✨",
   },
   'home.levels_cleared': {
     'en': "⭐ {n} cleared",
@@ -113,6 +135,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "⭐ {n} முடிந்தது",
     'pa': "⭐ {n} ਪੂਰੇ",
     'bho': "⭐ {n} पूरा",
+    'mr': "⭐ {n} पूर्ण",
+    'sa': "⭐ {n} सम्पन्नाः",
   },
   'home.new_badge': {
     'en': "NEW",
@@ -122,6 +146,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "புதியது",
     'pa': "ਨਵਾਂ",
     'bho': "नया",
+    'mr': "नवीन",
+    'sa': "नूतनम्",
   },
 
   // ------------------------------------------------------------ profile: PIN
@@ -133,6 +159,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "தற்போதைய PIN",
     'pa': "ਪੁਰਾਣਾ PIN",
     'bho': "पुरान PIN",
+    'mr': "सध्याचा PIN",
+    'sa': "वर्तमानं PIN",
   },
   'home.pin.new': {
     'en': "New PIN",
@@ -142,6 +170,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "புதிய PIN",
     'pa': "ਨਵਾਂ PIN",
     'bho': "नया PIN",
+    'mr': "नवीन PIN",
+    'sa': "नूतनं PIN",
   },
   'home.pin.new_again': {
     'en': "New PIN again",
@@ -151,6 +181,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "புதிய PIN மீண்டும்",
     'pa': "ਨਵਾਂ PIN ਦੁਬਾਰਾ",
     'bho': "नया PIN दोबारा",
+    'mr': "नवीन PIN पुन्हा",
+    'sa': "नूतनं PIN पुनः",
   },
   'home.pin.new_lock': {
     'en': "New PIN (app lock)",
@@ -160,6 +192,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "புதிய PIN (ஆப் பூட்டு)",
     'pa': "ਨਵਾਂ PIN (ਐਪ ਲੌਕ)",
     'bho': "नया PIN (ऐप लॉक)",
+    'mr': "नवीन PIN (ॲप लॉक)",
+    'sa': "नूतनं PIN (ऐप्-तालकम्)",
   },
   'home.pin.wrong': {
     'en': "Wrong PIN",
@@ -169,6 +203,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "தவறான PIN",
     'pa': "ਗਲਤ PIN",
     'bho': "गलत PIN",
+    'mr': "चुकीचा PIN",
+    'sa': "अशुद्धं PIN",
   },
   'home.pin.mismatch': {
     'en': "PINs didn't match",
@@ -178,6 +214,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN பொருந்தவில்லை",
     'pa': "PIN ਮੇਲ ਨਹੀਂ ਖਾਇਆ",
     'bho': "PIN मेल ना खाइल",
+    'mr': "PIN जुळले नाहीत",
+    'sa': "PIN न मिलितम्",
   },
   'home.pin.changed': {
     'en': "PIN changed ✅",
@@ -187,6 +225,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN மாற்றப்பட்டது ✅",
     'pa': "PIN ਬਦਲ ਗਿਆ ✅",
     'bho': "PIN बदल गइल ✅",
+    'mr': "PIN बदलला ✅",
+    'sa': "PIN परिवर्तितम् ✅",
   },
   'home.pin.lock_on': {
     'en': "PIN lock on ✅",
@@ -196,6 +236,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN பூட்டு இயக்கப்பட்டது ✅",
     'pa': "PIN ਲੌਕ ਚਾਲੂ ✅",
     'bho': "PIN लॉक चालू ✅",
+    'mr': "PIN लॉक सुरू ✅",
+    'sa': "PIN-तालकं सक्रियम् ✅",
   },
   'home.pin.lock_off': {
     'en': "PIN lock off",
@@ -205,6 +247,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN பூட்டு நிறுத்தப்பட்டது",
     'pa': "PIN ਲੌਕ ਬੰਦ",
     'bho': "PIN लॉक बंद",
+    'mr': "PIN लॉक बंद",
+    'sa': "PIN-तालकं निष्क्रियम्",
   },
   'home.pin.confirm': {
     'en': "Confirm with your PIN",
@@ -214,6 +258,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "உங்கள் PIN மூலம் உறுதிசெய்",
     'pa': "PIN ਨਾਲ ਪੁਸ਼ਟੀ ਕਰੋ",
     'bho': "PIN से पक्का करीं",
+    'mr': "तुमच्या PIN ने खात्री करा",
+    'sa': "स्व-PIN द्वारा पुष्टीकरोतु",
   },
   'home.pin.change': {
     'en': "Change PIN",
@@ -223,6 +269,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN மாற்று",
     'pa': "PIN ਬਦਲੋ",
     'bho': "PIN बदलीं",
+    'mr': "PIN बदला",
+    'sa': "PIN परिवर्तयतु",
   },
   'home.pin.remove': {
     'en': "Remove PIN lock",
@@ -232,6 +280,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN பூட்டை நீக்கு",
     'pa': "PIN ਲੌਕ ਹਟਾਓ",
     'bho': "PIN लॉक हटाईं",
+    'mr': "PIN लॉक काढा",
+    'sa': "PIN-तालकं निष्कासयतु",
   },
   'home.pin.set': {
     'en': "Set PIN lock",
@@ -241,6 +291,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN பூட்டு அமை",
     'pa': "PIN ਲੌਕ ਲਗਾਓ",
     'bho': "PIN लॉक लगाईं",
+    'mr': "PIN लॉक लावा",
+    'sa': "PIN-तालकं स्थापयतु",
   },
   'home.pin.set_sub': {
     'en': "Optional: PIN / fingerprint when opening the app",
@@ -250,6 +302,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "விருப்பம்: ஆப் திறக்கும்போது PIN / கைரேகை",
     'pa': "ਵਿਕਲਪਿਕ: ਐਪ ਖੋਲ੍ਹਣ 'ਤੇ PIN / ਫਿੰਗਰਪ੍ਰਿੰਟ",
     'bho': "मरजी से: ऐप खोले पर PIN / फिंगरप्रिंट",
+    'mr': "ऐच्छिक: ॲप उघडताना PIN / फिंगरप्रिंट",
+    'sa': "ऐच्छिकम्: ऐप्-उद्घाटने PIN / अङ्गुलिमुद्रा",
   },
   'home.lock_now': {
     'en': "Lock now",
@@ -259,6 +313,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இப்போது பூட்டு",
     'pa': "ਹੁਣੇ ਲੌਕ ਕਰੋ",
     'bho': "अबहीं लॉक करीं",
+    'mr': "आत्ता लॉक करा",
+    'sa': "अधुना तालयतु",
   },
   'home.fingerprint.title': {
     'en': "Fingerprint unlock",
@@ -268,6 +324,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கைரேகை திறப்பு",
     'pa': "ਫਿੰਗਰਪ੍ਰਿੰਟ ਅਨਲੌਕ",
     'bho': "फिंगरप्रिंट अनलॉक",
+    'mr': "फिंगरप्रिंट अनलॉक",
+    'sa': "अङ्गुलिमुद्रया उद्घाटनम्",
   },
   'home.fingerprint.unavailable': {
     'en': "No fingerprint is set up on this phone",
@@ -277,6 +335,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இந்த போனில் கைரேகை அமைக்கப்படவில்லை",
     'pa': "ਇਸ ਫ਼ੋਨ ਵਿੱਚ ਫਿੰਗਰਪ੍ਰਿੰਟ ਸੈੱਟ ਨਹੀਂ ਹੈ",
     'bho': "एह फोन में फिंगरप्रिंट सेट नइखे",
+    'mr': "या फोनवर फिंगरप्रिंट सेट केलेला नाही",
+    'sa': "अस्मिन् दूरवाणीयन्त्रे अङ्गुलिमुद्रा न स्थापिता",
   },
   'home.fingerprint.on': {
     'en': "Opens with your fingerprint as well as the PIN",
@@ -286,6 +346,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "PIN உடன் கைரேகையாலும் திறக்கும்",
     'pa': "PIN ਦੇ ਨਾਲ ਫਿੰਗਰਪ੍ਰਿੰਟ ਨਾਲ ਵੀ ਖੁੱਲ੍ਹੇਗਾ",
     'bho': "PIN के संगे फिंगरप्रिंट से भी खुली",
+    'mr': "PIN सोबत फिंगरप्रिंटनेही उघडेल",
+    'sa': "PIN सह अङ्गुलिमुद्रया अपि उद्घटिष्यते",
   },
 
   // -------------------------------------------------------- profile: account
@@ -297,6 +359,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பெயரை மாற்று",
     'pa': "ਨਾਮ ਬਦਲੋ",
     'bho': "नाम बदलीं",
+    'mr': "नाव बदला",
+    'sa': "नाम परिवर्तयतु",
   },
   'home.delete.menu': {
     'en': "Delete account",
@@ -306,6 +370,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கணக்கை நீக்கு",
     'pa': "ਖਾਤਾ ਮਿਟਾਓ",
     'bho': "अकाउंट डिलीट करीं",
+    'mr': "खाते हटवा",
+    'sa': "खातं निष्कासयतु",
   },
   'home.delete.title': {
     'en': "Delete account?",
@@ -315,6 +381,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கணக்கை நீக்கவா?",
     'pa': "ਖਾਤਾ ਮਿਟਾਉਣਾ ਹੈ?",
     'bho': "अकाउंट डिलीट करीं?",
+    'mr': "खाते हटवायचे?",
+    'sa': "खातं निष्कास्यताम्?",
   },
   'home.delete.body': {
     'en': "Your name, PIN, coins and all game records will be erased forever.",
@@ -324,6 +392,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "உங்கள் பெயர், PIN, நாணயங்கள் மற்றும் எல்லா விளையாட்டுப் பதிவுகளும் நிரந்தரமாக அழிக்கப்படும்.",
     'pa': "ਤੁਹਾਡਾ ਨਾਮ, PIN, ਸਿੱਕੇ ਅਤੇ ਸਾਰੀਆਂ ਗੇਮਾਂ ਦਾ ਰਿਕਾਰਡ ਹਮੇਸ਼ਾ ਲਈ ਮਿਟ ਜਾਵੇਗਾ।",
     'bho': "रउआ के नाम, PIN, सिक्का आ सगरी खेल के रिकॉर्ड हमेसा खातिर मिट जाई।",
+    'mr': "तुमचे नाव, PIN, नाणी आणि सर्व गेम्सचे रेकॉर्ड कायमचे पुसले जातील.",
+    'sa': "भवतः नाम, PIN, मुद्राः, सर्वक्रीडाणाम् अभिलेखाः च सदायै लुप्ताः भविष्यन्ति।",
   },
   'home.delete.body_cloud': {
     'en': "Your cloud backup, leaderboard scores and online account will also be deleted.",
@@ -333,6 +403,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கிளவுட் காப்பு, லீடர்போர்டு மதிப்பெண்கள் மற்றும் உங்கள் ஆன்லைன் கணக்கும் நீக்கப்படும்.",
     'pa': "ਕਲਾਊਡ ਬੈਕਅੱਪ, ਲੀਡਰਬੋਰਡ ਸਕੋਰ ਅਤੇ ਤੁਹਾਡਾ ਔਨਲਾਈਨ ਖਾਤਾ ਵੀ ਮਿਟ ਜਾਵੇਗਾ।",
     'bho': "क्लाउड बैकअप, लीडरबोर्ड स्कोर आ रउआ के ऑनलाइन अकाउंट भी डिलीट हो जाई।",
+    'mr': "तुमचा क्लाउड बॅकअप, लीडरबोर्ड स्कोअर आणि ऑनलाइन खातेही हटवले जाईल.",
+    'sa': "मेघ-प्रतिलिपिः, अग्रताफलक-अङ्काः, ऑनलाइन-खातं च अपि निष्कासितानि भविष्यन्ति।",
   },
   'home.delete.body_signin': {
     'en': "To delete cloud data, sign in first.",
@@ -342,6 +414,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கிளவுட் தரவை நீக்க முதலில் உள்நுழையவும்.",
     'pa': "ਕਲਾਊਡ ਡਾਟਾ ਮਿਟਾਉਣ ਲਈ ਪਹਿਲਾਂ ਸਾਈਨ ਇਨ ਕਰੋ।",
     'bho': "क्लाउड डेटा डिलीट करे खातिर पहिले साइन इन करीं।",
+    'mr': "क्लाउड डेटा हटवण्यासाठी आधी साइन इन करा.",
+    'sa': "मेघदत्तांशस्य निष्कासनाय प्रथमं प्रविशतु।",
   },
   'home.delete.yes': {
     'en': "Yes, delete",
@@ -351,6 +425,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஆம், நீக்கு",
     'pa': "ਹਾਂ, ਮਿਟਾਓ",
     'bho': "हँ, डिलीट करीं",
+    'mr': "होय, हटवा",
+    'sa': "आम्, निष्कासयतु",
   },
   'home.delete.sure': {
     'en': "Are you sure?",
@@ -360,6 +436,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "உறுதியா?",
     'pa': "ਪੱਕਾ?",
     'bho': "पक्का?",
+    'mr': "नक्की?",
+    'sa': "निश्चितम्?",
   },
   'home.delete.cant_undo': {
     'en': "This can't be undone.",
@@ -369,6 +447,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இதைத் திரும்பப் பெற முடியாது.",
     'pa': "ਇਹ ਵਾਪਸ ਨਹੀਂ ਹੋਵੇਗਾ।",
     'bho': "ई वापस ना होई।",
+    'mr': "हे परत करता येणार नाही.",
+    'sa': "इदं प्रत्यावर्तयितुं न शक्यते।",
   },
   'home.delete.btn': {
     'en': "Delete",
@@ -378,6 +458,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நீக்கு",
     'pa': "ਮਿਟਾਓ",
     'bho': "डिलीट",
+    'mr': "हटवा",
+    'sa': "निष्कासयतु",
   },
   'home.delete.cloud_failed': {
     'en': "Couldn't delete the cloud account. Check your internet and try again.",
@@ -387,6 +469,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கிளவுட் கணக்கை நீக்க முடியவில்லை. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
     'pa': "ਕਲਾਊਡ ਖਾਤਾ ਨਹੀਂ ਮਿਟਿਆ। ਇੰਟਰਨੈੱਟ ਚੈੱਕ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "क्लाउड अकाउंट डिलीट ना भइल। इंटरनेट देख के फेर से कोसिस करीं।",
+    'mr': "क्लाउड खाते हटवता आले नाही. इंटरनेट तपासा आणि पुन्हा प्रयत्न करा.",
+    'sa': "मेघखातं निष्कासयितुं न शक्तम्। अन्तर्जालं परीक्ष्य पुनः प्रयतताम्।",
   },
   'home.password.title': {
     'en': "Enter password",
@@ -396,6 +480,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கடவுச்சொல்லை உள்ளிடு",
     'pa': "ਪਾਸਵਰਡ ਪਾਓ",
     'bho': "पासवर्ड डालीं",
+    'mr': "पासवर्ड टाका",
+    'sa': "गुप्तशब्दं लिखतु",
   },
   'home.password.hint': {
     'en': "Account password",
@@ -405,6 +491,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கணக்கு கடவுச்சொல்",
     'pa': "ਖਾਤੇ ਦਾ ਪਾਸਵਰਡ",
     'bho': "अकाउंट पासवर्ड",
+    'mr': "खात्याचा पासवर्ड",
+    'sa': "खातस्य गुप्तशब्दः",
   },
 
   // ---------------------------------------------------------- profile: cloud
@@ -416,6 +504,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒத்திசைக்கப்பட்டது ✅",
     'pa': "ਸਿੰਕ ਹੋ ਗਿਆ ✅",
     'bho': "सिंक हो गइल ✅",
+    'mr': "सिंक झाले ✅",
+    'sa': "समन्वितम् ✅",
   },
   'home.signout.title': {
     'en': "Sign out?",
@@ -425,6 +515,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "வெளியேறவா?",
     'pa': "ਸਾਈਨ ਆਊਟ ਕਰਨਾ ਹੈ?",
     'bho': "साइन आउट करीं?",
+    'mr': "साइन आउट करायचे?",
+    'sa': "निर्गम्यताम्?",
   },
   'home.signout.body': {
     'en': "Progress is kept on this phone. Sign in again any time to sync.",
@@ -434,6 +526,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "முன்னேற்றம் இந்த போனிலேயே இருக்கும். ஒத்திசைக்க எப்போது வேண்டுமானாலும் மீண்டும் உள்நுழையவும்.",
     'pa': "ਪ੍ਰਗਤੀ ਇਸੇ ਫ਼ੋਨ ਵਿੱਚ ਰਹੇਗੀ। ਸਿੰਕ ਲਈ ਕਦੇ ਵੀ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।",
     'bho': "प्रोग्रेस एही फोन में रही। सिंक खातिर कबो फेर से साइन इन करीं।",
+    'mr': "प्रगती याच फोनवर राहील. सिंकसाठी कधीही पुन्हा साइन इन करा.",
+    'sa': "प्रगतिः अस्मिन् दूरवाणीयन्त्रे एव तिष्ठति। समन्वयाय कदापि पुनः प्रविशतु।",
   },
   'home.signout.btn': {
     'en': "Sign out",
@@ -443,6 +537,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "வெளியேறு",
     'pa': "ਸਾਈਨ ਆਊਟ",
     'bho': "साइन आउट",
+    'mr': "साइन आउट",
+    'sa': "निर्गमः",
   },
   'home.ago.never': {
     'en': "never",
@@ -452,6 +548,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒருபோதும் இல்லை",
     'pa': "ਕਦੇ ਨਹੀਂ",
     'bho': "कबो ना",
+    'mr': "कधीच नाही",
+    'sa': "कदापि न",
   },
   'home.ago.just_now': {
     'en': "just now",
@@ -461,6 +559,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இப்போதுதான்",
     'pa': "ਹੁਣੇ-ਹੁਣੇ",
     'bho': "अबहीं-अबहीं",
+    'mr': "आत्ताच",
+    'sa': "अधुनैव",
   },
   'home.ago.min': {
     'en': "{n} min ago",
@@ -470,6 +570,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "{n} நிமி. முன்பு",
     'pa': "{n} ਮਿੰਟ ਪਹਿਲਾਂ",
     'bho': "{n} मिनट पहिले",
+    'mr': "{n} मिनिटांपूर्वी",
+    'sa': "{n} निमेषेभ्यः पूर्वम्",
   },
   'home.ago.hours': {
     'en': "{n} h ago",
@@ -479,6 +581,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "{n} மணி முன்பு",
     'pa': "{n} ਘੰਟੇ ਪਹਿਲਾਂ",
     'bho': "{n} घंटा पहिले",
+    'mr': "{n} तासांपूर्वी",
+    'sa': "{n} होराभ्यः पूर्वम्",
   },
   'home.ago.days': {
     'en': "{n} d ago",
@@ -488,6 +592,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "{n} நாள் முன்பு",
     'pa': "{n} ਦਿਨ ਪਹਿਲਾਂ",
     'bho': "{n} दिन पहिले",
+    'mr': "{n} दिवसांपूर्वी",
+    'sa': "{n} दिनेभ्यः पूर्वम्",
   },
   'home.cloud.backup_title': {
     'en': "Back up your progress",
@@ -497,6 +603,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "உங்கள் முன்னேற்றத்தைக் காப்புப் பிரதி எடு",
     'pa': "ਆਪਣੀ ਪ੍ਰਗਤੀ ਦਾ ਬੈਕਅੱਪ ਲਓ",
     'bho': "आपन प्रोग्रेस के बैकअप लीं",
+    'mr': "तुमच्या प्रगतीचा बॅकअप घ्या",
+    'sa': "स्वप्रगतेः प्रतिलिपिं रक्षतु",
   },
   'home.cloud.backup_body': {
     'en': "Sign in to save coins & records in the cloud, play on any phone and join the leaderboards. Your local progress is kept.",
@@ -506,6 +614,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நாணயங்கள் & பதிவுகளை கிளவுடில் சேமிக்க, எந்த போனிலும் விளையாட, லீடர்போர்டுகளில் சேர உள்நுழையவும். உங்கள் உள்ளூர் முன்னேற்றம் அப்படியே இருக்கும்.",
     'pa': "ਸਿੱਕੇ ਤੇ ਰਿਕਾਰਡ ਕਲਾਊਡ ਵਿੱਚ ਸੇਵ ਕਰਨ, ਕਿਸੇ ਵੀ ਫ਼ੋਨ 'ਤੇ ਖੇਡਣ ਅਤੇ ਲੀਡਰਬੋਰਡ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ। ਤੁਹਾਡੀ ਲੋਕਲ ਪ੍ਰਗਤੀ ਬਣੀ ਰਹੇਗੀ।",
     'bho': "साइन इन करीं, सिक्का आ रिकॉर्ड क्लाउड में सेव होई, कवनो फोन पर खेलीं आ लीडरबोर्ड में शामिल होखीं। रउआ के लोकल प्रोग्रेस बनल रही।",
+    'mr': "नाणी आणि रेकॉर्ड क्लाउडमध्ये सेव्ह करण्यासाठी, कोणत्याही फोनवर खेळण्यासाठी आणि लीडरबोर्डमध्ये सामील होण्यासाठी साइन इन करा. तुमची लोकल प्रगती जपली जाईल.",
+    'sa': "मुद्राः अभिलेखान् च मेघे रक्षितुं, कस्मिन् अपि दूरवाणीयन्त्रे क्रीडितुम्, अग्रताफलके सम्मिलितुं च प्रविशतु। भवतः स्थानीया प्रगतिः रक्षिता भविष्यति।",
   },
   'home.cloud.signed_in': {
     'en': "Signed in",
@@ -515,6 +625,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "உள்நுழைந்துள்ளீர்கள்",
     'pa': "ਸਾਈਨ ਇਨ ਹੈ",
     'bho': "साइन इन बा",
+    'mr': "साइन इन केले आहे",
+    'sa': "प्रविष्टम्",
   },
   'home.cloud.last_synced': {
     'en': "Last synced: {time}",
@@ -524,6 +636,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கடைசி ஒத்திசைவு: {time}",
     'pa': "ਆਖਰੀ ਸਿੰਕ: {time}",
     'bho': "आखिरी सिंक: {time}",
+    'mr': "शेवटचे सिंक: {time}",
+    'sa': "अन्तिमः समन्वयः: {time}",
   },
   'home.cloud.not_verified': {
     'en': "Email not verified yet.",
@@ -533,6 +647,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மின்னஞ்சல் இன்னும் சரிபார்க்கப்படவில்லை.",
     'pa': "ਈਮੇਲ ਅਜੇ ਵੈਰੀਫਾਈ ਨਹੀਂ ਹੋਈ।",
     'bho': "ईमेल अबहीं वेरिफाई ना भइल बा।",
+    'mr': "ईमेल अजून पडताळलेला नाही.",
+    'sa': "ईमेल अधुना न सत्यापितम्।",
   },
   'home.cloud.verification_sent': {
     'en': "Verification email sent",
@@ -542,6 +658,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "சரிபார்ப்பு மின்னஞ்சல் அனுப்பப்பட்டது",
     'pa': "ਵੈਰੀਫਿਕੇਸ਼ਨ ਈਮੇਲ ਭੇਜ ਦਿੱਤੀ",
     'bho': "वेरिफिकेशन ईमेल भेज दिहल गइल",
+    'mr': "पडताळणी ईमेल पाठवला",
+    'sa': "सत्यापन-ईमेल प्रेषितम्",
   },
   'home.cloud.resend': {
     'en': "Resend link",
@@ -551,6 +669,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இணைப்பை மீண்டும் அனுப்பு",
     'pa': "ਲਿੰਕ ਦੁਬਾਰਾ ਭੇਜੋ",
     'bho': "लिंक फेर से भेजीं",
+    'mr': "लिंक पुन्हा पाठवा",
+    'sa': "सम्बन्धं पुनः प्रेषयतु",
   },
   'home.cloud.verified': {
     'en': "Email verified ✅",
@@ -560,6 +680,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மின்னஞ்சல் சரிபார்க்கப்பட்டது ✅",
     'pa': "ਈਮੇਲ ਵੈਰੀਫਾਈ ਹੋ ਗਈ ✅",
     'bho': "ईमेल वेरिफाई हो गइल ✅",
+    'mr': "ईमेल पडताळला ✅",
+    'sa': "ईमेल सत्यापितम् ✅",
   },
   'home.cloud.i_verified': {
     'en': "I've verified",
@@ -569,6 +691,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நான் சரிபார்த்துவிட்டேன்",
     'pa': "ਮੈਂ ਵੈਰੀਫਾਈ ਕਰ ਲਿਆ",
     'bho': "हम वेरिफाई कर लेनी",
+    'mr': "मी पडताळणी केली",
+    'sa': "मया सत्यापितम्",
   },
   'home.cloud.syncing': {
     'en': "Syncing...",
@@ -578,6 +702,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒத்திசைக்கிறது...",
     'pa': "ਸਿੰਕ ਹੋ ਰਿਹਾ ਹੈ...",
     'bho': "सिंक हो रहल बा...",
+    'mr': "सिंक होत आहे...",
+    'sa': "समन्वयः भवति...",
   },
   'home.cloud.sync_now': {
     'en': "Sync now",
@@ -587,6 +713,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இப்போது ஒத்திசை",
     'pa': "ਹੁਣੇ ਸਿੰਕ ਕਰੋ",
     'bho': "अबहीं सिंक करीं",
+    'mr': "आत्ता सिंक करा",
+    'sa': "अधुना समन्वययतु",
   },
   'home.leaderboard': {
     'en': "Leaderboard",
@@ -596,6 +724,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "லீடர்போர்டு",
     'pa': "ਲੀਡਰਬੋਰਡ",
     'bho': "लीडरबोर्ड",
+    'mr': "लीडरबोर्ड",
+    'sa': "अग्रताफलकम्",
   },
   'home.invite.title': {
     'en': "Invite friends",
@@ -605,6 +735,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நண்பர்களை அழை",
     'pa': "ਦੋਸਤਾਂ ਨੂੰ ਸੱਦੋ",
     'bho': "दोस्तन के बोलाईं",
+    'mr': "मित्रांना बोलवा",
+    'sa': "मित्राणि आमन्त्रयतु",
   },
   'home.invite.bonus': {
     'en': "+{coins} 🪙 each",
@@ -614,6 +746,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒவ்வொருவருக்கும் +{coins} 🪙",
     'pa': "ਹਰ ਇੱਕ 'ਤੇ +{coins} 🪙",
     'bho': "हर एक पर +{coins} 🪙",
+    'mr': "प्रत्येकी +{coins} 🪙",
+    'sa': "प्रत्येकं +{coins} 🪙",
   },
   'home.invite.signin_first': {
     'en': "Sign in first to invite friends.",
@@ -623,6 +757,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நண்பர்களை அழைக்க முதலில் உள்நுழையவும்.",
     'pa': "ਦੋਸਤਾਂ ਨੂੰ ਸੱਦਣ ਲਈ ਪਹਿਲਾਂ ਸਾਈਨ ਇਨ ਕਰੋ।",
     'bho': "दोस्तन के बोलावे खातिर पहिले साइन इन करीं।",
+    'mr': "मित्रांना बोलवण्यासाठी आधी साइन इन करा.",
+    'sa': "मित्राणाम् आमन्त्रणाय प्रथमं प्रविशतु।",
   },
 
   // ---------------------------------------------------------- profile: stats
@@ -634,6 +770,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "{plays} விளையாட்டுகள்  •  {wins} வெற்றி",
     'pa': "{plays} ਗੇਮਾਂ ਖੇਡੀਆਂ  •  {wins} ਜਿੱਤੀਆਂ",
     'bho': "{plays} खेल खेलनी  •  {wins} जीतनी",
+    'mr': "{plays} गेम खेळले  •  {wins} जिंकले",
+    'sa': "{plays} क्रीडाः क्रीडिताः  •  {wins} जिताः",
   },
   'home.profile.cloud_account': {
     'en': "Cloud account",
@@ -643,6 +781,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கிளவுட் கணக்கு",
     'pa': "ਕਲਾਊਡ ਖਾਤਾ",
     'bho': "क्लाउड अकाउंट",
+    'mr': "क्लाउड खाते",
+    'sa': "मेघखातम्",
   },
   'home.profile.records': {
     'en': "Game records",
@@ -652,6 +792,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "விளையாட்டுப் பதிவுகள்",
     'pa': "ਗੇਮਾਂ ਦਾ ਰਿਕਾਰਡ",
     'bho': "खेल के रिकॉर्ड",
+    'mr': "गेम्सचे रेकॉर्ड",
+    'sa': "क्रीडा-अभिलेखाः",
   },
   'home.profile.record_line': {
     'en': "Played {plays}  •  Won {wins}  •  Levels {levels}",
@@ -661,6 +803,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "விளையாடியது {plays}  •  வென்றது {wins}  •  நிலைகள் {levels}",
     'pa': "ਖੇਡੀਆਂ {plays}  •  ਜਿੱਤੀਆਂ {wins}  •  ਲੈਵਲ {levels}",
     'bho': "खेलनी {plays}  •  जीतनी {wins}  •  लेवल {levels}",
+    'mr': "खेळले {plays}  •  जिंकले {wins}  •  लेव्हल {levels}",
+    'sa': "क्रीडिताः {plays}  •  जिताः {wins}  •  स्तराः {levels}",
   },
   'home.profile.account': {
     'en': "Account",
@@ -670,6 +814,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கணக்கு",
     'pa': "ਖਾਤਾ",
     'bho': "अकाउंट",
+    'mr': "खाते",
+    'sa': "खातम्",
   },
   'home.profile.coins_earned': {
     'en': "Total coins earned: {coins} 🪙",
@@ -679,6 +825,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மொத்தம் சம்பாதித்த நாணயங்கள்: {coins} 🪙",
     'pa': "ਕੁੱਲ ਕਮਾਏ ਸਿੱਕੇ: {coins} 🪙",
     'bho': "कुल कमाइल सिक्का: {coins} 🪙",
+    'mr': "एकूण कमावलेली नाणी: {coins} 🪙",
+    'sa': "आहत्य अर्जिताः मुद्राः: {coins} 🪙",
   },
 
   // --------------------------------------------------------------- settings
@@ -690,6 +838,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒலி & அமைப்புகள்",
     'pa': "ਆਵਾਜ਼ ਅਤੇ ਸੈਟਿੰਗਾਂ",
     'bho': "आवाज आ सेटिंग",
+    'mr': "आवाज आणि सेटिंग्ज",
+    'sa': "ध्वनिः विन्यासाः च",
   },
   'home.settings.sound': {
     'en': "Sound effects",
@@ -699,6 +849,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒலி விளைவுகள்",
     'pa': "ਸਾਊਂਡ ਇਫੈਕਟ",
     'bho': "साउंड इफेक्ट",
+    'mr': "साउंड इफेक्ट्स",
+    'sa': "ध्वनि-प्रभावाः",
   },
   'home.settings.sound_sub': {
     'en': "Tap, win and mistake sounds",
@@ -708,6 +860,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "தட்டல், வெற்றி, தவறு ஒலிகள்",
     'pa': "ਟੈਪ, ਜਿੱਤ ਅਤੇ ਗਲਤੀ ਦੀ ਆਵਾਜ਼",
     'bho': "टैप, जीत आ गलती के आवाज",
+    'mr': "टॅप, विजय आणि चुकीचे आवाज",
+    'sa': "स्पर्श-विजय-दोष-ध्वनयः",
   },
   'home.settings.music': {
     'en': "Music",
@@ -717,6 +871,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இசை",
     'pa': "ਸੰਗੀਤ",
     'bho': "संगीत",
+    'mr': "संगीत",
+    'sa': "सङ्गीतम्",
   },
   'home.settings.music_sub': {
     'en': "Background music",
@@ -726,6 +882,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பின்னணி இசை",
     'pa': "ਬੈਕਗ੍ਰਾਊਂਡ ਸੰਗੀਤ",
     'bho': "बैकग्राउंड संगीत",
+    'mr': "पार्श्वसंगीत",
+    'sa': "पृष्ठसङ्गीतम्",
   },
   'home.settings.vibration': {
     'en': "Vibration",
@@ -735,6 +893,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "அதிர்வு",
     'pa': "ਵਾਈਬ੍ਰੇਸ਼ਨ",
     'bho': "वाइब्रेशन",
+    'mr': "कंपन",
+    'sa': "कम्पनम्",
   },
   'home.settings.vibration_sub': {
     'en': "Light haptic feedback",
@@ -744,6 +904,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "லேசான அதிர்வு பின்னூட்டம்",
     'pa': "ਹਲਕਾ ਹੈਪਟਿਕ ਫੀਡਬੈਕ",
     'bho': "हलुक हैप्टिक फीडबैक",
+    'mr': "हलका हॅप्टिक फीडबॅक",
+    'sa': "मृदु स्पर्श-प्रतिक्रिया",
   },
   'home.settings.theme': {
     'en': "Theme",
@@ -753,6 +915,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "தீம்",
     'pa': "ਥੀਮ",
     'bho': "थीम",
+    'mr': "थीम",
+    'sa': "विषयरूपम्",
   },
 
   // ----------------------------------------------------------------- themes
@@ -764,6 +928,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ராயல் ஊதா",
     'pa': "ਰਾਇਲ ਜਾਮਨੀ",
     'bho': "रॉयल बैंगनी",
+    'mr': "रॉयल जांभळा",
+    'sa': "राजकीयं धूम्रवर्णम्",
   },
   'home.theme.ocean': {
     'en': "Ocean Blue",
@@ -773,6 +939,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கடல் நீலம்",
     'pa': "ਸਮੁੰਦਰੀ ਨੀਲਾ",
     'bho': "समुंदरी नीला",
+    'mr': "सागरी निळा",
+    'sa': "सागरनीलम्",
   },
   'home.theme.sunset': {
     'en': "Sunset Orange",
@@ -782,6 +950,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "அந்தி ஆரஞ்சு",
     'pa': "ਸੂਰਜ ਡੁੱਬਣ ਸੰਤਰੀ",
     'bho': "साँझ नारंगी",
+    'mr': "सूर्यास्त केशरी",
+    'sa': "सूर्यास्त-कषायम्",
   },
   'home.theme.emerald': {
     'en': "Emerald",
@@ -791,6 +961,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மரகதம்",
     'pa': "ਪੰਨਾ ਹਰਾ",
     'bho': "पन्ना हरियर",
+    'mr': "पाचू हिरवा",
+    'sa': "मरकतहरितम्",
   },
   'home.theme.rose': {
     'en': "Rose Pink",
@@ -800,6 +972,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ரோஜா இளஞ்சிவப்பு",
     'pa': "ਗੁਲਾਬੀ",
     'bho': "गुलाबी",
+    'mr': "गुलाबी",
+    'sa': "पाटलम्",
   },
   'home.theme.midnight': {
     'en': "Midnight Gold",
@@ -809,6 +983,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நள்ளிரவு தங்கம்",
     'pa': "ਅੱਧੀ ਰਾਤ ਸੁਨਹਿਰੀ",
     'bho': "आधी रात सोनहुला",
+    'mr': "मध्यरात्र सोनेरी",
+    'sa': "निशीथ-सुवर्णम्",
   },
   'home.theme.not_enough': {
     'en': "Not enough coins",
@@ -818,6 +994,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நாணயங்கள் போதாது",
     'pa': "ਸਿੱਕੇ ਘੱਟ ਹਨ",
     'bho': "सिक्का कम बा",
+    'mr': "नाणी कमी आहेत",
+    'sa': "मुद्राः अपर्याप्ताः",
   },
   'home.theme.needs': {
     'en': "{theme} needs {coins} 🪙. Play games and earn coins!",
@@ -827,6 +1005,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "{theme}க்கு {coins} 🪙 தேவை. விளையாடி நாணயங்களைச் சம்பாதி!",
     'pa': "{theme} ਲਈ {coins} 🪙 ਚਾਹੀਦੇ ਹਨ। ਗੇਮਾਂ ਖੇਡੋ ਤੇ ਸਿੱਕੇ ਕਮਾਓ!",
     'bho': "{theme} खातिर {coins} 🪙 चाहीं। खेल खेलीं आ सिक्का कमाईं!",
+    'mr': "{theme} साठी {coins} 🪙 हवीत. गेम्स खेळा आणि नाणी कमवा!",
+    'sa': "{theme} कृते {coins} 🪙 आवश्यकाः। क्रीडतु मुद्राः च अर्जयतु!",
   },
   'home.theme.active': {
     'en': "Active",
@@ -836,6 +1016,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "செயலில்",
     'pa': "ਚਾਲੂ",
     'bho': "चालू",
+    'mr': "सुरू",
+    'sa': "सक्रियम्",
   },
   'home.theme.owned': {
     'en': "Owned",
@@ -845,6 +1027,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "உங்களுடையது",
     'pa': "ਤੁਹਾਡਾ",
     'bho': "रउआ के",
+    'mr': "तुमचे",
+    'sa': "भवदीयम्",
   },
   'home.theme.unlock_q': {
     'en': "Unlock this theme for {coins} 🪙?",
@@ -854,6 +1038,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "இந்த தீமை {coins} 🪙க்கு திறக்கவா?",
     'pa': "ਇਹ ਥੀਮ {coins} 🪙 ਵਿੱਚ ਅਨਲੌਕ ਕਰਨੀ ਹੈ?",
     'bho': "ई थीम {coins} 🪙 में अनलॉक करीं?",
+    'mr': "ही थीम {coins} 🪙 मध्ये अनलॉक करायची?",
+    'sa': "इदं विषयरूपं {coins} 🪙 द्वारा उद्घाट्यताम्?",
   },
   'home.theme.unlock_btn': {
     'en': "Unlock 🪙 {coins}",
@@ -863,6 +1049,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "திற 🪙 {coins}",
     'pa': "ਅਨਲੌਕ 🪙 {coins}",
     'bho': "अनलॉक 🪙 {coins}",
+    'mr': "अनलॉक 🪙 {coins}",
+    'sa': "उद्घाटयतु 🪙 {coins}",
   },
 
   // ------------------------------------------------------------------ games
@@ -874,6 +1062,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மாம் மெமரி",
     'pa': "ਮੌਮ ਮੈਮੋਰੀ",
     'bho': "मॉम मेमोरी",
+    'mr': "मॉम मेमरी",
+    'sa': "मातृस्मृतिः",
   },
   'game.mom_memory.subtitle': {
     'en': "Calm memory games for pregnancy",
@@ -883,6 +1073,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கர்ப்ப காலத்திற்கான அமைதியான நினைவு விளையாட்டுகள்",
     'pa': "ਗਰਭ ਅਵਸਥਾ ਲਈ ਸ਼ਾਂਤ ਮੈਮੋਰੀ ਗੇਮਾਂ",
     'bho': "गरभ के समय खातिर शांत मेमोरी खेल",
+    'mr': "गरोदरपणासाठी शांत स्मरणशक्ती गेम्स",
+    'sa': "गर्भावस्थायै शान्ताः स्मृति-क्रीडाः",
   },
   'game.block_puzzle.title': {
     'en': "Block Puzzle",
@@ -892,6 +1084,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பிளாக் புதிர்",
     'pa': "ਬਲਾਕ ਪਜ਼ਲ",
     'bho': "ब्लॉक पज़ल",
+    'mr': "ब्लॉक पझल",
+    'sa': "खण्ड-प्रहेलिका",
   },
   'game.block_puzzle.subtitle': {
     'en': "Drop blocks, clear lines",
@@ -901,6 +1095,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பிளாக்குகளை வை, வரிசைகளை அழி",
     'pa': "ਬਲਾਕ ਰੱਖੋ, ਲਾਈਨਾਂ ਸਾਫ਼ ਕਰੋ",
     'bho': "ब्लॉक रखीं, लाइन साफ करीं",
+    'mr': "ब्लॉक ठेवा, ओळी साफ करा",
+    'sa': "खण्डान् स्थापयतु, पङ्क्तीः शोधयतु",
   },
   'game.flow_pairs.title': {
     'en': "Flow",
@@ -910,6 +1106,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஃப்ளோ",
     'pa': "ਫਲੋ",
     'bho': "फ्लो",
+    'mr': "फ्लो",
+    'sa': "प्रवाहः",
   },
   'game.flow_pairs.subtitle': {
     'en': "Connect dots of the same colour",
@@ -919,6 +1117,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஒரே நிறப் புள்ளிகளை இணை",
     'pa': "ਇੱਕੋ ਰੰਗ ਦੇ ਬਿੰਦੂ ਜੋੜੋ",
     'bho': "एके रंग के डॉट जोड़ीं",
+    'mr': "एकाच रंगाचे ठिपके जोडा",
+    'sa': "समानवर्णानि बिन्दूनि योजयतु",
   },
   'game.sliding_puzzle.title': {
     'en': "Sliding Puzzle",
@@ -928,6 +1128,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஸ்லைடிங் புதிர்",
     'pa': "ਸਲਾਈਡਿੰਗ ਪਜ਼ਲ",
     'bho': "स्लाइडिंग पज़ल",
+    'mr': "स्लायडिंग पझल",
+    'sa': "सरण-प्रहेलिका",
   },
   'game.sliding_puzzle.subtitle': {
     'en': "Put the tiles in the right order",
@@ -937,6 +1139,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஓடுகளைச் சரியான வரிசையில் அடுக்கு",
     'pa': "ਟਾਈਲਾਂ ਨੂੰ ਸਹੀ ਕ੍ਰਮ ਵਿੱਚ ਲਗਾਓ",
     'bho': "टाइल के सही क्रम में लगाईं",
+    'mr': "टाइल्स योग्य क्रमाने लावा",
+    'sa': "फलकानि उचितक्रमेण स्थापयतु",
   },
   'game.minesweeper.title': {
     'en': "Minesweeper",
@@ -946,6 +1150,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மைன்ஸ்வீப்பர்",
     'pa': "ਮਾਈਨਸਵੀਪਰ",
     'bho': "माइनस्वीपर",
+    'mr': "माइनस्वीपर",
+    'sa': "सुरङ्ग-शोधकः",
   },
   'game.minesweeper.subtitle': {
     'en': "Clear the board, dodge the mines",
@@ -955,6 +1161,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கண்ணிவெடிகளைத் தவிர்த்து பலகையை அழி",
     'pa': "ਮਾਈਨਾਂ ਤੋਂ ਬਚ ਕੇ ਬੋਰਡ ਸਾਫ਼ ਕਰੋ",
     'bho': "माइन से बच के बोर्ड साफ करीं",
+    'mr': "सुरुंग टाळून बोर्ड साफ करा",
+    'sa': "सुरङ्गान् परिहृत्य फलकं शोधयतु",
   },
   'game.arrow_maze.title': {
     'en': "Arrow Maze",
@@ -964,6 +1172,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "அம்பு பிரமை",
     'pa': "ਐਰੋ ਮੇਜ਼",
     'bho': "एरो मेज़",
+    'mr': "ॲरो मेझ",
+    'sa': "शर-व्यूहः",
   },
   'game.arrow_maze.subtitle': {
     'en': "Slide the long arrows out",
@@ -973,6 +1183,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நீண்ட அம்புகளை வெளியே எடு",
     'pa': "ਲੰਬੇ ਤੀਰਾਂ ਨੂੰ ਬਾਹਰ ਕੱਢੋ",
     'bho': "लमहर तीरन के बाहर निकालीं",
+    'mr': "लांब बाण बाहेर सरकवा",
+    'sa': "दीर्घान् शरान् बहिः सारयतु",
   },
   'game.maze_escape.title': {
     'en': "Maze Escape",
@@ -982,6 +1194,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பிரமை தப்பித்தல்",
     'pa': "ਮੇਜ਼ ਐਸਕੇਪ",
     'bho': "मेज़ एस्केप",
+    'mr': "मेझ एस्केप",
+    'sa': "व्यूह-मोक्षः",
   },
   'game.maze_escape.subtitle': {
     'en': "Find the way out of the maze",
@@ -991,6 +1205,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பிரமையிலிருந்து சரியான வழியைக் கண்டுபிடி",
     'pa': "ਭੁੱਲ-ਭੁਲੱਈਆਂ 'ਚੋਂ ਸਹੀ ਰਾਹ ਲੱਭੋ",
     'bho': "भूल-भुलैया से सही रस्ता खोजीं",
+    'mr': "चक्रव्यूहातून बाहेरचा मार्ग शोधा",
+    'sa': "व्यूहात् निर्गममार्गम् अन्विष्यतु",
   },
   'game.sudoku.title': {
     'en': "Sudoku",
@@ -1000,6 +1216,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "Sudoku",
     'pa': "Sudoku",
     'bho': "Sudoku",
+    'mr': "Sudoku",
+    'sa': "Sudoku",
   },
   'game.sudoku.subtitle': {
     'en': "Classic number puzzle",
@@ -1009,6 +1227,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கிளாசிக் எண் புதிர்",
     'pa': "ਕਲਾਸਿਕ ਨੰਬਰ ਪਜ਼ਲ",
     'bho': "क्लासिक नंबर पज़ल",
+    'mr': "क्लासिक अंकांचे कोडे",
+    'sa': "पारम्परिकी अङ्क-प्रहेलिका",
   },
   'game.ball_sort.title': {
     'en': "Ball Sort",
@@ -1018,6 +1238,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பந்து வரிசை",
     'pa': "ਬਾਲ ਸੌਰਟ",
     'bho': "बॉल सॉर्ट",
+    'mr': "बॉल सॉर्ट",
+    'sa': "कन्दुक-विभाजनम्",
   },
   'game.ball_sort.subtitle': {
     'en': "Sort the balls by colour",
@@ -1027,6 +1249,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நிறப்படி பந்துகளைப் பிரி",
     'pa': "ਰੰਗ ਮੁਤਾਬਕ ਗੇਂਦਾਂ ਛਾਂਟੋ",
     'bho': "रंग के हिसाब से छाँटीं",
+    'mr': "रंगानुसार चेंडू वेगळे करा",
+    'sa': "वर्णानुसारं कन्दुकान् विभजतु",
   },
   'game.memory_boost.title': {
     'en': "Memory Boost",
@@ -1036,6 +1260,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மெமரி பூஸ்ட்",
     'pa': "ਮੈਮੋਰੀ ਬੂਸਟ",
     'bho': "मेमोरी बूस्ट",
+    'mr': "मेमरी बूस्ट",
+    'sa': "स्मृति-वर्धनम्",
   },
   'game.memory_boost.subtitle': {
     'en': "Sharpen your memory",
@@ -1045,6 +1271,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "நினைவாற்றலைக் கூர்மையாக்கு",
     'pa': "ਯਾਦਦਾਸ਼ਤ ਤੇਜ਼ ਕਰੋ",
     'bho': "याददास्त तेज करीं",
+    'mr': "तुमची स्मरणशक्ती तीक्ष्ण करा",
+    'sa': "स्वस्मृतिं तीक्ष्णीकरोतु",
   },
   'game.game_2048.title': {
     'en': "2048",
@@ -1054,6 +1282,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "2048",
     'pa': "2048",
     'bho': "2048",
+    'mr': "2048",
+    'sa': "2048",
   },
   'game.game_2048.subtitle': {
     'en': "Merge tiles to make 2048",
@@ -1063,6 +1293,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஓடுகளை இணைத்து 2048 ஆக்கு",
     'pa': "ਟਾਈਲਾਂ ਜੋੜ ਕੇ 2048 ਬਣਾਓ",
     'bho': "टाइल जोड़ के 2048 बनाईं",
+    'mr': "टाइल्स जोडून 2048 बनवा",
+    'sa': "फलकानि योजयित्वा 2048 रचयतु",
   },
   'game.focus_color.title': {
     'en': "Focus Colors",
@@ -1072,6 +1304,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஃபோகஸ் கலர்ஸ்",
     'pa': "ਫੋਕਸ ਕਲਰਜ਼",
     'bho': "फोकस कलर्स",
+    'mr': "फोकस कलर्स",
+    'sa': "एकाग्र-वर्णाः",
   },
   'game.focus_color.subtitle': {
     'en': "Keep your mind sharp and focused",
@@ -1081,6 +1315,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "மனதைக் கூர்மையாகவும் கவனமாகவும் வை",
     'pa': "ਦਿਮਾਗ ਨੂੰ ਤੇਜ਼ ਤੇ ਇਕਾਗਰ ਰੱਖੋ",
     'bho': "दिमाग के तेज आ धियान में राखीं",
+    'mr': "मन तीक्ष्ण आणि एकाग्र ठेवा",
+    'sa': "मनः तीक्ष्णम् एकाग्रं च रक्षतु",
   },
   'game.arrows.title': {
     'en': "Arrows",
@@ -1090,6 +1326,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "அம்புகள்",
     'pa': "ਐਰੋਜ਼",
     'bho': "एरोज़",
+    'mr': "ॲरोज",
+    'sa': "शराः",
   },
   'game.arrows.subtitle': {
     'en': "Get all the arrows out",
@@ -1099,6 +1337,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "எல்லா அம்புகளையும் வெளியே எடு",
     'pa': "ਸਾਰੇ ਤੀਰ ਬਾਹਰ ਕੱਢੋ",
     'bho': "सगरी तीर बाहर निकालीं",
+    'mr': "सर्व बाण बाहेर काढा",
+    'sa': "सर्वान् शरान् बहिः निष्कासयतु",
   },
   'game.screw_jam.title': {
     'en': "Screw Jam",
@@ -1108,6 +1348,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "திருகு ஜாம்",
     'pa': "ਸਕ੍ਰੂ ਜੈਮ",
     'bho': "स्क्रू जैम",
+    'mr': "स्क्रू जॅम",
+    'sa': "कीलक-सङ्कटः",
   },
   'game.screw_jam.subtitle': {
     'en': "Unscrew the bolts, drop the plates",
@@ -1117,6 +1359,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "திருகுகளை கழற்றி தட்டுகளை விழவைக்கவும்",
     'pa': "ਸਕ੍ਰੂ ਖੋਲ੍ਹੋ, ਪਲੇਟਾਂ ਸੁੱਟੋ",
     'bho': "स्क्रू खोलीं, प्लेट गिराईं",
+    'mr': "स्क्रू काढा, प्लेट्स पाडा",
+    'sa': "कीलकान् उद्घाट्य पट्टिकाः पातयतु",
   },
   'game.parking_jam.title': {
     'en': "Parking Jam",
@@ -1126,6 +1370,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "பார்க்கிங் ஜாம்",
     'pa': "ਪਾਰਕਿੰਗ ਜੈਮ",
     'bho': "पार्किंग जैम",
+    'mr': "पार्किंग जॅम",
+    'sa': "वाहनस्थान-सङ्कटः",
   },
   'game.parking_jam.subtitle': {
     'en': "Drive the cars out, clear the lot",
@@ -1135,6 +1381,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "கார்களை வெளியேற்றி இடத்தை காலி செய்யவும்",
     'pa': "ਗੱਡੀਆਂ ਕੱਢੋ, ਪਾਰਕਿੰਗ ਖਾਲੀ ਕਰੋ",
     'bho': "गाड़ी निकालीं, पार्किंग खाली करीं",
+    'mr': "गाड्या बाहेर काढा, पार्किंग रिकामे करा",
+    'sa': "वाहनानि बहिः नीत्वा स्थानं रिक्तीकरोतु",
   },
   'game.tile_match.title': {
     'en': "Tile Match",
@@ -1144,6 +1392,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "டைல் மேட்ச்",
     'pa': "ਟਾਈਲ ਮੈਚ",
     'bho': "टाइल मैच",
+    'mr': "टाइल मॅच",
+    'sa': "फलक-मेलनम्",
   },
   'game.tile_match.subtitle': {
     'en': "Match 3 tiles, clear the board",
@@ -1153,6 +1403,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "3 ஒரே மாதிரி டைல்களைச் சேர்க்கவும்",
     'pa': "3 ਇੱਕੋ ਜਿਹੀਆਂ ਟਾਈਲਾਂ ਜੋੜੋ",
     'bho': "3 एके जइसन टाइल जोड़ीं",
+    'mr': "3 सारख्या टाइल्स जुळवा, बोर्ड साफ करा",
+    'sa': "3 समानफलकानि मेलयित्वा फलकं शोधयतु",
   },
   'game.hexa_sort.title': {
     'en': "Hexa Sort",
@@ -1162,6 +1414,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "ஹெக்சா சார்ட்",
     'pa': "ਹੈਕਸਾ ਸੌਰਟ",
     'bho': "हेक्सा सॉर्ट",
+    'mr': "हेक्सा सॉर्ट",
+    'sa': "षट्कोण-विभाजनम्",
   },
   'game.hexa_sort.subtitle': {
     'en': "Stack hexagons by colour",
@@ -1171,6 +1425,8 @@ const Map<String, Map<String, String>> homeStrings = {
     'ta': "அறுகோணங்களை நிறப்படி அடுக்கவும்",
     'pa': "ਹੈਕਸਾਗਨ ਰੰਗ ਨਾਲ ਜੋੜੋ",
     'bho': "हेक्सागन के रंग से जोड़ीं",
+    'mr': "रंगानुसार षटकोन रचा",
+    'sa': "वर्णानुसारं षट्कोणान् सञ्चिनोतु",
   },
   'game.chess.title': {
     'en': "Chess",

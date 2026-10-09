@@ -10,11 +10,11 @@ import 'package:puzzle_hub/games/tile_match/logic/tile_match_logic.dart';
 import 'package:puzzle_hub/games/tile_match/tile_match_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _langs = {'en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'};
+final _langs = {for (final l in AppLang.values) l.code};
 final _ph = RegExp(r'\{(\w+)\}');
 
 void main() {
-  test('tile_match strings: all 7 languages, identical placeholders', () {
+  test('tile_match strings: all 9 languages, identical placeholders', () {
     expect(tileMatchStrings, isNotEmpty);
     for (final MapEntry(:key, :value) in tileMatchStrings.entries) {
       expect(key.startsWith('tile_match.'), isTrue, reason: key);
@@ -25,7 +25,7 @@ void main() {
         expect(_ph.allMatches(s).map((m) => m[1]).toSet(), en, reason: '$key.$lang placeholders');
       }
       // Native scripts (not Latin) for the Indic languages.
-      for (final lang in ['hi', 'te', 'ta', 'pa', 'bho']) {
+      for (final lang in ['hi', 'te', 'ta', 'pa', 'bho', 'mr', 'sa']) {
         final letters = value[lang]!.replaceAll(_ph, '').replaceAll(RegExp(r'[^A-Za-zऀ-෿਀-੿]'), '');
         final latin = letters.replaceAll(RegExp(r'[^A-Za-z]'), '').length;
         expect(latin * 2 <= letters.length, isTrue, reason: '$key.$lang should use its own script');

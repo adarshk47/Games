@@ -24,6 +24,8 @@ const missingPool = [
     'ta': "புட்டி",
     'pa': "ਬੋਤਲ",
     'bho': "बोतल",
+    'mr': "बाटली",
+    'sa': "कूपी",
   }),
   MmThing('🧸', {
     'en': "Toy",
@@ -33,6 +35,8 @@ const missingPool = [
     'ta': "பொம்மை",
     'pa': "ਖਿਡੌਣਾ",
     'bho': "खिलौना",
+    'mr': "खेळणे",
+    'sa': "क्रीडनकम्",
   }),
   MmThing('🧦', {
     'en': "Socks",
@@ -42,6 +46,8 @@ const missingPool = [
     'ta': "காலுறை",
     'pa': "ਜੁਰਾਬਾਂ",
     'bho': "मोजा",
+    'mr': "मोजे",
+    'sa': "पादावरणे",
   }),
   MmThing('🧷', {
     'en': "Pin",
@@ -51,6 +57,8 @@ const missingPool = [
     'ta': "பின்",
     'pa': "ਪਿੰਨ",
     'bho': "पिन",
+    'mr': "पिन",
+    'sa': "सूचिका",
   }),
   MmThing('🛁', {
     'en': "Tub",
@@ -60,6 +68,8 @@ const missingPool = [
     'ta': "தொட்டி",
     'pa': "ਟੱਬ",
     'bho': "टब",
+    'mr': "टब",
+    'sa': "द्रोणी",
   }),
   MmThing('🧴', {
     'en': "Lotion",
@@ -69,6 +79,8 @@ const missingPool = [
     'ta': "லோஷன்",
     'pa': "ਲੋਸ਼ਨ",
     'bho': "लोशन",
+    'mr': "लोशन",
+    'sa': "लेपः",
   }),
   MmThing('🧺', {
     'en': "Basket",
@@ -78,6 +90,8 @@ const missingPool = [
     'ta': "கூடை",
     'pa': "ਟੋਕਰੀ",
     'bho': "टोकरी",
+    'mr': "टोपली",
+    'sa': "करण्डः",
   }),
   MmThing('🪥', {
     'en': "Brush",
@@ -87,6 +101,8 @@ const missingPool = [
     'ta': "பிரஷ்",
     'pa': "ਬੁਰਸ਼",
     'bho': "ब्रश",
+    'mr': "ब्रश",
+    'sa': "कूर्चः",
   }),
   MmThing('🧼', {
     'en': "Soap",
@@ -96,6 +112,8 @@ const missingPool = [
     'ta': "சோப்பு",
     'pa': "ਸਾਬਣ",
     'bho': "साबुन",
+    'mr': "साबण",
+    'sa': "फेनकम्",
   }),
   MmThing('🧣', {
     'en': "Shawl",
@@ -105,6 +123,8 @@ const missingPool = [
     'ta': "சால்வை",
     'pa': "ਸ਼ਾਲ",
     'bho': "साल",
+    'mr': "शाल",
+    'sa': "शाटिका",
   }),
   MmThing('🧢', {
     'en': "Cap",
@@ -114,6 +134,8 @@ const missingPool = [
     'ta': "தொப்பி",
     'pa': "ਟੋਪੀ",
     'bho': "टोपी",
+    'mr': "टोपी",
+    'sa': "शिरस्त्रम्",
   }),
   MmThing('🦆', {
     'en': "Duck",
@@ -123,6 +145,8 @@ const missingPool = [
     'ta': "வாத்து",
     'pa': "ਬੱਤਖ",
     'bho': "बतख",
+    'mr': "बदक",
+    'sa': "हंसकः",
   }),
   MmThing('🍪', {
     'en': "Biscuit",
@@ -132,6 +156,8 @@ const missingPool = [
     'ta': "பிஸ்கட்",
     'pa': "ਬਿਸਕੁਟ",
     'bho': "बिस्कुट",
+    'mr': "बिस्किट",
+    'sa': "पिष्टकम्",
   }),
   MmThing('🔔', {
     'en': "Bell",
@@ -141,6 +167,8 @@ const missingPool = [
     'ta': "மணி",
     'pa': "ਘੰਟੀ",
     'bho': "घंटी",
+    'mr': "घंटा",
+    'sa': "घण्टा",
   }),
   MmThing('🪮', {
     'en': "Comb",
@@ -150,6 +178,8 @@ const missingPool = [
     'ta': "சீப்பு",
     'pa': "ਕੰਘੀ",
     'bho': "ककही",
+    'mr': "कंगवा",
+    'sa': "कङ्कतम्",
   }),
   MmThing('🥄', {
     'en': "Spoon",
@@ -159,6 +189,8 @@ const missingPool = [
     'ta': "கரண்டி",
     'pa': "ਚਮਚਾ",
     'bho': "चम्मच",
+    'mr': "चमचा",
+    'sa': "दर्वी",
   }),
   MmThing('☕', {
     'en': "Tea",
@@ -168,6 +200,8 @@ const missingPool = [
     'ta': "தேநீர்",
     'pa': "ਚਾਹ",
     'bho': "चाय",
+    'mr': "चहा",
+    'sa': "चायम्",
   }),
   MmThing('🔑', {
     'en': "Key",
@@ -177,6 +211,8 @@ const missingPool = [
     'ta': "சாவி",
     'pa': "ਚਾਬੀ",
     'bho': "चाभी",
+    'mr': "किल्ली",
+    'sa': "कुञ्चिका",
   }),
 ];
 
@@ -225,6 +261,8 @@ const wordPairs = [
       'ta': "பால்",
       'pa': "ਦੁੱਧ",
       'bho': "दूध",
+      'mr': "दूध",
+      'sa': "दुग्धम्",
     },
     MmThing('🍼', {
       'en': "Bottle",
@@ -234,6 +272,8 @@ const wordPairs = [
       'ta': "புட்டி",
       'pa': "ਬੋਤਲ",
       'bho': "बोतल",
+      'mr': "बाटली",
+      'sa': "कूपी",
     }),
   ),
   WordPair(
@@ -245,6 +285,8 @@ const wordPairs = [
       'ta': "தூக்கம்",
       'pa': "ਨੀਂਦ",
       'bho': "नींद",
+      'mr': "झोप",
+      'sa': "निद्रा",
     },
     MmThing('😴', {
       'en': "Nap",
@@ -254,6 +296,8 @@ const wordPairs = [
       'ta': "ஓய்வு",
       'pa': "ਸੌਣਾ",
       'bho': "सुतल",
+      'mr': "डुलकी",
+      'sa': "शयनम्",
     }),
   ),
   WordPair(
@@ -265,6 +309,8 @@ const wordPairs = [
       'ta': "குளியல்",
       'pa': "ਨਹਾਉਣਾ",
       'bho': "नहाइल",
+      'mr': "अंघोळ",
+      'sa': "स्नानम्",
     },
     MmThing('🛁', {
       'en': "Tub",
@@ -274,6 +320,8 @@ const wordPairs = [
       'ta': "தொட்டி",
       'pa': "ਟੱਬ",
       'bho': "टब",
+      'mr': "टब",
+      'sa': "द्रोणी",
     }),
   ),
   WordPair(
@@ -285,6 +333,8 @@ const wordPairs = [
       'ta': "தாலாட்டு",
       'pa': "ਲੋਰੀ",
       'bho': "लोरी",
+      'mr': "अंगाई",
+      'sa': "लालीगीतम्",
     },
     MmThing('🌙', {
       'en': "Moon",
@@ -294,6 +344,8 @@ const wordPairs = [
       'ta': "நிலா",
       'pa': "ਚੰਨ",
       'bho': "चंदा",
+      'mr': "चंद्र",
+      'sa': "चन्द्रः",
     }),
   ),
   WordPair(
@@ -305,6 +357,8 @@ const wordPairs = [
       'ta': "பொம்மை",
       'pa': "ਖਿਡੌਣਾ",
       'bho': "खिलौना",
+      'mr': "खेळणे",
+      'sa': "क्रीडनकम्",
     },
     MmThing('🧸', {
       'en': "Teddy",
@@ -314,6 +368,8 @@ const wordPairs = [
       'ta': "டெடி",
       'pa': "ਟੈਡੀ",
       'bho': "टेडी",
+      'mr': "टेडी",
+      'sa': "टेडी",
     }),
   ),
   WordPair(
@@ -325,6 +381,8 @@ const wordPairs = [
       'ta': "குளிர்",
       'pa': "ਸਰਦੀ",
       'bho': "जाड़ा",
+      'mr': "हिवाळा",
+      'sa': "शीतकालः",
     },
     MmThing('🧣', {
       'en': "Shawl",
@@ -334,6 +392,8 @@ const wordPairs = [
       'ta': "சால்வை",
       'pa': "ਸ਼ਾਲ",
       'bho': "साल",
+      'mr': "शाल",
+      'sa': "शाटिका",
     }),
   ),
   WordPair(
@@ -345,6 +405,8 @@ const wordPairs = [
       'ta': "மழை",
       'pa': "ਮੀਂਹ",
       'bho': "बरखा",
+      'mr': "पाऊस",
+      'sa': "वर्षा",
     },
     MmThing('☔', {
       'en': "Umbrella",
@@ -354,6 +416,8 @@ const wordPairs = [
       'ta': "குடை",
       'pa': "ਛਤਰੀ",
       'bho': "छाता",
+      'mr': "छत्री",
+      'sa': "छत्रम्",
     }),
   ),
   WordPair(
@@ -365,6 +429,8 @@ const wordPairs = [
       'ta': "சாம்பார்",
       'pa': "ਰੋਟੀ",
       'bho': "रोटी",
+      'mr': "वरण",
+      'sa': "सूपः",
     },
     MmThing('🥣', {
       'en': "Bowl",
@@ -374,6 +440,8 @@ const wordPairs = [
       'ta': "கிண்ணம்",
       'pa': "ਕਟੋਰੀ",
       'bho': "कटोरी",
+      'mr': "वाटी",
+      'sa': "पात्रम्",
     }),
   ),
   WordPair(
@@ -385,6 +453,8 @@ const wordPairs = [
       'ta': "பூ",
       'pa': "ਫੁੱਲ",
       'bho': "फूल",
+      'mr': "फूल",
+      'sa': "पुष्पम्",
     },
     MmThing('🌸', {
       'en': "Garden",
@@ -394,6 +464,8 @@ const wordPairs = [
       'ta': "தோட்டம்",
       'pa': "ਬਗੀਚਾ",
       'bho': "फुलवारी",
+      'mr': "बाग",
+      'sa': "उद्यानम्",
     }),
   ),
   WordPair(
@@ -405,6 +477,8 @@ const wordPairs = [
       'ta': "சூரியன்",
       'pa': "ਸੂਰਜ",
       'bho': "सुरुज",
+      'mr': "सूर्य",
+      'sa': "सूर्यः",
     },
     MmThing('☀️', {
       'en': "Light",
@@ -414,6 +488,8 @@ const wordPairs = [
       'ta': "வெளிச்சம்",
       'pa': "ਰੋਸ਼ਨੀ",
       'bho': "अंजोर",
+      'mr': "प्रकाश",
+      'sa': "प्रकाशः",
     }),
   ),
   WordPair(
@@ -425,6 +501,8 @@ const wordPairs = [
       'ta': "தண்ணீர்",
       'pa': "ਪਾਣੀ",
       'bho': "पानी",
+      'mr': "पाणी",
+      'sa': "जलम्",
     },
     MmThing('💧', {
       'en': "Glass",
@@ -434,6 +512,8 @@ const wordPairs = [
       'ta': "குவளை",
       'pa': "ਗਲਾਸ",
       'bho': "गिलास",
+      'mr': "ग्लास",
+      'sa': "चषकः",
     }),
   ),
   WordPair(
@@ -445,6 +525,8 @@ const wordPairs = [
       'ta': "புத்தகம்",
       'pa': "ਕਿਤਾਬ",
       'bho': "किताब",
+      'mr': "पुस्तक",
+      'sa': "पुस्तकम्",
     },
     MmThing('📖', {
       'en': "Story",
@@ -454,6 +536,8 @@ const wordPairs = [
       'ta': "கதை",
       'pa': "ਕਹਾਣੀ",
       'bho': "कहानी",
+      'mr': "गोष्ट",
+      'sa': "कथा",
     }),
   ),
   WordPair(
@@ -465,6 +549,8 @@ const wordPairs = [
       'ta': "தேநீர்",
       'pa': "ਚਾਹ",
       'bho': "चाय",
+      'mr': "चहा",
+      'sa': "चायम्",
     },
     MmThing('☕', {
       'en': "Cup",
@@ -474,6 +560,8 @@ const wordPairs = [
       'ta': "கோப்பை",
       'pa': "ਪਿਆਲੀ",
       'bho': "कप",
+      'mr': "कप",
+      'sa': "पानपात्रम्",
     }),
   ),
   WordPair(
@@ -485,6 +573,8 @@ const wordPairs = [
       'ta': "நட்சத்திரம்",
       'pa': "ਤਾਰੇ",
       'bho': "तरई",
+      'mr': "तारे",
+      'sa': "तारकाः",
     },
     MmThing('⭐', {
       'en': "Sky",
@@ -494,6 +584,8 @@ const wordPairs = [
       'ta': "வானம்",
       'pa': "ਅਸਮਾਨ",
       'bho': "असमान",
+      'mr': "आकाश",
+      'sa': "आकाशः",
     }),
   ),
   WordPair(
@@ -505,6 +597,8 @@ const wordPairs = [
       'ta': "வண்டி",
       'pa': "ਗੱਡੀ",
       'bho': "गाड़ी",
+      'mr': "गाडी",
+      'sa': "यानम्",
     },
     MmThing('🚗', {
       'en': "Road",
@@ -514,6 +608,8 @@ const wordPairs = [
       'ta': "சாலை",
       'pa': "ਸੜਕ",
       'bho': "सड़क",
+      'mr': "रस्ता",
+      'sa': "मार्गः",
     }),
   ),
   WordPair(
@@ -525,6 +621,8 @@ const wordPairs = [
       'ta': "பல்",
       'pa': "ਦੰਦ",
       'bho': "दाँत",
+      'mr': "दात",
+      'sa': "दन्ताः",
     },
     MmThing('🪥', {
       'en': "Brush",
@@ -534,6 +632,8 @@ const wordPairs = [
       'ta': "பிரஷ்",
       'pa': "ਬੁਰਸ਼",
       'bho': "ब्रश",
+      'mr': "ब्रश",
+      'sa': "कूर्चः",
     }),
   ),
 ];

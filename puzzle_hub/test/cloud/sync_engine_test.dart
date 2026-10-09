@@ -6,13 +6,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// In-memory stand-in for Firestore `users/{uid}`.
 class FakeRemote implements RemoteStore {
   final docs = <String, RemoteDoc>{};
+  final countries = <String, String?>{};
   int saves = 0;
 
   @override
   Future<RemoteDoc> load(String uid) async => docs[uid] ?? const RemoteDoc();
 
   @override
-  Future<void> save(String uid, {required bool exists, required String name, required Map<String, Object> data, required Map<String, KeyMeta> meta}) async {
+  Future<void> save(String uid, {required bool exists, required String name, String? country, required Map<String, Object> data, required Map<String, KeyMeta> meta}) async {
+    countries[uid] = country;
     expect(exists, docs.containsKey(uid), reason: 'create vs update must match the document state');
     saves++;
     docs[uid] = RemoteDoc(
@@ -162,5 +164,13 @@ void main() {
     expect(remote.docs['A']!.meta, firstMeta);
     expect(prefs.getInt('u1.coins'), 10);
     expect(prefs.getInt('u1.coins.spent'), 20);
+  });
+
+  test('country is saved with users/{uid} (normalized, invalid dropped)', () async {
+    await boot({'u1.coins': 5});
+    await engine().sync(uid: 'A', prefix: 'u1.', name: 'Asha', country: 'in');
+    expect(remote.countries['A'], 'IN');
+    await engine().sync(uid: 'B', prefix: 'u1.', name: 'Ben', country: 'India');
+    expect(remote.countries['B'], isNull);
   });
 }

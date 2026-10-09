@@ -7,7 +7,7 @@ import 'package:puzzle_hub/games/minesweeper/minesweeper_screen.dart';
 import '../block_puzzle/i18n_helpers.dart';
 
 void main() {
-  test('minesweeper strings: 7 languages, same placeholders', () => checkTable('minesweeper', minesweeperStrings));
+  test('minesweeper strings: 9 languages, same placeholders', () => checkTable('minesweeper', minesweeperStrings));
   test('minesweeper source keys exist', () => checkSourceKeys('lib/games/minesweeper'));
   firstScreenInAllLanguages('Minesweeper', () => const MinesweeperScreen(), then: (t) async {
     await t.tap(find.text(tr('common.tier.easy')).first);

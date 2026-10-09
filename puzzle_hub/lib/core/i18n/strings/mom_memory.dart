@@ -1,5 +1,5 @@
 // Translations for the mom_memory module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 // Content data (item names, word pairs, stories) lives next to the game logic
 // in lib/games/mom_memory/logic/.
@@ -12,6 +12,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "அம்மா நினைவு",
     'pa': "ਮੌਮ ਮੈਮੋਰੀ",
     'bho': "मॉम मेमोरी",
+    'mr': "मॉम मेमरी",
+    'sa': "मातृस्मृतिः",
   },
   'mom_memory.footnote': {
     'en': "Only for fun and light mental exercise, not medical advice.",
@@ -21,6 +23,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "பொழுதுபோக்கு மற்றும் லேசான மூளைப் பயிற்சிக்காக மட்டுமே, இது மருத்துவ ஆலோசனை அல்ல.",
     'pa': "ਸਿਰਫ਼ ਮਨੋਰੰਜਨ ਅਤੇ ਹਲਕੀ ਦਿਮਾਗੀ ਕਸਰਤ ਲਈ, ਇਹ ਡਾਕਟਰੀ ਸਲਾਹ ਨਹੀਂ ਹੈ।",
     'bho': "खाली मनोरंजन आ हलुक दिमागी कसरत खातिर, ई डॉक्टरी सलाह ना ह।",
+    'mr': "फक्त मनोरंजन आणि हलक्या मानसिक व्यायामासाठी, हा वैद्यकीय सल्ला नाही.",
+    'sa': "केवलं विनोदाय लघु-मानसव्यायामाय च, इदं वैद्यकीयं परामर्शं नास्ति।",
   },
 
   // ---------- encouraging lines ----------
@@ -32,6 +36,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மிகவும் அருமை!",
     'pa': "ਬਹੁਤ ਵਧੀਆ!",
     'bho': "बहुत बढ़िया!",
+    'mr': "खूप छान!",
+    'sa': "अतीव शोभनम्!",
   },
   'mom_memory.praise_2': {
     'en': "Wow, amazing!",
@@ -41,6 +47,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஆஹா, அற்புதம்!",
     'pa': "ਵਾਹ, ਕਮਾਲ!",
     'bho': "वाह, कमाल बा!",
+    'mr': "वा, कमाल!",
+    'sa': "अहो, अद्भुतम्!",
   },
   'mom_memory.praise_3': {
     'en': "Well done!",
@@ -50,6 +58,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சபாஷ்!",
     'pa': "ਸ਼ਾਬਾਸ਼!",
     'bho': "साबास!",
+    'mr': "शाब्बास!",
+    'sa': "साधु!",
   },
   'mom_memory.praise_4': {
     'en': "Exactly right!",
@@ -59,6 +69,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மிகச் சரி!",
     'pa': "ਬਿਲਕੁਲ ਸਹੀ!",
     'bho': "एकदम सही!",
+    'mr': "अगदी बरोबर!",
+    'sa': "सम्यक् उक्तम्!",
   },
   'mom_memory.praise_5': {
     'en': "You're an expert!",
@@ -68,6 +80,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நீங்கள் நிபுணர்!",
     'pa': "ਤੁਸੀਂ ਤਾਂ ਮਾਹਿਰ ਹੋ!",
     'bho': "रउआ त एक्सपर्ट बानी!",
+    'mr': "तुम्ही तर तज्ज्ञ आहात!",
+    'sa': "भवती तु निपुणा!",
   },
   'mom_memory.praise_6': {
     'en': "Lovely!",
@@ -77,6 +91,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "அழகு!",
     'pa': "ਪਿਆਰਾ!",
     'bho': "बड़ा नीक!",
+    'mr': "सुंदर!",
+    'sa': "सुन्दरम्!",
   },
   'mom_memory.gentle_1': {
     'en': "Take it easy, no hurry",
@@ -86,6 +102,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நிதானமாக, அவசரம் இல்லை",
     'pa': "ਆਰਾਮ ਨਾਲ, ਕੋਈ ਕਾਹਲੀ ਨਹੀਂ",
     'bho': "आराम से, कवनो हड़बड़ी नइखे",
+    'mr': "आरामात, घाई नाही",
+    'sa': "शनैः, त्वरा नास्ति",
   },
   'mom_memory.gentle_2': {
     'en': "No worries, let's look again",
@@ -95,6 +113,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "பரவாயில்லை, மீண்டும் பார்க்கலாம்",
     'pa': "ਕੋਈ ਗੱਲ ਨਹੀਂ, ਫਿਰ ਵੇਖਦੇ ਹਾਂ",
     'bho': "कवनो बात ना, फेर से देखल जाव",
+    'mr': "काळजी नको, पुन्हा पाहूया",
+    'sa': "चिन्ता मास्तु, पुनः पश्यामः",
   },
   'mom_memory.gentle_3': {
     'en': "Slowly, slowly, all is well",
@@ -104,6 +124,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மெல்ல மெல்ல, எல்லாம் நலம்",
     'pa': "ਹੌਲੀ-ਹੌਲੀ, ਸਭ ਠੀਕ ਹੈ",
     'bho': "धीरे-धीरे, सब ठीक बा",
+    'mr': "हळूहळू, सगळं ठीक आहे",
+    'sa': "शनैः शनैः, सर्वं कुशलम्",
   },
   'mom_memory.gentle_4': {
     'en': "Take a deep breath",
@@ -113,6 +135,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஆழமாக மூச்சு விடுங்கள்",
     'pa': "ਡੂੰਘਾ ਸਾਹ ਲਓ",
     'bho': "गहिर साँस लीं",
+    'mr': "दीर्घ श्वास घ्या",
+    'sa': "दीर्घं श्वसितु",
   },
 
   // ---------- shared game words ----------
@@ -124,6 +148,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "தொடங்குங்கள்",
     'pa': "ਸ਼ੁਰੂ ਕਰੋ",
     'bho': "सुरू करीं",
+    'mr': "सुरू करा",
+    'sa': "आरभताम्",
   },
   'mom_memory.memorized': {
     'en': "Got it",
@@ -133,6 +159,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நினைவில் வைத்தேன்",
     'pa': "ਯਾਦ ਹੋ ਗਿਆ",
     'bho': "याद हो गइल",
+    'mr': "लक्षात राहिले",
+    'sa': "स्मृतम्",
   },
   'mom_memory.done': {
     'en': "Done",
@@ -142,6 +170,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "முடிந்தது",
     'pa': "ਹੋ ਗਿਆ",
     'bho': "हो गइल",
+    'mr': "झाले",
+    'sa': "सम्पन्नम्",
   },
   'mom_memory.watch': {
     'en': "Watch carefully",
@@ -151,6 +181,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "கவனமாகப் பாருங்கள்",
     'pa': "ਧਿਆਨ ਨਾਲ ਵੇਖੋ",
     'bho': "धियान से देखीं",
+    'mr': "लक्षपूर्वक पाहा",
+    'sa': "ध्यानेन पश्यतु",
   },
   'mom_memory.remember_items': {
     'en': "Remember these things",
@@ -160,6 +192,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இந்தப் பொருட்களை நினைவில் வையுங்கள்",
     'pa': "ਇਹ ਚੀਜ਼ਾਂ ਯਾਦ ਕਰੋ",
     'bho': "ई चीजन के याद करीं",
+    'mr': "या वस्तू लक्षात ठेवा",
+    'sa': "एतानि वस्तूनि स्मरतु",
   },
   'mom_memory.good_try': {
     'en': "Lovely effort! Gently try again.",
@@ -169,6 +203,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மிக நல்ல முயற்சி! நிதானமாக மீண்டும் முயலுங்கள்.",
     'pa': "ਬਹੁਤ ਵਧੀਆ ਕੋਸ਼ਿਸ਼! ਆਰਾਮ ਨਾਲ ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "बहुत बढ़िया कोसिस! आराम से फेर कोसिस करीं।",
+    'mr': "खूप छान प्रयत्न! आरामात पुन्हा प्रयत्न करा.",
+    'sa': "अतीव शोभनः प्रयत्नः! शनैः पुनः प्रयतताम्।",
   },
   'mom_memory.n_correct': {
     'en': "{n}/{total} correct",
@@ -178,6 +214,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n}/{total} சரி",
     'pa': "{n}/{total} ਸਹੀ",
     'bho': "{n}/{total} सही",
+    'mr': "{n}/{total} बरोबर",
+    'sa': "{n}/{total} शुद्धानि",
   },
   'mom_memory.question_n': {
     'en': "Question {n}/{total}",
@@ -187,6 +225,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "கேள்வி {n}/{total}",
     'pa': "ਸਵਾਲ {n}/{total}",
     'bho': "सवाल {n}/{total}",
+    'mr': "प्रश्न {n}/{total}",
+    'sa': "प्रश्नः {n}/{total}",
   },
 
   // ---------- menu ----------
@@ -198,6 +238,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "வணக்கம்! நிதானமாக, அவசரம் இல்லை",
     'pa': "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਆਰਾਮ ਨਾਲ, ਕੋਈ ਕਾਹਲੀ ਨਹੀਂ",
     'bho': "प्रणाम! आराम से, कवनो हड़बड़ी नइखे",
+    'mr': "नमस्कार! आरामात, घाई नाही",
+    'sa': "नमस्ते! शनैः, त्वरा नास्ति",
   },
   'mom_memory.streak': {
     'en': "Together for {n} days 💗",
@@ -207,6 +249,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நம் பயணம்: {n} நாட்கள் 💗",
     'pa': "ਤੁਹਾਡਾ ਸਾਥ: {n} ਦਿਨ 💗",
     'bho': "राउर साथ: {n} दिन 💗",
+    'mr': "आपली सोबत: {n} दिवस 💗",
+    'sa': "अस्माकं सहयात्रा: {n} दिनानि 💗",
   },
   'mom_memory.no_streak': {
     'en': "Take a little time for yourself today",
@@ -216,6 +260,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இன்று உங்களுக்காகக் கொஞ்சம் நேரம் ஒதுக்குங்கள்",
     'pa': "ਅੱਜ ਆਪਣੇ ਲਈ ਥੋੜ੍ਹਾ ਸਮਾਂ ਕੱਢੋ",
     'bho': "आज अपना खातिर तनी समय निकालीं",
+    'mr': "आज स्वतःसाठी थोडा वेळ काढा",
+    'sa': "अद्य स्वस्यै किञ्चित् समयं ददातु",
   },
   'mom_memory.start_now': {
     'en': "Start now",
@@ -225,6 +271,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இப்போதே தொடங்குங்கள்",
     'pa': "ਹੁਣੇ ਸ਼ੁਰੂ ਕਰੋ",
     'bho': "अबहीं सुरू करीं",
+    'mr': "आत्ता सुरू करा",
+    'sa': "अधुना आरभताम्",
   },
   'mom_memory.stars_total': {
     'en': "{n} / {total} stars",
@@ -234,6 +282,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n} / {total} நட்சத்திரங்கள்",
     'pa': "{n} / {total} ਸਿਤਾਰੇ",
     'bho': "{n} / {total} तारा",
+    'mr': "{n} / {total} तारे",
+    'sa': "{n} / {total} तारकाः",
   },
   'mom_memory.bag_best': {
     'en': "Best: {n} remembered  •  Level {level}",
@@ -243,6 +293,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சிறந்தது: {n} நினைவில்  •  நிலை {level}",
     'pa': "ਸਭ ਤੋਂ ਵਧੀਆ: {n} ਯਾਦ ਰਹੇ  •  ਲੈਵਲ {level}",
     'bho': "बेस्ट: {n} याद रहल  •  लेवल {level}",
+    'mr': "सर्वोत्तम: {n} लक्षात राहिले  •  लेव्हल {level}",
+    'sa': "सर्वोत्तमम्: {n} स्मृतानि  •  स्तरः {level}",
   },
   'mom_memory.lullaby_longest': {
     'en': "Longest: {n}",
@@ -252,6 +304,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மிக நீளம்: {n}",
     'pa': "ਸਭ ਤੋਂ ਲੰਮਾ: {n}",
     'bho': "सबसे लमहर: {n}",
+    'mr': "सर्वात लांब: {n}",
+    'sa': "दीर्घतमम्: {n}",
   },
   'mom_memory.breath_stats': {
     'en': "{n} sessions  •  {m} min",
@@ -261,6 +315,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n} அமர்வுகள்  •  {m} நிமி",
     'pa': "{n} ਸੈਸ਼ਨ  •  {m} ਮਿੰਟ",
     'bho': "{n} सत्र  •  {m} मिनट",
+    'mr': "{n} सत्रे  •  {m} मिनिटे",
+    'sa': "{n} सत्राणि  •  {m} निमेषाः",
   },
   'mom_memory.story_stats': {
     'en': "Best: {n}/3  •  {played} stories",
@@ -270,6 +326,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சிறந்தது: {n}/3  •  {played} கதைகள்",
     'pa': "ਸਭ ਤੋਂ ਵਧੀਆ: {n}/3  •  {played} ਕਹਾਣੀਆਂ",
     'bho': "बेस्ट: {n}/3  •  {played} कहानी",
+    'mr': "सर्वोत्तम: {n}/3  •  {played} गोष्टी",
+    'sa': "सर्वोत्तमम्: {n}/3  •  {played} कथाः",
   },
 
   // ---------- game titles + subtitles ----------
@@ -281,6 +339,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "குழந்தைப் பொருள் ஜோடி",
     'pa': "ਬੇਬੀ ਚੀਜ਼ਾਂ ਮਿਲਾਓ",
     'bho': "बबुआ के चीज मिलाईं",
+    'mr': "बाळाच्या वस्तू जुळवा",
+    'sa': "शिशुवस्तु-मेलनम्",
   },
   'mom_memory.match_sub': {
     'en': "Match the lovely things",
@@ -290,6 +350,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "அழகான பொருட்களை ஜோடி சேருங்கள்",
     'pa': "ਪਿਆਰੀਆਂ ਚੀਜ਼ਾਂ ਜੋੜੋ",
     'bho': "पियारा चीजन के जोड़ीं",
+    'mr': "गोड वस्तू जुळवा",
+    'sa': "मधुराणि वस्तूनि मेलयतु",
   },
   'mom_memory.bag_title': {
     'en': "Hospital Bag Recall",
@@ -299,6 +361,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மருத்துவமனை பை நினைவு",
     'pa': "ਹਸਪਤਾਲ ਬੈਗ ਯਾਦ ਕਰੋ",
     'bho': "अस्पताल के बैग याद करीं",
+    'mr': "हॉस्पिटल बॅग आठवा",
+    'sa': "चिकित्सालय-स्यूतः स्मरणम्",
   },
   'mom_memory.bag_sub': {
     'en': "Look, remember, choose",
@@ -308,6 +372,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "பாருங்கள், நினைவில் வையுங்கள், தேர்ந்தெடுங்கள்",
     'pa': "ਵੇਖੋ, ਯਾਦ ਕਰੋ, ਚੁਣੋ",
     'bho': "देखीं, याद करीं, चुनीं",
+    'mr': "पाहा, लक्षात ठेवा, निवडा",
+    'sa': "पश्यतु, स्मरतु, चिनोतु",
   },
   'mom_memory.lullaby_title': {
     'en': "Lullaby Pattern",
@@ -317,6 +383,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "தாலாட்டு வரிசை",
     'pa': "ਲੋਰੀ ਪੈਟਰਨ",
     'bho': "लोरी पैटर्न",
+    'mr': "अंगाई पॅटर्न",
+    'sa': "लालीगीत-क्रमः",
   },
   'mom_memory.lullaby_sub': {
     'en': "Repeat the soft light sequence",
@@ -326,6 +394,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மென்மையான ஒளி வரிசையைத் திரும்பச் செய்யுங்கள்",
     'pa': "ਨਰਮ ਰੋਸ਼ਨੀ ਦਾ ਕ੍ਰਮ ਦੁਹਰਾਓ",
     'bho': "नरम अंजोर के क्रम दोहराईं",
+    'mr': "मंद प्रकाशाचा क्रम पुन्हा करा",
+    'sa': "मृदुप्रकाशस्य क्रमं पुनरावर्तयतु",
   },
   'mom_memory.breathe_title': {
     'en': "Breathe & Focus",
@@ -335,6 +405,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சுவாசம் & கவனம்",
     'pa': "ਸਾਹ ਅਤੇ ਧਿਆਨ",
     'bho': "साँस आ धियान",
+    'mr': "श्वास आणि ध्यान",
+    'sa': "श्वासः ध्यानं च",
   },
   'mom_memory.breathe_sub': {
     'en': "Deep breaths + a small question",
@@ -344,6 +416,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஆழ்ந்த மூச்சு + சிறிய கேள்வி",
     'pa': "ਡੂੰਘਾ ਸਾਹ + ਛੋਟਾ ਸਵਾਲ",
     'bho': "गहिर साँस + छोट सवाल",
+    'mr': "दीर्घ श्वास + एक छोटा प्रश्न",
+    'sa': "दीर्घश्वासाः + लघुप्रश्नः",
   },
   'mom_memory.missing_title': {
     'en': "What's missing?",
@@ -353,6 +427,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எது காணவில்லை?",
     'pa': "ਕੀ ਗਿਆ?",
     'bho': "का गइल?",
+    'mr': "काय गेले?",
+    'sa': "किं गतम्?",
   },
   'mom_memory.missing_sub': {
     'en': "Which thing hid away?",
@@ -362,6 +438,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எந்தப் பொருள் ஒளிந்தது?",
     'pa': "ਕਿਹੜੀ ਚੀਜ਼ ਲੁਕ ਗਈ?",
     'bho': "कवन चीज लुका गइल?",
+    'mr': "कोणती वस्तू लपली?",
+    'sa': "किं वस्तु निलीनम्?",
   },
   'mom_memory.pairs_title': {
     'en': "Match the Pairs",
@@ -371,6 +449,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஜோடி சேர்",
     'pa': "ਜੋੜੀ ਮਿਲਾਓ",
     'bho': "जोड़ी मिलाईं",
+    'mr': "जोड्या जुळवा",
+    'sa': "युग्मानि मेलयतु",
   },
   'mom_memory.pairs_sub': {
     'en': "Remember words and their partners",
@@ -380,6 +460,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சொற்களையும் அவற்றின் ஜோடிகளையும் நினைவில் வையுங்கள்",
     'pa': "ਸ਼ਬਦ ਅਤੇ ਸਾਥੀ ਯਾਦ ਕਰੋ",
     'bho': "सबद आ ओकर संगी याद करीं",
+    'mr': "शब्द आणि त्यांचे जोडीदार लक्षात ठेवा",
+    'sa': "शब्दान् तेषां सहचरान् च स्मरतु",
   },
   'mom_memory.where_title': {
     'en': "Where was it?",
@@ -389,6 +471,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எங்கே இருந்தது?",
     'pa': "ਕਿੱਥੇ ਸੀ?",
     'bho': "कहाँ रहे?",
+    'mr': "कुठे होते?",
+    'sa': "कुत्र आसीत्?",
   },
   'mom_memory.where_sub': {
     'en': "Remember where the emoji were",
@@ -398,6 +482,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எமோஜிகளின் இடத்தை நினைவில் வையுங்கள்",
     'pa': "ਇਮੋਜੀ ਦੀ ਥਾਂ ਯਾਦ ਕਰੋ",
     'bho': "इमोजी के जगह याद करीं",
+    'mr': "इमोजी कुठे होते ते लक्षात ठेवा",
+    'sa': "इमोजी कुत्र आसन् इति स्मरतु",
   },
   'mom_memory.story_title': {
     'en': "Story Recall",
@@ -407,6 +493,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "கதை நினைவு",
     'pa': "ਕਹਾਣੀ ਯਾਦ ਕਰੋ",
     'bho': "कहानी याद करीं",
+    'mr': "गोष्ट आठवा",
+    'sa': "कथा-स्मरणम्",
   },
   'mom_memory.story_sub': {
     'en': "A short story, 3 questions",
@@ -416,6 +504,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சிறு கதை, 3 கேள்விகள்",
     'pa': "ਛੋਟੀ ਕਹਾਣੀ, 3 ਸਵਾਲ",
     'bho': "छोट कहानी, 3 सवाल",
+    'mr': "एक छोटी गोष्ट, 3 प्रश्न",
+    'sa': "लघुकथा, 3 प्रश्नाः",
   },
 
   // ---------- Baby Items Match ----------
@@ -427,6 +517,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எளிது",
     'pa': "ਆਸਾਨ",
     'bho': "आसान",
+    'mr': "सोपे",
+    'sa': "सरलम्",
   },
   'mom_memory.level_medium': {
     'en': "Medium",
@@ -436,6 +528,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நடுத்தரம்",
     'pa': "ਦਰਮਿਆਨਾ",
     'bho': "मध्यम",
+    'mr': "मध्यम",
+    'sa': "मध्यमम्",
   },
   'mom_memory.level_more': {
     'en': "A little more",
@@ -445,6 +539,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சற்று வேறு",
     'pa': "ਥੋੜ੍ਹਾ ਵੱਖਰਾ",
     'bho': "तनी अलग",
+    'mr': "थोडे जास्त",
+    'sa': "किञ्चित् अधिकम्",
   },
   'mom_memory.match_win': {
     'en': "All pairs found in {moves} moves. Thank you for playing gently!",
@@ -454,6 +550,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{moves} நகர்வுகளில் எல்லா ஜோடிகளும் கிடைத்தன. நிதானமாக விளையாடியதற்கு நன்றி!",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ ਸਾਰੀਆਂ ਜੋੜੀਆਂ ਮਿਲ ਗਈਆਂ। ਆਰਾਮ ਨਾਲ ਖੇਡਣ ਲਈ ਸ਼ੁਕਰੀਆ!",
     'bho': "{moves} चाल में सब जोड़ी मिल गइल। आराम से खेले खातिर धन्यवाद!",
+    'mr': "{moves} चालींमध्ये सर्व जोड्या सापडल्या. आरामात खेळल्याबद्दल धन्यवाद!",
+    'sa': "{moves} चालैः सर्वाणि युग्मानि लब्धानि। शान्त्या क्रीडनाय धन्यवादाः!",
   },
   'mom_memory.match_status': {
     'en': "Moves: {moves}   •   {done}/{total} pairs",
@@ -463,6 +561,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நகர்வுகள்: {moves}   •   {done}/{total} ஜோடிகள்",
     'pa': "ਚਾਲਾਂ: {moves}   •   {done}/{total} ਜੋੜੀਆਂ",
     'bho': "चाल: {moves}   •   {done}/{total} जोड़ी",
+    'mr': "चाली: {moves}   •   {done}/{total} जोड्या",
+    'sa': "चालाः: {moves}   •   {done}/{total} युग्मानि",
   },
 
   // ---------- Hospital Bag Recall ----------
@@ -474,6 +574,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n} பொருட்களைப் பாருங்கள், பிறகு நினைவில் வைத்துத் தேர்ந்தெடுங்கள்.\nநிதானமாக, அவசரம் இல்லை.",
     'pa': "{n} ਚੀਜ਼ਾਂ ਵੇਖੋ, ਫਿਰ ਯਾਦ ਕਰਕੇ ਚੁਣੋ।\nਆਰਾਮ ਨਾਲ, ਕੋਈ ਕਾਹਲੀ ਨਹੀਂ।",
     'bho': "{n} गो चीज देखीं, फेर याद करके चुनीं।\nआराम से, कवनो हड़बड़ी नइखे।",
+    'mr': "{n} वस्तू पाहा, मग आठवून निवडा.\nआरामात, घाई नाही.",
+    'sa': "{n} वस्तूनि पश्यतु, ततः स्मृत्वा चिनोतु।\nशनैः, त्वरा नास्ति।",
   },
   'mom_memory.bag_pick': {
     'en': "Which things did you see? ({n}/{total})",
@@ -483,6 +585,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எந்தப் பொருட்கள் தெரிந்தன? ({n}/{total})",
     'pa': "ਕਿਹੜੀਆਂ ਚੀਜ਼ਾਂ ਦਿਸੀਆਂ ਸਨ? ({n}/{total})",
     'bho': "कवन-कवन चीज लउकल रहे? ({n}/{total})",
+    'mr': "कोणत्या वस्तू दिसल्या होत्या? ({n}/{total})",
+    'sa': "कानि वस्तूनि दृष्टानि? ({n}/{total})",
   },
   'mom_memory.bag_result': {
     'en': "{n}/{total} remembered",
@@ -492,6 +596,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n}/{total} நினைவில் இருந்தன",
     'pa': "{n}/{total} ਯਾਦ ਰਹੇ",
     'bho': "{n}/{total} याद रहल",
+    'mr': "{n}/{total} लक्षात राहिले",
+    'sa': "{n}/{total} स्मृतानि",
   },
 
   // ---------- Lullaby Pattern ----------
@@ -503,6 +609,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "தொடங்க கீழே தட்டுங்கள்",
     'pa': "ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਹੇਠਾਂ ਦਬਾਓ",
     'bho': "सुरू करे खातिर नीचे दबाईं",
+    'mr': "सुरू करण्यासाठी खाली दाबा",
+    'sa': "आरम्भाय अधः स्पृशतु",
   },
   'mom_memory.your_turn': {
     'en': "Your turn now",
@@ -512,6 +620,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இப்போது உங்கள் முறை",
     'pa': "ਹੁਣ ਤੁਹਾਡੀ ਵਾਰੀ",
     'bho': "अब राउर बारी",
+    'mr': "आता तुमची पाळी",
+    'sa': "अधुना भवत्याः वारः",
   },
   'mom_memory.lullaby_retry': {
     'en': "{msg}. Let's show the pattern again",
@@ -521,6 +631,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{msg}. வரிசையை மீண்டும் காட்டுகிறோம்",
     'pa': "{msg}। ਪੈਟਰਨ ਫਿਰ ਵਿਖਾਉਂਦੇ ਹਾਂ",
     'bho': "{msg}। पैटर्न फेर से देखावल जाता",
+    'mr': "{msg}. पॅटर्न पुन्हा दाखवूया",
+    'sa': "{msg}। क्रमं पुनः दर्शयामः",
   },
   'mom_memory.lullaby_longer': {
     'en': "A little longer now, watch carefully",
@@ -530,6 +642,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இப்போது சற்று நீளம், கவனமாகப் பாருங்கள்",
     'pa': "ਹੁਣ ਥੋੜ੍ਹਾ ਲੰਮਾ, ਧਿਆਨ ਨਾਲ ਵੇਖੋ",
     'bho': "अब तनी लमहर, धियान से देखीं",
+    'mr': "आता थोडे लांब, लक्षपूर्वक पाहा",
+    'sa': "अधुना किञ्चित् दीर्घम्, ध्यानेन पश्यतु",
   },
   'mom_memory.lullaby_status': {
     'en': "Length {n}   •   Best: {best}",
@@ -539,6 +653,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நீளம் {n}   •   சிறந்தது: {best}",
     'pa': "ਲੰਬਾਈ {n}   •   ਸਭ ਤੋਂ ਵਧੀਆ: {best}",
     'bho': "लंबाई {n}   •   सबसे बढ़िया: {best}",
+    'mr': "लांबी {n}   •   सर्वोत्तम: {best}",
+    'sa': "दैर्घ्यम् {n}   •   सर्वोत्तमम्: {best}",
   },
   'mom_memory.lullaby_best_len': {
     'en': "Best length: {best}",
@@ -548,6 +664,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "சிறந்த நீளம்: {best}",
     'pa': "ਸਭ ਤੋਂ ਵਧੀਆ ਲੰਬਾਈ: {best}",
     'bho': "सबसे बढ़िया लंबाई: {best}",
+    'mr': "सर्वोत्तम लांबी: {best}",
+    'sa': "सर्वोत्तमं दैर्घ्यम्: {best}",
   },
 
   // ---------- Breathe & Focus ----------
@@ -559,6 +677,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஆழ்ந்த மூச்சு, அமைதியான மனம்",
     'pa': "ਡੂੰਘਾ ਸਾਹ, ਸ਼ਾਂਤ ਮਨ",
     'bho': "गहिर साँस, सांत मन",
+    'mr': "दीर्घ श्वास, शांत मन",
+    'sa': "दीर्घश्वासः, शान्तं मनः",
   },
   'mom_memory.breathe_info': {
     'en': "Breathe in 4, hold 4, out 6.\nJust follow the circle.",
@@ -568,6 +688,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மூச்சை உள்ளே 4, நிறுத்தி 4, வெளியே 6.\nவட்டத்துடன் சேர்ந்து செல்லுங்கள்.",
     'pa': "ਸਾਹ ਅੰਦਰ 4, ਰੋਕੋ 4, ਬਾਹਰ 6।\nਬੱਸ ਗੋਲੇ ਦੇ ਨਾਲ-ਨਾਲ ਚੱਲੋ।",
     'bho': "साँस भीतर 4, रोकीं 4, बाहर 6।\nबस गोला के संगे-संगे चलीं।",
+    'mr': "श्वास आत 4, थांबा 4, बाहेर 6.\nफक्त वर्तुळासोबत चला.",
+    'sa': "अन्तः श्वासः 4, धारणम् 4, बहिः 6।\nकेवलं वृत्तम् अनुसरतु।",
   },
   'mom_memory.minutes': {
     'en': "{n} min",
@@ -577,6 +699,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n} நிமி",
     'pa': "{n} ਮਿੰਟ",
     'bho': "{n} मिनट",
+    'mr': "{n} मिनिटे",
+    'sa': "{n} निमेषाः",
   },
   'mom_memory.sessions_so_far': {
     'en': "{n} sessions so far",
@@ -586,6 +710,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இதுவரை {n} அமர்வுகள்",
     'pa': "ਹੁਣ ਤੱਕ {n} ਸੈਸ਼ਨ",
     'bho': "अब ले {n} सत्र",
+    'mr': "आतापर्यंत {n} सत्रे",
+    'sa': "अद्यावधि {n} सत्राणि",
   },
   'mom_memory.inhale': {
     'en': "Breathe in...",
@@ -595,6 +721,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மூச்சை உள்ளிழுங்கள்...",
     'pa': "ਸਾਹ ਅੰਦਰ...",
     'bho': "साँस भीतर...",
+    'mr': "श्वास आत...",
+    'sa': "श्वासं गृह्णातु...",
   },
   'mom_memory.hold': {
     'en': "Gently hold",
@@ -604,6 +732,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மெதுவாக நிறுத்துங்கள்",
     'pa': "ਆਰਾਮ ਨਾਲ ਰੋਕੋ",
     'bho': "आराम से रोकीं",
+    'mr': "हळूच थांबा",
+    'sa': "शनैः धारयतु",
   },
   'mom_memory.exhale': {
     'en': "Slowly out...",
@@ -613,6 +743,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மெதுவாக வெளிவிடுங்கள்...",
     'pa': "ਹੌਲੀ ਜਿਹੇ ਬਾਹਰ...",
     'bho': "धीरे से बाहर...",
+    'mr': "हळूहळू बाहेर...",
+    'sa': "शनैः बहिः...",
   },
   'mom_memory.stop': {
     'en': "Stop",
@@ -622,6 +754,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நிறுத்து",
     'pa': "ਰੁਕੋ",
     'bho': "रुकीं",
+    'mr': "थांबा",
+    'sa': "विरमतु",
   },
   'mom_memory.quiz_q': {
     'en': "A small question:\nWhich colour did you see?",
@@ -631,6 +765,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஒரு சிறிய கேள்வி:\nஎந்த நிறம் தெரிந்தது?",
     'pa': "ਇੱਕ ਛੋਟਾ ਜਿਹਾ ਸਵਾਲ:\nਕਿਹੜਾ ਰੰਗ ਦਿਸਿਆ ਸੀ?",
     'bho': "एगो छोट सवाल:\nकवन रंग लउकल रहे?",
+    'mr': "एक छोटा प्रश्न:\nकोणता रंग दिसला होता?",
+    'sa': "एकः लघुप्रश्नः:\nकः वर्णः दृष्टः?",
   },
   'mom_memory.color_right': {
     'en': "Exactly right! It was {color}.",
@@ -640,6 +776,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மிகச் சரி! அது {color}.",
     'pa': "ਬਿਲਕੁਲ ਸਹੀ! {color} ਸੀ।",
     'bho': "एकदम सही! {color} रहे।",
+    'mr': "अगदी बरोबर! तो {color} होता.",
+    'sa': "सम्यक्! सः {color} आसीत्।",
   },
   'mom_memory.color_wrong': {
     'en': "No worries, it was {color}.",
@@ -649,6 +787,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "பரவாயில்லை, அது {color}.",
     'pa': "ਕੋਈ ਗੱਲ ਨਹੀਂ, {color} ਸੀ।",
     'bho': "कवनो बात ना, {color} रहे।",
+    'mr': "काळजी नको, तो {color} होता.",
+    'sa': "चिन्ता मास्तु, सः {color} आसीत्।",
   },
   'mom_memory.breathe_thanks': {
     'en': "You spent {n} calm minutes. Thank you!",
@@ -658,6 +798,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நீங்கள் {n} நிமிடங்கள் அமைதியாகக் கழித்தீர்கள். நன்றி!",
     'pa': "ਤੁਸੀਂ {n} ਮਿੰਟ ਸ਼ਾਂਤੀ ਨਾਲ ਬਿਤਾਏ। ਸ਼ੁਕਰੀਆ!",
     'bho': "रउआ {n} मिनट सांति से बितवनी। धन्यवाद!",
+    'mr': "तुम्ही {n} मिनिटे शांततेत घालवली. धन्यवाद!",
+    'sa': "भवती {n} निमेषान् शान्त्या यापितवती। धन्यवादाः!",
   },
 
   // ---------- What's missing? ----------
@@ -669,6 +811,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n} பொருட்களைப் பாருங்கள். ஒன்று ஒளிந்துகொள்ளும்.\nஎது போனது என்று சொல்லுங்கள். நிதானமாக.",
     'pa': "{n} ਚੀਜ਼ਾਂ ਵੇਖੋ। ਇੱਕ ਲੁਕ ਜਾਵੇਗੀ।\nਦੱਸੋ ਕਿਹੜੀ ਗਈ? ਆਰਾਮ ਨਾਲ।",
     'bho': "{n} गो चीज देखीं। एगो लुका जाई।\nबताईं कवन गइल? आराम से।",
+    'mr': "{n} वस्तू पाहा. एक लपेल.\nकोणती गेली ते सांगा? आरामात.",
+    'sa': "{n} वस्तूनि पश्यतु। एकं निलेष्यते।\nकिं गतम् इति वदतु? शनैः।",
   },
   'mom_memory.first_try': {
     'en': "Right on the first try!",
@@ -678,6 +822,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "முதல் முயற்சியிலேயே சரி!",
     'pa': "ਪਹਿਲੀ ਵਾਰ ਵਿੱਚ ਹੀ ਸਹੀ!",
     'bho': "पहिले बेर में सही!",
+    'mr': "पहिल्याच प्रयत्नात बरोबर!",
+    'sa': "प्रथमप्रयत्ने एव शुद्धम्!",
   },
   'mom_memory.found_carefully': {
     'en': "You found it with care.",
@@ -687,6 +833,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "நீங்கள் கவனமாகக் கண்டுபிடித்தீர்கள்.",
     'pa': "ਤੁਸੀਂ ਧਿਆਨ ਨਾਲ ਲੱਭ ਲਿਆ।",
     'bho': "रउआ धियान से खोज लिहनी।",
+    'mr': "तुम्ही लक्षपूर्वक शोधले.",
+    'sa': "भवती ध्यानेन अन्विष्टवती।",
   },
   'mom_memory.which_gone': {
     'en': "Which thing went away?",
@@ -696,6 +844,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எந்தப் பொருள் போய்விட்டது?",
     'pa': "ਕਿਹੜੀ ਚੀਜ਼ ਚਲੀ ਗਈ?",
     'bho': "कवन चीज चल गइल?",
+    'mr': "कोणती वस्तू निघून गेली?",
+    'sa': "किं वस्तु गतम्?",
   },
   'mom_memory.curtain': {
     'en': "The curtain is coming down...",
@@ -705,6 +855,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "திரை இறங்குகிறது...",
     'pa': "ਪਰਦਾ ਡਿੱਗ ਰਿਹਾ ਹੈ...",
     'bho': "परदा गिरत बा...",
+    'mr': "पडदा खाली येत आहे...",
+    'sa': "यवनिका पतति...",
   },
 
   // ---------- Match the Pairs ----------
@@ -716,6 +868,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n} ஜோடிகளைப் பார்த்து நினைவில் வையுங்கள்.\nபிறகு ஒரு சொல்லின் ஜோடியைத் தேர்ந்தெடுங்கள்.",
     'pa': "{n} ਜੋੜੀਆਂ ਵੇਖੋ ਅਤੇ ਯਾਦ ਕਰੋ।\nਫਿਰ ਇੱਕ ਸ਼ਬਦ ਦਾ ਸਾਥੀ ਚੁਣੋ।",
     'bho': "{n} गो जोड़ी देखीं आ याद करीं।\nफेर एगो सबद के संगी चुनीं।",
+    'mr': "{n} जोड्या पाहा आणि लक्षात ठेवा.\nमग एका शब्दाचा जोडीदार निवडा.",
+    'sa': "{n} युग्मानि पश्यतु स्मरतु च।\nततः एकस्य शब्दस्य सहचरं चिनोतु।",
   },
   'mom_memory.remember_pairs': {
     'en': "Remember these pairs",
@@ -725,6 +879,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "இந்த ஜோடிகளை நினைவில் வையுங்கள்",
     'pa': "ਇਹ ਜੋੜੀਆਂ ਯਾਦ ਕਰੋ",
     'bho': "ई जोड़ी सब याद करीं",
+    'mr': "या जोड्या लक्षात ठेवा",
+    'sa': "एतानि युग्मानि स्मरतु",
   },
   'mom_memory.pairs_q': {
     'en': "What goes with \"{word}\"?",
@@ -734,6 +890,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "\"{word}\" இன் ஜோடி எது?",
     'pa': "\"{word}\" ਦਾ ਸਾਥੀ ਕੌਣ?",
     'bho': "\"{word}\" के संगी के?",
+    'mr': "\"{word}\" चा जोडीदार कोण?",
+    'sa': "\"{word}\" इत्यस्य सहचरः कः?",
   },
   'mom_memory.pairs_wrong': {
     'en': "No worries: {word} - {emoji} {partner}",
@@ -743,6 +901,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "பரவாயில்லை: {word} - {emoji} {partner}",
     'pa': "ਕੋਈ ਗੱਲ ਨਹੀਂ: {word} - {emoji} {partner}",
     'bho': "कवनो बात ना: {word} - {emoji} {partner}",
+    'mr': "काळजी नको: {word} - {emoji} {partner}",
+    'sa': "चिन्ता मास्तु: {word} - {emoji} {partner}",
   },
 
   // ---------- Where was it? ----------
@@ -754,6 +914,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "அழகான எமோஜிகள் சிறிது நேரம் தெரியும், பிறகு ஒளிந்துகொள்ளும்.\nஅவை எங்கே இருந்தன என்று நினைவில் வையுங்கள்.",
     'pa': "ਪਿਆਰੇ ਇਮੋਜੀ ਕੁਝ ਦੇਰ ਦਿਸਣਗੇ, ਫਿਰ ਲੁਕ ਜਾਣਗੇ।\nਯਾਦ ਕਰੋ ਉਹ ਕਿੱਥੇ ਸਨ।",
     'bho': "पियारा इमोजी कुछ देर लउकिहें, फेर लुका जइहें।\nयाद करीं ऊ कहाँ रहलें।",
+    'mr': "गोड इमोजी काही क्षण दिसतील, मग लपतील.\nते कुठे होते ते लक्षात ठेवा.",
+    'sa': "मधुराः इमोजी क्षणं दृश्यन्ते, ततः निलीयन्ते।\nते कुत्र आसन् इति स्मरतु।",
   },
   'mom_memory.where_pick': {
     'en': "Where were they? Choose ({n}/{total})",
@@ -763,6 +925,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "எங்கே இருந்தன? தேர்ந்தெடுங்கள் ({n}/{total})",
     'pa': "ਕਿੱਥੇ ਸਨ? ਚੁਣੋ ({n}/{total})",
     'bho': "कहाँ रहलें? चुनीं ({n}/{total})",
+    'mr': "ते कुठे होते? निवडा ({n}/{total})",
+    'sa': "ते कुत्र आसन्? चिनोतु ({n}/{total})",
   },
   'mom_memory.where_result': {
     'en': "{n}/{total} right spots",
@@ -772,6 +936,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "{n}/{total} சரியான இடங்கள்",
     'pa': "{n}/{total} ਸਹੀ ਥਾਂ",
     'bho': "{n}/{total} सही जगह",
+    'mr': "{n}/{total} योग्य जागा",
+    'sa': "{n}/{total} शुद्धस्थानानि",
   },
 
   // ---------- Story Recall ----------
@@ -783,6 +949,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "ஒரு சிறு கதை",
     'pa': "ਇੱਕ ਛੋਟੀ ਕਹਾਣੀ",
     'bho': "एगो छोट कहानी",
+    'mr': "एक छोटी गोष्ट",
+    'sa': "एका लघुकथा",
   },
   'mom_memory.story_info': {
     'en': "Read the story slowly, then 3 easy questions follow.",
@@ -792,6 +960,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "கதையை நிதானமாகப் படியுங்கள், பிறகு 3 எளிய கேள்விகள் வரும்.",
     'pa': "ਕਹਾਣੀ ਆਰਾਮ ਨਾਲ ਪੜ੍ਹੋ, ਫਿਰ 3 ਆਸਾਨ ਸਵਾਲ ਹੋਣਗੇ।",
     'bho': "कहानी आराम से पढ़ीं, फेर 3 गो आसान सवाल होई।",
+    'mr': "गोष्ट आरामात वाचा, मग 3 सोपे प्रश्न येतील.",
+    'sa': "कथां शनैः पठतु, ततः 3 सरलाः प्रश्नाः भविष्यन्ति।",
   },
   'mom_memory.story_good_try': {
     'en': "Lovely effort! Try again with a new story.",
@@ -801,6 +971,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "மிக நல்ல முயற்சி! புதிய கதையுடன் மீண்டும் முயலுங்கள்.",
     'pa': "ਬਹੁਤ ਵਧੀਆ ਕੋਸ਼ਿਸ਼! ਨਵੀਂ ਕਹਾਣੀ ਨਾਲ ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "बहुत बढ़िया कोसिस! नया कहानी के संगे फेर कोसिस करीं।",
+    'mr': "खूप छान प्रयत्न! नवीन गोष्टीसह पुन्हा प्रयत्न करा.",
+    'sa': "अतीव शोभनः प्रयत्नः! नूतनकथया पुनः प्रयतताम्।",
   },
   'mom_memory.read_done': {
     'en': "I've read it",
@@ -810,6 +982,8 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "படித்துவிட்டேன்",
     'pa': "ਪੜ੍ਹ ਲਿਆ",
     'bho': "पढ़ लेनी",
+    'mr': "वाचले",
+    'sa': "पठितम्",
   },
   'mom_memory.story_wrong': {
     'en': "No worries, the answer was: {answer}",
@@ -819,5 +993,7 @@ const Map<String, Map<String, String>> momMemoryStrings = {
     'ta': "பரவாயில்லை, சரியான பதில்: {answer}",
     'pa': "ਕੋਈ ਗੱਲ ਨਹੀਂ, ਸਹੀ ਜਵਾਬ: {answer}",
     'bho': "कवनो बात ना, सही जवाब: {answer}",
+    'mr': "काळजी नको, बरोबर उत्तर: {answer}",
+    'sa': "चिन्ता मास्तु, शुद्धम् उत्तरम्: {answer}",
   },
 };

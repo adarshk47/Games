@@ -1,5 +1,5 @@
 // Translations for the sliding_puzzle module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> slidingPuzzleStrings = {
   'sliding_puzzle.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "நகர்த்தும் புதிர்",
     'pa': "ਸਲਾਈਡਿੰਗ ਪਜ਼ਲ",
     'bho': "स्लाइडिंग पज़ल",
+    'mr': "स्लायडिंग पझल",
+    'sa': "स्लाइडिंग पज़ल",
   },
   'sliding_puzzle.picture_mode': {
     'en': "Picture mode",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "படப் பயன்முறை",
     'pa': "ਤਸਵੀਰ ਮੋਡ",
     'bho': "फोटो मोड",
+    'mr': "चित्र मोड",
+    'sa': "चित्र-प्रकारः",
   },
   'sliding_puzzle.choose_level': {
     'en': "Choose a level",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "நிலையைத் தேர்ந்தெடுங்கள்",
     'pa': "ਲੈਵਲ ਚੁਣੋ",
     'bho': "लेवल चुनीं",
+    'mr': "लेव्हल निवडा",
+    'sa': "स्तरं चिनुत",
   },
   'sliding_puzzle.solved': {
     'en': "Solved!",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "தீர்ந்தது!",
     'pa': "ਹੱਲ ਹੋ ਗਿਆ!",
     'bho': "हल हो गइल!",
+    'mr': "सुटले!",
+    'sa': "समाहितम्!",
   },
   'sliding_puzzle.result': {
     'en': "{n} moves  -  {time}",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "{n} நகர்வுகள்  -  {time}",
     'pa': "{n} ਚਾਲਾਂ  -  {time}",
     'bho': "{n} चाल  -  {time}",
+    'mr': "{n} चाली  -  {time}",
+    'sa': "{n} चालाः  -  {time}",
   },
   'sliding_puzzle.new_best': {
     'en': "New best moves!",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "புதிய சிறந்த நகர்வுகள்!",
     'pa': "ਨਵਾਂ ਬੈਸਟ!",
     'bho': "नया बेस्ट!",
+    'mr': "नवीन सर्वोत्तम!",
+    'sa': "नूतनं सर्वोत्तमम्!",
   },
   'sliding_puzzle.par': {
     'en': "Par",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "இலக்கு",
     'pa': "ਟੀਚਾ",
     'bho': "लक्ष्य",
+    'mr': "लक्ष्य",
+    'sa': "लक्ष्यम्",
   },
   'sliding_puzzle.par_n': {
     'en': "Par {n}",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "இலக்கு {n}",
     'pa': "ਟੀਚਾ {n}",
     'bho': "लक्ष्य {n}",
+    'mr': "लक्ष्य {n}",
+    'sa': "लक्ष्यम् {n}",
   },
   'sliding_puzzle.bought': {
     'en': "BOUGHT",
@@ -82,5 +98,7 @@ const Map<String, Map<String, String>> slidingPuzzleStrings = {
     'ta': "வாங்கியது",
     'pa': "ਖਰੀਦਿਆ",
     'bho': "खरीदल",
+    'mr': "विकत घेतले",
+    'sa': "क्रीतम्",
   },
 };

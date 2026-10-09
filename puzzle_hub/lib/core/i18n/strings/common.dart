@@ -1,4 +1,4 @@
-// Shared UI words used by every screen. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Shared UI words used by every screen. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 const Map<String, Map<String, String>> commonStrings = {
   'common.cancel': {
     'en': "Cancel",
@@ -8,6 +8,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "ரத்து செய்",
     'pa': "ਰੱਦ ਕਰੋ",
     'bho': "रद्द करीं",
+    'mr': "रद्द करा",
+    'sa': "निरस्यताम्",
   },
   'common.ok': {
     'en': "OK",
@@ -17,6 +19,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "சரி",
     'pa': "ਠੀਕ ਹੈ",
     'bho': "ठीक बा",
+    'mr': "ठीक आहे",
+    'sa': "अस्तु",
   },
   'common.retry': {
     'en': "Retry",
@@ -26,6 +30,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மீண்டும் முயற்சி",
     'pa': "ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
     'bho': "फेर से कोसिस करीं",
+    'mr': "पुन्हा प्रयत्न करा",
+    'sa': "पुनः प्रयतताम्",
   },
   'common.levels': {
     'en': "Levels",
@@ -35,6 +41,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நிலைகள்",
     'pa': "ਲੈਵਲ",
     'bho': "लेवल",
+    'mr': "लेव्हल",
+    'sa': "स्तराः",
   },
   'common.replay': {
     'en': "Replay",
@@ -44,6 +52,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மீண்டும் விளையாடு",
     'pa': "ਦੁਬਾਰਾ ਖੇਡੋ",
     'bho': "फेर से खेलीं",
+    'mr': "पुन्हा खेळा",
+    'sa': "पुनः क्रीडतु",
   },
   'common.next_level': {
     'en': "Next level",
@@ -53,6 +63,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "அடுத்த நிலை",
     'pa': "ਅਗਲਾ ਲੈਵਲ",
     'bho': "अगिला लेवल",
+    'mr': "पुढील लेव्हल",
+    'sa': "अग्रिमः स्तरः",
   },
   'common.menu': {
     'en': "Menu",
@@ -62,6 +74,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மெனு",
     'pa': "ਮੀਨੂ",
     'bho': "मेनू",
+    'mr': "मेनू",
+    'sa': "सूची",
   },
   'common.play': {
     'en': "Play",
@@ -71,6 +85,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "விளையாடு",
     'pa': "ਖੇਡੋ",
     'bho': "खेलीं",
+    'mr': "खेळा",
+    'sa': "क्रीडतु",
   },
   'common.play_again': {
     'en': "Play again",
@@ -80,6 +96,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மீண்டும் விளையாடு",
     'pa': "ਫਿਰ ਖੇਡੋ",
     'bho': "फेर से खेलीं",
+    'mr': "पुन्हा खेळा",
+    'sa': "पुनः क्रीडतु",
   },
   'common.continue': {
     'en': "Continue",
@@ -89,6 +107,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "தொடரவும்",
     'pa': "ਜਾਰੀ ਰੱਖੋ",
     'bho': "आगे बढ़ीं",
+    'mr': "सुरू ठेवा",
+    'sa': "अनुवर्तताम्",
   },
   'common.back': {
     'en': "Back",
@@ -98,6 +118,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "பின் செல்",
     'pa': "ਪਿੱਛੇ",
     'bho': "पाछे",
+    'mr': "मागे",
+    'sa': "पृष्ठतः",
   },
   'common.hint': {
     'en': "Hint",
@@ -107,6 +129,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "குறிப்பு",
     'pa': "ਸੰਕੇਤ",
     'bho': "हिंट",
+    'mr': "संकेत",
+    'sa': "सङ्केतः",
   },
   'common.undo': {
     'en': "Undo",
@@ -116,6 +140,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "செயல்தவிர்",
     'pa': "ਵਾਪਸ ਕਰੋ",
     'bho': "वापस करीं",
+    'mr': "मागे घ्या",
+    'sa': "प्रत्याहरतु",
   },
   'common.restart': {
     'en': "Restart",
@@ -125,6 +151,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மறுதொடக்கம்",
     'pa': "ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ",
     'bho': "फेर से सुरू करीं",
+    'mr': "पुन्हा सुरू करा",
+    'sa': "पुनः आरभताम्",
   },
   'common.level_n': {
     'en': "Level {n}",
@@ -134,6 +162,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நிலை {n}",
     'pa': "ਲੈਵਲ {n}",
     'bho': "लेवल {n}",
+    'mr': "लेव्हल {n}",
+    'sa': "स्तरः {n}",
   },
   'common.moves': {
     'en': "Moves",
@@ -143,6 +173,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நகர்வுகள்",
     'pa': "ਚਾਲਾਂ",
     'bho': "चाल",
+    'mr': "चाली",
+    'sa': "चालाः",
   },
   'common.time': {
     'en': "Time",
@@ -152,6 +184,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நேரம்",
     'pa': "ਸਮਾਂ",
     'bho': "समय",
+    'mr': "वेळ",
+    'sa': "समयः",
   },
   'common.best': {
     'en': "Best",
@@ -161,6 +195,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "சிறந்தது",
     'pa': "ਸਭ ਤੋਂ ਵਧੀਆ",
     'bho': "सबसे बढ़िया",
+    'mr': "सर्वोत्तम",
+    'sa': "सर्वोत्तमम्",
   },
   'common.score': {
     'en': "Score",
@@ -170,6 +206,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மதிப்பெண்",
     'pa': "ਸਕੋਰ",
     'bho': "स्कोर",
+    'mr': "स्कोअर",
+    'sa': "अङ्काः",
   },
   'common.lives': {
     'en': "Lives",
@@ -179,6 +217,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "உயிர்கள்",
     'pa': "ਜਾਨਾਂ",
     'bho': "जान",
+    'mr': "जीव",
+    'sa': "जीवनानि",
   },
   'common.stars': {
     'en': "Stars",
@@ -188,6 +228,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நட்சத்திரங்கள்",
     'pa': "ਤਾਰੇ",
     'bho': "स्टार",
+    'mr': "तारे",
+    'sa': "तारकाः",
   },
   'common.locked': {
     'en': "Locked",
@@ -197,6 +239,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "பூட்டப்பட்டது",
     'pa': "ਬੰਦ ਹੈ",
     'bho': "बंद बा",
+    'mr': "लॉक आहे",
+    'sa': "अवरुद्धम्",
   },
   'common.tier.easy': {
     'en': "Easy",
@@ -206,6 +250,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "எளிது",
     'pa': "ਆਸਾਨ",
     'bho': "आसान",
+    'mr': "सोपे",
+    'sa': "सरलम्",
   },
   'common.tier.medium': {
     'en': "Medium",
@@ -215,6 +261,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நடுத்தரம்",
     'pa': "ਦਰਮਿਆਨਾ",
     'bho': "मध्यम",
+    'mr': "मध्यम",
+    'sa': "मध्यमम्",
   },
   'common.tier.hard': {
     'en': "Hard",
@@ -224,6 +272,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "கடினம்",
     'pa': "ਔਖਾ",
     'bho': "कठिन",
+    'mr': "कठीण",
+    'sa': "कठिनम्",
   },
   'common.tier.extreme': {
     'en': "Extreme",
@@ -233,6 +283,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மிகக் கடினம்",
     'pa': "ਬਹੁਤ ਔਖਾ",
     'bho': "बहुते कठिन",
+    'mr': "खूप कठीण",
+    'sa': "अतिकठिनम्",
   },
   'common.level_complete': {
     'en': "Level complete!",
@@ -242,6 +294,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நிலை முடிந்தது!",
     'pa': "ਲੈਵਲ ਪੂਰਾ!",
     'bho': "लेवल पूरा भइल!",
+    'mr': "लेव्हल पूर्ण!",
+    'sa': "स्तरः सम्पूर्णः!",
   },
   'common.game_over': {
     'en': "Game over",
@@ -251,6 +305,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "விளையாட்டு முடிந்தது",
     'pa': "ਖੇਡ ਖ਼ਤਮ",
     'bho': "खेल खतम",
+    'mr': "खेळ संपला",
+    'sa': "क्रीडा समाप्ता",
   },
   'common.you_win': {
     'en': "You win!",
@@ -260,6 +316,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நீங்கள் வென்றீர்கள்!",
     'pa': "ਤੁਸੀਂ ਜਿੱਤ ਗਏ!",
     'bho': "रउआ जीत गइनी!",
+    'mr': "तुम्ही जिंकलात!",
+    'sa': "भवान् विजितवान्!",
   },
   'common.try_again': {
     'en': "Try again",
@@ -269,6 +327,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மீண்டும் முயற்சிக்கவும்",
     'pa': "ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
     'bho': "फेर से कोसिस करीं",
+    'mr': "पुन्हा प्रयत्न करा",
+    'sa': "पुनः प्रयतताम्",
   },
   'common.coins': {
     'en': "Coins",
@@ -278,6 +338,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நாணயங்கள்",
     'pa': "ਸਿੱਕੇ",
     'bho': "सिक्का",
+    'mr': "नाणी",
+    'sa': "मुद्राः",
   },
   'common.settings': {
     'en': "Settings",
@@ -287,6 +349,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "அமைப்புகள்",
     'pa': "ਸੈਟਿੰਗਾਂ",
     'bho': "सेटिंग",
+    'mr': "सेटिंग्ज",
+    'sa': "विन्यासाः",
   },
   'common.language': {
     'en': "Language",
@@ -296,6 +360,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மொழி",
     'pa': "ਭਾਸ਼ਾ",
     'bho': "भाषा",
+    'mr': "भाषा",
+    'sa': "भाषा",
   },
   'common.choose_language': {
     'en': "Choose your language",
@@ -305,6 +371,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
     'pa': "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
     'bho': "आपन भाषा चुनीं",
+    'mr': "तुमची भाषा निवडा",
+    'sa': "स्वभाषां चिनोतु",
   },
   'common.yes': {
     'en': "Yes",
@@ -314,6 +382,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "ஆம்",
     'pa': "ਹਾਂ",
     'bho': "हँ",
+    'mr': "होय",
+    'sa': "आम्",
   },
   'common.no': {
     'en': "No",
@@ -323,6 +393,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "இல்லை",
     'pa': "ਨਹੀਂ",
     'bho': "ना",
+    'mr': "नाही",
+    'sa': "न",
   },
   'common.save': {
     'en': "Save",
@@ -332,6 +404,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "சேமி",
     'pa': "ਸੇਵ ਕਰੋ",
     'bho': "सेव करीं",
+    'mr': "सेव्ह करा",
+    'sa': "रक्षतु",
   },
   'common.close': {
     'en': "Close",
@@ -341,6 +415,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "மூடு",
     'pa': "ਬੰਦ ਕਰੋ",
     'bho': "बंद करीं",
+    'mr': "बंद करा",
+    'sa': "पिदधातु",
   },
   'common.new_game': {
     'en': "New game",
@@ -350,6 +426,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "புதிய விளையாட்டு",
     'pa': "ਨਵੀਂ ਖੇਡ",
     'bho': "नया खेल",
+    'mr': "नवीन खेळ",
+    'sa': "नूतनक्रीडा",
   },
   'common.last_played': {
     'en': "Last played",
@@ -359,6 +437,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "கடைசியாக விளையாடியது",
     'pa': "ਆਖਰੀ ਵਾਰ ਖੇਡਿਆ",
     'bho': "पिछला खेलल",
+    'mr': "शेवटचे खेळले",
+    'sa': "अन्तिमवारं क्रीडितम्",
   },
   'common.free': {
     'en': "Free",
@@ -368,6 +448,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "இலவசம்",
     'pa': "ਮੁਫ਼ਤ",
     'bho': "मुफ्त",
+    'mr': "मोफत",
+    'sa': "निःशुल्कम्",
   },
   'common.skip.title': {
     'en': "Unlock level {n}?",
@@ -377,6 +459,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நிலை {n} ஐ திறக்கவா?",
     'pa': "ਲੈਵਲ {n} ਖੋਲ੍ਹੀਏ?",
     'bho': "लेवल {n} खोलीं?",
+    'mr': "लेव्हल {n} उघडायचे?",
+    'sa': "स्तरः {n} उद्घाट्यताम्?",
   },
   'common.skip.body': {
     'en': "You have reached level {from}. Skipping {gap} levels costs {price} coins. You can play this level {plays} times. Playing one by one is free!",
@@ -386,6 +470,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நீங்கள் நிலை {from} வரை வந்துள்ளீர்கள். {gap} நிலைகளைத் தவிர்க்க {price} நாணயங்கள் தேவை. இந்த நிலையை {plays} முறை விளையாடலாம். ஒவ்வொன்றாக விளையாடுவது இலவசம்!",
     'pa': "ਤੁਸੀਂ ਲੈਵਲ {from} ਤੱਕ ਪਹੁੰਚੇ ਹੋ। {gap} ਲੈਵਲ ਛੱਡਣ ਲਈ {price} ਸਿੱਕੇ ਲੱਗਣਗੇ। ਤੁਸੀਂ ਇਹ ਲੈਵਲ {plays} ਵਾਰ ਖੇਡ ਸਕਦੇ ਹੋ। ਇੱਕ-ਇੱਕ ਕਰਕੇ ਖੇਡਣਾ ਮੁਫ਼ਤ ਹੈ!",
     'bho': "रउआ लेवल {from} ले पहुँचल बानी। {gap} लेवल छोड़े खातिर {price} सिक्का लागी। ई लेवल रउआ {plays} बेर खेल सकेनी। एक-एक करके खेलल मुफ्त बा!",
+    'mr': "तुम्ही लेव्हल {from} पर्यंत पोहोचला आहात. {gap} लेव्हल वगळण्यासाठी {price} नाणी लागतील. तुम्ही हे लेव्हल {plays} वेळा खेळू शकता. एकेक करून खेळणे मोफत आहे!",
+    'sa': "भवान् स्तरं {from} यावत् प्राप्तवान्। {gap} स्तराणां लङ्घनाय {price} मुद्राः आवश्यकाः। अयं स्तरः {plays} वारं क्रीडितुं शक्यते। एकैकशः क्रीडनं निःशुल्कम्!",
   },
   'common.skip.buy': {
     'en': "Unlock for {price} coins",
@@ -395,6 +481,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "{price} நாணயங்களில் திற",
     'pa': "{price} ਸਿੱਕਿਆਂ ਵਿੱਚ ਖੋਲ੍ਹੋ",
     'bho': "{price} सिक्का में खोलीं",
+    'mr': "{price} नाण्यांत उघडा",
+    'sa': "{price} मुद्राभिः उद्घाटयतु",
   },
   'common.skip.not_enough_title': {
     'en': "Not enough coins",
@@ -404,6 +492,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "நாணயங்கள் போதாது",
     'pa': "ਸਿੱਕੇ ਘੱਟ ਹਨ",
     'bho': "सिक्का कम बा",
+    'mr': "नाणी कमी आहेत",
+    'sa': "मुद्राः अपर्याप्ताः",
   },
   'common.skip.not_enough': {
     'en': "You need {price} coins. Play levels one by one for free, or earn coins in the Shop.",
@@ -413,6 +503,8 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "உங்களுக்கு {price} நாணயங்கள் தேவை. நிலைகளை ஒவ்வொன்றாக இலவசமாக விளையாடுங்கள், அல்லது கடையில் நாணயங்கள் சம்பாதியுங்கள்.",
     'pa': "ਤੁਹਾਨੂੰ {price} ਸਿੱਕੇ ਚਾਹੀਦੇ ਹਨ। ਲੈਵਲ ਇੱਕ-ਇੱਕ ਕਰਕੇ ਮੁਫ਼ਤ ਖੇਡੋ, ਜਾਂ ਦੁਕਾਨ ਤੋਂ ਸਿੱਕੇ ਕਮਾਓ।",
     'bho': "रउआ के {price} सिक्का चाहीं। लेवल एक-एक करके मुफ्त खेलीं, भा दुकान से सिक्का कमाईं।",
+    'mr': "तुम्हाला {price} नाणी हवीत. लेव्हल एकेक करून मोफत खेळा, किंवा दुकानातून नाणी मिळवा.",
+    'sa': "{price} मुद्राः आवश्यकाः। स्तरान् एकैकशः निःशुल्कं क्रीडतु, अथवा आपणे मुद्राः अर्जयतु।",
   },
   'common.skip.plays_left': {
     'en': "{n} plays left",
@@ -422,5 +514,7 @@ const Map<String, Map<String, String>> commonStrings = {
     'ta': "{n} முறை மீதம்",
     'pa': "{n} ਵਾਰ ਬਾਕੀ",
     'bho': "{n} बेर बाकी",
+    'mr': "{n} वेळा बाकी",
+    'sa': "{n} वाराः अवशिष्टाः",
   },
 };

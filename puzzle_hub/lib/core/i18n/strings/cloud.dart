@@ -1,5 +1,5 @@
 // Translations for the cloud module (sign-in errors, sync, leaderboard, invites).
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> cloudStrings = {
   'cloud.pending': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "கிளவுட் அமைப்பு நிலுவையில் உள்ளது. உன் முன்னேற்றம் இந்த போனில் சேமிக்கப்பட்டுள்ளது.",
     'pa': "ਕਲਾਊਡ ਸੈੱਟਅੱਪ ਬਾਕੀ ਹੈ। ਤੁਹਾਡੀ ਤਰੱਕੀ ਇਸ ਫ਼ੋਨ 'ਤੇ ਸੇਵ ਹੈ।",
     'bho': "क्लाउड सेटअप अभी बाकी बा। रउआ के प्रगति एह फोन में सेव बा।",
+    'mr': "क्लाउड सेटअप बाकी आहे. तुमची प्रगती या फोनवर सेव्ह आहे.",
+    'sa': "मेघसज्जा अवशिष्टा। भवतः प्रगतिः अस्मिन् दूरवाणीयन्त्रे रक्षिता अस्ति।",
   },
   'cloud.sync_failed': {
     'en': "Sync failed. Check your internet and try again.",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "ஒத்திசைவு தோல்வி. இணையத்தைச் சரிபார்த்து மீண்டும் முயற்சி.",
     'pa': "ਸਿੰਕ ਨਹੀਂ ਹੋਇਆ। ਇੰਟਰਨੈੱਟ ਜਾਂਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "सिंक ना भइल। इंटरनेट देखीं आ फेर कोसिस करीं।",
+    'mr': "सिंक झाले नाही. इंटरनेट तपासा आणि पुन्हा प्रयत्न करा.",
+    'sa': "समन्वयः विफलः। अन्तर्जालं परीक्ष्य पुनः प्रयतताम्।",
   },
   'cloud.invite_bonus': {
     'en': "Invite bonus",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "அழைப்பு போனஸ்",
     'pa': "ਸੱਦਾ ਬੋਨਸ",
     'bho': "नेवता बोनस",
+    'mr': "आमंत्रण बोनस",
+    'sa': "आमन्त्रण-पुरस्कारः",
   },
 
   // ------------------------------------------------------------ invite share
@@ -39,6 +45,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "{name} உன்னை Master G க்கு அழைத்துள்ளார் - வேடிக்கையான மூளை & புதிர் விளையாட்டுகள்! நிறுவி, முதல் நிலையை முடித்து {coins} போனஸ் நாணயங்களைப் பெறு: {link}",
     'pa': "{name} ਨੇ ਤੁਹਾਨੂੰ Master G 'ਤੇ ਸੱਦਾ ਦਿੱਤਾ ਹੈ - ਮਜ਼ੇਦਾਰ ਦਿਮਾਗੀ ਅਤੇ ਪਹੇਲੀ ਗੇਮਾਂ! ਇੰਸਟਾਲ ਕਰੋ, ਪਹਿਲਾ ਲੈਵਲ ਪੂਰਾ ਕਰੋ ਅਤੇ {coins} ਬੋਨਸ ਸਿੱਕੇ ਪਾਓ: {link}",
     'bho': "{name} रउआ के Master G पर बोलवले बाड़न - मजेदार दिमागी आ पजल गेम! इंस्टॉल करीं, पहिला लेवल पूरा करीं आ {coins} बोनस सिक्का पाईं: {link}",
+    'mr': "{name} यांनी तुम्हाला Master G वर बोलावले आहे - मजेदार बुद्धी आणि पझल गेम्स! इंस्टॉल करा, पहिले लेव्हल पूर्ण करा आणि {coins} बोनस नाणी मिळवा: {link}",
+    'sa': "{name} भवन्तं Master G प्रति आमन्त्रयति - मनोरञ्जकाः बुद्धि-प्रहेलिका-क्रीडाः! स्थापयतु, प्रथमं स्तरं समापयतु, {coins} पुरस्कार-मुद्राः च प्राप्नोतु: {link}",
   },
   'cloud.invite.text_anon': {
     'en': "You're invited to Master G - fun brain & puzzle games! Install, finish your first level and get {coins} bonus coins: {link}",
@@ -48,6 +56,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உனக்கு Master G அழைப்பு - வேடிக்கையான மூளை & புதிர் விளையாட்டுகள்! நிறுவி, முதல் நிலையை முடித்து {coins} போனஸ் நாணயங்களைப் பெறு: {link}",
     'pa': "ਤੁਹਾਨੂੰ Master G 'ਤੇ ਸੱਦਾ ਹੈ - ਮਜ਼ੇਦਾਰ ਦਿਮਾਗੀ ਅਤੇ ਪਹੇਲੀ ਗੇਮਾਂ! ਇੰਸਟਾਲ ਕਰੋ, ਪਹਿਲਾ ਲੈਵਲ ਪੂਰਾ ਕਰੋ ਅਤੇ {coins} ਬੋਨਸ ਸਿੱਕੇ ਪਾਓ: {link}",
     'bho': "रउआ के Master G पर नेवता बा - मजेदार दिमागी आ पजल गेम! इंस्टॉल करीं, पहिला लेवल पूरा करीं आ {coins} बोनस सिक्का पाईं: {link}",
+    'mr': "तुम्हाला Master G वर आमंत्रण आहे - मजेदार बुद्धी आणि पझल गेम्स! इंस्टॉल करा, पहिले लेव्हल पूर्ण करा आणि {coins} बोनस नाणी मिळवा: {link}",
+    'sa': "भवान् Master G प्रति आमन्त्रितः - मनोरञ्जकाः बुद्धि-प्रहेलिका-क्रीडाः! स्थापयतु, प्रथमं स्तरं समापयतु, {coins} पुरस्कार-मुद्राः च प्राप्नोतु: {link}",
   },
   'cloud.invite.subject': {
     'en': "Play Master G with me",
@@ -57,6 +67,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "என்னுடன் Master G விளையாடு",
     'pa': "ਮੇਰੇ ਨਾਲ Master G ਖੇਡੋ",
     'bho': "हमरा संगे Master G खेलीं",
+    'mr': "माझ्यासोबत Master G खेळा",
+    'sa': "मया सह Master G क्रीडतु",
   },
 
   // ------------------------------------------------------------ leaderboard
@@ -68,6 +80,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "முன்னிலைப் பட்டியல்",
     'pa': "ਲੀਡਰਬੋਰਡ",
     'bho': "लीडरबोर्ड",
+    'mr': "लीडरबोर्ड",
+    'sa': "अग्रताफलकम्",
   },
   'cloud.lb.total_stars': {
     'en': "Total stars",
@@ -77,6 +91,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "மொத்த நட்சத்திரங்கள்",
     'pa': "ਕੁੱਲ ਤਾਰੇ",
     'bho': "कुल स्टार",
+    'mr': "एकूण तारे",
+    'sa': "आहत्य तारकाः",
   },
   'cloud.lb.pending_title': {
     'en': "Cloud setup pending",
@@ -86,6 +102,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "கிளவுட் அமைப்பு நிலுவையில்",
     'pa': "ਕਲਾਊਡ ਸੈੱਟਅੱਪ ਬਾਕੀ ਹੈ",
     'bho': "क्लाउड सेटअप बाकी बा",
+    'mr': "क्लाउड सेटअप बाकी आहे",
+    'sa': "मेघसज्जा अवशिष्टा",
   },
   'cloud.lb.pending_text': {
     'en': "Leaderboards will appear here once online features are switched on. Keep playing - your records are saved!",
@@ -95,6 +113,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "ஆன்லைன் வசதிகள் இயக்கப்பட்டதும் முன்னிலைப் பட்டியல்கள் இங்கே தோன்றும். தொடர்ந்து விளையாடு - உன் சாதனைகள் சேமிக்கப்பட்டுள்ளன!",
     'pa': "ਔਨਲਾਈਨ ਫ਼ੀਚਰ ਚਾਲੂ ਹੁੰਦੇ ਹੀ ਲੀਡਰਬੋਰਡ ਇੱਥੇ ਦਿਸਣਗੇ। ਖੇਡਦੇ ਰਹੋ - ਤੁਹਾਡੇ ਰਿਕਾਰਡ ਸੇਵ ਹਨ!",
     'bho': "ऑनलाइन फीचर चालू होते लीडरबोर्ड इहां लउकी। खेलत रहीं - रउआ के रिकॉर्ड सेव बा!",
+    'mr': "ऑनलाइन सुविधा सुरू झाल्यावर लीडरबोर्ड इथे दिसतील. खेळत राहा - तुमचे रेकॉर्ड सेव्ह आहेत!",
+    'sa': "ऑनलाइन-सुविधाः आरब्धाः चेत् अग्रताफलकानि अत्र दृश्यन्ते। क्रीडतु एव - भवतः अभिलेखाः रक्षिताः!",
   },
   'cloud.lb.signin_title': {
     'en': "Sign in to compete",
@@ -104,6 +124,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "போட்டியிட உள்நுழை",
     'pa': "ਮੁਕਾਬਲੇ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ",
     'bho': "मुकाबला खातिर साइन इन करीं",
+    'mr': "स्पर्धेसाठी साइन इन करा",
+    'sa': "स्पर्धायै प्रविशतु",
   },
   'cloud.lb.signin_text': {
     'en': "Sign in with Google or Email to put your best scores on the leaderboard.",
@@ -113,6 +135,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உன் சிறந்த மதிப்பெண்களை முன்னிலைப் பட்டியலில் சேர்க்க Google அல்லது மின்னஞ்சல் மூலம் உள்நுழை.",
     'pa': "ਆਪਣੇ ਸਭ ਤੋਂ ਵਧੀਆ ਸਕੋਰ ਲੀਡਰਬੋਰਡ 'ਤੇ ਪਾਉਣ ਲਈ Google ਜਾਂ ਈਮੇਲ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ।",
     'bho': "आपन सबसे बढ़िया स्कोर लीडरबोर्ड पर डाले खातिर Google भा ईमेल से साइन इन करीं।",
+    'mr': "तुमचे सर्वोत्तम स्कोअर लीडरबोर्डवर टाकण्यासाठी Google किंवा ईमेलने साइन इन करा.",
+    'sa': "स्वोत्तम-अङ्कान् अग्रताफलके स्थापयितुं Google अथवा ईमेल द्वारा प्रविशतु।",
   },
   'cloud.lb.load_failed_title': {
     'en': "Could not load",
@@ -122,6 +146,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "ஏற்ற முடியவில்லை",
     'pa': "ਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ",
     'bho': "लोड ना हो पाइल",
+    'mr': "लोड होऊ शकले नाही",
+    'sa': "आनेतुं न शक्तम्",
   },
   'cloud.lb.load_failed_text': {
     'en': "Check your internet connection and try again.",
@@ -131,6 +157,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உன் இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சி.",
     'pa': "ਆਪਣਾ ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਜਾਂਚੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "आपन इंटरनेट कनेक्सन देखीं आ फेर कोसिस करीं।",
+    'mr': "तुमचे इंटरनेट कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
+    'sa': "अन्तर्जाल-सम्पर्कं परीक्ष्य पुनः प्रयतताम्।",
   },
   'cloud.lb.your_rank': {
     'en': "Your rank: #{rank}",
@@ -140,6 +168,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உன் தரவரிசை: #{rank}",
     'pa': "ਤੁਹਾਡਾ ਰੈਂਕ: #{rank}",
     'bho': "रउआ के रैंक: #{rank}",
+    'mr': "तुमचा क्रमांक: #{rank}",
+    'sa': "भवतः क्रमाङ्कः: #{rank}",
   },
   'cloud.lb.no_scores': {
     'en': "No scores yet",
@@ -149,6 +179,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "இன்னும் மதிப்பெண்கள் இல்லை",
     'pa': "ਹਾਲੇ ਕੋਈ ਸਕੋਰ ਨਹੀਂ",
     'bho': "अभी कवनो स्कोर नइखे",
+    'mr': "अद्याप कोणतेही स्कोअर नाहीत",
+    'sa': "अधुना यावत् अङ्काः न सन्ति",
   },
   'cloud.lb.be_first': {
     'en': "Be the first on the {board} board!",
@@ -158,6 +190,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "{board} பட்டியலில் முதலாவதாக இரு!",
     'pa': "{board} ਬੋਰਡ 'ਤੇ ਪਹਿਲੇ ਬਣੋ!",
     'bho': "{board} बोर्ड पर पहिला बनीं!",
+    'mr': "{board} बोर्डवर पहिले व्हा!",
+    'sa': "{board} फलके प्रथमः भवतु!",
   },
   'cloud.lb.you': {
     'en': "{name} (you)",
@@ -167,6 +201,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "{name} (நீ)",
     'pa': "{name} (ਤੁਸੀਂ)",
     'bho': "{name} (रउआ)",
+    'mr': "{name} (तुम्ही)",
+    'sa': "{name} (भवान्)",
   },
 
   // ------------------------------------------------------------ auth errors
@@ -178,6 +214,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "Google உள்நுழைவு தோல்வி (டோக்கன் இல்லை). Firebase அமைப்பைச் சரிபார்.",
     'pa': "Google ਸਾਈਨ-ਇਨ ਨਹੀਂ ਹੋਇਆ (ਟੋਕਨ ਨਹੀਂ ਮਿਲਿਆ)। Firebase ਸੈੱਟਅੱਪ ਜਾਂਚੋ।",
     'bho': "Google साइन-इन ना भइल (टोकन ना मिलल)। Firebase सेटअप देखीं।",
+    'mr': "Google साइन-इन अयशस्वी (टोकन नाही). Firebase सेटअप तपासा.",
+    'sa': "Google-प्रवेशः विफलः (टोकन नास्ति)। Firebase-सज्जां परीक्षताम्।",
   },
   'cloud.err.google_retry': {
     'en': "Google sign-in failed. Please try again.",
@@ -187,6 +225,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "Google உள்நுழைவு தோல்வி. மீண்டும் முயற்சிக்கவும்.",
     'pa': "Google ਸਾਈਨ-ਇਨ ਨਹੀਂ ਹੋਇਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "Google साइन-इन ना भइल। फेर से कोसिस करीं।",
+    'mr': "Google साइन-इन अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+    'sa': "Google-प्रवेशः विफलः। कृपया पुनः प्रयतताम्।",
   },
   'cloud.err.google_failed': {
     'en': "Google sign-in failed.",
@@ -196,6 +236,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "Google உள்நுழைவு தோல்வி.",
     'pa': "Google ਸਾਈਨ-ਇਨ ਨਹੀਂ ਹੋਇਆ।",
     'bho': "Google साइन-इन ना भइल।",
+    'mr': "Google साइन-इन अयशस्वी.",
+    'sa': "Google-प्रवेशः विफलः।",
   },
   'cloud.err.signup_failed': {
     'en': "Sign up failed.",
@@ -205,6 +247,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "பதிவு தோல்வி.",
     'pa': "ਸਾਈਨ ਅੱਪ ਨਹੀਂ ਹੋਇਆ।",
     'bho': "साइन अप ना भइल।",
+    'mr': "साइन अप अयशस्वी.",
+    'sa': "पञ्जीकरणं विफलम्।",
   },
   'cloud.err.signup_retry': {
     'en': "Sign up failed. Please try again.",
@@ -214,6 +258,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "பதிவு தோல்வி. மீண்டும் முயற்சிக்கவும்.",
     'pa': "ਸਾਈਨ ਅੱਪ ਨਹੀਂ ਹੋਇਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "साइन अप ना भइल। फेर से कोसिस करीं।",
+    'mr': "साइन अप अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+    'sa': "पञ्जीकरणं विफलम्। कृपया पुनः प्रयतताम्।",
   },
   'cloud.err.signin_retry': {
     'en': "Sign in failed. Please try again.",
@@ -223,6 +269,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உள்நுழைவு தோல்வி. மீண்டும் முயற்சிக்கவும்.",
     'pa': "ਸਾਈਨ ਇਨ ਨਹੀਂ ਹੋਇਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "साइन इन ना भइल। फेर से कोसिस करीं।",
+    'mr': "साइन इन अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+    'sa': "प्रवेशः विफलः। कृपया पुनः प्रयतताम्।",
   },
   'cloud.err.reset_failed': {
     'en': "Could not send the reset email.",
@@ -232,6 +280,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "மீட்டமைப்பு மின்னஞ்சலை அனுப்ப முடியவில்லை.",
     'pa': "ਰੀਸੈੱਟ ਈਮੇਲ ਨਹੀਂ ਭੇਜੀ ਜਾ ਸਕੀ।",
     'bho': "रीसेट ईमेल ना भेजा पाइल।",
+    'mr': "रीसेट ईमेल पाठवता आला नाही.",
+    'sa': "पुनर्स्थापन-ईमेल प्रेषयितुं न शक्तम्।",
   },
   'cloud.err.verify_failed': {
     'en': "Could not send the verification email.",
@@ -241,6 +291,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "சரிபார்ப்பு மின்னஞ்சலை அனுப்ப முடியவில்லை.",
     'pa': "ਪੁਸ਼ਟੀ ਈਮੇਲ ਨਹੀਂ ਭੇਜੀ ਜਾ ਸਕੀ।",
     'bho': "वेरिफिकेसन ईमेल ना भेजा पाइल।",
+    'mr': "पडताळणी ईमेल पाठवता आला नाही.",
+    'sa': "सत्यापन-ईमेल प्रेषयितुं न शक्तम्।",
   },
   'cloud.err.not_signed_in': {
     'en': "Not signed in.",
@@ -250,6 +302,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உள்நுழையவில்லை.",
     'pa': "ਸਾਈਨ ਇਨ ਨਹੀਂ ਹੈ।",
     'bho': "साइन इन नइखे।",
+    'mr': "साइन इन केलेले नाही.",
+    'sa': "प्रवेशः न कृतः।",
   },
   'cloud.err.password_required': {
     'en': "Password required.",
@@ -259,6 +313,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "கடவுச்சொல் தேவை.",
     'pa': "ਪਾਸਵਰਡ ਜ਼ਰੂਰੀ ਹੈ।",
     'bho': "पासवर्ड जरूरी बा।",
+    'mr': "पासवर्ड आवश्यक आहे.",
+    'sa': "गुप्तशब्दः आवश्यकः।",
   },
   'cloud.err.reauth_failed': {
     'en': "Could not confirm your identity.",
@@ -268,6 +324,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "உன் அடையாளத்தை உறுதிப்படுத்த முடியவில்லை.",
     'pa': "ਤੁਹਾਡੀ ਪਛਾਣ ਦੀ ਪੁਸ਼ਟੀ ਨਹੀਂ ਹੋ ਸਕੀ।",
     'bho': "रउआ के पहचान पक्का ना हो पाइल।",
+    'mr': "तुमच्या ओळखीची खात्री होऊ शकली नाही.",
+    'sa': "भवतः परिचयः पुष्टीकर्तुं न शक्तः।",
   },
   'cloud.err.invalid_email': {
     'en': "That email address looks wrong.",
@@ -277,6 +335,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "அந்த மின்னஞ்சல் முகவரி தவறாகத் தெரிகிறது.",
     'pa': "ਇਹ ਈਮੇਲ ਪਤਾ ਗਲਤ ਲੱਗਦਾ ਹੈ।",
     'bho': "ई ईमेल पता गलत लागत बा।",
+    'mr': "हा ईमेल पत्ता चुकीचा दिसतो.",
+    'sa': "अयं ईमेल-सङ्केतः अशुद्धः प्रतीयते।",
   },
   'cloud.err.user_disabled': {
     'en': "This account has been disabled.",
@@ -286,6 +346,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "இந்தக் கணக்கு முடக்கப்பட்டுள்ளது.",
     'pa': "ਇਹ ਖਾਤਾ ਬੰਦ ਕਰ ਦਿੱਤਾ ਗਿਆ ਹੈ।",
     'bho': "ई खाता बंद क दिहल गइल बा।",
+    'mr': "हे खाते बंद केले आहे.",
+    'sa': "इदं खातं निष्क्रियीकृतम्।",
   },
   'cloud.err.wrong_credentials': {
     'en': "Wrong email or password.",
@@ -295,6 +357,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "மின்னஞ்சல் அல்லது கடவுச்சொல் தவறு.",
     'pa': "ਈਮੇਲ ਜਾਂ ਪਾਸਵਰਡ ਗਲਤ ਹੈ।",
     'bho': "ईमेल भा पासवर्ड गलत बा।",
+    'mr': "ईमेल किंवा पासवर्ड चुकीचा आहे.",
+    'sa': "ईमेल अथवा गुप्तशब्दः अशुद्धः।",
   },
   'cloud.err.email_in_use': {
     'en': "An account with this email already exists. Try signing in.",
@@ -304,6 +368,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "இந்த மின்னஞ்சலுடன் ஏற்கனவே கணக்கு உள்ளது. உள்நுழைந்து பார்.",
     'pa': "ਇਸ ਈਮੇਲ ਨਾਲ ਖਾਤਾ ਪਹਿਲਾਂ ਤੋਂ ਹੈ। ਸਾਈਨ ਇਨ ਕਰਕੇ ਦੇਖੋ।",
     'bho': "एह ईमेल से खाता पहिले से बा। साइन इन क के देखीं।",
+    'mr': "या ईमेलने खाते आधीच आहे. साइन इन करून पाहा.",
+    'sa': "अनेन ईमेल द्वारा खातं पूर्वमेव अस्ति। प्रवेष्टुं प्रयतताम्।",
   },
   'cloud.err.weak_password': {
     'en': "Password is too weak (use at least 6 characters).",
@@ -313,6 +379,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "கடவுச்சொல் மிகவும் பலவீனம் (குறைந்தது 6 எழுத்துகள் பயன்படுத்து).",
     'pa': "ਪਾਸਵਰਡ ਬਹੁਤ ਕਮਜ਼ੋਰ ਹੈ (ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰ ਰੱਖੋ)।",
     'bho': "पासवर्ड बहुत कमजोर बा (कम से कम 6 अक्षर रखीं)।",
+    'mr': "पासवर्ड खूप कमकुवत आहे (किमान 6 अक्षरे वापरा).",
+    'sa': "गुप्तशब्दः अतिदुर्बलः (न्यूनातिन्यूनं 6 वर्णाः उपयुज्यन्ताम्)।",
   },
   'cloud.err.too_many': {
     'en': "Too many attempts. Please wait a bit and try again.",
@@ -322,6 +390,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "அதிக முயற்சிகள். சிறிது நேரம் கழித்து மீண்டும் முயற்சி.",
     'pa': "ਬਹੁਤ ਜ਼ਿਆਦਾ ਕੋਸ਼ਿਸ਼ਾਂ। ਥੋੜ੍ਹਾ ਰੁਕ ਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "बहुत जादा कोसिस हो गइल। तनी रुक के फेर कोसिस करीं।",
+    'mr': "खूप जास्त प्रयत्न. थोडा वेळ थांबून पुन्हा प्रयत्न करा.",
+    'sa': "अत्यधिकाः प्रयत्नाः। किञ्चित् प्रतीक्ष्य पुनः प्रयतताम्।",
   },
   'cloud.err.no_internet': {
     'en': "No internet connection.",
@@ -331,6 +401,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "இணைய இணைப்பு இல்லை.",
     'pa': "ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਹੈ।",
     'bho': "इंटरनेट कनेक्सन नइखे।",
+    'mr': "इंटरनेट कनेक्शन नाही.",
+    'sa': "अन्तर्जाल-सम्पर्कः नास्ति।",
   },
   'cloud.err.other_method': {
     'en': "This email is already used with another sign-in method.",
@@ -340,6 +412,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "இந்த மின்னஞ்சல் ஏற்கனவே வேறு உள்நுழைவு முறையில் பயன்படுத்தப்பட்டுள்ளது.",
     'pa': "ਇਹ ਈਮੇਲ ਪਹਿਲਾਂ ਹੀ ਕਿਸੇ ਹੋਰ ਸਾਈਨ-ਇਨ ਤਰੀਕੇ ਨਾਲ ਜੁੜੀ ਹੈ।",
     'bho': "ई ईमेल पहिले से कवनो दोसर साइन-इन तरीका से जुड़ल बा।",
+    'mr': "हा ईमेल आधीच दुसऱ्या साइन-इन पद्धतीने वापरला आहे.",
+    'sa': "अयं ईमेल अन्यया प्रवेशपद्धत्या पूर्वमेव उपयुक्तः।",
   },
   'cloud.err.recent_login': {
     'en': "Please sign in again to continue.",
@@ -349,6 +423,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "தொடர மீண்டும் உள்நுழையவும்.",
     'pa': "ਜਾਰੀ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।",
     'bho': "आगे बढ़े खातिर फेर से साइन इन करीं।",
+    'mr': "सुरू ठेवण्यासाठी कृपया पुन्हा साइन इन करा.",
+    'sa': "अनुवर्तितुं कृपया पुनः प्रविशतु।",
   },
   'cloud.err.not_enabled': {
     'en': "This sign-in method is not enabled yet.",
@@ -358,6 +434,8 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "இந்த உள்நுழைவு முறை இன்னும் இயக்கப்படவில்லை.",
     'pa': "ਇਹ ਸਾਈਨ-ਇਨ ਤਰੀਕਾ ਹਾਲੇ ਚਾਲੂ ਨਹੀਂ ਹੈ।",
     'bho': "ई साइन-इन तरीका अभी चालू नइखे।",
+    'mr': "ही साइन-इन पद्धत अद्याप सुरू नाही.",
+    'sa': "इयं प्रवेशपद्धतिः अधुना न सक्रिया।",
   },
   'cloud.err.unknown': {
     'en': "Something went wrong ({code}).",
@@ -367,5 +445,40 @@ const Map<String, Map<String, String>> cloudStrings = {
     'ta': "ஏதோ தவறு நடந்தது ({code}).",
     'pa': "ਕੁਝ ਗੜਬੜ ਹੋ ਗਈ ({code})।",
     'bho': "कुछ गड़बड़ हो गइल ({code})।",
+    'mr': "काहीतरी चूक झाली ({code}).",
+    'sa': "किमपि दोषः जातः ({code})।",
+  },
+  'cloud.lb.global': {
+    'en': "Global",
+    'hi': "ग्लोबल",
+    'hinglish': "Global",
+    'te': "గ్లోబల్",
+    'ta': "உலகளவில்",
+    'pa': "ਗਲੋਬਲ",
+    'bho': "ग्लोबल",
+    'mr': "जागतिक",
+    'sa': "वैश्विकम्",
+  },
+  'cloud.lb.scope_rank': {
+    'en': "{place} rank: #{rank}",
+    'hi': "{place} रैंक: #{rank}",
+    'hinglish': "{place} rank: #{rank}",
+    'te': "{place} ర్యాంక్: #{rank}",
+    'ta': "{place} தரவரிசை: #{rank}",
+    'pa': "{place} ਰੈਂਕ: #{rank}",
+    'bho': "{place} रैंक: #{rank}",
+    'mr': "{place} क्रमांक: #{rank}",
+    'sa': "{place} स्थानम्: #{rank}",
+  },
+  'cloud.lb.chess_wins': {
+    'en': "Chess wins",
+    'hi': "शतरंज जीत",
+    'hinglish': "Chess wins",
+    'te': "చెస్ విజయాలు",
+    'ta': "சதுரங்க வெற்றிகள்",
+    'pa': "ਸ਼ਤਰੰਜ ਜਿੱਤਾਂ",
+    'bho': "शतरंज जीत",
+    'mr': "बुद्धिबळ विजय",
+    'sa': "चतुरङ्गविजयाः",
   },
 };

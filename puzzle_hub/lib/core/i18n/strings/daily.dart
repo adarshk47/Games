@@ -1,5 +1,5 @@
 // Translations for the daily module (daily hub, quests, reminder, achievements).
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> dailyStrings = {
   // ------------------------------------------------------------ daily hub
@@ -11,6 +11,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி",
     'pa': "ਰੋਜ਼ਾਨਾ",
     'bho': "रोज के",
+    'mr': "दैनिक",
+    'sa': "दैनिकम्",
   },
   'daily.tagline': {
     'en': "Play every day, win coins 🪙",
@@ -20,6 +22,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினமும் விளையாடு, நாணயங்களை வெல்லு 🪙",
     'pa': "ਰੋਜ਼ ਖੇਡੋ, ਸਿੱਕੇ ਜਿੱਤੋ 🪙",
     'bho': "रोज खेलीं, सिक्का जीतीं 🪙",
+    'mr': "रोज खेळा, नाणी जिंका 🪙",
+    'sa': "प्रतिदिनं क्रीडतु, मुद्राः जयतु 🪙",
   },
   'daily.todays_quests': {
     'en': "Today's Quests",
@@ -29,6 +33,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "இன்றைய சவால்கள்",
     'pa': "ਅੱਜ ਦੇ ਕੁਐਸਟ",
     'bho': "आज के क्वेस्ट",
+    'mr': "आजचे क्वेस्ट",
+    'sa': "अद्यतनानि कार्याणि",
   },
   'daily.reward_title': {
     'en': "Daily Reward",
@@ -38,6 +44,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி பரிசு",
     'pa': "ਰੋਜ਼ਾਨਾ ਇਨਾਮ",
     'bho': "रोज के इनाम",
+    'mr': "दैनिक बक्षीस",
+    'sa': "दैनिकपुरस्कारः",
   },
   'daily.reward_claimed': {
     'en': "Reward claimed!",
@@ -47,6 +55,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "பரிசு பெற்றாய்!",
     'pa': "ਇਨਾਮ ਮਿਲ ਗਿਆ!",
     'bho': "इनाम मिल गइल!",
+    'mr': "बक्षीस मिळाले!",
+    'sa': "पुरस्कारः प्राप्तः!",
   },
   'daily.streak_restart': {
     'en': "No worries! Let's start a new streak. Day {day}: {coins} coins",
@@ -56,6 +66,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "பரவாயில்லை! புதிய தொடரைத் தொடங்குவோம். நாள் {day}: {coins} நாணயங்கள்",
     'pa': "ਕੋਈ ਗੱਲ ਨਹੀਂ! ਨਵੀਂ ਸਟ੍ਰੀਕ ਸ਼ੁਰੂ ਕਰੀਏ। ਦਿਨ {day}: {coins} ਸਿੱਕੇ",
     'bho': "कवनो बात ना! नया स्ट्रीक सुरू करल जाव। दिन {day}: {coins} सिक्का",
+    'mr': "काळजी करू नका! नवीन स्ट्रीक सुरू करूया. दिवस {day}: {coins} नाणी",
+    'sa': "चिन्ता मास्तु! नूतनां शृङ्खलाम् आरभामहे। दिनम् {day}: {coins} मुद्राः",
   },
   'daily.day_of_7': {
     'en': "Day {day} of 7 · {coins} coins",
@@ -65,6 +77,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நாள் {day} / 7 · {coins} நாணயங்கள்",
     'pa': "ਦਿਨ {day} / 7 · {coins} ਸਿੱਕੇ",
     'bho': "दिन {day} / 7 · {coins} सिक्का",
+    'mr': "दिवस {day} / 7 · {coins} नाणी",
+    'sa': "दिनम् {day} / 7 · {coins} मुद्राः",
   },
   'daily.come_back': {
     'en': "Come back tomorrow, Day {day} reward: {coins} 🪙",
@@ -74,6 +88,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நாளை மீண்டும் வா, நாள் {day} பரிசு: {coins} 🪙",
     'pa': "ਕੱਲ੍ਹ ਫਿਰ ਆਉਣਾ, ਦਿਨ {day} ਦਾ ਇਨਾਮ: {coins} 🪙",
     'bho': "काल्ह फेर आईं, दिन {day} के इनाम: {coins} 🪙",
+    'mr': "उद्या परत या, दिवस {day} चे बक्षीस: {coins} 🪙",
+    'sa': "श्वः पुनः आगच्छतु, दिनम् {day} पुरस्कारः: {coins} 🪙",
   },
   'daily.claim': {
     'en': "Claim {coins} 🪙",
@@ -83,6 +99,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{coins} 🪙 பெறு",
     'pa': "{coins} 🪙 ਲਓ",
     'bho': "{coins} 🪙 लीं",
+    'mr': "{coins} 🪙 घ्या",
+    'sa': "{coins} 🪙 स्वीकरोतु",
   },
   'daily.day_short': {
     'en': "D{n}",
@@ -92,6 +110,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நா{n}",
     'pa': "ਦਿ{n}",
     'bho': "दि{n}",
+    'mr': "दि{n}",
+    'sa': "दि{n}",
   },
   'daily.days_one': {
     'en': "{n} day",
@@ -101,6 +121,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} நாள்",
     'pa': "{n} ਦਿਨ",
     'bho': "{n} दिन",
+    'mr': "{n} दिवस",
+    'sa': "{n} दिनम्",
   },
   'daily.days_many': {
     'en': "{n} days",
@@ -110,6 +132,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} நாட்கள்",
     'pa': "{n} ਦਿਨ",
     'bho': "{n} दिन",
+    'mr': "{n} दिवस",
+    'sa': "{n} दिनानि",
   },
   'daily.login_streak': {
     'en': "Login streak · best {n}",
@@ -119,6 +143,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "உள்நுழைவு தொடர் · சிறந்தது {n}",
     'pa': "ਲਾਗਇਨ ਸਟ੍ਰੀਕ · ਸਭ ਤੋਂ ਵਧੀਆ {n}",
     'bho': "लॉगिन स्ट्रीक · सबसे बढ़िया {n}",
+    'mr': "लॉगिन स्ट्रीक · सर्वोत्तम {n}",
+    'sa': "प्रवेश-शृङ्खला · सर्वोत्तमम् {n}",
   },
   'daily.challenge_streak': {
     'en': "Daily Challenge · best {n}",
@@ -128,6 +154,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி சவால் · சிறந்தது {n}",
     'pa': "ਡੇਲੀ ਚੈਲੰਜ · ਸਭ ਤੋਂ ਵਧੀਆ {n}",
     'bho': "डेली चैलेंज · सबसे बढ़िया {n}",
+    'mr': "दैनिक आव्हान · सर्वोत्तम {n}",
+    'sa': "दैनिकाह्वानम् · सर्वोत्तमम् {n}",
   },
   'daily.done': {
     'en': "Done",
@@ -137,6 +165,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "முடிந்தது",
     'pa': "ਪੂਰਾ",
     'bho': "हो गइल",
+    'mr': "पूर्ण",
+    'sa': "सम्पन्नम्",
   },
   'daily.challenge': {
     'en': "Daily Challenge",
@@ -146,6 +176,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி சவால்",
     'pa': "ਡੇਲੀ ਚੈਲੰਜ",
     'bho': "डेली चैलेंज",
+    'mr': "दैनिक आव्हान",
+    'sa': "दैनिकाह्वानम्",
   },
   'daily.challenge_done': {
     'en': "Well done! Today's challenge is complete 🎉",
@@ -155,6 +187,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "சபாஷ்! இன்றைய சவால் முடிந்தது 🎉",
     'pa': "ਸ਼ਾਬਾਸ਼! ਅੱਜ ਦਾ ਚੈਲੰਜ ਪੂਰਾ 🎉",
     'bho': "सबास! आज के चैलेंज पूरा हो गइल 🎉",
+    'mr': "शाब्बास! आजचे आव्हान पूर्ण झाले 🎉",
+    'sa': "साधु! अद्यतनम् आह्वानं सम्पन्नम् 🎉",
   },
   'daily.challenge_ready': {
     'en': "All 3 quests done! Claim your bonus",
@@ -164,6 +198,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "மூன்று சவால்களும் முடிந்தன! போனஸ் பெறு",
     'pa': "ਤਿੰਨੇ ਕੁਐਸਟ ਪੂਰੇ! ਬੋਨਸ ਲੈ ਲਓ",
     'bho': "तीनों क्वेस्ट पूरा! बोनस ले लीं",
+    'mr': "तिन्ही क्वेस्ट पूर्ण! तुमचा बोनस घ्या",
+    'sa': "त्रीणि अपि कार्याणि सम्पन्नानि! पुरस्कारं स्वीकरोतु",
   },
   'daily.challenge_todo': {
     'en': "Complete all 3 quests, +{coins} bonus 🪙",
@@ -173,6 +209,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "மூன்று சவால்களையும் முடி, +{coins} போனஸ் 🪙",
     'pa': "ਤਿੰਨੇ ਕੁਐਸਟ ਪੂਰੇ ਕਰੋ, +{coins} ਬੋਨਸ 🪙",
     'bho': "तीनों क्वेस्ट पूरा करीं, +{coins} बोनस 🪙",
+    'mr': "तिन्ही क्वेस्ट पूर्ण करा, +{coins} बोनस 🪙",
+    'sa': "त्रीणि अपि कार्याणि समापयतु, +{coins} पुरस्कारः 🪙",
   },
   'daily.badges_unlocked': {
     'en': "{have} / {total} badges unlocked",
@@ -182,6 +220,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{have} / {total} பதக்கங்கள் திறக்கப்பட்டன",
     'pa': "{have} / {total} ਬੈਜ ਅਨਲੌਕ",
     'bho': "{have} / {total} बैज खुलल",
+    'mr': "{have} / {total} बॅज अनलॉक",
+    'sa': "{have} / {total} पदकानि उद्घाटितानि",
   },
   'daily.quest_complete': {
     'en': "Quest complete!",
@@ -191,6 +231,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "சவால் முடிந்தது!",
     'pa': "ਕੁਐਸਟ ਪੂਰਾ!",
     'bho': "क्वेस्ट पूरा!",
+    'mr': "क्वेस्ट पूर्ण!",
+    'sa': "कार्यं सम्पन्नम्!",
   },
   'daily.quest_toast_sub': {
     'en': "{title} · claim +{coins} 🪙",
@@ -200,6 +242,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{title} · +{coins} 🪙 பெறு",
     'pa': "{title} · +{coins} 🪙 ਲਓ",
     'bho': "{title} · +{coins} 🪙 लीं",
+    'mr': "{title} · +{coins} 🪙 घ्या",
+    'sa': "{title} · +{coins} 🪙 स्वीकरोतु",
   },
   'daily.challenge_bonus_label': {
     'en': "Daily Challenge!",
@@ -209,6 +253,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி சவால்!",
     'pa': "ਡੇਲੀ ਚੈਲੰਜ!",
     'bho': "डेली चैलेंज!",
+    'mr': "दैनिक आव्हान!",
+    'sa': "दैनिकाह्वानम्!",
   },
   'daily.day_reward_label': {
     'en': "Day {n} reward",
@@ -218,6 +264,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நாள் {n} பரிசு",
     'pa': "ਦਿਨ {n} ਦਾ ਇਨਾਮ",
     'bho': "दिन {n} के इनाम",
+    'mr': "दिवस {n} चे बक्षीस",
+    'sa': "दिनम् {n} पुरस्कारः",
   },
 
   // ------------------------------------------------------------ quests
@@ -229,6 +277,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "எந்த விளையாட்டிலும் {n} நிலைகளை முடி",
     'pa': "ਕਿਸੇ ਵੀ ਗੇਮ ਵਿੱਚ {n} ਲੈਵਲ ਪੂਰੇ ਕਰੋ",
     'bho': "कवनो गेम में {n} लेवल पूरा करीं",
+    'mr': "कोणत्याही गेममध्ये {n} लेव्हल पूर्ण करा",
+    'sa': "कस्याम् अपि क्रीडायां {n} स्तरान् समापयतु",
   },
   'quest.variety_n': {
     'en': "Play {n} different games",
@@ -238,6 +288,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} வெவ்வேறு விளையாட்டுகளை விளையாடு",
     'pa': "{n} ਵੱਖ-ਵੱਖ ਗੇਮਾਂ ਖੇਡੋ",
     'bho': "{n} अलग-अलग गेम खेलीं",
+    'mr': "{n} वेगवेगळे गेम खेळा",
+    'sa': "{n} भिन्नाः क्रीडाः क्रीडतु",
   },
   'quest.hard_clear': {
     'en': "Clear a Hard or Extreme level",
@@ -247,6 +299,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "ஒரு கடினமான அல்லது தீவிர நிலையை முடி",
     'pa': "ਇੱਕ ਔਖਾ ਜਾਂ ਐਕਸਟ੍ਰੀਮ ਲੈਵਲ ਪਾਰ ਕਰੋ",
     'bho': "एगो कठिन भा एक्सट्रीम लेवल पार करीं",
+    'mr': "एक कठीण किंवा एक्स्ट्रीम लेव्हल पार करा",
+    'sa': "एकं कठिनम् अतिकठिनं वा स्तरं समापयतु",
   },
   'quest.stars_any': {
     'en': "Get 3 stars on {n} levels",
@@ -256,6 +310,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} நிலைகளில் 3 நட்சத்திரங்கள் பெறு",
     'pa': "{n} ਲੈਵਲਾਂ ਵਿੱਚ 3 ਤਾਰੇ ਲਓ",
     'bho': "{n} लेवल में 3 स्टार पाईं",
+    'mr': "{n} लेव्हलमध्ये 3 तारे मिळवा",
+    'sa': "{n} स्तरेषु 3 तारकाः प्राप्नोतु",
   },
   'quest.win_game': {
     'en': "Win a game of {game}",
@@ -265,6 +321,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} ஒரு ஆட்டத்தை வெல்லு",
     'pa': "{game} ਦੀ ਇੱਕ ਗੇਮ ਜਿੱਤੋ",
     'bho': "{game} के एगो गेम जीतीं",
+    'mr': "{game} चा एक गेम जिंका",
+    'sa': "{game} इत्यस्य एकां क्रीडां जयतु",
   },
   'quest.stars_game': {
     'en': "Get 3 stars in {game}",
@@ -274,6 +332,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} இல் 3 நட்சத்திரங்கள் பெறு",
     'pa': "{game} ਵਿੱਚ 3 ਤਾਰੇ ਲਓ",
     'bho': "{game} में 3 स्टार पाईं",
+    'mr': "{game} मध्ये 3 तारे मिळवा",
+    'sa': "{game} इत्यत्र 3 तारकाः प्राप्नोतु",
   },
   'quest.score_game': {
     'en': "Score {n}+ in {game} (any tier)",
@@ -283,6 +343,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} இல் {n}+ மதிப்பெண் பெறு (எந்த நிலையும்)",
     'pa': "{game} ਵਿੱਚ {n}+ ਸਕੋਰ ਕਰੋ (ਕੋਈ ਵੀ ਪੱਧਰ)",
     'bho': "{game} में {n}+ स्कोर करीं (कवनो लेवल)",
+    'mr': "{game} मध्ये {n}+ स्कोअर करा (कोणताही स्तर)",
+    'sa': "{game} इत्यत्र {n}+ अङ्कान् प्राप्नोतु (कोऽपि स्तरः)",
   },
   'quest.runs_game': {
     'en': "Finish {n} {game} runs",
@@ -292,6 +354,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} {n} சுற்றுகளை முடி",
     'pa': "{game} ਦੇ {n} ਰਾਊਂਡ ਪੂਰੇ ਕਰੋ",
     'bho': "{game} के {n} राउंड पूरा करीं",
+    'mr': "{game} च्या {n} फेऱ्या पूर्ण करा",
+    'sa': "{game} इत्यस्य {n} आवर्तनानि समापयतु",
   },
 
   // ------------------------------------------------------------ reminder
@@ -303,6 +367,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி நினைவூட்டல்",
     'pa': "ਰੋਜ਼ਾਨਾ ਯਾਦ-ਦਹਾਨੀ",
     'bho': "रोज के याद दिलावे वाला",
+    'mr': "दैनिक आठवण",
+    'sa': "दैनिकस्मारकम्",
   },
   'reminder.on_sub': {
     'en': "We'll remind you every day at {time}",
@@ -312,6 +378,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினமும் {time} மணிக்கு நினைவூட்டுவோம்",
     'pa': "ਰੋਜ਼ {time} ਵਜੇ ਯਾਦ ਕਰਾਵਾਂਗੇ",
     'bho': "रोज {time} बजे याद दिलाइब",
+    'mr': "आम्ही तुम्हाला रोज {time} वाजता आठवण करून देऊ",
+    'sa': "प्रतिदिनं {time} वादने स्मारयिष्यामः",
   },
   'reminder.off': {
     'en': "Off",
@@ -321,6 +389,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "முடக்கம்",
     'pa': "ਬੰਦ",
     'bho': "बंद",
+    'mr': "बंद",
+    'sa': "निष्क्रियम्",
   },
   'reminder.permission': {
     'en': "Please allow notifications in your phone settings",
@@ -330,6 +400,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "அமைப்புகளில் அறிவிப்புகளை அனுமதிக்கவும்",
     'pa': "ਕਿਰਪਾ ਕਰਕੇ ਸੈਟਿੰਗਾਂ ਤੋਂ ਨੋਟੀਫਿਕੇਸ਼ਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ",
     'bho': "सेटिंग में जा के नोटिफिकेसन के इजाजत दीं",
+    'mr': "कृपया फोनच्या सेटिंग्जमधून सूचनांना परवानगी द्या",
+    'sa': "कृपया दूरवाणी-विन्यासेषु सूचनाः अनुमन्यताम्",
   },
   'reminder.time': {
     'en': "Reminder time",
@@ -339,6 +411,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நினைவூட்டல் நேரம்",
     'pa': "ਯਾਦ-ਦਹਾਨੀ ਦਾ ਸਮਾਂ",
     'bho': "याद दिलावे के समय",
+    'mr': "आठवणीची वेळ",
+    'sa': "स्मारक-समयः",
   },
   'reminder.channel_desc': {
     'en': "Daily puzzle reminder",
@@ -348,6 +422,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி புதிர் நினைவூட்டல்",
     'pa': "ਰੋਜ਼ਾਨਾ ਪਹੇਲੀ ਯਾਦ-ਦਹਾਨੀ",
     'bho': "रोज के पजल याद",
+    'mr': "दैनिक पझल आठवण",
+    'sa': "दैनिकप्रहेलिका-स्मारकम्",
   },
   'reminder.msg.puzzle': {
     'en': "Today's puzzle is waiting for you 🧩",
@@ -357,6 +433,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "இன்றைய புதிர் உனக்காகக் காத்திருக்கிறது 🧩",
     'pa': "ਅੱਜ ਦੀ ਪਹੇਲੀ ਤੁਹਾਡੀ ਉਡੀਕ ਕਰ ਰਹੀ ਹੈ 🧩",
     'bho': "आज के पजल रउआ के इंतजार करत बा 🧩",
+    'mr': "आजचे कोडे तुमची वाट पाहत आहे 🧩",
+    'sa': "अद्यतनी प्रहेलिका भवन्तं प्रतीक्षते 🧩",
   },
   'reminder.msg.streak': {
     'en': "Don't break your streak! 🔥 Day {n}",
@@ -366,6 +444,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "உன் தொடரை உடைக்காதே! 🔥 நாள் {n}",
     'pa': "ਸਟ੍ਰੀਕ ਨਾ ਤੋੜੋ! 🔥 ਦਿਨ {n}",
     'bho': "स्ट्रीक मत तोड़ीं! 🔥 दिन {n}",
+    'mr': "तुमचा स्ट्रीक तोडू नका! 🔥 दिवस {n}",
+    'sa': "शृङ्खलां मा भिनत्तु! 🔥 दिनम् {n}",
   },
   'reminder.msg.reward': {
     'en': "Your daily reward is ready 🎁",
@@ -375,6 +455,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "உன் தினசரி பரிசு தயார் 🎁",
     'pa': "ਤੁਹਾਡਾ ਰੋਜ਼ਾਨਾ ਇਨਾਮ ਤਿਆਰ ਹੈ 🎁",
     'bho': "रउआ के रोज के इनाम तइयार बा 🎁",
+    'mr': "तुमचे दैनिक बक्षीस तयार आहे 🎁",
+    'sa': "भवतः दैनिकपुरस्कारः सज्जः 🎁",
   },
   'reminder.msg.quests': {
     'en': "Today's 3 quests are ready, win coins 🪙",
@@ -384,6 +466,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "இன்றைய 3 சவால்கள் தயார், நாணயங்களை வெல்லு 🪙",
     'pa': "ਅੱਜ ਦੇ 3 ਕੁਐਸਟ ਤਿਆਰ ਹਨ, ਸਿੱਕੇ ਜਿੱਤੋ 🪙",
     'bho': "आज के 3 गो क्वेस्ट तइयार बा, सिक्का जीतीं 🪙",
+    'mr': "आजचे 3 क्वेस्ट तयार आहेत, नाणी जिंका 🪙",
+    'sa': "अद्यतनानि 3 कार्याणि सज्जानि, मुद्राः जयतु 🪙",
   },
   'reminder.msg.brain': {
     'en': "Just 5 minutes of brain exercise 🧠",
@@ -393,6 +477,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "வெறும் 5 நிமிடம், மூளைக்குக் கொஞ்சம் பயிற்சி 🧠",
     'pa': "ਬੱਸ 5 ਮਿੰਟ, ਦਿਮਾਗ ਦੀ ਥੋੜ੍ਹੀ ਕਸਰਤ 🧠",
     'bho': "बस 5 मिनट, दिमाग के तनी कसरत 🧠",
+    'mr': "फक्त 5 मिनिटे मेंदूचा व्यायाम 🧠",
+    'sa': "केवलं 5 निमेषाः बुद्धि-व्यायामः 🧠",
   },
 
   // ------------------------------------------------------------ achievements
@@ -404,6 +490,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "சாதனைகள்",
     'pa': "ਪ੍ਰਾਪਤੀਆਂ",
     'bho': "उपलब्धि",
+    'mr': "कामगिरी",
+    'sa': "उपलब्धयः",
   },
   'ach.badges': {
     'en': "{done} / {total} badges",
@@ -413,6 +501,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{done} / {total} பதக்கங்கள்",
     'pa': "{done} / {total} ਬੈਜ",
     'bho': "{done} / {total} बैज",
+    'mr': "{done} / {total} बॅज",
+    'sa': "{done} / {total} पदकानि",
   },
   'ach.unlocked_toast': {
     'en': "Badge unlocked: {name}",
@@ -422,6 +512,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "பதக்கம் திறந்தது: {name}",
     'pa': "ਬੈਜ ਅਨਲੌਕ: {name}",
     'bho': "बैज खुलल: {name}",
+    'mr': "बॅज अनलॉक: {name}",
+    'sa': "पदकम् उद्घाटितम्: {name}",
   },
   'ach.first_win.title': {
     'en': "First Win",
@@ -431,6 +523,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "முதல் வெற்றி",
     'pa': "ਪਹਿਲੀ ਜਿੱਤ",
     'bho': "पहिला जीत",
+    'mr': "पहिला विजय",
+    'sa': "प्रथमविजयः",
   },
   'ach.first_win.desc': {
     'en': "Win any game or level",
@@ -440,6 +534,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "ஏதேனும் ஒரு விளையாட்டு அல்லது நிலையை வெல்லு",
     'pa': "ਕੋਈ ਵੀ ਗੇਮ ਜਾਂ ਲੈਵਲ ਜਿੱਤੋ",
     'bho': "कवनो गेम भा लेवल जीतीं",
+    'mr': "कोणताही गेम किंवा लेव्हल जिंका",
+    'sa': "काम् अपि क्रीडां स्तरं वा जयतु",
   },
   'ach.levels_n.desc': {
     'en': "Complete {n} levels",
@@ -449,6 +545,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} நிலைகளை முடி",
     'pa': "{n} ਲੈਵਲ ਪੂਰੇ ਕਰੋ",
     'bho': "{n} लेवल पूरा करीं",
+    'mr': "{n} लेव्हल पूर्ण करा",
+    'sa': "{n} स्तरान् समापयतु",
   },
   'ach.levels_10.title': {
     'en': "Warming Up",
@@ -458,6 +556,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தயாராகிறது",
     'pa': "ਸ਼ੁਰੂਆਤ",
     'bho': "सुरुआत",
+    'mr': "सुरुवात",
+    'sa': "आरम्भः",
   },
   'ach.levels_50.title': {
     'en': "Puzzle Pro",
@@ -467,6 +567,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "புதிர் நிபுணர்",
     'pa': "ਪਹੇਲੀ ਮਾਹਿਰ",
     'bho': "पजल प्रो",
+    'mr': "पझल प्रो",
+    'sa': "प्रहेलिका-प्रवीणः",
   },
   'ach.levels_100.title': {
     'en': "Centurion",
@@ -476,6 +578,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "சதம் வீரர்",
     'pa': "ਸੈਂਕੜਾ ਵੀਰ",
     'bho': "सतक वीर",
+    'mr': "शतकवीर",
+    'sa': "शतकवीरः",
   },
   'ach.levels_250.title': {
     'en': "Grandmaster",
@@ -485,6 +589,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "கிராண்ட்மாஸ்டர்",
     'pa': "ਗ੍ਰੈਂਡਮਾਸਟਰ",
     'bho': "ग्रैंडमास्टर",
+    'mr': "ग्रँडमास्टर",
+    'sa': "महागुरुः",
   },
   'ach.plays_25.title': {
     'en': "Regular",
@@ -494,6 +600,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "வழக்கமான வீரர்",
     'pa': "ਪੱਕਾ ਖਿਡਾਰੀ",
     'bho': "पक्का खेलाड़ी",
+    'mr': "नियमित खेळाडू",
+    'sa': "नियमितः क्रीडकः",
   },
   'ach.plays_25.desc': {
     'en': "Play {n} times",
@@ -503,6 +611,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} முறை விளையாடு",
     'pa': "{n} ਵਾਰ ਖੇਡੋ",
     'bho': "{n} बेर खेलीं",
+    'mr': "{n} वेळा खेळा",
+    'sa': "{n} वारं क्रीडतु",
   },
   'ach.explorer.title': {
     'en': "Explorer",
@@ -512,6 +622,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "ஆய்வாளர்",
     'pa': "ਖੋਜੀ",
     'bho': "खोजी",
+    'mr': "शोधक",
+    'sa': "अन्वेषकः",
   },
   'ach.all_games.title': {
     'en': "Globetrotter",
@@ -521,6 +633,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "எல்லாம் விளையாடுபவர்",
     'pa': "ਹਰ ਗੇਮ ਦਾ ਖਿਡਾਰੀ",
     'bho': "हर गेम के खेलाड़ी",
+    'mr': "प्रत्येक गेमचा खेळाडू",
+    'sa': "सर्वक्रीडा-पथिकः",
   },
   'ach.all_games.desc': {
     'en': "Play every game",
@@ -530,6 +644,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "எல்லா விளையாட்டுகளையும் விளையாடு",
     'pa': "ਹਰ ਗੇਮ ਖੇਡੋ",
     'bho': "हर गेम खेलीं",
+    'mr': "प्रत्येक गेम खेळा",
+    'sa': "सर्वाः क्रीडाः क्रीडतु",
   },
   'ach.all_tiers.title': {
     'en': "Tier Taster",
@@ -539,6 +655,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "எல்லா நிலைகளும்",
     'pa': "ਹਰ ਪੱਧਰ ਦਾ ਸੁਆਦ",
     'bho': "हर लेवल के स्वाद",
+    'mr': "प्रत्येक स्तराची चव",
+    'sa': "सर्वस्तर-रसिकः",
   },
   'ach.all_tiers.desc': {
     'en': "Clear Easy, Medium, Hard & Extreme levels",
@@ -548,6 +666,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "எளிது, நடுத்தரம், கடினம் & தீவிர நிலைகளை முடி",
     'pa': "ਆਸਾਨ, ਦਰਮਿਆਨਾ, ਔਖਾ ਅਤੇ ਐਕਸਟ੍ਰੀਮ ਲੈਵਲ ਪਾਰ ਕਰੋ",
     'bho': "आसान, मध्यम, कठिन आ एक्सट्रीम लेवल पार करीं",
+    'mr': "सोपे, मध्यम, कठीण आणि एक्स्ट्रीम लेव्हल पार करा",
+    'sa': "सरलं, मध्यमं, कठिनम्, अतिकठिनं च स्तरं समापयतु",
   },
   'ach.hard_clear.title': {
     'en': "Tough Cookie",
@@ -557,6 +677,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "உறுதியானவர்",
     'pa': "ਤਕੜਾ ਖਿਡਾਰੀ",
     'bho': "मजबूत खेलाड़ी",
+    'mr': "पक्का खेळाडू",
+    'sa': "दृढः क्रीडकः",
   },
   'ach.hard_clear.desc': {
     'en': "Clear a Hard level",
@@ -566,6 +688,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "ஒரு கடினமான நிலையை முடி",
     'pa': "ਇੱਕ ਔਖਾ ਲੈਵਲ ਪਾਰ ਕਰੋ",
     'bho': "एगो कठिन लेवल पार करीं",
+    'mr': "एक कठीण लेव्हल पार करा",
+    'sa': "एकं कठिनं स्तरं समापयतु",
   },
   'ach.extreme_clear.title': {
     'en': "Extreme!",
@@ -575,6 +699,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தீவிரம்!",
     'pa': "ਐਕਸਟ੍ਰੀਮ!",
     'bho': "एक्सट्रीम!",
+    'mr': "एक्स्ट्रीम!",
+    'sa': "अतिकठिनम्!",
   },
   'ach.extreme_clear.desc': {
     'en': "Clear an Extreme level",
@@ -584,6 +710,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "ஒரு தீவிர நிலையை முடி",
     'pa': "ਇੱਕ ਐਕਸਟ੍ਰੀਮ ਲੈਵਲ ਪਾਰ ਕਰੋ",
     'bho': "एगो एक्सट्रीम लेवल पार करीं",
+    'mr': "एक एक्स्ट्रीम लेव्हल पार करा",
+    'sa': "एकम् अतिकठिनं स्तरं समापयतु",
   },
   'ach.extreme_10.title': {
     'en': "Fearless",
@@ -593,6 +721,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "அச்சமற்றவர்",
     'pa': "ਨਿਡਰ",
     'bho': "निडर",
+    'mr': "निडर",
+    'sa': "निर्भयः",
   },
   'ach.extreme_10.desc': {
     'en': "Clear {n} Extreme levels",
@@ -602,6 +732,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} தீவிர நிலைகளை முடி",
     'pa': "{n} ਐਕਸਟ੍ਰੀਮ ਲੈਵਲ ਪਾਰ ਕਰੋ",
     'bho': "{n} एक्सट्रीम लेवल पार करीं",
+    'mr': "{n} एक्स्ट्रीम लेव्हल पार करा",
+    'sa': "{n} अतिकठिनान् स्तरान् समापयतु",
   },
   'ach.stars3_1.title': {
     'en': "Perfectionist",
@@ -611,6 +743,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "முழுமைவாதி",
     'pa': "ਪਰਫੈਕਸ਼ਨਿਸਟ",
     'bho': "एकदम परफेक्ट",
+    'mr': "परिपूर्णतावादी",
+    'sa': "पूर्णतावादी",
   },
   'ach.stars3_1.desc': {
     'en': "Get 3 stars on a level",
@@ -620,6 +754,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "ஒரு நிலையில் 3 நட்சத்திரங்கள் பெறு",
     'pa': "ਇੱਕ ਲੈਵਲ ਵਿੱਚ 3 ਤਾਰੇ ਲਓ",
     'bho': "एगो लेवल में 3 स्टार पाईं",
+    'mr': "एका लेव्हलमध्ये 3 तारे मिळवा",
+    'sa': "एकस्मिन् स्तरे 3 तारकाः प्राप्नोतु",
   },
   'ach.stars3_25.title': {
     'en': "Star Collector",
@@ -629,6 +765,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நட்சத்திர சேகரிப்பாளர்",
     'pa': "ਤਾਰੇ ਇਕੱਠੇ ਕਰਨ ਵਾਲਾ",
     'bho': "स्टार बटोरे वाला",
+    'mr': "तारे संग्राहक",
+    'sa': "तारका-सङ्ग्राहकः",
   },
   'ach.streak_n.desc': {
     'en': "Reach a {n} day login streak",
@@ -638,6 +776,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} நாள் உள்நுழைவு தொடரை அடை",
     'pa': "{n} ਦਿਨਾਂ ਦੀ ਲਾਗਇਨ ਸਟ੍ਰੀਕ ਬਣਾਓ",
     'bho': "{n} दिन के लॉगिन स्ट्रीक बनाईं",
+    'mr': "{n} दिवसांचा लॉगिन स्ट्रीक गाठा",
+    'sa': "{n} दिनानां प्रवेश-शृङ्खलां प्राप्नोतु",
   },
   'ach.streak_3.title': {
     'en': "Habit Forming",
@@ -647,6 +787,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "பழக்கமாகிறது",
     'pa': "ਆਦਤ ਬਣ ਰਹੀ ਹੈ",
     'bho': "आदत बनत बा",
+    'mr': "सवय लागत आहे",
+    'sa': "अभ्यासः जायते",
   },
   'ach.streak_7.title': {
     'en': "On Fire",
@@ -656,6 +798,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தீப்பொறி",
     'pa': "ਧਮਾਕੇਦਾਰ",
     'bho': "धमाकेदार",
+    'mr': "जोरात!",
+    'sa': "प्रज्वलितः!",
   },
   'ach.streak_30.title': {
     'en': "Unstoppable",
@@ -665,6 +809,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தடுக்க முடியாதவர்",
     'pa': "ਅਜਿੱਤ",
     'bho': "रोकल ना जाई",
+    'mr': "अजिंक्य",
+    'sa': "अजेयः",
   },
   'ach.challenge_1.title': {
     'en': "Daily Champion",
@@ -674,6 +820,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தினசரி சாம்பியன்",
     'pa': "ਡੇਲੀ ਚੈਂਪੀਅਨ",
     'bho': "डेली चैंपियन",
+    'mr': "दैनिक चॅम्पियन",
+    'sa': "दैनिकविजेता",
   },
   'ach.challenge_1.desc': {
     'en': "Complete all 3 daily quests",
@@ -683,6 +831,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "மூன்று தினசரி சவால்களையும் முடி",
     'pa': "ਤਿੰਨੇ ਡੇਲੀ ਕੁਐਸਟ ਪੂਰੇ ਕਰੋ",
     'bho': "तीनों डेली क्वेस्ट पूरा करीं",
+    'mr': "तिन्ही दैनिक क्वेस्ट पूर्ण करा",
+    'sa': "त्रीणि अपि दैनिककार्याणि समापयतु",
   },
   'ach.challenge_7.title': {
     'en': "Week Warrior",
@@ -692,6 +842,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "வார வீரர்",
     'pa': "ਹਫ਼ਤੇ ਦਾ ਯੋਧਾ",
     'bho': "हफ्ता के जोधा",
+    'mr': "आठवड्याचा योद्धा",
+    'sa': "सप्ताह-योद्धा",
   },
   'ach.challenge_7.desc': {
     'en': "Daily Challenge {n} days in a row",
@@ -701,6 +853,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "தொடர்ந்து {n} நாட்கள் தினசரி சவால்",
     'pa': "ਲਗਾਤਾਰ {n} ਦਿਨ ਡੇਲੀ ਚੈਲੰਜ",
     'bho': "लगातार {n} दिन डेली चैलेंज",
+    'mr': "सलग {n} दिवस दैनिक आव्हान",
+    'sa': "निरन्तरं {n} दिनानि दैनिकाह्वानम्",
   },
   'ach.quests_25.title': {
     'en': "Quest Hunter",
@@ -710,6 +864,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "சவால் வேட்டைக்காரர்",
     'pa': "ਕੁਐਸਟ ਸ਼ਿਕਾਰੀ",
     'bho': "क्वेस्ट सिकारी",
+    'mr': "क्वेस्ट शिकारी",
+    'sa': "कार्य-मृगयुः",
   },
   'ach.quests_25.desc': {
     'en': "Claim {n} daily quests",
@@ -719,6 +875,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} தினசரி சவால் பரிசுகளைப் பெறு",
     'pa': "{n} ਡੇਲੀ ਕੁਐਸਟ ਦੇ ਇਨਾਮ ਲਓ",
     'bho': "{n} डेली क्वेस्ट के इनाम लीं",
+    'mr': "{n} दैनिक क्वेस्टची बक्षिसे घ्या",
+    'sa': "{n} दैनिककार्याणां पुरस्कारान् स्वीकरोतु",
   },
   'ach.coins_n.desc': {
     'en': "Earn {n} coins",
@@ -728,6 +886,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{n} நாணயங்களைச் சம்பாதி",
     'pa': "{n} ਸਿੱਕੇ ਕਮਾਓ",
     'bho': "{n} सिक्का कमाईं",
+    'mr': "{n} नाणी कमवा",
+    'sa': "{n} मुद्राः अर्जयतु",
   },
   'ach.coins_1000.title': {
     'en': "Coin Hoarder",
@@ -737,6 +897,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "நாணயச் சேமிப்பாளர்",
     'pa': "ਸਿੱਕਿਆਂ ਦਾ ਖਜ਼ਾਨਚੀ",
     'bho': "सिक्का के खजांची",
+    'mr': "नाण्यांचा खजिनदार",
+    'sa': "मुद्रा-कोषाध्यक्षः",
   },
   'ach.coins_5000.title': {
     'en': "Treasure King",
@@ -746,6 +908,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "புதையல் ராஜா",
     'pa': "ਖਜ਼ਾਨੇ ਦਾ ਰਾਜਾ",
     'bho': "खजाना के राजा",
+    'mr': "खजिन्याचा राजा",
+    'sa': "निधि-राजः",
   },
   'ach.master.title': {
     'en': "{game} Master",
@@ -755,6 +919,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} மாஸ்டர்",
     'pa': "{game} ਮਾਸਟਰ",
     'bho': "{game} मास्टर",
+    'mr': "{game} मास्टर",
+    'sa': "{game} प्रवीणः",
   },
   'ach.master_score.desc': {
     'en': "Score {n}+ in {game}",
@@ -764,6 +930,8 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} இல் {n}+ மதிப்பெண் பெறு",
     'pa': "{game} ਵਿੱਚ {n}+ ਸਕੋਰ ਕਰੋ",
     'bho': "{game} में {n}+ स्कोर करीं",
+    'mr': "{game} मध्ये {n}+ स्कोअर करा",
+    'sa': "{game} इत्यत्र {n}+ अङ्कान् प्राप्नोतु",
   },
   'ach.master_wins.desc': {
     'en': "Win {n} times in {game}",
@@ -773,5 +941,7 @@ const Map<String, Map<String, String>> dailyStrings = {
     'ta': "{game} இல் {n} முறை வெல்லு",
     'pa': "{game} ਵਿੱਚ {n} ਵਾਰ ਜਿੱਤੋ",
     'bho': "{game} में {n} बेर जीतीं",
+    'mr': "{game} मध्ये {n} वेळा जिंका",
+    'sa': "{game} इत्यत्र {n} वारं जयतु",
   },
 };

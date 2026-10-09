@@ -7,7 +7,7 @@ import 'package:puzzle_hub/games/flow_pairs/flow_pairs_screen.dart';
 import '../block_puzzle/i18n_helpers.dart';
 
 void main() {
-  test('flow_pairs strings: 7 languages, same placeholders', () => checkTable('flow_pairs', flowPairsStrings));
+  test('flow_pairs strings: 9 languages, same placeholders', () => checkTable('flow_pairs', flowPairsStrings));
   test('flow_pairs source keys exist', () => checkSourceKeys('lib/games/flow_pairs'));
   firstScreenInAllLanguages('Flow', () => const FlowPairsScreen(), then: (t) async {
     await t.tap(find.text(tr('common.tier.easy')));

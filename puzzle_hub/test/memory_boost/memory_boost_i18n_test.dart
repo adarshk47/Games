@@ -20,7 +20,7 @@ Set<String> _placeholders(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m
 
 void main() {
   group('memory_boost strings', () {
-    test('every key is prefixed and has all 7 languages with identical placeholders', () {
+    test('every key is prefixed and has all languages with identical placeholders', () {
       final langs = AppLang.values.map((l) => l.code).toSet();
       expect(memoryBoostStrings, isNotEmpty);
       memoryBoostStrings.forEach((key, entry) {

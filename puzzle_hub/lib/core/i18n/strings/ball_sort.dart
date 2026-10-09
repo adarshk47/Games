@@ -1,5 +1,5 @@
 // Translations for the ball_sort module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> ballSortStrings = {
   'ball_sort.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "பால் சார்ட்",
     'pa': "ਬਾਲ ਸੋਰਟ",
     'bho': "बॉल सॉर्ट",
+    'mr': "बॉल सॉर्ट",
+    'sa': "कन्दुक-वर्गीकरणम्",
   },
   'ball_sort.title_tier': {
     'en': "Ball Sort · {tier}",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "பால் சார்ட் · {tier}",
     'pa': "ਬਾਲ ਸੋਰਟ · {tier}",
     'bho': "बॉल सॉर्ट · {tier}",
+    'mr': "बॉल सॉर्ट · {tier}",
+    'sa': "कन्दुक-वर्गीकरणम् · {tier}",
   },
   'ball_sort.choose': {
     'en': "Choose difficulty",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "சிரமத்தைத் தேர்வு செய்",
     'pa': "ਮੁਸ਼ਕਲ ਚੁਣੋ",
     'bho': "कठिनाई चुनीं",
+    'mr': "काठिण्य निवडा",
+    'sa': "काठिन्यं चिनुत",
   },
   'ball_sort.choose_sub': {
     'en': "Each mode keeps its own levels and records.",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "ஒவ்வொரு மோடுக்கும் தனி நிலைகள், சாதனைகள் உண்டு.",
     'pa': "ਹਰ ਮੋਡ ਦੇ ਆਪਣੇ ਲੈਵਲ ਤੇ ਰਿਕਾਰਡ ਹਨ।",
     'bho': "हर मोड के आपन लेवल आ रिकॉर्ड बा।",
+    'mr': "प्रत्येक मोडचे स्वतःचे स्तर आणि विक्रम आहेत.",
+    'sa': "प्रत्येकस्य प्रकारस्य स्वकीयाः स्तराः अभिलेखाः च सन्ति।",
   },
   'ball_sort.colors': {
     'en': "{range} colors",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "{range} வண்ணங்கள்",
     'pa': "{range} ਰੰਗ",
     'bho': "{range} रंग",
+    'mr': "{range} रंग",
+    'sa': "{range} वर्णाः",
   },
   'ball_sort.desc.easy': {
     'en': "Relaxed start. Two spare tubes.",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "நிதானமான தொடக்கம். இரண்டு காலி குழாய்கள்.",
     'pa': "ਆਰਾਮ ਨਾਲ ਸ਼ੁਰੂਆਤ। ਦੋ ਖਾਲੀ ਟਿਊਬਾਂ।",
     'bho': "आराम से शुरुआत। दू गो खाली ट्यूब।",
+    'mr': "निवांत सुरुवात. दोन रिकाम्या ट्यूब.",
+    'sa': "शान्तः आरम्भः। द्वे रिक्ते नलिके।",
   },
   'ball_sort.desc.medium': {
     'en': "A proper sorting workout.",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "சரியான வரிசைப்படுத்தும் பயிற்சி.",
     'pa': "ਛਾਂਟਣ ਦੀ ਪੂਰੀ ਕਸਰਤ।",
     'bho': "छाँटे के असली कसरत।",
+    'mr': "वर्गीकरणाचा खरा व्यायाम.",
+    'sa': "वर्गीकरणस्य यथार्थः व्यायामः।",
   },
   'ball_sort.desc.hard': {
     'en': "A rainbow of tubes. Shape markers help.",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "குழாய்களின் வானவில். வடிவக் குறிகள் உதவும்.",
     'pa': "ਟਿਊਬਾਂ ਦੀ ਸਤਰੰਗੀ। ਆਕਾਰ ਨਿਸ਼ਾਨ ਮਦਦ ਕਰਨਗੇ।",
     'bho': "ट्यूबन के इंद्रधनुष। आकार निशान मदद करी।",
+    'mr': "ट्यूबांचे इंद्रधनुष्य. आकार खुणा मदत करतील.",
+    'sa': "नलिकानाम् इन्द्रधनुः। आकारचिह्नानि साहाय्यं करिष्यन्ति।",
   },
   'ball_sort.desc.extreme': {
     'en': "Only 1-2 spare tubes. Pure chaos.",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "1-2 காலி குழாய்கள் மட்டுமே. முழு குழப்பம்.",
     'pa': "ਸਿਰਫ਼ 1-2 ਖਾਲੀ ਟਿਊਬਾਂ। ਪੂਰੀ ਹਫੜਾ-ਦਫੜੀ।",
     'bho': "बस 1-2 गो खाली ट्यूब। पूरा हड़बोंग।",
+    'mr': "फक्त 1-2 रिकाम्या ट्यूब. निव्वळ गोंधळ.",
+    'sa': "केवलं 1-2 रिक्तनलिकाः। शुद्धः कोलाहलः।",
   },
   'ball_sort.continue_tier': {
     'en': "Continue {tier}",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "{tier} தொடரவும்",
     'pa': "{tier} ਜਾਰੀ ਰੱਖੋ",
     'bho': "{tier} जारी राखीं",
+    'mr': "{tier} पुढे सुरू करा",
+    'sa': "{tier} अनुवर्तयत",
   },
   'ball_sort.last': {
     'en': "LAST",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "கடைசி",
     'pa': "ਪਿਛਲਾ",
     'bho': "पिछला",
+    'mr': "मागील",
+    'sa': "पूर्वतनम्",
   },
   'ball_sort.not_started': {
     'en': "Not started",
@@ -109,6 +131,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "இன்னும் தொடங்கவில்லை",
     'pa': "ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤਾ",
     'bho': "अबहीं शुरू ना भइल",
+    'mr': "सुरू केले नाही",
+    'sa': "न आरब्धम्",
   },
   'ball_sort.cleared_one': {
     'en': "{n} level cleared",
@@ -118,6 +142,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "{n} நிலை முடிந்தது",
     'pa': "{n} ਲੈਵਲ ਪੂਰਾ",
     'bho': "{n} गो लेवल पूरा",
+    'mr': "{n} स्तर पूर्ण",
+    'sa': "{n} स्तरः पूर्णः",
   },
   'ball_sort.cleared_n': {
     'en': "{n} levels cleared",
@@ -127,6 +153,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "{n} நிலைகள் முடிந்தன",
     'pa': "{n} ਲੈਵਲ ਪੂਰੇ",
     'bho': "{n} गो लेवल पूरा",
+    'mr': "{n} स्तर पूर्ण",
+    'sa': "{n} स्तराः पूर्णाः",
   },
   'ball_sort.play_level': {
     'en': "Play level {n}",
@@ -136,6 +164,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "நிலை {n} விளையாடு",
     'pa': "ਲੈਵਲ {n} ਖੇਡੋ",
     'bho': "लेवल {n} खेलीं",
+    'mr': "स्तर {n} खेळा",
+    'sa': "स्तरं {n} क्रीडत",
   },
   'ball_sort.level_done': {
     'en': "Level {n} complete!",
@@ -145,6 +175,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "நிலை {n} முடிந்தது!",
     'pa': "ਲੈਵਲ {n} ਪੂਰਾ!",
     'bho': "लेवल {n} पूरा!",
+    'mr': "स्तर {n} पूर्ण!",
+    'sa': "स्तरः {n} पूर्णः!",
   },
   'ball_sort.solved_msg': {
     'en': "Solved in {moves} moves (par {par}).",
@@ -154,6 +186,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "{moves} நகர்வுகளில் தீர்த்தீர்கள் (இலக்கு {par}).",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ ਹੱਲ (ਟੀਚਾ {par})।",
     'bho': "{moves} चाल में हल (लक्ष्य {par})।",
+    'mr': "{moves} चालींत सोडवले (लक्ष्य {par}).",
+    'sa': "{moves} चालैः समाहितम् (लक्ष्यम् {par})।",
   },
   'ball_sort.markers': {
     'en': "Shape markers",
@@ -163,6 +197,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "வடிவக் குறிகள்",
     'pa': "ਆਕਾਰ ਨਿਸ਼ਾਨ",
     'bho': "आकार निशान",
+    'mr': "आकार खुणा",
+    'sa': "आकारचिह्नानि",
   },
   'ball_sort.moves_n': {
     'en': "Moves {n}",
@@ -172,6 +208,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "நகர்வுகள் {n}",
     'pa': "ਚਾਲਾਂ {n}",
     'bho': "चाल {n}",
+    'mr': "चाली {n}",
+    'sa': "चालाः {n}",
   },
   'ball_sort.tube_n': {
     'en': "Tube ({n})",
@@ -181,6 +219,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "குழாய் ({n})",
     'pa': "ਟਿਊਬ ({n})",
     'bho': "ट्यूब ({n})",
+    'mr': "ट्यूब ({n})",
+    'sa': "नलिका ({n})",
   },
   'ball_sort.tube_buy': {
     'en': "Tube +🪙",
@@ -190,6 +230,8 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "குழாய் +🪙",
     'pa': "ਟਿਊਬ +🪙",
     'bho': "ट्यूब +🪙",
+    'mr': "ट्यूब +🪙",
+    'sa': "नलिका +🪙",
   },
   'ball_sort.bought': {
     'en': "BOUGHT",
@@ -199,5 +241,7 @@ const Map<String, Map<String, String>> ballSortStrings = {
     'ta': "வாங்கியது",
     'pa': "ਖਰੀਦਿਆ",
     'bho': "खरीदल",
+    'mr': "खरेदी केले",
+    'sa': "क्रीतम्",
   },
 };

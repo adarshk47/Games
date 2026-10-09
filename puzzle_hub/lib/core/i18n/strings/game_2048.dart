@@ -1,5 +1,5 @@
 // Translations for the game_2048 module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> game2048Strings = {
   'game_2048.target_reached': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "{n} எட்டிவிட்டீர்கள்!",
     'pa': "{n} ਤੱਕ ਪਹੁੰਚ ਗਏ!",
     'bho': "{n} ले पहुँच गइनी!",
+    'mr': "{n} गाठले!",
+    'sa': "{n} प्राप्तम्!",
   },
   'game_2048.win_msg': {
     'en': "Score {score}. Keep going for a higher tile?",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "ஸ்கோர் {score}. பெரிய டைலுக்காக தொடர்ந்து விளையாடுவீர்களா?",
     'pa': "ਸਕੋਰ {score}। ਹੋਰ ਵੱਡੀ ਟਾਈਲ ਲਈ ਖੇਡਦੇ ਰਹੋਗੇ?",
     'bho': "स्कोर {score}। अउर बड़ टाइल खातिर खेलत रहब?",
+    'mr': "गुण {score}. मोठ्या टाइलसाठी खेळत राहायचे?",
+    'sa': "अङ्काः {score}। बृहत्तरफलकार्थं क्रीडाम् अनुवर्तयत?",
   },
   'game_2048.keep_going': {
     'en': "Keep going",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "தொடர்ந்து விளையாடு",
     'pa': "ਖੇਡਦੇ ਰਹੋ",
     'bho': "खेलत रहीं",
+    'mr': "खेळत राहा",
+    'sa': "अनुवर्तयत",
   },
   'game_2048.over_msg': {
     'en': "Score {score}  •  Best {best}\nHighest tile {tile}",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "ஸ்கோர் {score}  •  சிறந்தது {best}\nபெரிய டைல் {tile}",
     'pa': "ਸਕੋਰ {score}  •  ਸਭ ਤੋਂ ਵਧੀਆ {best}\nਸਭ ਤੋਂ ਵੱਡੀ ਟਾਈਲ {tile}",
     'bho': "स्कोर {score}  •  बेस्ट {best}\nसबसे बड़ टाइल {tile}",
+    'mr': "गुण {score}  •  सर्वोत्तम {best}\nसर्वात मोठी टाइल {tile}",
+    'sa': "अङ्काः {score}  •  श्रेष्ठम् {best}\nबृहत्तमं फलकम् {tile}",
   },
   'game_2048.undo_tip': {
     'en': "Undo ({n})",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "அன்டூ ({n})",
     'pa': "ਅਨਡੂ ({n})",
     'bho': "अनडू ({n})",
+    'mr': "पूर्ववत ({n})",
+    'sa': "प्रतिवर्तनम् ({n})",
   },
   'game_2048.swipe_hint': {
     'en': "Swipe to merge tiles. Reach {n}!",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "டைல்களை இணைக்க ஸ்வைப் செய்யுங்கள். {n} எட்டுங்கள்!",
     'pa': "ਟਾਈਲਾਂ ਜੋੜਨ ਲਈ ਸਵਾਈਪ ਕਰੋ। {n} ਤੱਕ ਪਹੁੰਚੋ!",
     'bho': "टाइल मिलावे खातिर स्वाइप करीं। {n} ले पहुँचीं!",
+    'mr': "टाइल जोडण्यासाठी स्वाइप करा. {n} गाठा!",
+    'sa': "फलकानि योजयितुं स्वाइप कुरुत। {n} प्राप्नुत!",
   },
   'game_2048.classic': {
     'en': "Classic 2048",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "கிளாசிக் 2048",
     'pa': "ਕਲਾਸਿਕ 2048",
     'bho': "क्लासिक 2048",
+    'mr': "क्लासिक 2048",
+    'sa': "पारम्परिकम् 2048",
   },
   'game_2048.classic_sel': {
     'en': "4x4 • original rules • {left}/{total} undos",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "4x4 • அசல் விதிகள் • {left}/{total} அன்டூ",
     'pa': "4x4 • ਅਸਲ ਨਿਯਮ • {left}/{total} ਅਨਡੂ",
     'bho': "4x4 • असली नियम • {left}/{total} अनडू",
+    'mr': "4x4 • मूळ नियम • {left}/{total} पूर्ववत",
+    'sa': "4x4 • मूलनियमाः • {left}/{total} प्रतिवर्तनानि",
   },
   'game_2048.classic_idle': {
     'en': "4x4 • original rules • endless",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "4x4 • அசல் விதிகள் • முடிவில்லா",
     'pa': "4x4 • ਅਸਲ ਨਿਯਮ • ਬੇਅੰਤ",
     'bho': "4x4 • असली नियम • बेअंत",
+    'mr': "4x4 • मूळ नियम • अंतहीन",
+    'sa': "4x4 • मूलनियमाः • अनन्तम्",
   },
   'game_2048.undos_one': {
     'en': "{n} undo",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "{n} அன்டூ",
     'pa': "{n} ਅਨਡੂ",
     'bho': "{n} अनडू",
+    'mr': "{n} पूर्ववत",
+    'sa': "{n} प्रतिवर्तनम्",
   },
   'game_2048.undos_n': {
     'en': "{n} undos",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "{n} அன்டூ",
     'pa': "{n} ਅਨਡੂ",
     'bho': "{n} अनडू",
+    'mr': "{n} पूर्ववत",
+    'sa': "{n} प्रतिवर्तनानि",
   },
   'game_2048.stones_n': {
     'en': "{n} stones",
@@ -109,6 +131,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "{n} கற்கள்",
     'pa': "{n} ਪੱਥਰ",
     'bho': "{n} गो पत्थर",
+    'mr': "{n} दगड",
+    'sa': "{n} पाषाणाः",
   },
   'game_2048.no_stones': {
     'en': "no stones",
@@ -118,6 +142,8 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "கற்கள் இல்லை",
     'pa': "ਕੋਈ ਪੱਥਰ ਨਹੀਂ",
     'bho': "पत्थर ना",
+    'mr': "दगड नाहीत",
+    'sa': "पाषाणाः न सन्ति",
   },
   'game_2048.fours': {
     'en': "{n}% fours",
@@ -127,5 +153,7 @@ const Map<String, Map<String, String>> game2048Strings = {
     'ta': "{n}% 4 டைல்கள்",
     'pa': "{n}% 4 ਟਾਈਲਾਂ",
     'bho': "{n}% 4 टाइल",
+    'mr': "{n}% 4 टाइल",
+    'sa': "{n}% 4-फलकानि",
   },
 };

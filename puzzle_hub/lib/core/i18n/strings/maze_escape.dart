@@ -1,5 +1,5 @@
 // Translations for the maze_escape module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> mazeEscapeStrings = {
   'maze_escape.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "புதிர்ப்பாதை தப்பித்தல்",
     'pa': "ਭੁੱਲ-ਭੁਲੱਈਆ ਤੋਂ ਬਚੋ",
     'bho': "भूलभुलैया से निकलीं",
+    'mr': "भुलभुलैयातून सुटका",
+    'sa': "व्यूहात् मुक्तिः",
   },
   'maze_escape.intro': {
     'en': "You're trapped. Many paths,\nonly one way out.",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நீங்கள் சிக்கியுள்ளீர்கள். பாதைகள் பல,\nவெளியேற ஒன்றே.",
     'pa': "ਤੁਸੀਂ ਫਸ ਗਏ ਹੋ। ਰਾਹ ਬਹੁਤ ਨੇ,\nਬਾਹਰ ਦਾ ਸਿਰਫ਼ ਇੱਕ।",
     'bho': "तू फँस गइल बाड़। रास्ता ढेर बा,\nबाहर के खाली एगो बा।",
+    'mr': "तुम्ही अडकला आहात. वाटा अनेक,\nबाहेर पडण्याचा मार्ग एकच.",
+    'sa': "भवान् बद्धः अस्ति। मार्गाः बहवः,\nनिर्गमः एक एव।",
   },
   'maze_escape.mode.labyrinth': {
     'en': "Labyrinth",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "சிக்கல்பாதை",
     'pa': "ਭੁੱਲ-ਭੁਲੱਈਆ",
     'bho': "भूलभुलैया",
+    'mr': "भुलभुलैया",
+    'sa': "चक्रव्यूहः",
   },
   'maze_escape.mode.memory': {
     'en': "Memory Maze",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நினைவுப் புதிர்ப்பாதை",
     'pa': "ਯਾਦ ਭੁੱਲ-ਭੁਲੱਈਆ",
     'bho': "याद वाला भूलभुलैया",
+    'mr': "स्मृती भुलभुलैया",
+    'sa': "स्मृतिव्यूहः",
   },
   'maze_escape.tagline.labyrinth': {
     'en': "Swipe through twisting corridors. Fog, torches and move limits.",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "வளைந்த பாதைகளில் ஸ்வைப் செய்யுங்கள். பனிமூட்டம், தீப்பந்தங்கள், நகர்வு வரம்பு.",
     'pa': "ਘੁੰਮਾਵਦਾਰ ਗਲੀਆਂ ਵਿੱਚ ਸਵਾਈਪ ਕਰੋ। ਧੁੰਦ, ਮਸ਼ਾਲਾਂ ਤੇ ਚਾਲਾਂ ਦੀ ਹੱਦ।",
     'bho': "घुमावदार गली में स्वाइप करीं। कुहासा, मसाल आ चाल के सीमा।",
+    'mr': "वळणावळणाच्या बोळांमधून स्वाइप करा. धुके, मशाली आणि चालींची मर्यादा.",
+    'sa': "वक्रवीथिषु स्वाइप कुरुत। नीहारः, दीपिकाः, चालसीमा च।",
   },
   'maze_escape.tagline.memory': {
     'en': "Study the maze, then the lights go out. Walk to the exit from memory.",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "புதிர்ப்பாதையைப் பாருங்கள், பிறகு விளக்குகள் அணையும். நினைவில் வைத்து வெளியேறுங்கள்.",
     'pa': "ਭੁੱਲ-ਭੁਲੱਈਆ ਵੇਖੋ, ਫਿਰ ਬੱਤੀਆਂ ਬੁਝ ਜਾਣਗੀਆਂ। ਯਾਦ ਨਾਲ ਬਾਹਰ ਨਿਕਲੋ।",
     'bho': "भूलभुलैया देखीं, फेर बत्ती बुता जाई। याद से बाहर निकलीं।",
+    'mr': "भुलभुलैया नीट पाहा, मग दिवे विझतील. आठवणीतून बाहेर पडा.",
+    'sa': "व्यूहं पश्यत, ततः दीपाः शाम्यन्ति। स्मृत्या निर्गच्छत।",
   },
   'maze_escape.badge_new': {
     'en': "NEW",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "புதியது",
     'pa': "ਨਵਾਂ",
     'bho': "नया",
+    'mr': "नवीन",
+    'sa': "नूतनम्",
   },
   'maze_escape.sub.labyrinth': {
     'en': "Many paths, only one way out.",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "பாதைகள் பல, வெளியேற ஒன்றே.",
     'pa': "ਰਾਹ ਬਹੁਤ ਨੇ, ਬਾਹਰ ਦਾ ਸਿਰਫ਼ ਇੱਕ।",
     'bho': "रास्ता ढेर बा, बाहर के खाली एगो बा।",
+    'mr': "वाटा अनेक, बाहेर पडण्याचा मार्ग एकच.",
+    'sa': "मार्गाः बहवः, निर्गमः एक एव।",
   },
   'maze_escape.sub.memory': {
     'en': "Look, remember, then find your way in the dark.",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "பாருங்கள், நினைவில் வையுங்கள், பிறகு இருட்டில் வழி தேடுங்கள்.",
     'pa': "ਵੇਖੋ, ਯਾਦ ਕਰੋ, ਫਿਰ ਹਨੇਰੇ ਵਿੱਚ ਰਾਹ ਲੱਭੋ।",
     'bho': "देखीं, याद करीं, फेर अन्हार में रास्ता खोजीं।",
+    'mr': "पाहा, लक्षात ठेवा, मग अंधारात वाट शोधा.",
+    'sa': "पश्यत, स्मरत, ततः अन्धकारे मार्गम् अन्विष्यत।",
   },
   'maze_escape.choose_difficulty': {
     'en': "Choose your difficulty",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "உங்கள் சிரமத்தைத் தேர்ந்தெடுங்கள்",
     'pa': "ਆਪਣੀ ਮੁਸ਼ਕਲ ਚੁਣੋ",
     'bho': "आपन कठिनाई चुनीं",
+    'mr': "काठिण्य पातळी निवडा",
+    'sa': "काठिन्यं चिनुत",
   },
   'maze_escape.blurb.easy': {
     'en': "{a}x{a} to {b}x{b} mazes. Clear view, 3 torches.",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{a}x{a} முதல் {b}x{b} புதிர்ப்பாதைகள். தெளிவான பார்வை, 3 தீப்பந்தங்கள்.",
     'pa': "{a}x{a} ਤੋਂ {b}x{b} ਭੁੱਲ-ਭੁਲੱਈਆਂ। ਸਾਫ਼ ਨਜ਼ਾਰਾ, 3 ਮਸ਼ਾਲਾਂ।",
     'bho': "{a}x{a} से {b}x{b} भूलभुलैया। साफ नजारा, 3 गो मसाल।",
+    'mr': "{a}x{a} ते {b}x{b} भुलभुलैया. स्पष्ट दृश्य, 3 मशाली.",
+    'sa': "{a}x{a} तः {b}x{b} पर्यन्तं व्यूहाः। स्पष्टदृश्यम्, 3 दीपिकाः।",
   },
   'maze_escape.blurb.medium': {
     'en': "{a}x{a} to {b}x{b} mazes. Light fog later on, 3 torches.",
@@ -109,6 +131,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{a}x{a} முதல் {b}x{b} புதிர்ப்பாதைகள். பின்னர் லேசான பனிமூட்டம், 3 தீப்பந்தங்கள்.",
     'pa': "{a}x{a} ਤੋਂ {b}x{b} ਭੁੱਲ-ਭੁਲੱਈਆਂ। ਬਾਅਦ ਵਿੱਚ ਹਲਕੀ ਧੁੰਦ, 3 ਮਸ਼ਾਲਾਂ।",
     'bho': "{a}x{a} से {b}x{b} भूलभुलैया। बाद में हलुक कुहासा, 3 गो मसाल।",
+    'mr': "{a}x{a} ते {b}x{b} भुलभुलैया. नंतर हलके धुके, 3 मशाली.",
+    'sa': "{a}x{a} तः {b}x{b} पर्यन्तं व्यूहाः। अनन्तरं मन्दनीहारः, 3 दीपिकाः।",
   },
   'maze_escape.blurb.hard': {
     'en': "{a}x{a} to {b}x{b} mazes. Fog, move limits, 2 torches.",
@@ -118,6 +142,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{a}x{a} முதல் {b}x{b} புதிர்ப்பாதைகள். பனிமூட்டம், நகர்வு வரம்பு, 2 தீப்பந்தங்கள்.",
     'pa': "{a}x{a} ਤੋਂ {b}x{b} ਭੁੱਲ-ਭੁਲੱਈਆਂ। ਧੁੰਦ, ਚਾਲਾਂ ਦੀ ਹੱਦ, 2 ਮਸ਼ਾਲਾਂ।",
     'bho': "{a}x{a} से {b}x{b} भूलभुलैया। कुहासा, चाल के सीमा, 2 गो मसाल।",
+    'mr': "{a}x{a} ते {b}x{b} भुलभुलैया. धुके, चालींची मर्यादा, 2 मशाली.",
+    'sa': "{a}x{a} तः {b}x{b} पर्यन्तं व्यूहाः। नीहारः, चालसीमा, 2 दीपिके।",
   },
   'maze_escape.blurb.extreme': {
     'en': "{a}x{a} to {b}x{b} mazes. Thick fog, tight move limit, 1 torch.",
@@ -127,6 +153,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{a}x{a} முதல் {b}x{b} புதிர்ப்பாதைகள். அடர்ந்த பனிமூட்டம், கடுமையான நகர்வு வரம்பு, 1 தீப்பந்தம்.",
     'pa': "{a}x{a} ਤੋਂ {b}x{b} ਭੁੱਲ-ਭੁਲੱਈਆਂ। ਸੰਘਣੀ ਧੁੰਦ, ਸਖ਼ਤ ਚਾਲ ਹੱਦ, 1 ਮਸ਼ਾਲ।",
     'bho': "{a}x{a} से {b}x{b} भूलभुलैया। घना कुहासा, कड़ा चाल सीमा, 1 गो मसाल।",
+    'mr': "{a}x{a} ते {b}x{b} भुलभुलैया. दाट धुके, कडक चाल मर्यादा, 1 मशाल.",
+    'sa': "{a}x{a} तः {b}x{b} पर्यन्तं व्यूहाः। घननीहारः, कठोरा चालसीमा, 1 दीपिका।",
   },
   'maze_escape.mem_blurb': {
     'en': "{a}x{a} to {b}x{b} mazes. {s}s look.",
@@ -136,6 +164,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{a}x{a} முதல் {b}x{b} புதிர்ப்பாதைகள். பார்க்க {s} வி.",
     'pa': "{a}x{a} ਤੋਂ {b}x{b} ਭੁੱਲ-ਭੁਲੱਈਆਂ। ਵੇਖਣ ਲਈ {s} ਸਕਿੰਟ।",
     'bho': "{a}x{a} से {b}x{b} भूलभुलैया। देखे खातिर {s} सेकंड।",
+    'mr': "{a}x{a} ते {b}x{b} भुलभुलैया. पाहण्यासाठी {s} सेकंद.",
+    'sa': "{a}x{a} तः {b}x{b} पर्यन्तं व्यूहाः। दर्शनाय {s} क्षणाः।",
   },
   'maze_escape.no_peeks': {
     'en': "No peeks.",
@@ -145,6 +175,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "பார்வை இல்லை.",
     'pa': "ਕੋਈ ਝਾਤ ਨਹੀਂ।",
     'bho': "कवनो झलक ना।",
+    'mr': "झलक नाही.",
+    'sa': "दर्शनं नास्ति।",
   },
   'maze_escape.peeks_one': {
     'en': "{n} peek.",
@@ -154,6 +186,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{n} பார்வை.",
     'pa': "{n} ਝਾਤ।",
     'bho': "{n} गो झलक।",
+    'mr': "{n} झलक.",
+    'sa': "{n} दर्शनम्।",
   },
   'maze_escape.peeks_many': {
     'en': "{n} peeks.",
@@ -163,6 +197,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{n} பார்வைகள்.",
     'pa': "{n} ਝਾਤਾਂ।",
     'bho': "{n} गो झलक।",
+    'mr': "{n} झलका.",
+    'sa': "{n} दर्शनानि।",
   },
   'maze_escape.bumps_out': {
     'en': "{n} bumps and out.",
@@ -172,6 +208,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{n} மோதல்களில் ஆட்டம் முடியும்.",
     'pa': "{n} ਟੱਕਰਾਂ ਤੇ ਬਾਹਰ।",
     'bho': "{n} गो टक्कर आ खेल खतम।",
+    'mr': "{n} धडका आणि बाहेर.",
+    'sa': "{n} आघाताः, ततः बहिः।",
   },
   'maze_escape.grid_title': {
     'en': "{mode} - {tier}",
@@ -181,6 +219,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{mode} - {tier}",
     'pa': "{mode} - {tier}",
     'bho': "{mode} - {tier}",
+    'mr': "{mode} - {tier}",
+    'sa': "{mode} - {tier}",
   },
   'maze_escape.lab_title': {
     'en': "Labyrinth {tier} {n}",
@@ -190,6 +230,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "சிக்கல்பாதை {tier} {n}",
     'pa': "ਭੁੱਲ-ਭੁਲੱਈਆ {tier} {n}",
     'bho': "भूलभुलैया {tier} {n}",
+    'mr': "भुलभुलैया {tier} {n}",
+    'sa': "चक्रव्यूहः {tier} {n}",
   },
   'maze_escape.lab_win_title': {
     'en': "You escaped!",
@@ -199,6 +241,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "தப்பித்துவிட்டீர்கள்!",
     'pa': "ਬਾਹਰ ਨਿਕਲ ਗਏ!",
     'bho': "बाहर निकल गइनी!",
+    'mr': "तुम्ही सुटलात!",
+    'sa': "भवान् मुक्तः!",
   },
   'maze_escape.lab_win_msg': {
     'en': "Escaped in {moves} moves (best possible: {optimal}).",
@@ -208,6 +252,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{moves} நகர்வுகளில் தப்பித்தீர்கள் (சிறந்தது: {optimal}).",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ ਨਿਕਲੇ (ਸਭ ਤੋਂ ਵਧੀਆ: {optimal})।",
     'bho': "{moves} चाल में निकल गइनी (सबसे बढ़िया: {optimal})।",
+    'mr': "{moves} चालींत सुटका (सर्वोत्तम शक्य: {optimal}).",
+    'sa': "{moves} चालैः मुक्तिः (श्रेष्ठसम्भवः: {optimal})।",
   },
   'maze_escape.lab_lose_title': {
     'en': "Out of moves!",
@@ -217,6 +263,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நகர்வுகள் தீர்ந்தன!",
     'pa': "ਚਾਲਾਂ ਖ਼ਤਮ!",
     'bho': "चाल खतम!",
+    'mr': "चाली संपल्या!",
+    'sa': "चालाः समाप्ताः!",
   },
   'maze_escape.lab_lose_msg': {
     'en': "You ran out of the {limit} moves allowed. Try a smarter route.",
@@ -226,6 +274,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "அனுமதிக்கப்பட்ட {limit} நகர்வுகள் தீர்ந்தன. புத்திசாலித்தனமான வழியை முயலுங்கள்.",
     'pa': "ਤੁਹਾਡੀਆਂ {limit} ਚਾਲਾਂ ਖ਼ਤਮ ਹੋ ਗਈਆਂ। ਕੋਈ ਸਿਆਣਾ ਰਾਹ ਅਜ਼ਮਾਓ।",
     'bho': "रउआ के {limit} चाल खतम हो गइल। कवनो चालाक रास्ता आजमाईं।",
+    'mr': "परवानगी असलेल्या {limit} चाली संपल्या. अधिक हुशार मार्ग वापरून पाहा.",
+    'sa': "अनुमताः {limit} चालाः समाप्ताः। चतुरतरं मार्गम् आश्रयत।",
   },
   'maze_escape.torch': {
     'en': "Torch",
@@ -235,6 +285,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "தீப்பந்தம்",
     'pa': "ਮਸ਼ਾਲ",
     'bho': "मसाल",
+    'mr': "मशाल",
+    'sa': "दीपिका",
   },
   'maze_escape.hud_moves': {
     'en': "Moves {n}",
@@ -244,6 +296,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நகர்வுகள் {n}",
     'pa': "ਚਾਲਾਂ {n}",
     'bho': "चाल {n}",
+    'mr': "चाली {n}",
+    'sa': "चालाः {n}",
   },
   'maze_escape.hud_moves_limit': {
     'en': "Moves {n} / {limit}",
@@ -253,6 +307,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நகர்வுகள் {n} / {limit}",
     'pa': "ਚਾਲਾਂ {n} / {limit}",
     'bho': "चाल {n} / {limit}",
+    'mr': "चाली {n} / {limit}",
+    'sa': "चालाः {n} / {limit}",
   },
   'maze_escape.fog': {
     'en': "🌫️ Fog",
@@ -262,6 +318,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "🌫️ பனிமூட்டம்",
     'pa': "🌫️ ਧੁੰਦ",
     'bho': "🌫️ कुहासा",
+    'mr': "🌫️ धुके",
+    'sa': "🌫️ नीहारः",
   },
   'maze_escape.dead_ends': {
     'en': "✖ {n} dead ends",
@@ -271,6 +329,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "✖ {n} முட்டுச்சந்துகள்",
     'pa': "✖ {n} ਬੰਦ ਰਾਹ",
     'bho': "✖ {n} गो बंद रास्ता",
+    'mr': "✖ {n} बंद वाटा",
+    'sa': "✖ {n} रुद्धमार्गाः",
   },
   'maze_escape.mem_title': {
     'en': "Memory {tier} {n}",
@@ -280,6 +340,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நினைவு {tier} {n}",
     'pa': "ਯਾਦ {tier} {n}",
     'bho': "याद {tier} {n}",
+    'mr': "स्मृती {tier} {n}",
+    'sa': "स्मृतिः {tier} {n}",
   },
   'maze_escape.mem_win_title': {
     'en': "Escaped from memory!",
@@ -289,6 +351,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நினைவால் தப்பித்தீர்கள்!",
     'pa': "ਯਾਦ ਨਾਲ ਨਿਕਲ ਗਏ!",
     'bho': "याद से निकल गइनी!",
+    'mr': "आठवणीतून सुटलात!",
+    'sa': "स्मृत्या मुक्तः!",
   },
   'maze_escape.mem_win_msg': {
     'en': "Escaped in {moves} moves. Bumps: {bumps}.",
@@ -298,6 +362,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{moves} நகர்வுகளில் தப்பித்தீர்கள். மோதல்கள்: {bumps}.",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ ਨਿਕਲੇ। ਟੱਕਰਾਂ: {bumps}।",
     'bho': "{moves} चाल में निकल गइनी। टक्कर: {bumps}।",
+    'mr': "{moves} चालींत सुटका. धडका: {bumps}.",
+    'sa': "{moves} चालैः मुक्तिः। आघाताः: {bumps}।",
   },
   'maze_escape.mem_win_msg_peeks': {
     'en': "Escaped in {moves} moves. Bumps: {bumps}, peeks: {peeks}.",
@@ -307,6 +373,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "{moves} நகர்வுகளில் தப்பித்தீர்கள். மோதல்கள்: {bumps}, பார்வைகள்: {peeks}.",
     'pa': "{moves} ਚਾਲਾਂ ਵਿੱਚ ਨਿਕਲੇ। ਟੱਕਰਾਂ: {bumps}, ਝਾਤਾਂ: {peeks}।",
     'bho': "{moves} चाल में निकल गइनी। टक्कर: {bumps}, झलक: {peeks}।",
+    'mr': "{moves} चालींत सुटका. धडका: {bumps}, झलका: {peeks}.",
+    'sa': "{moves} चालैः मुक्तिः। आघाताः: {bumps}, दर्शनानि: {peeks}।",
   },
   'maze_escape.mem_lose_title': {
     'en': "Hit the walls!",
@@ -316,6 +384,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "சுவரில் மோதிவிட்டீர்கள்!",
     'pa': "ਕੰਧ ਨਾਲ ਟਕਰਾ ਗਏ!",
     'bho': "देवाल से टकरा गइनी!",
+    'mr': "भिंतींवर आदळलात!",
+    'sa': "भित्तिषु आहतः!",
   },
   'maze_escape.mem_lose_msg': {
     'en': "You bumped into {n} walls. Study the map harder and try again.",
@@ -325,6 +395,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நீங்கள் {n} சுவர்களில் மோதினீர்கள். வரைபடத்தை நன்கு கவனித்து மீண்டும் முயலுங்கள்.",
     'pa': "ਤੁਸੀਂ {n} ਕੰਧਾਂ ਨਾਲ ਟਕਰਾਏ। ਨਕਸ਼ਾ ਧਿਆਨ ਨਾਲ ਵੇਖੋ ਤੇ ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
     'bho': "रउआ {n} गो देवाल से टकरइनी। नक्सा धियान से देखीं आ फेर कोसिस करीं।",
+    'mr': "तुम्ही {n} भिंतींवर आदळलात. नकाशा नीट पाहा आणि पुन्हा प्रयत्न करा.",
+    'sa': "{n} भित्तिषु आघातः जातः। मानचित्रं सम्यक् पश्यत, पुनः प्रयत्नं कुरुत।",
   },
   'maze_escape.ready': {
     'en': "Ready!",
@@ -334,6 +406,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "தயார்!",
     'pa': "ਤਿਆਰ!",
     'bho': "तइयार!",
+    'mr': "तयार!",
+    'sa': "सिद्धम्!",
   },
   'maze_escape.memorise': {
     'en': "Memorise!",
@@ -343,6 +417,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "நினைவில் வையுங்கள்!",
     'pa': "ਯਾਦ ਕਰੋ!",
     'bho': "याद करीं!",
+    'mr': "लक्षात ठेवा!",
+    'sa': "स्मरत!",
   },
   'maze_escape.bumps': {
     'en': "Bumps {n}",
@@ -352,6 +428,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "மோதல்கள் {n}",
     'pa': "ਟੱਕਰਾਂ {n}",
     'bho': "टक्कर {n}",
+    'mr': "धडका {n}",
+    'sa': "आघाताः {n}",
   },
   'maze_escape.bumps_max': {
     'en': "Bumps {n} / {max}",
@@ -361,6 +439,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "மோதல்கள் {n} / {max}",
     'pa': "ਟੱਕਰਾਂ {n} / {max}",
     'bho': "टक्कर {n} / {max}",
+    'mr': "धडका {n} / {max}",
+    'sa': "आघाताः {n} / {max}",
   },
   'maze_escape.peek': {
     'en': "Peek {n}",
@@ -370,6 +450,8 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "பார்வை {n}",
     'pa': "ਝਾਤ {n}",
     'bho': "झलक {n}",
+    'mr': "झलक {n}",
+    'sa': "दर्शनम् {n}",
   },
   'maze_escape.bought': {
     'en': "BOUGHT",
@@ -379,5 +461,7 @@ const Map<String, Map<String, String>> mazeEscapeStrings = {
     'ta': "வாங்கியது",
     'pa': "ਖਰੀਦਿਆ",
     'bho': "खरीदल",
+    'mr': "खरेदी केले",
+    'sa': "क्रीतम्",
   },
 };

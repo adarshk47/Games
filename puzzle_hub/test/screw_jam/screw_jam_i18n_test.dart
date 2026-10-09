@@ -10,11 +10,11 @@ import 'package:puzzle_hub/games/screw_jam/logic/screw_jam_logic.dart';
 import 'package:puzzle_hub/games/screw_jam/screw_jam_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _langs = {'en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'};
+final _langs = {for (final l in AppLang.values) l.code};
 final _ph = RegExp(r'\{(\w+)\}');
 
 void main() {
-  test('screw_jam strings: all 7 languages, identical placeholders', () {
+  test('screw_jam strings: all 9 languages, identical placeholders', () {
     expect(screwJamStrings, isNotEmpty);
     for (final MapEntry(:key, :value) in screwJamStrings.entries) {
       expect(key.startsWith('screw_jam.'), isTrue, reason: key);

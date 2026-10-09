@@ -93,7 +93,7 @@ class RemoteDoc {
 
 abstract class RemoteStore {
   Future<RemoteDoc> load(String uid);
-  Future<void> save(String uid, {required bool exists, required String name, required Map<String, Object> data, required Map<String, KeyMeta> meta});
+  Future<void> save(String uid, {required bool exists, required String name, String? country, required Map<String, Object> data, required Map<String, KeyMeta> meta});
 
   /// Atomically reads and zeroes `pendingCredits`; returns the amount.
   Future<int> consumePendingCredits(String uid);
@@ -128,9 +128,11 @@ class FirestoreRemoteStore implements RemoteStore {
   }
 
   @override
-  Future<void> save(String uid, {required bool exists, required String name, required Map<String, Object> data, required Map<String, KeyMeta> meta}) async {
+  Future<void> save(String uid, {required bool exists, required String name, String? country, required Map<String, Object> data, required Map<String, KeyMeta> meta}) async {
+    final cc = normalizeCountry(country);
     final body = <String, Object>{
       'name': name,
+      'country': ?cc,
       'data': data,
       'meta': metaToJson(meta, withHash: false),
       'schema': 1,
@@ -167,7 +169,7 @@ class SyncEngine {
 
   /// Returns the pending referral credits that were consumed (to be added to
   /// the user's coins by the caller).
-  Future<int> sync({required String uid, required String prefix, required String name}) async {
+  Future<int> sync({required String uid, required String prefix, required String name, String? country}) async {
     final local = kv.readAll(prefix);
     final meta = SyncMerge.refreshMeta(local, kv.readMeta(prefix), _clock());
     await kv.writeMeta(prefix, meta);
@@ -176,7 +178,7 @@ class SyncEngine {
     await kv.writeAll(prefix, merged.values);
     final newMeta = SyncMerge.withHashes(merged.values, merged.meta);
     await kv.writeMeta(prefix, newMeta);
-    await remote.save(uid, exists: doc.exists, name: name, data: merged.values, meta: merged.meta);
+    await remote.save(uid, exists: doc.exists, name: name, country: normalizeCountry(country), data: merged.values, meta: merged.meta);
     return doc.pendingCredits > 0 ? await remote.consumePendingCredits(uid) : 0;
   }
 }
@@ -265,7 +267,7 @@ class SyncService with WidgetsBindingObserver {
     try {
       final prefs = await SharedPreferences.getInstance();
       final engine = SyncEngine(kv: LocalKv(prefs), remote: remote);
-      final credits = await engine.sync(uid: uid, prefix: prefix, name: AccountService.I.name);
+      final credits = await engine.sync(uid: uid, prefix: prefix, name: AccountService.I.name, country: AccountService.I.country);
       // The user may have locked/switched while we were busy.
       if (Storage.userPrefix != prefix) return;
       Rewards.reload();

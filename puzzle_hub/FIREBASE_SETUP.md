@@ -1,144 +1,138 @@
-# Firebase setup (cloud save, login, leaderboards, invites)
+# Firebase setup checklist (login, cloud save, leaderboards, invites)
 
-The app runs fully offline without Firebase. Until `android/app/google-services.json`
-exists, `CloudService.available` is `false` and every cloud screen shows
-"Cloud setup pending". Follow these steps once to switch the online features on.
+The app works fully **without** Firebase. Until the setup below is finished,
+cloud screens show "Cloud setup pending" and progress stays on the phone.
 
-## 1. Create the project
+Do these steps once, in order. Tick each box when done.
 
-1. Open https://console.firebase.google.com and click **Add project**.
-2. Name it (e.g. `Master G`). Google Analytics is optional.
+## Part A - Firebase project
 
-## 2. Add the Android apps
+1. [ ] Open https://console.firebase.google.com -> **Add project** -> name it
+   (e.g. `Master G`). Analytics is optional.
+   The project starts on the free **Spark** plan. Do not add a card.
 
-In **Project settings -> General -> Your apps -> Add app -> Android**:
+2. [ ] Add the two Android apps: **Project settings (gear icon) -> General ->
+   Your apps -> Add app -> Android**.
+   - App 1 (Play Store): package name `com.memorypuzzle.app`
+   - App 2 (test builds from `flutter run`): package name `com.memorypuzzle.app.dev`
 
-| App | Package name | Used for |
-| --- | --- | --- |
-| Release | `com.memorypuzzle.app` | Play Store builds |
-| Debug | `com.memorypuzzle.app.dev` | `flutter run` debug builds (`applicationIdSuffix ".dev"`) |
+   Skip "Download config" and "Add SDK" for now (already done in the code).
 
-Skip the "download config" and "add SDK" steps for now (the Gradle plugin is already wired up).
+## Part B - SHA fingerprints (Google login will NOT work without these)
 
-## 3. Add the SHA fingerprints (needed for Google Sign-In)
+For each key below, copy **SHA-1** and **SHA-256** and add both in
+**Project settings -> Your apps -> (choose the app) -> Add fingerprint**.
 
-Add **both SHA-1 and SHA-256** for every key that signs the app
-(**Project settings -> Your apps -> select the app -> Add fingerprint**).
+`keytool` comes with Android Studio. Run these in **Command Prompt (cmd)**.
 
-**a) Upload key** (release app `com.memorypuzzle.app`), from the `puzzle_hub` folder:
+3. [ ] **Upload key** -> add to app `com.memorypuzzle.app`:
 
-```
-keytool -list -v -keystore android/app/upload-keystore.jks -alias upload
-```
+   ```
+   cd D:\gita\Games\puzzle_hub\android\app
+   "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe" -list -v -keystore upload-keystore.jks -alias upload
+   ```
 
-**b) Play App Signing key** (release app): Play Console -> your app ->
-**Test and release -> Setup -> App signing** (older UI: *Release -> Setup -> App integrity*)
--> copy the SHA-1 and SHA-256 of the **App signing key certificate**.
-Without this, Google Sign-In fails for users who install from the Play Store.
+   It asks for the keystore password (the one in `android\key.properties`).
 
-**c) Debug key** (debug app `com.memorypuzzle.app.dev`):
+4. [ ] **Play Console app-signing key** -> add to app `com.memorypuzzle.app`:
+   Play Console -> your app -> **Test and release -> App integrity -> App signing**
+   -> copy SHA-1 and SHA-256 of the **App signing key certificate**.
+   (Without this, Google login fails for people who install from the Play Store.)
 
-```
-keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
-```
+5. [ ] **Debug key** -> add to app `com.memorypuzzle.app.dev`:
 
-(or run `gradlew signingReport` inside `android/`).
+   ```
+   "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe" -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+   ```
 
-## 4. Enable sign-in methods
+## Part C - Login methods
 
-**Build -> Authentication -> Get started -> Sign-in method**:
+6. [ ] **Build -> Authentication -> Get started -> Sign-in method**:
+   - **Google** -> Enable -> pick your support email -> Save.
+   - **Email/Password** -> Enable (keep "Email link" off) -> Save.
 
-1. **Google** -> Enable -> choose a support email -> Save.
-   (This creates the *Web client* OAuth ID that Google Sign-In needs; it is
-   included in `google-services.json` automatically, so download the file
-   **after** this step.)
-2. **Email/Password** -> Enable (leave "Email link" off) -> Save.
-3. Optional: **Authentication -> Templates** to customise the verification and
-   password-reset emails.
+## Part D - Database (Firestore)
 
-## 5. Create Firestore
+7. [ ] **Build -> Firestore Database -> Create database**.
+   - Location: **`asia-south1` (Mumbai)** - best for players in India.
+     It can never be changed later.
+   - Choose **production mode**.
 
-1. **Build -> Firestore Database -> Create database**.
-2. Choose a location close to your players (e.g. `asia-south1` for India). It cannot be changed later.
-3. Start in **production mode**.
-4. Open the **Rules** tab, replace everything with the contents of
-   [`firestore.rules`](firestore.rules) and click **Publish**.
+8. [ ] Rules: open the **Rules** tab, delete everything, paste the whole file
+   [`firestore.rules`](firestore.rules), click **Publish**.
 
-No indexes are needed (leaderboards use a single-field `score` order).
+9. [ ] Indexes (needed for the India / country leaderboards):
+   **Firestore Database -> Indexes -> Composite -> Create index**. Make these two:
 
-## 6. Download `google-services.json`
+   | Collection ID | Field 1 | Field 2 | Query scope |
+   | --- | --- | --- | --- |
+   | `entries` | `country` Ascending | `score` Descending | Collection |
+   | `entries` | `country` Ascending | `score` Ascending | Collection |
 
-**Project settings -> General -> Your apps -> (either Android app) -> google-services.json**.
-One file contains both apps. Save it as:
+   Wait until the status shows **Enabled** (a few minutes). The same indexes
+   are listed in [`firestore.indexes.json`](firestore.indexes.json).
+   Tip: if one is missing, the app log shows an error with a direct
+   "create index" link - open it and click **Create**.
 
-```
-puzzle_hub/android/app/google-services.json
-```
+## Part E - Config file and build
 
-Re-download it whenever you add a fingerprint or app. Do not commit it to a public repository.
+10. [ ] Download `google-services.json`: **Project settings -> General -> Your apps ->
+    (any Android app) -> google-services.json**. One file covers both apps.
+    Put it here (replace the old one):
 
-## 7. Rebuild
+    ```
+    D:\gita\Games\puzzle_hub\android\app\google-services.json
+    ```
 
-```
-flutter clean
-flutter pub get
-flutter run            # debug (.dev)
-flutter build appbundle  # release
-```
+    Download it **again** every time you add an app, a fingerprint, or turn on
+    Google login (steps 2-6). Do not upload it to a public GitHub repo.
 
-The Gradle build applies the `google-services` plugin automatically once the
-file exists. On start the app calls `Firebase.initializeApp()`; if that fails it
-quietly stays offline.
+11. [ ] Rebuild:
 
-## 8. Check it works
+    ```
+    flutter clean
+    flutter pub get
+    flutter run
+    flutter build appbundle
+    ```
 
-1. Profile -> **Continue with Google** (or Email) -> the cloud card shows your
-   account and "Last synced: just now".
-2. Firestore console shows `users/<uid>` with a `data` map.
-3. Play a score game, open **Leaderboard** -> your entry is there.
-4. Profile -> **Invite friends** shares
-   `https://play.google.com/store/apps/details?id=com.memorypuzzle.app&referrer=ref_<uid>`.
-   The referral only triggers for installs from the Play Store (the Install
-   Referrer API); the invitee gets 50 coins after their first level while signed in, the
-   inviter gets 100 coins on their next sync (max 20 invites).
+12. [ ] Check: Profile -> **Continue with Google** works -> play 2048 ->
+    **Leaderboard** shows your name under **India** and **Global**.
 
-## Account deletion (Google Play policy)
+## Free plan limits (Spark)
 
-- In-app: Profile -> **Account delete karein** deletes the Firestore user
-  document, the player's leaderboard entries and referral record, the Firebase
-  Auth user, and all local data on the phone. Firebase may ask the player to
-  sign in again first.
-- Play Console also requires a **web link** where users can request deletion
-  without the app (**App content -> Data safety -> Data deletion**). Placeholder:
+- About **50,000 reads** and **20,000 writes** per day, 1 GB storage - free.
+- Each leaderboard open is about 50 reads; each sync or new best score is 1-2 writes.
+  This is enough for a few thousand daily players.
+- If you reach the limit, cloud features pause until the next day (games keep working).
+- Consider the paid **Blaze** plan (pay only for what you use, has a free part too)
+  when Firebase **Usage** shows you near the daily limits regularly.
+  Set a **budget alert** in Google Cloud billing first.
 
-  `https://YOUR-DOMAIN.example/master-g/delete-account`
+## If something goes wrong
 
-  Create a simple page (Google Form / Sites page / email link) that asks for
-  the account email and explains that the account, cloud save and leaderboard
-  entries are deleted within 30 days. Delete such accounts manually in
-  **Authentication -> Users** and **Firestore -> users/<uid>**,
-  **leaderboards/*/entries/<uid>** and **referrals/<uid>**.
-- Update the Data safety form: Email address + User IDs (account management),
-  App activity / in-game progress (app functionality); data is encrypted in transit
-  and users can request deletion.
+- **Google login error 10 / DEVELOPER_ERROR**: a SHA fingerprint is missing
+  (steps 3-5), or `google-services.json` is old. Fix, download again, rebuild.
+- **Still "Cloud setup pending"**: the file is not in `android\app\`, or the
+  app you are running is not in it (test builds need `com.memorypuzzle.app.dev`).
+- **PERMISSION_DENIED**: rules not published (step 8).
+- **Country leaderboard does not load**: indexes not ready (step 9).
+
+## Account deletion (Play Store rule)
+
+- In the app: Profile -> **Account delete karein** removes the cloud save,
+  leaderboard entries, invite record and the login.
+- Play Console also needs a **web link** for deletion requests
+  (**App content -> Data safety -> Data deletion**), e.g. a Google Form asking for
+  the account email. Delete such accounts by hand in **Authentication -> Users** and
+  Firestore (`users/<uid>`, `leaderboards/*/entries/<uid>`, `referrals/<uid>`).
 
 ## What is stored
 
 | Path | Content |
 | --- | --- |
-| `users/{uid}` | `name`, `data` (the player's local game keys: records, stars, coins ledger, saved games), `meta` (per-key `updatedAt` for saved games), `updatedAt`, `pendingCredits`, `inviteCount` |
-| `leaderboards/{board}/entries/{uid}` | `name`, `score`, `updatedAt` (boards: `game_2048`, `focus_color`, `memory_boost`, `block_puzzle`, `total_stars`) |
+| `users/{uid}` | `name`, `country` (e.g. `IN`), `data` (game records, stars, coins, saved games), `meta`, `updatedAt`, `pendingCredits`, `inviteCount` |
+| `leaderboards/{board}/entries/{uid}` | `name`, `score`, `country`, `updatedAt`. Boards: `game_2048`, `focus_color`, `memory_boost`, `block_puzzle`, `chess` (wins), `total_stars` |
 | `referrals/{inviteeUid}` | `inviter`, `inviterCredited`, `createdAt` |
 
-The local PIN and fingerprint lock never leave the phone.
-
-## Troubleshooting
-
-- **Google sign-in fails / error 10 (DEVELOPER_ERROR)**: a SHA fingerprint is
-  missing for the key that signed this build (debug, upload or Play signing),
-  or `google-services.json` was downloaded before Google sign-in was enabled.
-  Add the fingerprint, re-download the file, rebuild.
-- **"Cloud setup pending" still shows**: the file is not at
-  `android/app/google-services.json`, or its `package_name` does not match the
-  build (`.dev` for debug builds). Run `flutter clean` and rebuild.
-- **PERMISSION_DENIED in logs**: the rules from `firestore.rules` were not published.
+The PIN and fingerprint lock never leave the phone.

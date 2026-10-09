@@ -6,7 +6,7 @@ import 'package:puzzle_hub/games/sliding_puzzle/sliding_puzzle_screen.dart';
 import '../block_puzzle/i18n_helpers.dart';
 
 void main() {
-  test('sliding_puzzle strings: 7 languages, same placeholders', () => checkTable('sliding_puzzle', slidingPuzzleStrings));
+  test('sliding_puzzle strings: 9 languages, same placeholders', () => checkTable('sliding_puzzle', slidingPuzzleStrings));
   test('sliding_puzzle source keys exist', () => checkSourceKeys('lib/games/sliding_puzzle'));
   firstScreenInAllLanguages('Sliding Puzzle', () => const SlidingPuzzleScreen(), then: (t) async {
     await t.tap(find.text('1').first);

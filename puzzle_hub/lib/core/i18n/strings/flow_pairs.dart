@@ -1,5 +1,5 @@
 // Translations for the flow_pairs module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> flowPairsStrings = {
   'flow_pairs.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "ஃப்ளோ",
     'pa': "ਫ਼ਲੋ",
     'bho': "फ़्लो",
+    'mr': "फ्लो",
+    'sa': "फ़्लो",
   },
   'flow_pairs.choose': {
     'en': "Choose difficulty",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "கடினத்தைத் தேர்ந்தெடுங்கள்",
     'pa': "ਮੁਸ਼ਕਲ ਪੱਧਰ ਚੁਣੋ",
     'bho': "कठिनाई चुनीं",
+    'mr': "काठिण्य निवडा",
+    'sa': "काठिन्यं चिनुत",
   },
   'flow_pairs.subtitle': {
     'en': "Connect matching colors without crossing paths.",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "பாதைகள் குறுக்கிடாமல் ஒரே நிறங்களை இணையுங்கள்.",
     'pa': "ਰਸਤੇ ਕੱਟੇ ਬਿਨਾਂ ਇੱਕੋ ਜਿਹੇ ਰੰਗ ਜੋੜੋ।",
     'bho': "रस्ता काटले बिना एक जइसन रंग जोड़ीं।",
+    'mr': "मार्ग न ओलांडता सारखे रंग जोडा.",
+    'sa': "मार्गान् अनुल्लङ्घ्य समानवर्णान् योजयत।",
   },
   'flow_pairs.fill_all': {
     'en': "Fill all",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "அனைத்தையும் நிரப்பு",
     'pa': "ਸਭ ਭਰੋ",
     'bho': "सब भरीं",
+    'mr': "सर्व भरा",
+    'sa': "सर्वं पूरयत",
   },
   'flow_pairs.progress': {
     'en': "{done}/{total} levels  -  {stars}/{max} stars",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "{done}/{total} நிலைகள்  -  {stars}/{max} நட்சத்திரங்கள்",
     'pa': "{done}/{total} ਲੈਵਲ  -  {stars}/{max} ਸਟਾਰ",
     'bho': "{done}/{total} लेवल  -  {stars}/{max} स्टार",
+    'mr': "{done}/{total} लेव्हल  -  {stars}/{max} तारे",
+    'sa': "{done}/{total} स्तराः  -  {stars}/{max} तारकाः",
   },
   'flow_pairs.tier_levels': {
     'en': "{tier} levels",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "{tier} நிலைகள்",
     'pa': "{tier} ਲੈਵਲ",
     'bho': "{tier} लेवल",
+    'mr': "{tier} लेव्हल",
+    'sa': "{tier} स्तराः",
   },
   'flow_pairs.complete': {
     'en': "Flow complete!",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "ஃப்ளோ முடிந்தது!",
     'pa': "ਫ਼ਲੋ ਪੂਰਾ!",
     'bho': "फ़्लो पूरा भइल!",
+    'mr': "फ्लो पूर्ण!",
+    'sa': "प्रवाहः पूर्णः!",
   },
   'flow_pairs.strokes': {
     'en': "{n} strokes (best {best})",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "{n} கோடுகள் (சிறந்தது {best})",
     'pa': "{n} ਸਟ੍ਰੋਕ (ਬੈਸਟ {best})",
     'bho': "{n} स्ट्रोक (बेस्ट {best})",
+    'mr': "{n} रेषा (सर्वोत्तम {best})",
+    'sa': "{n} रेखाः (सर्वोत्तमम् {best})",
   },
   'flow_pairs.pairs': {
     'en': "Pairs",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "ஜோடிகள்",
     'pa': "ਜੋੜੇ",
     'bho': "जोड़ा",
+    'mr': "जोड्या",
+    'sa': "युग्मानि",
   },
   'flow_pairs.grid': {
     'en': "Grid",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "கட்டம்",
     'pa': "ਗਰਿੱਡ",
     'bho': "ग्रिड",
+    'mr': "ग्रिड",
+    'sa': "जालम्",
   },
   'flow_pairs.bought': {
     'en': "Bought",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "வாங்கியது",
     'pa': "ਖਰੀਦਿਆ",
     'bho': "खरीदल",
+    'mr': "विकत घेतले",
+    'sa': "क्रीतम्",
   },
   'flow_pairs.plays_over': {
     'en': "No plays left on this level, so it is locked again. Play the levels in order for free, or unlock it again.",
@@ -109,5 +131,7 @@ const Map<String, Map<String, String>> flowPairsStrings = {
     'ta': "இந்த நிலைக்கு வாய்ப்புகள் முடிந்தன, அதனால் மீண்டும் பூட்டப்பட்டது. நிலைகளை வரிசையாக இலவசமாக விளையாடுங்கள், அல்லது மீண்டும் திறங்கள்.",
     'pa': "ਇਸ ਲੈਵਲ ਦੀਆਂ ਖੇਡਾਂ ਖਤਮ ਹੋ ਗਈਆਂ, ਇਸ ਲਈ ਇਹ ਫਿਰ ਬੰਦ ਹੈ। ਲੈਵਲ ਕ੍ਰਮ ਵਿੱਚ ਮੁਫ਼ਤ ਖੇਡੋ, ਜਾਂ ਇਸਨੂੰ ਫਿਰ ਖੋਲ੍ਹੋ।",
     'bho': "एह लेवल के खेल खतम हो गइल, एही से ई फेर से बंद बा। लेवल क्रम से मुफ्त खेलीं, भा एकरा के फेर से खोलीं।",
+    'mr': "या लेव्हलचे खेळ संपले, म्हणून ती पुन्हा बंद झाली आहे. लेव्हल क्रमाने मोफत खेळा, किंवा ती पुन्हा उघडा.",
+    'sa': "अस्य स्तरस्य क्रीडाः समाप्ताः, अतः सः पुनः पिहितः। स्तरान् क्रमेण निःशुल्कं क्रीडत, अथवा तं पुनः उद्घाटयत।",
   },
 };

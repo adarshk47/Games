@@ -1,5 +1,5 @@
 // Translations for the minesweeper module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> minesweeperStrings = {
   'minesweeper.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "மைன்ஸ்வீப்பர்",
     'pa': "ਮਾਈਨਸਵੀਪਰ",
     'bho': "माइनस्वीपर",
+    'mr': "माइनस्वीपर",
+    'sa': "माइनस्वीपर",
   },
   'minesweeper.intro': {
     'en': "Clear the field without touching a mine.\nTap to reveal, long-press to flag.",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "கண்ணிவெடியைத் தொடாமல் களத்தைச் சுத்தம் செய்யுங்கள்.\nதிறக்க தட்டுங்கள், கொடிக்கு நீண்ட நேரம் அழுத்துங்கள்.",
     'pa': "ਮਾਈਨ ਛੂਹੇ ਬਿਨਾਂ ਮੈਦਾਨ ਸਾਫ਼ ਕਰੋ।\nਖੋਲ੍ਹਣ ਲਈ ਟੈਪ, ਝੰਡੇ ਲਈ ਦੇਰ ਤੱਕ ਦਬਾਓ।",
     'bho': "माइन छुअले बिना मैदान साफ करीं।\nखोले खातिर टैप करीं, झंडा खातिर देर ले दबाईं।",
+    'mr': "सुरुंगाला स्पर्श न करता मैदान साफ करा.\nउघडण्यासाठी टॅप करा, झेंड्यासाठी दीर्घ दाबा.",
+    'sa': "सुरङ्गम् अस्पृष्ट्वा क्षेत्रं स्वच्छं कुरुत।\nउद्घाटनाय स्पृशत, ध्वजाय दीर्घं नुदत।",
   },
   'minesweeper.board_info': {
     'en': "{cols}×{rows} · {n} mines",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "{cols}×{rows} · {n} கண்ணிவெடிகள்",
     'pa': "{cols}×{rows} · {n} ਮਾਈਨਾਂ",
     'bho': "{cols}×{rows} · {n} माइन",
+    'mr': "{cols}×{rows} · {n} सुरुंग",
+    'sa': "{cols}×{rows} · {n} सुरङ्गाः",
   },
   'minesweeper.best_wins': {
     'en': "Best {time}  ·  {n} wins",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "சிறந்தது {time}  ·  {n} வெற்றிகள்",
     'pa': "ਬੈਸਟ {time}  ·  {n} ਜਿੱਤਾਂ",
     'bho': "बेस्ट {time}  ·  {n} जीत",
+    'mr': "सर्वोत्तम {time}  ·  {n} विजय",
+    'sa': "सर्वोत्तमम् {time}  ·  {n} विजयाः",
   },
   'minesweeper.wins': {
     'en': "{n} wins",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "{n} வெற்றிகள்",
     'pa': "{n} ਜਿੱਤਾਂ",
     'bho': "{n} जीत",
+    'mr': "{n} विजय",
+    'sa': "{n} विजयाः",
   },
   'minesweeper.not_cleared': {
     'en': "Not cleared yet",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "இன்னும் முடிக்கவில்லை",
     'pa': "ਹਾਲੇ ਸਾਫ਼ ਨਹੀਂ ਕੀਤਾ",
     'bho': "अबहीं ले साफ ना भइल",
+    'mr': "अजून साफ केले नाही",
+    'sa': "अद्यापि न स्वच्छीकृतम्",
   },
   'minesweeper.mines': {
     'en': "Mines",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "கண்ணிவெடிகள்",
     'pa': "ਮਾਈਨਾਂ",
     'bho': "माइन",
+    'mr': "सुरुंग",
+    'sa': "सुरङ्गाः",
   },
   'minesweeper.flag': {
     'en': "Flag",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "கொடி",
     'pa': "ਝੰਡਾ",
     'bho': "झंडा",
+    'mr': "झेंडा",
+    'sa': "ध्वजः",
   },
   'minesweeper.reveal': {
     'en': "Reveal",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "திற",
     'pa': "ਖੋਲ੍ਹੋ",
     'bho': "खोलीं",
+    'mr': "उघडा",
+    'sa': "उद्घाटयत",
   },
   'minesweeper.cleared_in': {
     'en': "Cleared {tier} in {time}",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "{tier} ஐ {time} இல் முடித்தீர்கள்",
     'pa': "{tier} ਨੂੰ {time} ਵਿੱਚ ਸਾਫ਼ ਕੀਤਾ",
     'bho': "{tier} के {time} में साफ कइनी",
+    'mr': "{tier} {time} मध्ये साफ केले",
+    'sa': "{tier} {time} मध्ये स्वच्छीकृतम्",
   },
   'minesweeper.new_best': {
     'en': "New best time!",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "புதிய சிறந்த நேரம்!",
     'pa': "ਨਵਾਂ ਬੈਸਟ ਟਾਈਮ!",
     'bho': "नया बेस्ट टाइम!",
+    'mr': "नवीन सर्वोत्तम वेळ!",
+    'sa': "नूतनः सर्वोत्तमः समयः!",
   },
   'minesweeper.hit_mine': {
     'en': "You hit a mine after {time}. Try again!",
@@ -109,6 +131,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "{time} பிறகு கண்ணிவெடி வெடித்தது. மீண்டும் முயலுங்கள்!",
     'pa': "{time} ਬਾਅਦ ਮਾਈਨ ਫਟ ਗਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ!",
     'bho': "{time} बाद माइन फाट गइल। फेर से कोसिस करीं!",
+    'mr': "{time} नंतर सुरुंग फुटला. पुन्हा प्रयत्न करा!",
+    'sa': "{time} अनन्तरं सुरङ्गः स्फुटितः। पुनः प्रयतध्वम्!",
   },
   'minesweeper.field_cleared': {
     'en': "Field cleared!",
@@ -118,6 +142,8 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "களம் சுத்தம்!",
     'pa': "ਮੈਦਾਨ ਸਾਫ਼!",
     'bho': "मैदान साफ!",
+    'mr': "मैदान साफ!",
+    'sa': "क्षेत्रं स्वच्छम्!",
   },
   'minesweeper.boom': {
     'en': "Boom!",
@@ -127,5 +153,7 @@ const Map<String, Map<String, String>> minesweeperStrings = {
     'ta': "டமால்!",
     'pa': "ਧਮਾਕਾ!",
     'bho': "धमाका!",
+    'mr': "धडाम!",
+    'sa': "विस्फोटः!",
   },
 };

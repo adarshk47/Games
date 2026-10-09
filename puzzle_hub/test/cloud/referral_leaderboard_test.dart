@@ -31,12 +31,13 @@ void main() {
   });
 
   group('leaderboard', () {
-    test('boards: four score games + total stars, unique ids', () {
+    test('boards: score games + chess wins + total stars, unique ids', () {
       expect(leaderboards.map((b) => b.id).toSet().length, leaderboards.length);
-      expect(leaderboards.map((b) => b.id), containsAll(['game_2048', 'focus_color', 'memory_boost', 'block_puzzle', 'total_stars']));
+      expect(leaderboards.map((b) => b.id), containsAll(['game_2048', 'focus_color', 'memory_boost', 'block_puzzle', 'chess', 'total_stars']));
       expect(boardForGame('game_2048')!.id, 'game_2048');
       expect(boardForGame('sudoku'), isNull);
       expect(totalStarsBoard.gameId, isNull);
+      expect(boardForGame('chess')!.metric, BoardMetric.wins);
     });
 
     test('totalStarsOf sums every stars key', () {

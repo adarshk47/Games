@@ -1,5 +1,5 @@
 // Translations for the sudoku module.
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> sudokuStrings = {
   'sudoku.title': {
@@ -10,6 +10,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "சுடோகு",
     'pa': "ਸੁਡੋਕੁ",
     'bho': "सुडोकू",
+    'mr': "सुडोकू",
+    'sa': "सुडोकू",
   },
   'sudoku.title_daily': {
     'en': "{tier} · Daily",
@@ -19,6 +21,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{tier} · தினசரி",
     'pa': "{tier} · ਰੋਜ਼ਾਨਾ",
     'bho': "{tier} · रोज के",
+    'mr': "{tier} · दैनिक",
+    'sa': "{tier} · दैनिकम्",
   },
   'sudoku.solved': {
     'en': "Solved!",
@@ -28,6 +32,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "தீர்த்துவிட்டீர்கள்!",
     'pa': "ਹੱਲ ਹੋ ਗਿਆ!",
     'bho': "हल हो गइल!",
+    'mr': "सुटले!",
+    'sa': "समाहितम्!",
   },
   'sudoku.win_time': {
     'en': "Time {time}",
@@ -37,6 +43,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "நேரம் {time}",
     'pa': "ਸਮਾਂ {time}",
     'bho': "समय {time}",
+    'mr': "वेळ {time}",
+    'sa': "समयः {time}",
   },
   'sudoku.new_best': {
     'en': "New best time!",
@@ -46,6 +54,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "புதிய சிறந்த நேரம்!",
     'pa': "ਨਵਾਂ ਸਭ ਤੋਂ ਵਧੀਆ ਸਮਾਂ!",
     'bho': "नया बेस्ट टाइम!",
+    'mr': "नवीन सर्वोत्तम वेळ!",
+    'sa': "नूतनः श्रेष्ठसमयः!",
   },
   'sudoku.lose_msg': {
     'en': "You made {n} mistakes.",
@@ -55,6 +65,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "நீங்கள் {n} தவறுகள் செய்தீர்கள்.",
     'pa': "ਤੁਸੀਂ {n} ਗਲਤੀਆਂ ਕੀਤੀਆਂ।",
     'bho': "रउआ {n} गो गलती कइनी।",
+    'mr': "तुमच्या {n} चुका झाल्या.",
+    'sa': "भवता {n} दोषाः कृताः।",
   },
   'sudoku.generating': {
     'en': "Generating puzzle...",
@@ -64,6 +76,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "புதிர் உருவாகிறது...",
     'pa': "ਪਹੇਲੀ ਬਣ ਰਹੀ ਹੈ...",
     'bho': "पहेली बन रहल बा...",
+    'mr': "कोडे तयार होत आहे...",
+    'sa': "प्रहेलिका निर्मीयते...",
   },
   'sudoku.resume': {
     'en': "Resume {tier}",
@@ -73,6 +87,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{tier} தொடரவும்",
     'pa': "{tier} ਜਾਰੀ ਰੱਖੋ",
     'bho': "{tier} जारी राखीं",
+    'mr': "{tier} पुढे सुरू करा",
+    'sa': "{tier} अनुवर्तयत",
   },
   'sudoku.resume_daily': {
     'en': "Resume {tier} (Daily)",
@@ -82,6 +98,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{tier} தொடரவும் (தினசரி)",
     'pa': "{tier} ਜਾਰੀ ਰੱਖੋ (ਰੋਜ਼ਾਨਾ)",
     'bho': "{tier} जारी राखीं (रोज के)",
+    'mr': "{tier} पुढे सुरू करा (दैनिक)",
+    'sa': "{tier} अनुवर्तयत (दैनिकम्)",
   },
   'sudoku.daily_puzzle': {
     'en': "Daily puzzle",
@@ -91,6 +109,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "தினசரி புதிர்",
     'pa': "ਰੋਜ਼ਾਨਾ ਪਹੇਲੀ",
     'bho': "आज के पहेली",
+    'mr': "आजचे कोडे",
+    'sa': "अद्यतनी प्रहेलिका",
   },
   'sudoku.daily_done': {
     'en': "Completed in {time}",
@@ -100,6 +120,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{time}-ல் முடித்தீர்கள்",
     'pa': "{time} ਵਿੱਚ ਪੂਰਾ ਕੀਤਾ",
     'bho': "{time} में पूरा भइल",
+    'mr': "{time} मध्ये पूर्ण केले",
+    'sa': "{time} समये पूर्णम्",
   },
   'sudoku.daily_sub': {
     'en': "{tier} · same for everyone today",
@@ -109,6 +131,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{tier} · இன்று அனைவருக்கும் ஒன்றே",
     'pa': "{tier} · ਅੱਜ ਸਭ ਲਈ ਇੱਕੋ ਜਿਹੀ",
     'bho': "{tier} · आज सभे खातिर एके जइसन",
+    'mr': "{tier} · आज सर्वांसाठी सारखेच",
+    'sa': "{tier} · अद्य सर्वेभ्यः समाना",
   },
   'sudoku.difficulty': {
     'en': "DIFFICULTY",
@@ -118,6 +142,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "சிரமம்",
     'pa': "ਮੁਸ਼ਕਲ ਪੱਧਰ",
     'bho': "कठिनाई",
+    'mr': "काठिण्य",
+    'sa': "काठिन्यम्",
   },
   'sudoku.hints_one': {
     'en': "{n} hint",
@@ -127,6 +153,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{n} குறிப்பு",
     'pa': "{n} ਸੰਕੇਤ",
     'bho': "{n} गो हिंट",
+    'mr': "{n} संकेत",
+    'sa': "{n} सङ्केतः",
   },
   'sudoku.hints_n': {
     'en': "{n} hints",
@@ -136,6 +164,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{n} குறிப்புகள்",
     'pa': "{n} ਸੰਕੇਤ",
     'bho': "{n} गो हिंट",
+    'mr': "{n} संकेत",
+    'sa': "{n} सङ्केताः",
   },
   'sudoku.mistakes_unlimited': {
     'en': "unlimited mistakes",
@@ -145,6 +175,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "வரம்பற்ற தவறுகள்",
     'pa': "ਅਸੀਮਤ ਗਲਤੀਆਂ",
     'bho': "जेतना मन ओतना गलती",
+    'mr': "अमर्याद चुका",
+    'sa': "असीमिताः दोषाः",
   },
   'sudoku.mistakes_n': {
     'en': "{n} mistakes",
@@ -154,6 +186,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{n} தவறுகள்",
     'pa': "{n} ਗਲਤੀਆਂ",
     'bho': "{n} गो गलती",
+    'mr': "{n} चुका",
+    'sa': "{n} दोषाः",
   },
   'sudoku.best_time': {
     'en': "Best {time}",
@@ -163,6 +197,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "சிறந்தது {time}",
     'pa': "ਸਭ ਤੋਂ ਵਧੀਆ {time}",
     'bho': "बेस्ट {time}",
+    'mr': "सर्वोत्तम {time}",
+    'sa': "श्रेष्ठम् {time}",
   },
   'sudoku.no_best': {
     'en': "No best time yet",
@@ -172,6 +208,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "இன்னும் சிறந்த நேரம் இல்லை",
     'pa': "ਅਜੇ ਕੋਈ ਵਧੀਆ ਸਮਾਂ ਨਹੀਂ",
     'bho': "अबहीं ले कवनो बेस्ट टाइम नइखे",
+    'mr': "अजून सर्वोत्तम वेळ नाही",
+    'sa': "अद्यापि श्रेष्ठसमयः नास्ति",
   },
   'sudoku.no_limit': {
     'en': "{n} · no limit",
@@ -181,6 +219,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "{n} · வரம்பு இல்லை",
     'pa': "{n} · ਕੋਈ ਹੱਦ ਨਹੀਂ",
     'bho': "{n} · कवनो सीमा ना",
+    'mr': "{n} · मर्यादा नाही",
+    'sa': "{n} · सीमा नास्ति",
   },
   'sudoku.erase': {
     'en': "Erase",
@@ -190,6 +230,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "அழி",
     'pa': "ਮਿਟਾਓ",
     'bho': "मिटाईं",
+    'mr': "पुसा",
+    'sa': "मार्जयत",
   },
   'sudoku.notes': {
     'en': "Notes",
@@ -199,6 +241,8 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "நோட்ஸ்",
     'pa': "ਨੋਟਸ",
     'bho': "नोट्स",
+    'mr': "नोंदी",
+    'sa': "टिप्पण्यः",
   },
   'sudoku.notes_on': {
     'en': "Notes on",
@@ -208,5 +252,7 @@ const Map<String, Map<String, String>> sudokuStrings = {
     'ta': "நோட்ஸ் ஆன்",
     'pa': "ਨੋਟਸ ਚਾਲੂ",
     'bho': "नोट्स चालू",
+    'mr': "नोंदी चालू",
+    'sa': "टिप्पण्यः सक्रियाः",
   },
 };

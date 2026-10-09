@@ -1,16 +1,36 @@
 import 'package:flutter/material.dart';
 
+import '../account/account_service.dart';
 import '../account/auth_screens.dart';
+import '../account/countries.dart';
 import '../i18n/i18n.dart';
 import '../ui/ui.dart';
 import 'cloud_auth.dart';
 import 'cloud_service.dart';
 import 'leaderboard_service.dart';
 
-/// Display name of a board: game names stay as-is, "Total stars" is localized.
-String boardTitle(Board b) => b.gameId == null ? tr('cloud.lb.total_stars') : b.title;
+/// Display name of a board: game names stay as-is, "Total stars" and
+/// "Chess wins" are localized.
+String boardTitle(Board b) => switch (b.metric) {
+      BoardMetric.totalStars => tr('cloud.lb.total_stars'),
+      BoardMetric.wins when b.gameId == 'chess' => tr('cloud.lb.chess_wins'),
+      _ => b.title,
+    };
 
-/// Leaderboards: one tab per score game + "Total stars". Needs cloud login.
+/// "🌍 Global" or "🇮🇳 India".
+String scopeLabel(LeaderboardScope scope, String? country) {
+  if (scope == LeaderboardScope.global) return '🌍 ${tr('cloud.lb.global')}';
+  final c = countryByCode(normalizeCountry(country));
+  return c == null ? (normalizeCountry(country) ?? '') : '${c.flag} ${c.name}';
+}
+
+/// "Global" / "India" (no flag) for the rank line.
+String _placeName(LeaderboardScope scope, String? country) => scope == LeaderboardScope.global
+    ? tr('cloud.lb.global')
+    : (countryByCode(normalizeCountry(country))?.name ?? normalizeCountry(country) ?? '');
+
+/// Leaderboards: one tab per score game + "Total stars", each Global or
+/// limited to the player's country. Needs cloud login.
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key, this.initialBoard});
   final String? initialBoard;
@@ -21,6 +41,8 @@ class LeaderboardScreen extends StatefulWidget {
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
   late Board _board = leaderboards.firstWhere((b) => b.id == widget.initialBoard, orElse: () => leaderboards.first);
+  final String? _country = AccountService.I.country;
+  late LeaderboardScope _scope = hasCountryScope(_country) ? defaultScope(_country) : LeaderboardScope.global;
   Future<LeaderboardPage>? _page;
 
   @override
@@ -39,18 +61,18 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   void _reload() {
     if (!mounted) return;
     setState(() {
-      _page = CloudService.available && CloudAuth.I.user.value != null ? _fetch(_board) : null;
+      _page = CloudService.available && CloudAuth.I.user.value != null ? _fetch(_board, _scope) : null;
     });
   }
 
-  Future<LeaderboardPage> _fetch(Board b) async {
+  Future<LeaderboardPage> _fetch(Board b, LeaderboardScope scope) async {
     // Make sure our own latest score is on the board before reading it.
     if (b.gameId == null) {
       await LeaderboardService.I.submitTotalStars();
     } else {
       await LeaderboardService.I.submitAll();
     }
-    return LeaderboardService.I.load(b);
+    return LeaderboardService.I.load(b, scope: scope);
   }
 
   void _select(Board b) {
@@ -58,6 +80,23 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     _board = b;
     _reload();
   }
+
+  void _selectScope(LeaderboardScope s) {
+    if (s == _scope) return;
+    _scope = s;
+    _reload();
+  }
+
+  Widget _chip(String label, bool selected, VoidCallback onTap) => ChoiceChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (_) => onTap(),
+        selectedColor: Pal.goldDeep,
+        backgroundColor: Colors.black.withValues(alpha: 0.25),
+        labelStyle: TextStyle(color: selected ? Colors.white : Pal.text, fontWeight: FontWeight.w700),
+        side: const BorderSide(color: Pal.glassBorder),
+        showCheckmark: false,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -84,20 +123,19 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               for (final b in leaderboards)
                 Padding(
                   padding: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
-                  child: ChoiceChip(
-                    label: Text('${b.emoji} ${boardTitle(b)}'),
-                    selected: b.id == _board.id,
-                    onSelected: (_) => _select(b),
-                    selectedColor: Pal.goldDeep,
-                    backgroundColor: Colors.black.withValues(alpha: 0.25),
-                    labelStyle: TextStyle(color: b.id == _board.id ? Colors.white : Pal.text, fontWeight: FontWeight.w700),
-                    side: const BorderSide(color: Pal.glassBorder),
-                    showCheckmark: false,
-                  ),
+                  child: _chip('${b.emoji} ${boardTitle(b)}', b.id == _board.id, () => _select(b)),
                 ),
             ],
           ),
         ),
+        if (hasCountryScope(_country))
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 2, 14, 0),
+            child: Wrap(spacing: 8, children: [
+              for (final s in const [LeaderboardScope.country, LeaderboardScope.global])
+                _chip(scopeLabel(s, _country), s == _scope, () => _selectScope(s)),
+            ]),
+          ),
         const SizedBox(height: 6),
         Expanded(child: _body()),
       ]),
@@ -151,7 +189,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   const Icon(Icons.person_pin_rounded, color: Pal.gold),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text(tr('cloud.lb.your_rank', {'rank': p.myRank ?? '-'}),
+                    child: Text(tr('cloud.lb.scope_rank', {'place': _placeName(_scope, _country), 'rank': p.myRank ?? '-'}),
                         style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 16)),
                   ),
                   Text('${p.mine!.score}', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w900, fontSize: 18)),

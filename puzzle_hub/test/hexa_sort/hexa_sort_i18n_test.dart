@@ -10,15 +10,17 @@ import 'package:puzzle_hub/games/hexa_sort/hexa_sort_screen.dart';
 import 'package:puzzle_hub/games/hexa_sort/logic/hexa_sort_logic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _langs = {'en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'};
+final _langs = {for (final l in AppLang.values) l.code};
 final _ph = RegExp(r'\{(\w+)\}');
 
 void main() {
-  test('hexa_sort strings: all 7 languages, identical placeholders, native scripts', () {
+  test('hexa_sort strings: all 9 languages, identical placeholders, native scripts', () {
     expect(hexaSortStrings, isNotEmpty);
     final scripts = {
       'hi': RegExp(r'[ऀ-ॿ]'),
       'bho': RegExp(r'[ऀ-ॿ]'),
+      'mr': RegExp(r'[ऀ-ॿ]'),
+      'sa': RegExp(r'[ऀ-ॿ]'),
       'te': RegExp(r'[ఀ-౿]'),
       'ta': RegExp(r'[஀-௿]'),
       'pa': RegExp(r'[਀-੿]'),

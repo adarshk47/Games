@@ -12,7 +12,7 @@ import 'package:puzzle_hub/games/maze_escape/maze_escape_screen.dart';
 import 'package:puzzle_hub/games/maze_escape/memory_maze_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _langs = {'en', 'hi', 'hinglish', 'te', 'ta', 'pa', 'bho'};
+final _langs = AppLang.values.map((l) => l.code).toSet();
 final _ph = RegExp(r'\{(\w+)\}');
 
 void checkTable(String prefix, Map<String, Map<String, String>> table) {
@@ -40,7 +40,7 @@ void checkUsedKeys(String dir) {
 }
 
 void main() {
-  test('maze_escape strings: all 7 languages, identical placeholders', () {
+  test('maze_escape strings: all languages, identical placeholders', () {
     checkTable('maze_escape', mazeEscapeStrings);
     checkUsedKeys('lib/games/maze_escape');
     for (final t in MazeTier.values) {

@@ -4,7 +4,7 @@ import 'package:puzzle_hub/core/i18n/strings/ball_sort.dart';
 import 'package:puzzle_hub/core/i18n/strings/game_2048.dart';
 import 'package:puzzle_hub/core/i18n/strings/sudoku.dart';
 
-/// Every key of the Sudoku / 2048 / Ball Sort tables has all 7 languages and
+/// Every key of the Sudoku / 2048 / Ball Sort tables has all languages and
 /// the same placeholders as English.
 void main() {
   final tables = {

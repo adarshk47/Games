@@ -1,5 +1,5 @@
 // Translations for the account module (welcome, lock, PIN, email sign-in).
-// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho.
+// Keys: '<module>.<name>'. Languages: en, hi, hinglish, te, ta, pa, bho, mr, sa.
 // Each entry must have at least 'en'. Placeholders like {name} are filled by tr().
 const Map<String, Map<String, String>> accountStrings = {
   // ----------------------------------------------------------- lock screen
@@ -11,6 +11,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "மீண்டும் வருக,",
     'pa': "ਮੁੜ ਜੀ ਆਇਆਂ ਨੂੰ,",
     'bho': "फेर से स्वागत बा,",
+    'mr': "पुन्हा स्वागत आहे,",
+    'sa': "पुनः स्वागतम्,",
   },
   'account.enter_pin': {
     'en': "Enter your PIN",
@@ -20,6 +22,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "உங்கள் PIN-ஐ உள்ளிடு",
     'pa': "ਆਪਣਾ PIN ਪਾਓ",
     'bho': "आपन PIN डालीं",
+    'mr': "तुमचा PIN टाका",
+    'sa': "स्वकीयं PIN लिखतु",
   },
   'account.wrong_pin_retry': {
     'en': "Wrong PIN, try again",
@@ -29,6 +33,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "தவறான PIN, மீண்டும் முயற்சி",
     'pa': "ਗਲਤ PIN, ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
     'bho': "गलत PIN, फेर से कोसिस करीं",
+    'mr': "चुकीचा PIN, पुन्हा प्रयत्न करा",
+    'sa': "अशुद्धं PIN, पुनः प्रयतताम्",
   },
   'account.play_without_pin': {
     'en': "Play Without PIN",
@@ -38,6 +44,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "PIN இல்லாமல் விளையாடு",
     'pa': "ਬਿਨਾਂ PIN ਖੇਡੋ",
     'bho': "बिना PIN खेलीं",
+    'mr': "PIN शिवाय खेळा",
+    'sa': "PIN विना क्रीडतु",
   },
   'account.fingerprint_unlock': {
     'en': "Unlock with fingerprint",
@@ -47,6 +55,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கைரேகை மூலம் திற",
     'pa': "ਫਿੰਗਰਪ੍ਰਿੰਟ ਨਾਲ ਅਨਲੌਕ ਕਰੋ",
     'bho': "फिंगरप्रिंट से अनलॉक करीं",
+    'mr': "फिंगरप्रिंटने अनलॉक करा",
+    'sa': "अङ्गुलिमुद्रया उद्घाटयतु",
   },
 
   // -------------------------------------------------------- register (local)
@@ -58,6 +68,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "இந்த போனிலேயே விளையாடு",
     'pa': "ਇਸੇ ਫ਼ੋਨ 'ਤੇ ਖੇਡੋ",
     'bho': "एही फोन पर खेलीं",
+    'mr': "याच फोनवर खेळा",
+    'sa': "अस्मिन् एव दूरवाणीयन्त्रे क्रीडतु",
   },
   'account.reg.welcome': {
     'en': "Welcome, {name}!",
@@ -67,6 +79,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "வருக, {name}!",
     'pa': "ਜੀ ਆਇਆਂ ਨੂੰ, {name}!",
     'bho': "स्वागत बा, {name}!",
+    'mr': "स्वागत आहे, {name}!",
+    'sa': "स्वागतम्, {name}!",
   },
   'account.reg.confirm_title': {
     'en': "Confirm PIN",
@@ -76,6 +90,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "PIN உறுதிசெய்",
     'pa': "PIN ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
     'bho': "PIN पक्का करीं",
+    'mr': "PIN ची खात्री करा",
+    'sa': "PIN पुष्टीकरोतु",
   },
   'account.reg.sub_name': {
     'en': "Tell us your name. Everything is saved right here on this phone.",
@@ -85,6 +101,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "உங்கள் பெயரைச் சொல்லுங்கள். எல்லாம் இந்த போனிலேயே சேமிக்கப்படும்.",
     'pa': "ਆਪਣਾ ਨਾਮ ਦੱਸੋ, ਅਸੀਂ ਸਭ ਕੁਝ ਇਸੇ ਫ਼ੋਨ ਵਿੱਚ ਸੇਵ ਰੱਖਾਂਗੇ।",
     'bho': "आपन नाम बताईं, हमनी के सब कुछ एही फोन में सेव राखब।",
+    'mr': "तुमचे नाव सांगा. सर्व काही याच फोनवर सेव्ह राहील.",
+    'sa': "स्वनाम वदतु। सर्वम् अस्मिन् एव दूरवाणीयन्त्रे रक्षितं भविष्यति।",
   },
   'account.reg.sub_pin': {
     'en': "Choose a 4-digit PIN (optional app lock).",
@@ -94,6 +112,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "4 இலக்க PIN-ஐத் தேர்வுசெய் (விருப்ப ஆப் பூட்டு).",
     'pa': "4 ਅੰਕਾਂ ਦਾ PIN ਚੁਣੋ (ਵਿਕਲਪਿਕ ਐਪ ਲੌਕ)।",
     'bho': "4 अंक के PIN चुनीं (मरजी से ऐप लॉक)।",
+    'mr': "4 अंकी PIN निवडा (ऐच्छिक ॲप लॉक).",
+    'sa': "चतुरङ्कीयं PIN चिनोतु (ऐच्छिकं ऐप्-तालकम्)।",
   },
   'account.reg.sub_confirm': {
     'en': "Enter the same PIN again.",
@@ -103,6 +123,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "அதே PIN-ஐ மீண்டும் உள்ளிடு.",
     'pa': "ਉਹੀ PIN ਦੁਬਾਰਾ ਪਾਓ।",
     'bho': "उहे PIN फेर से डालीं।",
+    'mr': "तोच PIN पुन्हा टाका.",
+    'sa': "तदेव PIN पुनः लिखतु।",
   },
   'account.reg.mismatch': {
     'en': "PINs didn't match, enter it again",
@@ -112,6 +134,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "PIN பொருந்தவில்லை, மீண்டும் உள்ளிடு",
     'pa': "PIN ਮੇਲ ਨਹੀਂ ਖਾਇਆ, ਦੁਬਾਰਾ ਪਾਓ",
     'bho': "PIN मेल ना खाइल, फेर से डालीं",
+    'mr': "PIN जुळला नाही, पुन्हा टाका",
+    'sa': "PIN न मिलितम्, पुनः लिखतु",
   },
   'account.your_name': {
     'en': "Your name",
@@ -121,6 +145,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "உங்கள் பெயர்",
     'pa': "ਤੁਹਾਡਾ ਨਾਮ",
     'bho': "रउआ के नाम",
+    'mr': "तुमचे नाव",
+    'sa': "भवतः नाम",
   },
   'account.reg.next': {
     'en': "Next",
@@ -130,6 +156,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "அடுத்து",
     'pa': "ਅੱਗੇ ਵਧੋ",
     'bho': "आगे बढ़ीं",
+    'mr': "पुढे",
+    'sa': "अग्रे",
   },
   'account.skip_pin': {
     'en': "Skip PIN & Play Directly",
@@ -139,6 +167,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "PIN தவிர்த்து நேரடியாக விளையாடு",
     'pa': "PIN ਛੱਡੋ ਤੇ ਸਿੱਧਾ ਖੇਡੋ",
     'bho': "PIN छोड़ीं आ सीधे खेलीं",
+    'mr': "PIN वगळा आणि थेट खेळा",
+    'sa': "PIN त्यक्त्वा साक्षात् क्रीडतु",
   },
 
   // ----------------------------------------------------------- welcome
@@ -150,6 +180,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "Master G-க்கு வருக",
     'pa': "Master G ਵਿੱਚ ਜੀ ਆਇਆਂ ਨੂੰ",
     'bho': "Master G में रउआ के स्वागत बा",
+    'mr': "Master G मध्ये तुमचे स्वागत आहे",
+    'sa': "Master G इत्यत्र स्वागतम्",
   },
   'account.welcome_sub': {
     'en': "Sign in to back up your progress and join the leaderboards, or just play on this phone.",
@@ -159,6 +191,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "முன்னேற்றத்தைக் காப்புப் பிரதி எடுக்கவும் லீடர்போர்டுகளில் சேரவும் உள்நுழையவும், அல்லது இந்த போனிலேயே விளையாடவும்.",
     'pa': "ਪ੍ਰਗਤੀ ਦਾ ਬੈਕਅੱਪ ਲੈਣ ਅਤੇ ਲੀਡਰਬੋਰਡ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ, ਜਾਂ ਬੱਸ ਇਸੇ ਫ਼ੋਨ 'ਤੇ ਖੇਡੋ।",
     'bho': "प्रोग्रेस के बैकअप आ लीडरबोर्ड में शामिल होखे खातिर साइन इन करीं, ना त बस एही फोन पर खेलीं।",
+    'mr': "प्रगतीचा बॅकअप घेण्यासाठी आणि लीडरबोर्डमध्ये सामील होण्यासाठी साइन इन करा, किंवा फक्त याच फोनवर खेळा.",
+    'sa': "प्रगतेः रक्षणाय अग्रताफलके सम्मिलितुं च प्रविशतु, अथवा केवलम् अस्मिन् दूरवाणीयन्त्रे क्रीडतु।",
   },
   'account.or': {
     'en': "or",
@@ -168,6 +202,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "அல்லது",
     'pa': "ਜਾਂ",
     'bho': "ना त",
+    'mr': "किंवा",
+    'sa': "अथवा",
   },
   'account.play_guest': {
     'en': "Play as guest / local",
@@ -177,6 +213,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "விருந்தினராக / உள்ளூரில் விளையாடு",
     'pa': "ਮਹਿਮਾਨ / ਲੋਕਲ ਖੇਡੋ",
     'bho': "मेहमान / लोकल खेलीं",
+    'mr': "पाहुणा / लोकल खेळा",
+    'sa': "अतिथिरूपेण / स्थानीयं क्रीडतु",
   },
   'account.later_note': {
     'en': "You can sign in later from Profile. Local progress is kept.",
@@ -186,6 +224,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "பின்னர் சுயவிவரத்திலிருந்து உள்நுழையலாம். உள்ளூர் முன்னேற்றம் அப்படியே இருக்கும்.",
     'pa': "ਤੁਸੀਂ ਬਾਅਦ ਵਿੱਚ ਪ੍ਰੋਫਾਈਲ ਤੋਂ ਸਾਈਨ ਇਨ ਕਰ ਸਕਦੇ ਹੋ। ਲੋਕਲ ਪ੍ਰਗਤੀ ਬਣੀ ਰਹੇਗੀ।",
     'bho': "रउआ बाद में प्रोफाइल से साइन इन कर सकीले। लोकल प्रोग्रेस बनल रही।",
+    'mr': "तुम्ही नंतर प्रोफाइलमधून साइन इन करू शकता. लोकल प्रगती जपली जाईल.",
+    'sa': "पश्चात् परिचयपृष्ठात् प्रवेष्टुं शक्यते। स्थानीया प्रगतिः रक्षिता भविष्यति।",
   },
   'account.cloud_pending': {
     'en': "Cloud setup pending. Your progress is saved on this phone.",
@@ -195,6 +235,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கிளவுட் அமைப்பு நிலுவையில் உள்ளது. உங்கள் முன்னேற்றம் இந்த போனில் சேமிக்கப்பட்டுள்ளது.",
     'pa': "ਕਲਾਊਡ ਸੈੱਟਅੱਪ ਬਾਕੀ ਹੈ। ਤੁਹਾਡੀ ਪ੍ਰਗਤੀ ਇਸੇ ਫ਼ੋਨ ਵਿੱਚ ਸੇਵ ਹੈ।",
     'bho': "क्लाउड सेटअप बाकी बा। रउआ के प्रोग्रेस एही फोन में सेव बा।",
+    'mr': "क्लाउड सेटअप बाकी आहे. तुमची प्रगती याच फोनवर सेव्ह आहे.",
+    'sa': "मेघसज्जा अवशिष्टा। भवतः प्रगतिः अस्मिन् दूरवाणीयन्त्रे रक्षिता अस्ति।",
   },
   'account.signing_in': {
     'en': "Signing in...",
@@ -204,6 +246,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "உள்நுழைகிறது...",
     'pa': "ਸਾਈਨ ਇਨ ਹੋ ਰਿਹਾ ਹੈ...",
     'bho': "साइन इन हो रहल बा...",
+    'mr': "साइन इन होत आहे...",
+    'sa': "प्रवेशः भवति...",
   },
   'account.continue_google': {
     'en': "Continue with Google",
@@ -213,6 +257,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "Google மூலம் தொடர்",
     'pa': "Google ਨਾਲ ਜਾਰੀ ਰੱਖੋ",
     'bho': "Google से आगे बढ़ीं",
+    'mr': "Google ने सुरू ठेवा",
+    'sa': "Google द्वारा अनुवर्तताम्",
   },
   'account.continue_email': {
     'en': "Continue with Email",
@@ -222,6 +268,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "மின்னஞ்சல் மூலம் தொடர்",
     'pa': "ਈਮੇਲ ਨਾਲ ਜਾਰੀ ਰੱਖੋ",
     'bho': "ईमेल से आगे बढ़ीं",
+    'mr': "ईमेलने सुरू ठेवा",
+    'sa': "ईमेल द्वारा अनुवर्तताम्",
   },
 
   // ------------------------------------------------------------ email auth
@@ -233,6 +281,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "சரியான மின்னஞ்சல் முகவரியை உள்ளிடு.",
     'pa': "ਸਹੀ ਈਮੇਲ ਪਤਾ ਪਾਓ।",
     'bho': "सही ईमेल पता डालीं।",
+    'mr': "योग्य ईमेल पत्ता टाका.",
+    'sa': "शुद्धं ईमेल-सङ्केतं लिखतु।",
   },
   'account.short_password': {
     'en': "Password must be at least 6 characters.",
@@ -242,6 +292,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.",
     'pa': "ਪਾਸਵਰਡ ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰਾਂ ਦਾ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ।",
     'bho': "पासवर्ड कम से कम 6 अक्षर के होखे के चाहीं।",
+    'mr': "पासवर्ड किमान 6 अक्षरांचा असावा.",
+    'sa': "गुप्तशब्दः न्यूनातिन्यूनं 6 वर्णात्मकः भवेत्।",
   },
   'account.reset_sent': {
     'en': "Reset link sent to {email}. Check your inbox, then sign in.",
@@ -251,6 +303,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "மீட்டமைப்பு இணைப்பு {email}க்கு அனுப்பப்பட்டது. இன்பாக்ஸைப் பார்த்து, பிறகு உள்நுழையவும்.",
     'pa': "ਰੀਸੈੱਟ ਲਿੰਕ {email} 'ਤੇ ਭੇਜਿਆ ਗਿਆ। ਇਨਬਾਕਸ ਦੇਖੋ, ਫਿਰ ਸਾਈਨ ਇਨ ਕਰੋ।",
     'bho': "रीसेट लिंक {email} पर भेजल गइल। इनबॉक्स देखीं, फेर साइन इन करीं।",
+    'mr': "रीसेट लिंक {email} वर पाठवली. इनबॉक्स तपासा, मग साइन इन करा.",
+    'sa': "पुनर्स्थापन-सम्बन्धः {email} प्रति प्रेषितः। आगतपत्राणि पश्यतु, ततः प्रविशतु।",
   },
   'account.signup_welcome': {
     'en': "Welcome! We sent a verification link to {email}.",
@@ -260,6 +314,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "வருக! {email}க்கு சரிபார்ப்பு இணைப்பை அனுப்பியுள்ளோம்.",
     'pa': "ਜੀ ਆਇਆਂ ਨੂੰ! ਅਸੀਂ {email} 'ਤੇ ਵੈਰੀਫਿਕੇਸ਼ਨ ਲਿੰਕ ਭੇਜਿਆ ਹੈ।",
     'bho': "स्वागत बा! हमनी के {email} पर वेरिफिकेशन लिंक भेजले बानी।",
+    'mr': "स्वागत आहे! आम्ही {email} वर पडताळणी लिंक पाठवली आहे.",
+    'sa': "स्वागतम्! {email} प्रति सत्यापन-सम्बन्धः प्रेषितः।",
   },
   'account.sign_in': {
     'en': "Sign in",
@@ -269,6 +325,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "உள்நுழை",
     'pa': "ਸਾਈਨ ਇਨ",
     'bho': "साइन इन",
+    'mr': "साइन इन",
+    'sa': "प्रवेशः",
   },
   'account.create_account': {
     'en': "Create account",
@@ -278,6 +336,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கணக்கை உருவாக்கு",
     'pa': "ਖਾਤਾ ਬਣਾਓ",
     'bho': "अकाउंट बनाईं",
+    'mr': "खाते तयार करा",
+    'sa': "खातं रचयतु",
   },
   'account.reset_password': {
     'en': "Reset password",
@@ -287,6 +347,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கடவுச்சொல்லை மீட்டமை",
     'pa': "ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ",
     'bho': "पासवर्ड रीसेट करीं",
+    'mr': "पासवर्ड रीसेट करा",
+    'sa': "गुप्तशब्दं पुनः स्थापयतु",
   },
   'account.email': {
     'en': "Email",
@@ -296,6 +358,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "மின்னஞ்சல்",
     'pa': "ਈਮੇਲ",
     'bho': "ईमेल",
+    'mr': "ईमेल",
+    'sa': "ईमेल",
   },
   'account.password': {
     'en': "Password",
@@ -305,6 +369,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கடவுச்சொல்",
     'pa': "ਪਾਸਵਰਡ",
     'bho': "पासवर्ड",
+    'mr': "पासवर्ड",
+    'sa': "गुप्तशब्दः",
   },
   'account.please_wait': {
     'en': "Please wait...",
@@ -314,6 +380,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "தயவுசெய்து காத்திருக்கவும்...",
     'pa': "ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ...",
     'bho': "तनी रुकीं...",
+    'mr': "कृपया थांबा...",
+    'sa': "कृपया प्रतीक्षताम्...",
   },
   'account.forgot_password': {
     'en': "Forgot password?",
@@ -323,6 +391,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "கடவுச்சொல் மறந்துவிட்டதா?",
     'pa': "ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?",
     'bho': "पासवर्ड भुला गइनी?",
+    'mr': "पासवर्ड विसरलात?",
+    'sa': "गुप्तशब्दः विस्मृतः?",
   },
   'account.new_here': {
     'en': "New here? Create an account",
@@ -332,6 +402,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "புதியவரா? கணக்கை உருவாக்கு",
     'pa': "ਨਵੇਂ ਹੋ? ਖਾਤਾ ਬਣਾਓ",
     'bho': "नया बानी? अकाउंट बनाईं",
+    'mr': "नवीन आहात? खाते तयार करा",
+    'sa': "नूतनः असि? खातं रचयतु",
   },
   'account.have_account': {
     'en': "Already have an account? Sign in",
@@ -341,6 +413,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "ஏற்கனவே கணக்கு உள்ளதா? உள்நுழை",
     'pa': "ਪਹਿਲਾਂ ਹੀ ਖਾਤਾ ਹੈ? ਸਾਈਨ ਇਨ ਕਰੋ",
     'bho': "पहिले से अकाउंट बा? साइन इन करीं",
+    'mr': "आधीच खाते आहे? साइन इन करा",
+    'sa': "पूर्वमेव खातम् अस्ति? प्रविशतु",
   },
   'account.country.title': {
     'en': "Where are you playing from?",
@@ -350,6 +424,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "நீங்கள் எங்கிருந்து விளையாடுகிறீர்கள்?",
     'pa': "ਤੁਸੀਂ ਕਿੱਥੋਂ ਖੇਡ ਰਹੇ ਹੋ?",
     'bho': "रउआ कहाँ से खेलत बानी?",
+    'mr': "तुम्ही कुठून खेळत आहात?",
+    'sa': "भवान् कुतः क्रीडति?",
   },
   'account.country.sub': {
     'en': "Choose your country to continue.",
@@ -359,6 +435,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "தொடர உங்கள் நாட்டைத் தேர்ந்தெடுக்கவும்.",
     'pa': "ਅੱਗੇ ਵਧਣ ਲਈ ਆਪਣਾ ਦੇਸ਼ ਚੁਣੋ।",
     'bho': "आगे बढ़े खातिर आपन देस चुनीं।",
+    'mr': "पुढे जाण्यासाठी तुमचा देश निवडा.",
+    'sa': "अग्रे गन्तुं स्वदेशं चिनोतु।",
   },
   'account.country.search': {
     'en': "Search country",
@@ -368,6 +446,8 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "நாட்டைத் தேடு",
     'pa': "ਦੇਸ਼ ਲੱਭੋ",
     'bho': "देस खोजीं",
+    'mr': "देश शोधा",
+    'sa': "देशम् अन्विष्यतु",
   },
   'account.country.label': {
     'en': "Country",
@@ -377,5 +457,7 @@ const Map<String, Map<String, String>> accountStrings = {
     'ta': "நாடு",
     'pa': "ਦੇਸ਼",
     'bho': "देस",
+    'mr': "देश",
+    'sa': "देशः",
   },
 };
