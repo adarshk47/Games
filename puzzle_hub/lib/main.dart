@@ -13,12 +13,14 @@ import 'core/storage.dart';
 import 'core/theme.dart';
 import 'core/ui/app_theme.dart';
 import 'home/home_screen.dart';
+import 'core/cheer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Storage.init();
   await I18n.init();
+  Cheer.init();
   await AppThemeController.init();
   await AppAudio.init();
   // Optional services: a failure here must never block the app from starting.

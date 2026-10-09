@@ -9,6 +9,7 @@ import 'audio.dart';
 import 'i18n/i18n.dart';
 import 'storage.dart';
 import 'ui/palette.dart';
+import 'cheer.dart';
 
 /// Coins + per-game records for the signed-in user. All data goes through
 /// [Storage], so it is automatically per-account.
@@ -20,7 +21,15 @@ import 'ui/palette.dart';
 ///
 /// Broadcast to listeners (daily quests, achievements, leaderboard, referral).
 class RewardEvent {
-  const RewardEvent({required this.gameId, required this.type, this.levelKey, this.stars = 0, this.score, this.won = false, this.firstTime = false});
+  const RewardEvent({
+    required this.gameId,
+    required this.type,
+    this.levelKey,
+    this.stars = 0,
+    this.score,
+    this.won = false,
+    this.firstTime = false,
+  });
   final String gameId;
 
   /// 'level' (onLevelComplete) or 'run' (onGameEnd).
@@ -35,7 +44,8 @@ class RewardEvent {
 class Rewards {
   Rewards._();
 
-  static final StreamController<RewardEvent> _events = StreamController<RewardEvent>.broadcast();
+  static final StreamController<RewardEvent> _events =
+      StreamController<RewardEvent>.broadcast();
 
   /// Every completed level / finished run, after records and coins are updated.
   static Stream<RewardEvent> get events => _events.stream;
@@ -77,7 +87,9 @@ class Rewards {
     final sp = Storage.getInt(kSpent).clamp(0, 1 << 31);
     final storedEarned = Storage.getInt(kEarned, -1);
     // Missing earned (old installs) -> derive it; otherwise never shrink it.
-    final e = storedEarned < 0 ? bal + sp : (storedEarned > bal + sp ? storedEarned : bal + sp);
+    final e = storedEarned < 0
+        ? bal + sp
+        : (storedEarned > bal + sp ? storedEarned : bal + sp);
     _writeLedger(e, e - bal);
   }
 
@@ -101,7 +113,13 @@ class Rewards {
   /// [source] says where coins came from ('game', 'ad', 'daily', 'quest',
   /// 'achievement', 'invite', ...); [gameId] credits a specific game. Both feed
   /// the coin history screen.
-  static Future<void> addCoins(int n, {String? label, bool playSound = true, String source = 'other', String? gameId}) async {
+  static Future<void> addCoins(
+    int n, {
+    String? label,
+    bool playSound = true,
+    String source = 'other',
+    String? gameId,
+  }) async {
     if (n <= 0) return;
     if (playSound) AppAudio.play(Sound.coin);
     _normalizeLedger();
@@ -116,7 +134,11 @@ class Rewards {
   /// Returns false (and spends nothing) if the user cannot afford it.
   /// [reason] says what the coins were spent on ('hint', 'undo', 'extraLife',
   /// 'skip', 'theme', 'adfree', ...) for the coin history screen.
-  static Future<bool> spend(int n, {String reason = 'other', String? gameId}) async {
+  static Future<bool> spend(
+    int n, {
+    String reason = 'other',
+    String? gameId,
+  }) async {
     if (n < 0) return false;
     _normalizeLedger();
     final e = earned;
@@ -130,21 +152,44 @@ class Rewards {
   }
 
   /// Coins paid for a level completion (pure, for UI / tests).
-  static int levelReward({required bool firstTime, int stars = 0}) =>
-      firstTime ? firstClearBase + firstClearPerStar * stars.clamp(0, 3) : replayReward;
+  static int levelReward({required bool firstTime, int stars = 0}) => firstTime
+      ? firstClearBase + firstClearPerStar * stars.clamp(0, 3)
+      : replayReward;
 
   /// A level / puzzle was completed. First completion of [levelKey] pays
   /// 3 + 1 per star; replays pay 1. Also updates the game's record.
   /// Returns the coins awarded.
-  static int onLevelComplete(String gameId, String levelKey, {int stars = 0, int? score}) {
+  static int onLevelComplete(
+    String gameId,
+    String levelKey, {
+    int stars = 0,
+    int? score,
+  }) {
     final done = 'rec.$gameId.done.$levelKey';
     final first = !Storage.getBool(done);
     if (first) Storage.setBool(done, true);
     final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     AppAudio.play(Sound.win);
-    addCoins(reward, label: first ? tr('common.level_complete') : null, playSound: false, source: 'game', gameId: gameId);
-    _events.add(RewardEvent(gameId: gameId, type: 'level', levelKey: levelKey, stars: stars, score: score, won: true, firstTime: first));
+    Cheer.win();
+    addCoins(
+      reward,
+      label: first ? tr('common.level_complete') : null,
+      playSound: false,
+      source: 'game',
+      gameId: gameId,
+    );
+    _events.add(
+      RewardEvent(
+        gameId: gameId,
+        type: 'level',
+        levelKey: levelKey,
+        stars: stars,
+        score: score,
+        won: true,
+        firstTime: first,
+      ),
+    );
     try {
       AdsService.onLevelCompleted(gameId: gameId);
     } catch (_) {}
@@ -155,10 +200,18 @@ class Rewards {
   static void onGameEnd(String gameId, {int? score, bool won = false}) {
     _record(gameId, won: won, score: score);
     if (won) addCoins(runWinReward, source: 'game', gameId: gameId);
-    _events.add(RewardEvent(gameId: gameId, type: 'run', score: score, won: won));
+    won ? Cheer.win() : Cheer.lose();
+    _events.add(
+      RewardEvent(gameId: gameId, type: 'run', score: score, won: won),
+    );
   }
 
-  static void _record(String gameId, {required bool won, int? score, int level = 0}) {
+  static void _record(
+    String gameId, {
+    required bool won,
+    int? score,
+    int level = 0,
+  }) {
     final p = 'rec.$gameId';
     Storage.setInt('$p.plays', Storage.getInt('$p.plays') + 1);
     if (won) Storage.setInt('$p.wins', Storage.getInt('$p.wins') + 1);
@@ -185,22 +238,45 @@ class Rewards {
         right: 0,
         child: IgnorePointer(
           child: Center(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-              decoration: BoxDecoration(
-                gradient: Pal.accent(Pal.goldDeep),
-                borderRadius: BorderRadius.circular(40),
-                boxShadow: [BoxShadow(color: Pal.goldDeep.withValues(alpha: 0.6), blurRadius: 24)],
-                border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-              ),
-              child: Text(text,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 17, decoration: TextDecoration.none)),
-            )
-                .animate()
-                .fadeIn(duration: 250.ms)
-                .slideY(begin: -0.6, end: 0, curve: Curves.easeOutBack, duration: 450.ms)
-                .then(delay: 1500.ms)
-                .fadeOut(duration: 350.ms),
+            child:
+                Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: Pal.accent(Pal.goldDeep),
+                        borderRadius: BorderRadius.circular(40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Pal.goldDeep.withValues(alpha: 0.6),
+                            blurRadius: 24,
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 17,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 250.ms)
+                    .slideY(
+                      begin: -0.6,
+                      end: 0,
+                      curve: Curves.easeOutBack,
+                      duration: 450.ms,
+                    )
+                    .then(delay: 1500.ms)
+                    .fadeOut(duration: 350.ms),
           ),
         ),
       ),
@@ -232,17 +308,26 @@ class CoinPill extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           border: Border.all(color: Pal.gold.withValues(alpha: 0.7)),
         ),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Text('🪙', style: TextStyle(fontSize: 16)),
-          const SizedBox(width: 6),
-          Text('$v', style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w900, fontSize: 15)),
-        ]),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('🪙', style: TextStyle(fontSize: 16)),
+            const SizedBox(width: 6),
+            Text(
+              '$v',
+              style: const TextStyle(
+                color: Pal.gold,
+                fontWeight: FontWeight.w900,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
       ),
     );
     return onTap == null ? pill : GestureDetector(onTap: onTap, child: pill);
   }
 }
-
 
 /// Per-game / per-source coin totals plus a capped log of recent transactions.
 /// Everything is stored through [Storage], so it is per account and synced.
@@ -255,10 +340,21 @@ class CoinHistory {
   static void record(int amount, {required String source, String? gameId}) {
     if (amount == 0) return;
     if (amount > 0) {
-      Storage.setInt('coins.src.$source', Storage.getInt('coins.src.$source') + amount);
-      if (gameId != null) Storage.setInt('coins.game.$gameId', Storage.getInt('coins.game.$gameId') + amount);
+      Storage.setInt(
+        'coins.src.$source',
+        Storage.getInt('coins.src.$source') + amount,
+      );
+      if (gameId != null) {
+        Storage.setInt(
+          'coins.game.$gameId',
+          Storage.getInt('coins.game.$gameId') + amount,
+        );
+      }
     } else {
-      Storage.setInt('coins.use.$source', Storage.getInt('coins.use.$source') - amount);
+      Storage.setInt(
+        'coins.use.$source',
+        Storage.getInt('coins.use.$source') - amount,
+      );
     }
     final list = entries();
     list.insert(0, CoinTx(DateTime.now(), amount, source, gameId));
@@ -267,7 +363,8 @@ class CoinHistory {
   }
 
   /// Coins earned from one game (levels + runs).
-  static int earnedFromGame(String gameId) => Storage.getInt('coins.game.$gameId');
+  static int earnedFromGame(String gameId) =>
+      Storage.getInt('coins.game.$gameId');
 
   /// Coins earned from a source ('game', 'ad', 'daily', ...).
   static int earnedFrom(String source) => Storage.getInt('coins.src.$source');
@@ -279,7 +376,10 @@ class CoinHistory {
     final raw = Storage.getString(_log);
     if (raw == null || raw.isEmpty) return [];
     try {
-      return [for (final e in jsonDecode(raw) as List) CoinTx.fromJson(e as Map<String, dynamic>)];
+      return [
+        for (final e in jsonDecode(raw) as List)
+          CoinTx.fromJson(e as Map<String, dynamic>),
+      ];
     } catch (_) {
       return [];
     }
@@ -293,8 +393,17 @@ class CoinTx {
   final String source;
   final String? gameId;
 
-  Map<String, dynamic> toJson() => {'t': time.millisecondsSinceEpoch, 'a': amount, 's': source, if (gameId != null) 'g': gameId};
+  Map<String, dynamic> toJson() => {
+    't': time.millisecondsSinceEpoch,
+    'a': amount,
+    's': source,
+    if (gameId != null) 'g': gameId,
+  };
 
-  factory CoinTx.fromJson(Map<String, dynamic> j) =>
-      CoinTx(DateTime.fromMillisecondsSinceEpoch(j['t'] as int), j['a'] as int, j['s'] as String, j['g'] as String?);
+  factory CoinTx.fromJson(Map<String, dynamic> j) => CoinTx(
+    DateTime.fromMillisecondsSinceEpoch(j['t'] as int),
+    j['a'] as int,
+    j['s'] as String,
+    j['g'] as String?,
+  );
 }

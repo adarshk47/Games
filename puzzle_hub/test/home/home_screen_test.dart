@@ -89,7 +89,7 @@ void main() {
   testWidgets('locked theme purchase from settings spends coins', (t) async {
     await _setup({'coins': 1000});
     expect(Rewards.coins.value, 1000);
-    t.view.physicalSize = const Size(390, 844);
+    t.view.physicalSize = const Size(390, 1400);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.resetPhysicalSize);
     await t.pumpWidget(MaterialApp(

@@ -4,6 +4,7 @@ import '../ads/ads_service.dart';
 import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../ui/ui.dart';
+import '../cheer.dart';
 
 /// What the player is trying to get when out of free help.
 enum OfferKind { hint, undo, extraLife, unlockLevel }
@@ -73,6 +74,8 @@ Future<bool> showContinueOffer(
     ),
     pageBuilder: (_, _, _) => _OfferDialog(kind: kind, price: cost),
   );
+  // Declining an extra chance means the game is lost.
+  if (r != true && kind == OfferKind.extraLife) Cheer.lose();
   return r ?? false;
 }
 
@@ -175,7 +178,10 @@ class _OfferDialogState extends State<_OfferDialog> {
                         children: [
                           Text(
                             '${tr('offer.balance')} ',
-                            style: const TextStyle(color: Pal.textDim, fontSize: 14),
+                            style: const TextStyle(
+                              color: Pal.textDim,
+                              fontSize: 14,
+                            ),
                           ),
                           const Text('🪙', style: TextStyle(fontSize: 15)),
                           const SizedBox(width: 4),
@@ -194,7 +200,9 @@ class _OfferDialogState extends State<_OfferDialog> {
                         width: double.infinity,
                         child: Center(
                           child: PremiumButton(
-                            label: tr('offer.use_coins', {'coins': widget.price}),
+                            label: tr('offer.use_coins', {
+                              'coins': widget.price,
+                            }),
                             icon: Icons.monetization_on_rounded,
                             onTap: _busy || !canAfford ? null : _useCoins,
                           ),
@@ -202,7 +210,9 @@ class _OfferDialogState extends State<_OfferDialog> {
                       ),
                       const SizedBox(height: 10),
                       PremiumButton(
-                        label: _busy ? tr('offer.loading') : tr('offer.watch_ad'),
+                        label: _busy
+                            ? tr('offer.loading')
+                            : tr('offer.watch_ad'),
                         icon: Icons.ondemand_video_rounded,
                         color: const Color(0xFF4DA8FF),
                         onTap: _busy ? null : _watchAd,
@@ -210,7 +220,8 @@ class _OfferDialogState extends State<_OfferDialog> {
                       if (_error != null || !canAfford) ...[
                         const SizedBox(height: 10),
                         Text(
-                          _error ?? tr('offer.need_more', {'n': widget.price - bal}),
+                          _error ??
+                              tr('offer.need_more', {'n': widget.price - bal}),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Pal.danger,

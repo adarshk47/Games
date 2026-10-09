@@ -8,6 +8,7 @@ import '../rewards.dart';
 import 'app_theme.dart';
 import 'glass_card.dart';
 import 'palette.dart';
+import '../cheer.dart';
 
 /// Bottom sheet with Sound / Music / Vibration switches, the theme picker and
 /// the daily reminder row. Opened from the home screen and from the speaker
@@ -124,6 +125,20 @@ class _SettingsSheet extends StatelessWidget {
                       tr('home.settings.vibration_sub'),
                       AppAudio.hapticsOn,
                       AppAudio.setHaptics,
+                    ),
+                    row(
+                      Icons.celebration_rounded,
+                      tr('cheer.setting'),
+                      tr('cheer.setting_sub'),
+                      Cheer.enabled,
+                      Cheer.setEnabled,
+                    ),
+                    row(
+                      Icons.record_voice_over_rounded,
+                      tr('cheer.voice'),
+                      tr('cheer.voice_sub'),
+                      Cheer.voice,
+                      Cheer.setVoice,
                     ),
                     const ReminderSettingsTile(),
                     ValueListenableBuilder<AppLang>(
@@ -249,7 +264,10 @@ class ThemePicker extends StatelessWidget {
           backgroundColor: AppThemeController.theme.bg1,
           title: Text(
             tr('home.theme.not_enough'),
-            style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900),
+            style: const TextStyle(
+              color: Pal.text,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           content: Text(
             tr('home.theme.needs', {'theme': th.name, 'coins': th.price}),
@@ -478,7 +496,9 @@ class _BuyDialog extends StatelessWidget {
                     onPressed: () => Navigator.pop(context, true),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text(tr('home.theme.unlock_btn', {'coins': theme.price})),
+                      child: Text(
+                        tr('home.theme.unlock_btn', {'coins': theme.price}),
+                      ),
                     ),
                   ),
                 ),
