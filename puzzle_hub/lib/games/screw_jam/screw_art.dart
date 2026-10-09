@@ -18,6 +18,8 @@ const sjScrewColors = <Color>[
   Color(0xFFF97316), // orange
   Color(0xFF06B6D4), // cyan
   Color(0xFFEC4899), // pink
+  Color(0xFFF1F5F9), // white
+  Color(0xFF8B5A2B), // brown
 ];
 
 Color sjColor(int i) => sjScrewColors[i % sjScrewColors.length];

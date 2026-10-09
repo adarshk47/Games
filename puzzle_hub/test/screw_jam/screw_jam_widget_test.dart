@@ -126,7 +126,7 @@ void main() {
     expect(find.text('Tray full!'), findsOneWidget);
     await t.tap(find.text('Try again'));
     await _settle(t, 2);
-    expect(find.text('Tray 0/4'), findsOneWidget);
+    expect(find.text('Tray 0/${sjSpec(tier).tray}'), findsOneWidget);
     await _finish(t);
   });
 

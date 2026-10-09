@@ -382,7 +382,16 @@ int sjStars({required int peakTray, required int trayCapacity, required int cont
 /// Depth-first solver with memo; prefers taps that go straight into a box.
 /// Returns a winning tap order from [start], or null if none was found
 /// within [maxNodes].
+///
+/// A quick pass first only considers tray taps when no box tap exists (that
+/// is almost always right and solves most boards fast); if it fails, a full
+/// search uses the rest of the budget.
 List<int>? sjSolve(SjGame start, {int maxNodes = 200000}) {
+  final quick = maxNodes ~/ 4;
+  return _dfsSolve(start, quick, boxOnly: true) ?? _dfsSolve(start, maxNodes - quick, boxOnly: false);
+}
+
+List<int>? _dfsSolve(SjGame start, int maxNodes, {required bool boxOnly}) {
   final seen = <String>{};
   final path = <int>[];
   var nodes = 0;
@@ -391,12 +400,33 @@ List<int>? sjSolve(SjGame start, {int maxNodes = 200000}) {
     if (s.lost) return false;
     if (++nodes > maxNodes) return false;
     if (!seen.add(s.key)) return false;
+    // Taps on plates with few screws left first (they drop plates and
+    // uncover the most).
+    int left(int m) => s.level.plateScrews[s.level.screws[m].plate].where((x) => !s.removed.contains(x)).length;
+    int byLeft(int a, int b) {
+      final d = left(a).compareTo(left(b));
+      return d != 0 ? d : a.compareTo(b);
+    }
+
     final moves = s.removable.toList();
-    final toBox = [for (final m in moves) if (s.slotFor(m) != null) m];
-    final toTray = [for (final m in moves) if (s.slotFor(m) == null) m];
-    // Try only one tray move per color (they are equivalent for the rules
-    // except for which plate they free up, so keep them all but box first).
-    for (final m in [...toBox, ...toTray]) {
+    final toBox = [for (final m in moves) if (s.slotFor(m) != null) m]..sort(byLeft);
+    // Tray taps: colors whose box arrives soonest first (they leave the tray
+    // again quickly).
+    int wait(int m) {
+      final q = s.level.boxQueue, c = s.level.screws[m].color;
+      for (var i = s.nextBox; i < q.length; i++) {
+        if (q[i] == c) return i - s.nextBox;
+      }
+      return q.length;
+    }
+
+    final toTray = [for (final m in moves) if (s.slotFor(m) == null) m]
+      ..sort((a, b) {
+        final d = wait(a).compareTo(wait(b));
+        return d != 0 ? d : byLeft(a, b);
+      });
+    final tryMoves = boxOnly && toBox.isNotEmpty ? toBox : [...toBox, ...toTray];
+    for (final m in tryMoves) {
       final c = s.clone()..tap(m);
       path.add(m);
       if (dfs(c)) return true;
@@ -409,11 +439,21 @@ List<int>? sjSolve(SjGame start, {int maxNodes = 200000}) {
   return dfs(start.clone()) ? path : null;
 }
 
-/// A good next tap for the hint button: the first step of a solution if the
-/// solver finds one quickly, else an exposed screw that fits a box, else any
-/// exposed screw.
+/// A good next tap for the hint button: the next step of the built-in
+/// solution while the player is still on it, else the first step of a
+/// solution if the solver finds one quickly, else an exposed screw that fits
+/// a box, else any exposed screw.
 int? sjHint(SjGame g, {int maxNodes = 6000}) {
   if (g.over) return null;
+  final line = g.level.solution;
+  final k = g.removed.length;
+  if (k < line.length) {
+    final ref = SjGame(g.level);
+    for (var i = 0; i < k; i++) {
+      ref.tap(line[i]);
+    }
+    if (ref.key == g.key && g.canTap(line[k])) return line[k];
+  }
   final sol = sjSolve(g, maxNodes: maxNodes);
   if (sol != null && sol.isNotEmpty) return sol.first;
   final moves = g.removable.toList();
@@ -674,4 +714,212 @@ SjLevel _build(SjTier tier, int level) {
     colorCount: colors,
     solution: order,
   );
+}
+
+/// Hard / extreme: try several removal orders + tray-aware colorings and keep
+/// the one a naive player fails most. Each candidate is solvable by
+/// construction: its removal order, replayed, never holds more than
+/// [SjTierSpec.trayUse] screws in the tray.
+SjLevel _buildTricky(SjTier tier, int level, SjTierSpec spec, _Rng rng, SjLevel base, int colors) {
+  final n = base.screws.length;
+  final trap = sjTrapFor(tier, level);
+  final tries = sjCandidatesFor(tier, level);
+  List<int>? bestOrder, bestColors, bestQueue;
+  var bestScore = -1;
+  for (var cand = 0; cand < tries; cand++) {
+    final order = _digOrder(base, rng, spec.dig);
+    final (colorOf, queue) = _trayColoring(order, colors, spec.trayUse, trap, rng);
+    final lv = SjLevel(
+      tier: tier,
+      number: level,
+      cols: base.cols,
+      rows: base.rows,
+      plates: base.plates,
+      screws: [
+        for (final s in base.screws) SjScrew(id: s.id, plate: s.plate, c: s.c, r: s.r, color: colorOf[s.id]),
+      ],
+      boxQueue: queue,
+      trayCapacity: spec.tray,
+      colorCount: colors,
+      solution: order,
+    );
+    final score = _trapScore(lv, rng);
+    if (score > bestScore) {
+      bestScore = score;
+      bestOrder = order;
+      bestColors = colorOf;
+      bestQueue = queue;
+    }
+  }
+  return SjLevel(
+    tier: tier,
+    number: level,
+    cols: base.cols,
+    rows: base.rows,
+    plates: base.plates,
+    screws: [
+      for (var i = 0; i < n; i++)
+        SjScrew(id: i, plate: base.screws[i].plate, c: base.screws[i].c, r: base.screws[i].r, color: bestColors![i]),
+    ],
+    boxQueue: bestQueue!,
+    trayCapacity: spec.tray,
+    colorCount: colors,
+    solution: bestOrder!,
+  );
+}
+
+/// A legal removal order. With [dig] percent it continues with a screw that
+/// was uncovered most recently, building long dependency chains and leaving
+/// long-exposed screws for the end of the order.
+List<int> _digOrder(SjLevel lv, _Rng rng, int dig) {
+  final n = lv.screws.length;
+  final removed = <int>{};
+  final fallen = <int>{};
+  final exposedAt = List<int>.filled(n, 0);
+  final order = <int>[];
+  while (order.length < n) {
+    final open = [
+      for (var s = 0; s < n; s++)
+        if (!removed.contains(s) && lv.coverers[s].every(fallen.contains)) s,
+    ];
+    var pool = open;
+    if (rng.chance(dig)) {
+      var newest = -1;
+      for (final s in open) {
+        if (exposedAt[s] > newest) newest = exposedAt[s];
+      }
+      pool = [for (final s in open) if (exposedAt[s] == newest) s];
+    }
+    final pick = pool[rng.nextInt(pool.length)];
+    order.add(pick);
+    removed.add(pick);
+    final p = lv.screws[pick].plate;
+    if (lv.plateScrews[p].every(removed.contains) && fallen.add(p)) {
+      for (var s = 0; s < n; s++) {
+        if (!removed.contains(s) && lv.coverers[s].contains(p) && lv.coverers[s].every(fallen.contains)) {
+          exposedAt[s] = order.length;
+        }
+      }
+    }
+  }
+  return order;
+}
+
+/// Colors screws along [order] by simulating the game rules: each step either
+/// fills a visible box or (with [trap] percent, while the tray holds fewer
+/// than [trayUse]) parks the screw in the tray in a color whose box comes
+/// later. Returns (color per screw id, box queue). Replaying [order] then wins
+/// with the tray never above [trayUse].
+(List<int>, List<int>) _trayColoring(List<int> order, int colors, int trayUse, int trap, _Rng rng) {
+  final n = order.length, total = n ~/ kSjBoxSize;
+  final colorOf = List<int>.filled(n, -1);
+  final queue = <int>[];
+  final visC = List<int?>.filled(kSjSlots, null);
+  final visN = List<int>.filled(kSjSlots, 0);
+  final tray = <int>[];
+  final used = List<int>.filled(colors, 0);
+
+  Set<int> trayColors() => {for (final t in tray) colorOf[t]};
+  int trayCount(int c) => tray.where((t) => colorOf[t] == c).length;
+
+  // Least used color outside [avoid] (random among ties), or -1.
+  int fresh(Set<int> avoid) {
+    var low = 1 << 30;
+    final pool = <int>[];
+    for (var c = 0; c < colors; c++) {
+      if (avoid.contains(c)) continue;
+      if (used[c] < low) {
+        low = used[c];
+        pool.clear();
+      }
+      if (used[c] == low) pool.add(c);
+    }
+    return pool.isEmpty ? -1 : pool[rng.nextInt(pool.length)];
+  }
+
+  late void Function(int) close;
+  void open(int slot, int c) {
+    queue.add(c);
+    used[c]++;
+    visC[slot] = c;
+    visN[slot] = 0;
+    for (final t in [...tray]) {
+      if (visN[slot] >= kSjBoxSize) break;
+      if (colorOf[t] == c) {
+        tray.remove(t);
+        visN[slot]++;
+      }
+    }
+    if (visN[slot] >= kSjBoxSize) close(slot);
+  }
+
+  close = (int slot) {
+    visC[slot] = null;
+    visN[slot] = 0;
+    if (queue.length >= total) return;
+    final tc = trayColors();
+    final left = total - queue.length;
+    var c = -1;
+    if (tc.isNotEmpty && (left <= tc.length || rng.chance(45))) {
+      c = colorOf[tray.first];
+    } else {
+      c = fresh({...tc, for (final v in visC) ?v});
+      if (c < 0) c = colorOf[tray.first];
+    }
+    open(slot, c);
+  };
+
+  for (var i = 0; i < kSjSlots && queue.length < total; i++) {
+    open(i, fresh({for (final v in visC) ?v}));
+  }
+
+  for (final s in order) {
+    final tc = trayColors();
+    final left = total - queue.length;
+    final room = tray.length < trayUse;
+    final old = [for (final c in tc) if (trayCount(c) < kSjBoxSize) c];
+    final canNew = room && left > tc.length;
+    if (room && (old.isNotEmpty || canNew) && rng.chance(trap)) {
+      var c = -1;
+      if (canNew && (old.isEmpty || rng.chance(60))) {
+        c = fresh({...tc, for (final v in visC) ?v});
+      }
+      if (c < 0 && old.isNotEmpty) c = old[rng.nextInt(old.length)];
+      if (c >= 0) {
+        colorOf[s] = c;
+        tray.add(s);
+        continue;
+      }
+    }
+    final slots = [for (var j = 0; j < kSjSlots; j++) if (visC[j] != null) j];
+    final j = slots[rng.nextInt(slots.length)];
+    colorOf[s] = visC[j]!;
+    visN[j]++;
+    if (visN[j] >= kSjBoxSize) close(j);
+  }
+  return (colorOf, queue);
+}
+
+/// How badly naive play does on [lv]: losses of a few "tap something that
+/// fits a box, else anything" runs, plus solution steps where no free screw
+/// fits a box (forced tray moves).
+int _trapScore(SjLevel lv, _Rng rng) {
+  var score = 0;
+  for (var run = 0; run < 6; run++) {
+    final g = SjGame(lv);
+    while (!g.over) {
+      final moves = g.removable.toList();
+      if (moves.isEmpty) break;
+      final fit = [for (final m in moves) if (g.slotFor(m) != null) m];
+      final pool = fit.isNotEmpty ? fit : moves;
+      g.tap(pool[rng.nextInt(pool.length)]);
+    }
+    if (!g.won) score += 100;
+  }
+  final g = SjGame(lv);
+  for (final s in lv.solution) {
+    if (!g.removable.any((m) => g.slotFor(m) != null)) score += 3;
+    g.tap(s);
+  }
+  return score;
 }

@@ -190,8 +190,9 @@ void main() {
           expect(g.lost, isFalse, reason: why);
         }
         expect(g.won, isTrue, reason: why);
-        // Independent solver also finds a win.
-        final sol = sjSolve(SjGame(lv), maxNodes: 50000);
+        // Independent solver also finds a win (hard / extreme boards need a
+        // real search: their solutions must park screws in the tray).
+        final sol = sjSolve(SjGame(lv), maxNodes: lv.trayCapacity <= sjSpec(SjTier.hard).tray ? 1000000 : 50000);
         expect(sol, isNotNull, reason: '$why solver');
         final g2 = SjGame(lv);
         for (final s in sol!) {
@@ -207,6 +208,35 @@ void main() {
     final h = sjHint(g)!;
     expect(g.canTap(h), isTrue);
     expect(g.slotFor(h), isNotNull);
+  });
+
+  test('following hints wins hard and extreme levels', () {
+    for (final t in [SjTier.hard, SjTier.extreme]) {
+      for (final n in [1, 50, 100]) {
+        final g = SjGame(sjGenerate(t, n));
+        while (!g.over) {
+          final h = sjHint(g)!;
+          expect(g.tap(h), isNotNull);
+        }
+        expect(g.won, isTrue, reason: '${t.id} L$n');
+      }
+    }
+  });
+
+  test('easy / medium levels are unchanged by the hard-tier rework', () {
+    // Classic generator: the built-in solution never touches the tray.
+    for (final t in [SjTier.easy, SjTier.medium]) {
+      expect(sjSpec(t).trayUse, 0);
+      for (var n = 1; n <= kSjLevels; n += 9) {
+        final g = SjGame(sjGenerate(t, n));
+        for (final s in g.level.solution) {
+          g.tap(s);
+        }
+        expect(g.peakTray, 0, reason: '${t.id} L$n');
+      }
+    }
+    expect(sjSpec(SjTier.hard).tray, 4);
+    expect(sjSpec(SjTier.extreme).tray, 3);
   });
 }
 

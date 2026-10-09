@@ -608,6 +608,16 @@ class _ChessScreenState extends State<ChessScreen> {
             ]),
           ),
         ],
+        _section(tr('chess.time_control')),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 1.35,
+          children: [for (final tc in TimeControl.all) _tcTile(tc)],
+        ),
         _section(tr('chess.start_pos')),
         Wrap(spacing: 8, runSpacing: 8, children: [
           _Choice(
@@ -632,16 +642,6 @@ class _ChessScreenState extends State<ChessScreen> {
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
             child: Text(tr('chess.mid_hint'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.35)),
           ),
-        _section(tr('chess.time_control')),
-        GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: 1.35,
-          children: [for (final tc in TimeControl.all) _tcTile(tc)],
-        ),
         const SizedBox(height: 16),
         GlassCard(
           blur: 0,

@@ -161,9 +161,11 @@ void midgameTests() {
     await t.tap(find.byKey(const ValueKey('mode_cpu')));
     await t.tap(find.byKey(const ValueKey('level_easy')));
     await t.pump();
+    await t.tap(find.byKey(const ValueKey('tc_2m')));
+    await t.pump();
+    await t.scrollUntilVisible(find.text(tr('chess.mid_hint')), 200, scrollable: find.byType(Scrollable).first);
     expect(find.byKey(const ValueKey('start_std')), findsOneWidget);
     expect(find.byKey(const ValueKey('start_mid')), findsOneWidget);
-    expect(find.text(tr('chess.mid_hint')), findsOneWidget);
     await tapStart(t);
     await t.pump(const Duration(milliseconds: 400));
     expect(find.byKey(const ValueKey('chessBoard')), findsOneWidget);
