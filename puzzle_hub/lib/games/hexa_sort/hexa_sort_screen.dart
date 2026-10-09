@@ -291,23 +291,46 @@ class _LevelTile extends StatelessWidget {
             ? null
             : [BoxShadow(color: a.withValues(alpha: current ? 0.55 : 0.2), blurRadius: current ? 16 : 8, spreadRadius: -2)],
       ),
-      child: FittedBox(
+      child: locked
+          ? _LockedLevelLabel(level: level)
+          : FittedBox(
         fit: BoxFit.scaleDown,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          if (locked) ...[
-            const Icon(Icons.lock_rounded, size: 16, color: Pal.textDim),
-            Text('$level', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 12)),
-          ] else ...[
-            Text('$level',
-                style: TextStyle(color: current ? Colors.white : Pal.text, fontWeight: FontWeight.w800, fontSize: 18)),
-            if (stars > 0) StarRow(stars: stars, size: 12),
-            if (plays > 0)
-              Text(tr('common.skip.plays_left', {'n': plays}),
-                  style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w700)),
-          ],
+          Text('$level',
+              style: TextStyle(color: current ? Colors.white : Pal.text, fontWeight: FontWeight.w800, fontSize: 18)),
+          if (stars > 0) StarRow(stars: stars, size: 12),
+          if (plays > 0)
+            Text(tr('common.skip.plays_left', {'n': plays}),
+                style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w700)),
         ]),
       ),
     );
     return Pressable(onTap: onTap, child: tile);
+  }
+}
+
+/// Locked tile content: the level number stays readable (dimmed), with a
+/// small lock badge in the corner.
+class _LockedLevelLabel extends StatelessWidget {
+  const _LockedLevelLabel({required this.level});
+
+  final int level;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(fit: StackFit.expand, children: [
+      Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('$level',
+              style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800, fontSize: 18)),
+        ),
+      ),
+      const Positioned(
+        top: 2,
+        right: 2,
+        child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+      ),
+    ]);
   }
 }

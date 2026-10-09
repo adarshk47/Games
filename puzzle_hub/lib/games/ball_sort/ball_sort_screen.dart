@@ -281,14 +281,11 @@ class _LevelTile extends StatelessWidget {
             ? null
             : [BoxShadow(color: bsAccent.withValues(alpha: current ? 0.55 : 0.2), blurRadius: current ? 16 : 8, spreadRadius: -2)],
       ),
-      child: FittedBox(
+      child: locked
+          ? _LockedLevelLabel(level: level)
+          : FittedBox(
         fit: BoxFit.scaleDown,
-        child: locked
-            ? Column(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.lock_rounded, size: 18, color: Pal.textDim),
-                Text('$level', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 11)),
-              ])
-            : Column(mainAxisSize: MainAxisSize.min, children: [
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
                 if (bought)
                   Text(tr('ball_sort.bought'),
                       style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
@@ -303,5 +300,31 @@ class _LevelTile extends StatelessWidget {
       ),
     );
     return Pressable(onTap: locked ? onLockedTap : onTap, child: tile);
+  }
+}
+
+/// Locked tile content: the level number stays readable (dimmed), with a
+/// small lock badge in the corner.
+class _LockedLevelLabel extends StatelessWidget {
+  const _LockedLevelLabel({required this.level});
+
+  final int level;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(fit: StackFit.expand, children: [
+      Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('$level',
+              style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800, fontSize: 18)),
+        ),
+      ),
+      const Positioned(
+        top: 2,
+        right: 2,
+        child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+      ),
+    ]);
   }
 }

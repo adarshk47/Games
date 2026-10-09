@@ -348,7 +348,7 @@ class _LevelSelect extends StatelessWidget {
             final size = _levelSize(mode, tier, level);
             return Opacity(
               key: ValueKey('maze-level-$level'),
-              opacity: open ? 1 : 0.45,
+              opacity: open ? 1 : 0.7,
               child: GlassCard(
                 blur: 0,
                 radius: 20,
@@ -357,16 +357,13 @@ class _LevelSelect extends StatelessWidget {
                 onTap: open
                     ? () => openMazeLevel(context, tier, level, mode: mode)
                     : () => buyMazeLevel(context, tier, level, mode: mode),
-                child: FittedBox(
+                child: Stack(fit: StackFit.expand, children: [
+                  FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     if (plays > 0) _boughtBadge(),
-                    open
-                        ? Text('$level', style: const TextStyle(color: Pal.text, fontSize: 24, fontWeight: FontWeight.w900))
-                        : Column(mainAxisSize: MainAxisSize.min, children: [
-                            const Icon(Icons.lock_rounded, color: Pal.textDim, size: 22),
-                            Text('$level', style: const TextStyle(color: Pal.textDim, fontSize: 11, fontWeight: FontWeight.w800)),
-                          ]),
+                    Text('$level',
+                        style: TextStyle(color: open ? Pal.text : Pal.textDim, fontSize: 24, fontWeight: FontWeight.w900)),
                     const SizedBox(height: 2),
                     Text('${size}x$size', style: const TextStyle(color: Pal.textDim, fontSize: 11)),
                     const SizedBox(height: 4),
@@ -376,7 +373,14 @@ class _LevelSelect extends StatelessWidget {
                     else
                       StarRow(stars: stars, size: 14),
                   ]),
-                ),
+                  ),
+                  if (!open)
+                    const Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+                    ),
+                ]),
               ),
             );
           },

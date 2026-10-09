@@ -239,7 +239,9 @@ class _FlowLevelsPageState extends State<FlowLevelsPage> {
                         ? [color.withValues(alpha: done ? 0.35 : 0.22), color.withValues(alpha: 0.06)]
                         : const [Color(0x14FFFFFF), Color(0x08FFFFFF)],
                   ),
-                  child: FittedBox(
+                  child: !unlocked
+                      ? _LockedLevelLabel(level: level, fontSize: 22)
+                      : FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       if (bought)
@@ -249,15 +251,12 @@ class _FlowLevelsPageState extends State<FlowLevelsPage> {
                           child: Text(tr('flow_pairs.bought'),
                               style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.w900)),
                         ),
-                      if (unlocked)
-                        Text('$level', style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900))
-                      else
-                        const Icon(Icons.lock_rounded, color: Pal.textDim, size: 22),
+                      Text('$level', style: const TextStyle(color: Pal.text, fontSize: 22, fontWeight: FontWeight.w900)),
                       const SizedBox(height: 4),
                       if (bought)
                         Text(tr('common.skip.plays_left', {'n': left}),
                             style: const TextStyle(color: Pal.gold, fontSize: 11, fontWeight: FontWeight.w700))
-                      else if (unlocked)
+                      else
                         StarRow(stars: FlowProgress.stars(tier, level), size: 13),
                     ]),
                   ),
@@ -268,5 +267,32 @@ class _FlowLevelsPageState extends State<FlowLevelsPage> {
         ),
       ]),
     );
+  }
+}
+
+/// Locked tile content: the level number stays readable (dimmed), with a
+/// small lock badge in the corner.
+class _LockedLevelLabel extends StatelessWidget {
+  const _LockedLevelLabel({required this.level, this.fontSize = 18});
+
+  final int level;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(fit: StackFit.expand, children: [
+      Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('$level',
+              style: TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800, fontSize: fontSize)),
+        ),
+      ),
+      const Positioned(
+        top: 2,
+        right: 2,
+        child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+      ),
+    ]);
   }
 }

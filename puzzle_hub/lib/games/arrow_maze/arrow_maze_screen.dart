@@ -392,9 +392,10 @@ class _LevelTile extends StatelessWidget {
               ]
             : null,
       ),
-      child: Center(
-        child: unlocked
-            ? Column(
+      child: !unlocked
+          ? _LockedLevelLabel(level: level, fontSize: 24)
+          : Center(
+        child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text('$level',
@@ -420,8 +421,7 @@ class _LevelTile extends StatelessWidget {
                   else
                     const SizedBox(height: 15),
                 ],
-              )
-            : const Icon(Icons.lock_rounded, color: Pal.textDim, size: 24),
+              ),
       ),
     );
     final badged = bought
@@ -1196,4 +1196,31 @@ class _FxPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_FxPainter old) => true;
+}
+
+/// Locked tile content: the level number stays readable (dimmed), with a
+/// small lock badge in the corner.
+class _LockedLevelLabel extends StatelessWidget {
+  const _LockedLevelLabel({required this.level, this.fontSize = 18});
+
+  final int level;
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(fit: StackFit.expand, children: [
+      Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('$level',
+              style: TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800, fontSize: fontSize)),
+        ),
+      ),
+      const Positioned(
+        top: 2,
+        right: 2,
+        child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+      ),
+    ]);
+  }
 }

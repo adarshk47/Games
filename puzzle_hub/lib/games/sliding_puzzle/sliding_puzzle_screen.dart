@@ -204,25 +204,22 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
     final s = _stars(_tier, l);
     return Opacity(
       key: ValueKey('slide-level-$l'),
-      opacity: open ? 1 : 0.5,
+      opacity: open ? 1 : 0.7,
       child: GlassCard(
         padding: const EdgeInsets.all(6),
         radius: 18,
         blur: 0,
         glow: plays > 0 ? Pal.gold : null,
         onTap: () => _tapLevel(l),
-        child: FittedBox(
+        child: Stack(fit: StackFit.expand, children: [
+          FittedBox(
           fit: BoxFit.scaleDown,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             if (plays > 0)
               Text(tr('sliding_puzzle.bought'),
                   style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-            open
-                ? Text('$l', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 20))
-                : Column(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.lock_rounded, color: Pal.textDim, size: 20),
-                    Text('$l', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 10)),
-                  ]),
+            Text('$l',
+                style: TextStyle(color: open ? Pal.text : Pal.textDim, fontWeight: FontWeight.w900, fontSize: 20)),
             const SizedBox(height: 4),
             if (plays > 0)
               Text(tr('common.skip.plays_left', {'n': plays}),
@@ -230,7 +227,14 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
             else
               StarRow(stars: s, size: 13),
           ]),
-        ),
+          ),
+          if (!open)
+            const Positioned(
+              top: 0,
+              right: 0,
+              child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+            ),
+        ]),
       ),
     );
   }

@@ -314,7 +314,7 @@ class _LevelTile extends StatelessWidget {
             : [BoxShadow(color: a.withValues(alpha: current ? 0.55 : 0.2), blurRadius: current ? 16 : 8, spreadRadius: -2)],
       ),
       child: locked
-          ? const Icon(Icons.lock_rounded, size: 18, color: Pal.textDim)
+          ? _LockedLevelLabel(level: level)
           : FittedBox(
               fit: BoxFit.scaleDown,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -336,5 +336,31 @@ class _LevelTile extends StatelessWidget {
             ),
     );
     return Pressable(onTap: onTap, child: tile);
+  }
+}
+
+/// Locked tile content: the level number stays readable (dimmed), with a
+/// small lock badge in the corner.
+class _LockedLevelLabel extends StatelessWidget {
+  const _LockedLevelLabel({required this.level});
+
+  final int level;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(fit: StackFit.expand, children: [
+      Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('$level',
+              style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800, fontSize: 18)),
+        ),
+      ),
+      const Positioned(
+        top: 2,
+        right: 2,
+        child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+      ),
+    ]);
   }
 }
