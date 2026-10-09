@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:puzzle_hub/core/i18n/i18n.dart';
 import 'package:puzzle_hub/core/storage.dart';
 import 'package:puzzle_hub/games/chess/chess_screen.dart';
+import 'package:puzzle_hub/games/chess/logic/chess_engine.dart';
+import 'package:puzzle_hub/games/chess/logic/chess_positions.dart';
+import 'package:puzzle_hub/games/chess/widgets/chess_board.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> openChess(WidgetTester t, {Size size = const Size(360, 640), Map<String, Object> prefs = const {}}) async {
@@ -120,6 +123,99 @@ void main() {
     await t.pump();
     expect(find.text('Auto-rotate board'), findsOneWidget);
     expect(I18n.lang.value, AppLang.en);
+    await disposeScreen(t);
+  });
+
+  midgameTests();
+}
+
+/// Reads the board shown on screen and returns the squares of a legal,
+/// non-promoting, non-castling move for [white] in that position.
+(String, String) pickMove(WidgetTester t, {bool white = true}) {
+  final board = t.widget<ChessBoardView>(find.byType(ChessBoardView)).board;
+  final sb = StringBuffer();
+  for (var r = 7; r >= 0; r--) {
+    var empty = 0;
+    for (var f = 0; f < 8; f++) {
+      final p = board[r * 8 + f];
+      if (p == 0) {
+        empty++;
+        continue;
+      }
+      if (empty > 0) sb.write(empty);
+      empty = 0;
+      final ch = 'pnbrqk'[p.abs() - 1];
+      sb.write(p > 0 ? ch.toUpperCase() : ch);
+    }
+    if (empty > 0) sb.write(empty);
+    if (r > 0) sb.write('/');
+  }
+  final pos = Position.fromFen('$sb ${white ? 'w' : 'b'} - - 0 1');
+  final m = pos.legalMoves().firstWhere((m) => movePromo(m) == 0);
+  return (sqName(moveFrom(m)), sqName(moveTo(m)));
+}
+
+void midgameTests() {
+  testWidgets('2-minute mid-game vs computer: header label, move, AI replies', (t) async {
+    await openChess(t, prefs: {'chess.pref.start': 1, 'chess.pref.tc': 0});
+    await t.tap(find.byKey(const ValueKey('mode_cpu')));
+    await t.tap(find.byKey(const ValueKey('level_easy')));
+    await t.pump();
+    expect(find.byKey(const ValueKey('start_std')), findsOneWidget);
+    expect(find.byKey(const ValueKey('start_mid')), findsOneWidget);
+    expect(find.text(tr('chess.mid_hint')), findsOneWidget);
+    await tapStart(t);
+    await t.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('chessBoard')), findsOneWidget);
+    expect(find.text('2:00'), findsNWidgets(2));
+    final label = t.widget<Text>(find.byKey(const ValueKey('midLabel'))).data!;
+    expect(midgamePositions.any((p) => label.endsWith(p.name)), isTrue, reason: label);
+    expect(find.text('No moves yet'), findsOneWidget);
+
+    // If black is to move the computer opens; wait for the player's turn.
+    final yourTurn = find.text(tr('chess.your_turn'));
+    await waitFor(t, yourTurn);
+    expect(yourTurn, findsOneWidget);
+    final before = historyText(RegExp(r'^\d+\. ')).evaluate().length;
+
+    final (from, to) = pickMove(t);
+    await tapSquare(t, from);
+    await tapSquare(t, to);
+    await t.pump(const Duration(milliseconds: 100));
+    expect(yourTurn, findsNothing, reason: 'move accepted, computer to play');
+    final afterMine = List<int>.of(t.widget<ChessBoardView>(find.byType(ChessBoardView)).board);
+
+    await waitFor(t, yourTurn);
+    expect(yourTurn, findsOneWidget, reason: 'computer replied');
+    expect(t.widget<ChessBoardView>(find.byType(ChessBoardView)).board, isNot(afterMine));
+    expect(historyText(RegExp(r'^\d+\. ')).evaluate().length, greaterThanOrEqualTo(before));
+    expect(Storage.getInt('chess.pref.start'), 1);
+    expect(t.takeException(), isNull);
+    await disposeScreen(t);
+  });
+
+  testWidgets('mid-game in 2 players: side to move plays first; standard still default', (t) async {
+    await openChess(t, prefs: {'chess.pref.mode': 1, 'chess.pref.rotate': false});
+    // Default is the standard start.
+    await tapStart(t);
+    await t.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('midLabel')), findsNothing);
+    await disposeScreen(t);
+
+    await openChess(t, prefs: {'chess.pref.mode': 1, 'chess.pref.rotate': false, 'chess.pref.start': 1, 'chess.pref.tc': 5});
+    await tapStart(t);
+    await t.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('midLabel')), findsOneWidget);
+    expect(find.text('10:00'), findsNWidgets(2));
+    final whiteToMove = find.text(tr('chess.turn_white')).evaluate().isNotEmpty;
+    final (from, to) = pickMove(t, white: whiteToMove);
+    await tapSquare(t, from);
+    await tapSquare(t, to);
+    await t.pump(const Duration(milliseconds: 300));
+    expect(find.text(tr(whiteToMove ? 'chess.turn_black' : 'chess.turn_white')), findsOneWidget);
+    // Black-to-move starts show "N. ... move".
+    if (!whiteToMove) expect(historyText(RegExp(r'^\d+\. \.\.\. \S+')), findsOneWidget);
+    expect(t.takeException(), isNull);
     await disposeScreen(t);
   });
 }

@@ -47,15 +47,43 @@ class SjTierSpec {
     required this.minColors,
     required this.maxColors,
     required this.tray,
+    this.trayUse = 0,
+    this.trapMin = 0,
+    this.trapMax = 0,
+    this.dig = 0,
+    this.minCandidates = 1,
+    this.maxCandidates = 1,
   });
   final int cols, rows, minPlates, maxPlates, minColors, maxColors, tray;
+
+  /// Tray slots the built-in solution is allowed to use (0 = classic
+  /// generator whose solution never touches the tray). Kept at most
+  /// `tray - 2` so a perfect 3-star run stays possible.
+  final int trayUse;
+
+  /// Percent chance (lerped over the levels) that a solution step parks its
+  /// screw in the tray for a box that only arrives later.
+  final int trapMin, trapMax;
+
+  /// Percent chance that the removal order digs into the most recently
+  /// uncovered screws (long dependency chains; old exposed screws get late
+  /// box colors and act as decoys).
+  final int dig;
+
+  /// Candidate removal orders + colorings tried per level (lerped); the one a naive
+  /// "tap anything that fits" player fails most is kept.
+  final int minCandidates, maxCandidates;
 }
 
 SjTierSpec sjSpec(SjTier t) => switch (t) {
       SjTier.easy => const SjTierSpec(cols: 6, rows: 7, minPlates: 3, maxPlates: 9, minColors: 3, maxColors: 5, tray: 7),
       SjTier.medium => const SjTierSpec(cols: 6, rows: 8, minPlates: 6, maxPlates: 12, minColors: 4, maxColors: 6, tray: 6),
-      SjTier.hard => const SjTierSpec(cols: 7, rows: 9, minPlates: 9, maxPlates: 15, minColors: 5, maxColors: 7, tray: 5),
-      SjTier.extreme => const SjTierSpec(cols: 7, rows: 9, minPlates: 12, maxPlates: 18, minColors: 6, maxColors: 8, tray: 4),
+      SjTier.hard => const SjTierSpec(
+          cols: 7, rows: 9, minPlates: 10, maxPlates: 17, minColors: 6, maxColors: 8, tray: 4,
+          trayUse: 2, trapMin: 18, trapMax: 40, dig: 55, minCandidates: 2, maxCandidates: 10),
+      SjTier.extreme => const SjTierSpec(
+          cols: 8, rows: 10, minPlates: 13, maxPlates: 21, minColors: 7, maxColors: 10, tray: 3,
+          trayUse: 1, trapMin: 30, trapMax: 55, dig: 70, minCandidates: 4, maxCandidates: 14),
     };
 
 int _lerp(int a, int b, int level) {
@@ -65,6 +93,8 @@ int _lerp(int a, int b, int level) {
 
 int sjPlatesFor(SjTier t, int level) => _lerp(sjSpec(t).minPlates, sjSpec(t).maxPlates, level);
 int sjColorsFor(SjTier t, int level) => _lerp(sjSpec(t).minColors, sjSpec(t).maxColors, level);
+int sjTrapFor(SjTier t, int level) => _lerp(sjSpec(t).trapMin, sjSpec(t).trapMax, level);
+int sjCandidatesFor(SjTier t, int level) => _lerp(sjSpec(t).minCandidates, sjSpec(t).maxCandidates, level);
 
 /// A cell rectangle (column, row, width, height).
 class SjRect {
@@ -598,6 +628,8 @@ SjLevel _build(SjTier tier, int level) {
     colorCount: colors,
     solution: const [],
   );
+  if (spec.trayUse > 0) return _buildTricky(tier, level, spec, rng, tmpLevel, colors);
+
   final removed = <int>{};
   final fallen = <int>{};
   final order = <int>[];

@@ -14,6 +14,7 @@ import '../../core/ui/ui.dart';
 import 'logic/chess_ai.dart';
 import 'logic/chess_engine.dart';
 import 'logic/chess_game.dart';
+import 'logic/chess_positions.dart';
 import 'widgets/chess_board.dart';
 
 const _tint = Color(0xFFC08A4E);
@@ -46,11 +47,15 @@ class _ChessScreenState extends State<ChessScreen> {
   TimeControl _tc = const TimeControl(3);
   int _colorPref = 0; // 0 white, 1 black, 2 random
   bool _autoRotate = true;
+  bool _midStart = false; // start from a curated middlegame position
 
   // ---- game state
   ChessGame? _game;
   late ChessClock _clock;
   bool _playerWhite = true;
+  MidgamePosition? _midPos; // null = standard start
+  bool _startWhite = true; // side to move in the start position
+  int _startFullmove = 1;
   bool _thinking = false;
   int _searchGen = 0;
   int? _selected;
@@ -73,6 +78,7 @@ class _ChessScreenState extends State<ChessScreen> {
     _tc = TimeControl.all[Storage.getInt('chess.pref.tc', 1).clamp(0, TimeControl.all.length - 1)];
     _colorPref = Storage.getInt('chess.pref.color').clamp(0, 2);
     _autoRotate = Storage.getBool('chess.pref.rotate', true);
+    _midStart = Storage.getInt('chess.pref.start').clamp(0, 1) == 1;
   }
 
   @override
@@ -89,6 +95,7 @@ class _ChessScreenState extends State<ChessScreen> {
     Storage.setInt('chess.pref.tc', TimeControl.all.indexOf(_tc));
     Storage.setInt('chess.pref.color', _colorPref);
     Storage.setBool('chess.pref.rotate', _autoRotate);
+    Storage.setInt('chess.pref.start', _midStart ? 1 : 0);
   }
 
   // ---------------------------------------------------------------- stats
@@ -120,8 +127,12 @@ class _ChessScreenState extends State<ChessScreen> {
     _ticker?.cancel();
     _endTimer?.cancel();
     _searchGen++;
+    final mid = _midStart ? randomMidgame() : null;
     setState(() {
-      _game = ChessGame();
+      _midPos = mid;
+      _game = mid == null ? ChessGame() : ChessGame(mid.fen);
+      _startWhite = _game!.whiteToMove;
+      _startFullmove = _game!.pos.fullmove;
       _clock = ChessClock(_tc);
       _playerWhite = _colorPref == 2 ? math.Random().nextBool() : _colorPref == 0;
       _thinking = false;
@@ -137,7 +148,8 @@ class _ChessScreenState extends State<ChessScreen> {
       ..start();
     _lastTick = 0;
     _ticker = Timer.periodic(const Duration(milliseconds: 100), (_) => _tick());
-    if (_cpu && !_playerWhite) _aiMove();
+    // The computer opens when it has the side to move (e.g. player is black).
+    if (_cpu && _game!.whiteToMove != _playerWhite) _aiMove();
   }
 
   void _menu() {
@@ -233,7 +245,7 @@ class _ChessScreenState extends State<ChessScreen> {
     if (_clockRunning) {
       _clock.moved(moverWhite);
     } else {
-      _clockRunning = true; // clocks start after white's first move
+      _clockRunning = true; // clocks start after the first move
     }
     _lastTick = _sw.elapsedMilliseconds;
     if (!g.over) {
@@ -289,7 +301,8 @@ class _ChessScreenState extends State<ChessScreen> {
   bool get _canUndo {
     final g = _game;
     if (g == null || !_cpu || g.over || _thinking || !_humanTurn) return false;
-    return g.moves.length >= (_playerWhite ? 2 : 3);
+    // Need the player's own move + the reply, and never undo past the start.
+    return g.moves.length >= (_playerWhite == _startWhite ? 2 : 3);
   }
 
   Future<void> _undo() async {
@@ -595,6 +608,30 @@ class _ChessScreenState extends State<ChessScreen> {
             ]),
           ),
         ],
+        _section(tr('chess.start_pos')),
+        Wrap(spacing: 8, runSpacing: 8, children: [
+          _Choice(
+            key: const ValueKey('start_std'),
+            label: tr('chess.start_standard'),
+            icon: Icons.grid_on_rounded,
+            selected: !_midStart,
+            color: _tint,
+            onTap: () => setState(() => _midStart = false),
+          ),
+          _Choice(
+            key: const ValueKey('start_mid'),
+            label: tr('chess.start_mid'),
+            icon: Icons.shuffle_rounded,
+            selected: _midStart,
+            color: _tint,
+            onTap: () => setState(() => _midStart = true),
+          ),
+        ]),
+        if (_midStart)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+            child: Text(tr('chess.mid_hint'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.35)),
+          ),
         _section(tr('chess.time_control')),
         GridView.count(
           crossAxisCount: 3,
@@ -690,7 +727,25 @@ class _ChessScreenState extends State<ChessScreen> {
     final flipped = _flipped;
     final topWhite = flipped; // white sits at the top when the board is flipped
     final checkSq = g.inCheck ? (g.whiteToMove ? g.pos.whiteKing : g.pos.blackKing) : null;
+    final mid = _midPos;
     return Column(children: [
+      if (mid != null)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 2, 12, 0),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(Icons.auto_stories_rounded, color: Pal.gold, size: 15),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                '${tr('chess.start_mid')} · ${mid.name}',
+                key: const ValueKey('midLabel'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Pal.gold, fontSize: 12, fontWeight: FontWeight.w800),
+              ),
+            ),
+          ]),
+        ),
       Padding(padding: const EdgeInsets.fromLTRB(12, 4, 12, 4), child: _playerPanel(topWhite)),
       Expanded(
         child: Padding(
@@ -830,6 +885,9 @@ class _ChessScreenState extends State<ChessScreen> {
   }
 
   Widget _history(ChessGame g) {
+    // A position with black to move starts the list with "N. ... move".
+    final pad = _startWhite ? 0 : 1;
+    final rows = (g.sans.length + pad + 1) ~/ 2;
     return SizedBox(
       height: 30,
       child: g.sans.isEmpty
@@ -839,12 +897,13 @@ class _ChessScreenState extends State<ChessScreen> {
               scrollDirection: Axis.horizontal,
               reverse: true,
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: (g.sans.length + 1) ~/ 2,
+              itemCount: rows,
               itemBuilder: (_, i) {
-                final n = (g.sans.length + 1) ~/ 2 - 1 - i;
-                final w = g.sans[n * 2];
-                final b = n * 2 + 1 < g.sans.length ? g.sans[n * 2 + 1] : '';
-                final last = n == (g.sans.length + 1) ~/ 2 - 1;
+                final n = rows - 1 - i;
+                final wi = n * 2 - pad, bi = n * 2 + 1 - pad;
+                final w = wi >= 0 ? g.sans[wi] : '...';
+                final b = bi < g.sans.length ? g.sans[bi] : '';
+                final last = n == rows - 1;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
                   child: Container(
@@ -854,7 +913,7 @@ class _ChessScreenState extends State<ChessScreen> {
                       color: last ? _tint.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.07),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text('${n + 1}. $w $b',
+                    child: Text('${_startFullmove + n}. $w $b',
                         style: const TextStyle(color: Pal.text, fontSize: 12, fontWeight: FontWeight.w700)),
                   ),
                 );
