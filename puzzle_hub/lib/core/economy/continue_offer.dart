@@ -208,15 +208,17 @@ class _OfferDialogState extends State<_OfferDialog> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      PremiumButton(
-                        label: _busy
-                            ? tr('offer.loading')
-                            : tr('offer.watch_ad'),
-                        icon: Icons.ondemand_video_rounded,
-                        color: const Color(0xFF4DA8FF),
-                        onTap: _busy ? null : _watchAd,
-                      ),
+                      if (AdsService.featuresOn) ...[
+                        const SizedBox(height: 10),
+                        PremiumButton(
+                          label: _busy
+                              ? tr('offer.loading')
+                              : tr('offer.watch_ad'),
+                          icon: Icons.ondemand_video_rounded,
+                          color: const Color(0xFF4DA8FF),
+                          onTap: _busy ? null : _watchAd,
+                        ),
+                      ],
                       if (_error != null || !canAfford) ...[
                         const SizedBox(height: 10),
                         Text(

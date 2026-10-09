@@ -9,6 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   setUp(() async {
+    AdsService.debugForceEnabled = true; // ads are off in release until enabled
+    addTearDown(() => AdsService.debugForceEnabled = false);
     SharedPreferences.setMockInitialValues({'coins': 25});
     await Storage.init();
     Storage.userPrefix = '';

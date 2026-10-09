@@ -22,6 +22,8 @@ void main() {
   var now = DateTime(2026, 10, 4, 12);
 
   setUp(() async {
+    AdsService.debugForceEnabled = true; // ads are off in release until enabled
+    addTearDown(() => AdsService.debugForceEnabled = false);
     now = DateTime(2026, 10, 4, 12);
     AdsService.clock = () => now;
     AdsService.rewardedOverride = null;
@@ -83,10 +85,10 @@ void main() {
   });
 
   group('ad-free pass', () {
-    test('buy requires 3000 coins and expires after 24h', () async {
+    test('buy requires 3333 coins and expires after 24h', () async {
       expect(await AdsService.buyAdFree(), isFalse);
       expect(AdsService.adFree, isFalse);
-      await Rewards.addCoins(3000);
+      await Rewards.addCoins(3333);
       expect(await AdsService.buyAdFree(), isTrue);
       expect(Rewards.balance, 0);
       expect(AdsService.adFree, isTrue);
@@ -101,16 +103,19 @@ void main() {
   });
 
   group('rewarded ads', () {
-    test('daily cap of 10, resets next day', () async {
+    test('daily cap of 15 with a 5 minute gap, resets next day', () async {
       AdsService.rewardedOverride = (_) async => true;
-      for (var i = 0; i < 10; i++) {
+      now = DateTime(now.year, now.month, now.day, 1); // keep all 15 on one day
+      for (var i = 0; i < 15; i++) {
         expect(await AdsService.watchAdForCoins(), 25);
+        expect(await AdsService.watchAdForCoins(), 0, reason: 'cooldown');
+        now = now.add(const Duration(minutes: 5));
       }
       expect(await AdsService.watchAdForCoins(), 0);
       expect(AdsService.rewardedRemainingToday, 0);
-      expect(Rewards.balance, 250);
+      expect(Rewards.balance, 375);
       now = now.add(const Duration(days: 1));
-      expect(AdsService.rewardedRemainingToday, 10);
+      expect(AdsService.rewardedRemainingToday, 15);
       expect(await AdsService.watchAdForCoins(), 25);
       _expectInvariant();
     });
@@ -119,7 +124,7 @@ void main() {
       AdsService.rewardedOverride = (_) async => false;
       expect(await AdsService.watchAdForCoins(), 0);
       expect(Rewards.balance, 0);
-      expect(AdsService.rewardedRemainingToday, 10);
+      expect(AdsService.rewardedRemainingToday, 15);
     });
 
     test('ads are a no-op on the test host', () async {
@@ -157,7 +162,7 @@ void main() {
       AdsService.suppress();
       expect(AdsService.interstitialAllowed(), isFalse);
       AdsService.unsuppress();
-      await Rewards.addCoins(3000);
+      await Rewards.addCoins(3333);
       await AdsService.buyAdFree();
       expect(AdsService.interstitialAllowed(), isFalse);
     });
@@ -175,7 +180,9 @@ void main() {
     expect(Prices.undo, 10);
     expect(Prices.extraLife, 30);
     expect(Prices.unlockLevel, 150);
-    expect(Prices.adFreePass, 3000);
+    expect(Prices.adFreePass, 3333);
     expect(Prices.of(OfferKind.extraLife), 30);
   });
 }
+
+

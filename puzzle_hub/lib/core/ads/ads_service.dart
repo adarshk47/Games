@@ -8,18 +8,31 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
+import '../features.dart';
 
 /// Ad unit ids.
 ///
 /// !!! REPLACE BEFORE RELEASE !!!
 /// These are Google's official TEST ad unit ids. Swap them (and the AdMob app
 /// id in AndroidManifest.xml) for the real ids from the AdMob console.
+/// Master G AdMob ad units. Release builds use the real units; debug/profile
+/// builds use Google's test units so testing never creates invalid traffic.
 class AdIds {
   AdIds._();
-  // TODO(release): replace with the real rewarded ad unit id.
-  static const rewarded = 'ca-app-pub-3940256099942544/5224354917';
-  // TODO(release): replace with the real interstitial ad unit id.
-  static const interstitial = 'ca-app-pub-3940256099942544/1033173712';
+  static const _realRewarded = 'ca-app-pub-4083049312549641/4244584412';
+  static const _realInterstitial = 'ca-app-pub-4083049312549641/7853848901';
+  static const _realBanner = 'ca-app-pub-4083049312549641/2287581470';
+  static const _testRewarded = 'ca-app-pub-3940256099942544/5224354917';
+  static const _testInterstitial = 'ca-app-pub-3940256099942544/1033173712';
+  static const _testBanner = 'ca-app-pub-3940256099942544/6300978111';
+
+  static const rewarded = kReleaseMode ? _realRewarded : _testRewarded;
+  static const interstitial = kReleaseMode
+      ? _realInterstitial
+      : _testInterstitial;
+
+  /// Reserved for a future banner placement (not shown yet).
+  static const banner = kReleaseMode ? _realBanner : _testBanner;
 }
 
 /// AdMob wrapper. Every method is safe to call when ads are unavailable
@@ -34,8 +47,11 @@ class AdsService {
 
   // ---- Tunables --------------------------------------------------------------
   static const rewardedCoins = 25;
-  static const dailyRewardedCap = 10;
-  static const adFreePrice = 3000;
+  static const dailyRewardedCap = 15;
+
+  /// Minimum wait between two coin-reward ads.
+  static const rewardedCooldown = Duration(minutes: 5);
+  static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
   static const levelsPerInterstitial = 3;
   static const minInterstitialGap = Duration(minutes: 3);
@@ -45,6 +61,7 @@ class AdsService {
   static const kAdFreeUntil = 'ads.adfree.until';
   static const _kRewardDay = 'ads.rewarded.day';
   static const _kRewardCount = 'ads.rewarded.count';
+  static const _kRewardLast = 'ads.rewarded.last';
 
   /// Clock (overridable in tests).
   @visibleForTesting
@@ -93,17 +110,30 @@ class AdsService {
   }
 
   /// Starts consent + SDK init in the background. Returns immediately.
+  /// True when ad features may be shown (ads enabled, or a test override).
+  /// Lets tests exercise ad rules while ads are switched off for release.
+  @visibleForTesting
+  static bool debugForceEnabled = false;
+
+  static bool get featuresOn =>
+      kAdsEnabled || debugForceEnabled || rewardedOverride != null;
+
   static Future<void> init() async {
     _sessionStart = clock();
-    if (!_supportedPlatform) return;
-    unawaited(_bootstrap().catchError((Object e) {
-      debugPrint('ads init failed: $e');
-      _ready = false;
-    }));
+    if (!kAdsEnabled || !_supportedPlatform) return;
+    unawaited(
+      _bootstrap().catchError((Object e) {
+        debugPrint('ads init failed: $e');
+        _ready = false;
+      }),
+    );
   }
 
   static Future<void> _bootstrap() async {
-    final consentOk = await _gatherConsent().timeout(const Duration(seconds: 30), onTimeout: () => false);
+    final consentOk = await _gatherConsent().timeout(
+      const Duration(seconds: 30),
+      onTimeout: () => false,
+    );
     if (!consentOk) return;
     await MobileAds.instance.initialize().timeout(const Duration(seconds: 20));
     _ready = true;
@@ -119,7 +149,8 @@ class AdsService {
       ConsentInformation.instance.requestConsentInfoUpdate(
         ConsentRequestParameters(),
         () => done.isCompleted ? null : done.complete(),
-        (FormError e) => done.isCompleted ? null : done.completeError(e.message),
+        (FormError e) =>
+            done.isCompleted ? null : done.completeError(e.message),
       );
       try {
         await done.future;
@@ -174,7 +205,9 @@ class AdsService {
   }
 
   static void _loadInterstitial() {
-    if (!_ready || adFree || _interstitial != null || _loadingInterstitial) return;
+    if (!_ready || adFree || _interstitial != null || _loadingInterstitial) {
+      return;
+    }
     _loadingInterstitial = true;
     try {
       InterstitialAd.load(
@@ -202,12 +235,17 @@ class AdsService {
   static Future<bool> showRewarded({String reason = ''}) async {
     final o = rewardedOverride;
     if (o != null) return o(reason);
-    if (!_ready || _showing) return false;
+    if (!kAdsEnabled || !_ready || _showing) return false;
     try {
       if (_rewarded == null) {
         _loadRewarded();
         final wait = _rewardedLoaded;
-        if (wait != null) await wait.future.timeout(const Duration(seconds: 8), onTimeout: () {});
+        if (wait != null) {
+          await wait.future.timeout(
+            const Duration(seconds: 8),
+            onTimeout: () {},
+          );
+        }
       }
       final ad = _rewarded;
       if (ad == null) return false;
@@ -246,22 +284,42 @@ class AdsService {
   }
 
   /// Coin-reward ads watched today.
-  static int get rewardedToday => Storage.getString(_kRewardDay) == _today() ? Storage.getInt(_kRewardCount) : 0;
+  static int get rewardedToday => Storage.getString(_kRewardDay) == _today()
+      ? Storage.getInt(_kRewardCount)
+      : 0;
 
   /// Coin-reward ads still allowed today.
-  static int get rewardedRemainingToday => (dailyRewardedCap - rewardedToday).clamp(0, dailyRewardedCap);
+  static int get rewardedRemainingToday =>
+      (dailyRewardedCap - rewardedToday).clamp(0, dailyRewardedCap);
 
   /// The shop's "Watch ad: +25 coins" action. Returns coins granted (0 if the
   /// daily cap is reached or the ad was not completed).
+  /// Time until the next coin-reward ad may be watched (zero = ready now).
+  static Duration get rewardedCooldownLeft {
+    final last = Storage.getInt(_kRewardLast);
+    if (last <= 0) return Duration.zero;
+    final left = DateTime.fromMillisecondsSinceEpoch(last)
+        .add(rewardedCooldown)
+        .difference(clock());
+    return left.isNegative ? Duration.zero : left;
+  }
+
   static Future<int> watchAdForCoins() async {
-    if (rewardedRemainingToday <= 0) return 0;
+    if (rewardedRemainingToday <= 0 || rewardedCooldownLeft > Duration.zero) {
+      return 0;
+    }
     final ok = await showRewarded(reason: 'coins');
     if (!ok) return 0;
     final today = _today();
     final count = rewardedToday + 1;
     await Storage.setString(_kRewardDay, today);
     await Storage.setInt(_kRewardCount, count);
-    await Rewards.addCoins(rewardedCoins, label: tr('ads.reward_label'), source: 'ad');
+    await Storage.setInt(_kRewardLast, clock().millisecondsSinceEpoch);
+    await Rewards.addCoins(
+      rewardedCoins,
+      label: tr('ads.reward_label'),
+      source: 'ad',
+    );
     _notify();
     return rewardedCoins;
   }
@@ -291,12 +349,15 @@ class AdsService {
     return d.isNegative ? Duration.zero : d;
   }
 
-  /// Buys (or extends) the pass for [adFreePrice] coins. False if unaffordable.
-  static Future<bool> buyAdFree() async {
-    if (!await Rewards.spend(adFreePrice, reason: 'adfree')) return false;
+  /// Buys (or extends) an ad-free pass. False if unaffordable.
+  static Future<bool> buyAdFree([AdFreePlan plan = AdFreePlan.day]) async {
+    if (!await Rewards.spend(plan.price, reason: 'adfree')) return false;
     final now = clock();
     final base = adFree ? adFreeUntil! : now;
-    await Storage.setInt(kAdFreeUntil, base.add(adFreeDuration).millisecondsSinceEpoch);
+    await Storage.setInt(
+      kAdFreeUntil,
+      base.add(plan.duration).millisecondsSinceEpoch,
+    );
     try {
       _interstitial?.dispose();
     } catch (_) {}
@@ -352,6 +413,7 @@ class AdsService {
   /// Call after a level completes; shows an interstitial when the frequency
   /// rules allow, ~1.2s later so the win dialog appears first.
   static void onLevelCompleted({String? gameId}) {
+    if (!featuresOn) return;
     try {
       if (gameId != null && _neverInterstitial.contains(gameId)) return;
       _levelsSinceInterstitial++;
@@ -367,7 +429,9 @@ class AdsService {
 
   static void _showInterstitial(String? gameId) {
     try {
-      if (_showing || !interstitialAllowed(gameId: gameId) || !_routeIdle) return;
+      if (_showing || !interstitialAllowed(gameId: gameId) || !_routeIdle) {
+        return;
+      }
       final ad = _interstitial;
       if (ad == null) {
         _loadInterstitial();
@@ -396,4 +460,15 @@ class AdsService {
       debugPrint('interstitial show failed: $e');
     }
   }
+}
+
+/// Ad-free passes sold for coins.
+enum AdFreePlan {
+  day(3333, Duration(hours: 24)),
+  week(11111, Duration(days: 7)),
+  month(55555, Duration(days: 30));
+
+  const AdFreePlan(this.price, this.duration);
+  final int price;
+  final Duration duration;
 }

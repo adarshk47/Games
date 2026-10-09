@@ -38,11 +38,10 @@
         <meta-data
             android:name="io.flutter.embedding.android.EnableImpeller"
             android:value="false" />
-        <!-- AdMob app id. This is Google's public TEST id; replace with your real
-             AdMob app id (ca-app-pub-XXXX~YYYY) before going live. -->
+        <!-- Master G AdMob app id. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-4083049312549641~9106028856"/>
         <!-- Daily reminder notifications (flutter_local_notifications). -->
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
