@@ -29,8 +29,8 @@
 - **Category:** Games → Puzzle
 - **Tags:** Puzzle, Brain games, Board, Logic, Offline
 - **Contact email:** (your developer email)
-- **Privacy policy:** https://adarshk47.github.io/Games/privacy.html
-- **Account deletion URL:** https://adarshk47.github.io/Games/delete-account.html
+- **Privacy policy:** https://adarshk47.github.io/Idealworld/master-g/privacy.html
+- **Account deletion URL:** https://adarshk47.github.io/Idealworld/master-g/delete-account.html
 - **App icon:** `store_assets/play_icon_512.png`
 - **Feature graphic:** `store_assets/feature_graphic_1024x500.png`
 - **Screenshots:** take 4–8 phone screenshots (home screen, Chess, Arrow Maze, Tile Match, Screw Jam, leaderboard, language picker).
