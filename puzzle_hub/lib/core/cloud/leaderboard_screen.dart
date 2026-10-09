@@ -345,17 +345,21 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final medal = switch (rank) {
-      1 => '🥇',
-      2 => '🥈',
-      3 => '🥉',
-      _ => null,
-    };
+    final tier = leaderTier(rank);
+    final medal = tier?.emoji;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: GlassCard(
         blur: 0,
-        glow: isMe ? Pal.gold : null,
+        glow: isMe ? Pal.gold : tier?.color,
+        gradient: tier == null
+            ? null
+            : LinearGradient(
+                colors: [
+                  tier.color.withValues(alpha: 0.28),
+                  Colors.white.withValues(alpha: 0.04),
+                ],
+              ),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         child: Row(
           children: [
@@ -372,15 +376,33 @@ class _Row extends StatelessWidget {
                     ),
             ),
             Expanded(
-              child: Text(
-                isMe ? tr('cloud.lb.you', {'name': entry.name}) : entry.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: isMe ? Pal.gold : Pal.text,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isMe
+                        ? tr('cloud.lb.you', {'name': entry.name})
+                        : entry.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: isMe ? Pal.gold : Pal.text,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                    ),
+                  ),
+                  if (tier != null)
+                    Text(
+                      tr('cloud.lb.tier.${tier.id}'),
+                      style: TextStyle(
+                        color: tier.color,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                ],
               ),
             ),
             Text(
@@ -397,3 +419,20 @@ class _Row extends StatelessWidget {
     );
   }
 }
+
+/// Top-5 tiers on every leaderboard scope: Diamond, Gold, Silver, Bronze, Steel.
+class LeaderTier {
+  const LeaderTier(this.id, this.emoji, this.color);
+  final String id;
+  final String emoji;
+  final Color color;
+}
+
+LeaderTier? leaderTier(int rank) => switch (rank) {
+  1 => const LeaderTier('diamond', '💎', Color(0xFF7DD3FC)),
+  2 => const LeaderTier('gold', '🥇', Color(0xFFFFD369)),
+  3 => const LeaderTier('silver', '🥈', Color(0xFFD1D5DB)),
+  4 => const LeaderTier('bronze', '🥉', Color(0xFFD97706)),
+  5 => const LeaderTier('steel', '⚙️', Color(0xFF94A3B8)),
+  _ => null,
+};
