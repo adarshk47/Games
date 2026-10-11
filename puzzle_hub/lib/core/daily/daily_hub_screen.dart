@@ -16,7 +16,10 @@ import '../features.dart';
 /// Daily tab body (no Scaffold): login reward, streaks, today's quests,
 /// all-done bonus and the achievements entry.
 class DailyHubScreen extends StatefulWidget {
-  const DailyHubScreen({super.key});
+  const DailyHubScreen({super.key, this.showHeader = true});
+
+  /// False when a page bar above already shows the title.
+  final bool showHeader;
 
   @override
   State<DailyHubScreen> createState() => _DailyHubScreenState();
@@ -54,8 +57,10 @@ class _DailyHubScreenState extends State<DailyHubScreen>
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
           children: [
-            const _Header(),
-            const SizedBox(height: 16),
+            if (widget.showHeader) ...[
+              const _Header(),
+              const SizedBox(height: 16),
+            ],
             _LoginRewardCard(tick: tick),
             if (kStreaksEnabled) ...[
               const SizedBox(height: 14),
@@ -728,4 +733,20 @@ class _AchievementsEntry extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Daily as its own page (opened from the home header and the profile).
+class DailyPage extends StatelessWidget {
+  const DailyPage({super.key});
+
+  static Future<void> open(BuildContext context) =>
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (_) => const DailyPage()));
+
+  @override
+  Widget build(BuildContext context) => GameScaffold(
+    title: tr('daily.title'),
+    tint: Pal.gold,
+    body: const DailyHubScreen(showHeader: false),
+  );
 }

@@ -161,7 +161,8 @@ class AppThemeController {
       festive: true,
     ),
   ];
-  static final ValueNotifier<int> current = ValueNotifier<int>(0);
+  static final int defaultIndex = themes.indexWhere((t) => t.id == 'utsav');
+  static final ValueNotifier<int> current = ValueNotifier<int>(defaultIndex);
 
   /// Bumped whenever the unlocked set changes (so pickers can refresh).
   static final ValueNotifier<int> unlocks = ValueNotifier<int>(0);
@@ -170,8 +171,9 @@ class AppThemeController {
   static AppThemeData get theme => themes[current.value.clamp(0, themes.length - 1)];
 
   static Future<void> init() async {
-    final i = int.tryParse(Storage.globalString(_kTheme) ?? '') ?? 0;
-    current.value = (i >= 0 && i < themes.length) ? i : 0;
+    // New installs start in the festive Utsav theme.
+    final i = int.tryParse(Storage.globalString(_kTheme) ?? '') ?? defaultIndex;
+    current.value = (i >= 0 && i < themes.length) ? i : defaultIndex;
     await AppLayoutController.init();
   }
 

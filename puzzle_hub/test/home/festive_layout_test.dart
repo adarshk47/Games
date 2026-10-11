@@ -63,7 +63,9 @@ void main() {
 
   test('layout choice persists globally under set.layout', () async {
     await _setup();
-    expect(AppLayoutController.layout, AppLayout.classic);
+    // New installs default to the diya chakra and the Utsav theme.
+    expect(AppLayoutController.layout, AppLayout.chakra);
+    expect(AppThemeController.theme.id, 'utsav');
     await AppLayoutController.select(AppLayout.festive);
     expect(Storage.globalString('set.layout'), 'festive');
     AppLayoutController.current.value = AppLayout.classic;
@@ -71,12 +73,15 @@ void main() {
     expect(AppLayoutController.festive, isTrue);
 
     await _setup({'set.layout': 'bogus'});
+    expect(AppLayoutController.layout, AppLayout.chakra);
+    await _setup({'set.layout': 'classic', 'set.theme': '0'});
     expect(AppLayoutController.layout, AppLayout.classic);
+    expect(AppThemeController.theme.id, 'royal');
   });
 
   for (final size in const [Size(320, 480), Size(390, 844)]) {
     testWidgets('switch layout and theme from settings at $size', (t) async {
-      await _setup();
+      await _setup({'set.layout': 'classic', 'set.theme': '0'});
       await _pumpHome(t, size);
       expect(find.byKey(const ValueKey('classic_layout')), findsOneWidget);
 
@@ -149,6 +154,33 @@ void main() {
         expect(t.takeException(), isNull);
         await t.pumpWidget(const SizedBox());
       }
+    });
+  }
+
+  for (final lang in AppLang.values) {
+    testWidgets('chakra home (default) renders in ${lang.code} without overflow', (t) async {
+      await _setup();
+      I18n.lang.value = lang;
+      for (final size in const [Size(320, 480), Size(390, 844), Size(360, 3200)]) {
+        await _pumpHome(t, size);
+        expect(t.takeException(), isNull, reason: '$size');
+        expect(find.byKey(const ValueKey('chakra_layout')), findsOneWidget);
+        if (size.height > 3000) {
+          for (final g in games) {
+            expect(find.byKey(ValueKey('game_${g.id}')), findsOneWidget, reason: g.id);
+          }
+          // Turning the wheel keeps every game reachable.
+          await t.drag(find.byKey(const ValueKey('chakra_hub')), const Offset(120, 0));
+          await t.timedDrag(find.byKey(const ValueKey('game_chakra')), const Offset(0, 140),
+              const Duration(milliseconds: 300));
+          await t.pump(const Duration(milliseconds: 300));
+          expect(t.takeException(), isNull);
+        }
+      }
+      await _openSettings(t);
+      expect(find.text(tr('home.layout.chakra')), findsOneWidget);
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
     });
   }
 }

@@ -38,7 +38,7 @@ void main() {
       await _pumpHome(t, size);
       expect(t.takeException(), isNull);
 
-      for (final id in ['games', 'daily', 'shop', 'profile']) {
+      for (final id in ['games', 'leaderboard', 'shop', 'profile']) {
         expect(find.byKey(ValueKey('nav_$id')), findsOneWidget);
       }
       expect(_stackIndex(t), 0);
@@ -48,7 +48,7 @@ void main() {
       await t.tap(find.byKey(const ValueKey('nav_shop')));
       await t.pump(const Duration(milliseconds: 500));
       expect(_stackIndex(t), 2);
-      await t.tap(find.byKey(const ValueKey('nav_daily')));
+      await t.tap(find.byKey(const ValueKey('nav_leaderboard')));
       await t.pump(const Duration(milliseconds: 500));
       expect(_stackIndex(t), 1);
       await t.tap(find.byKey(const ValueKey('nav_profile')));

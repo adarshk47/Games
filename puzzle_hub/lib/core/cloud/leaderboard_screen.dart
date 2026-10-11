@@ -37,8 +37,11 @@ String _placeName(LeaderboardScope scope, String? country) =>
 /// Leaderboards: one tab per score game + "Total stars", each Global or
 /// limited to the player's country. Needs cloud login.
 class LeaderboardScreen extends StatefulWidget {
-  const LeaderboardScreen({super.key, this.initialBoard});
+  const LeaderboardScreen({super.key, this.initialBoard, this.embedded = false});
   final String? initialBoard;
+
+  /// Shown as a home tab (no back button / own background).
+  final bool embedded;
 
   @override
   State<LeaderboardScreen> createState() => _LeaderboardScreenState();
@@ -157,6 +160,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     return GameScaffold(
       title: tr('cloud.lb.title'),
       tint: Pal.gold,
+      embedded: widget.embedded,
       actions: [
         if (_page != null)
           GlassCard(

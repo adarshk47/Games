@@ -105,6 +105,25 @@ void main() {
       expect(AdsService.adFree, isFalse);
       expect(AdsService.adFreeRemaining, Duration.zero);
     });
+
+    test('coins earned while ad-free cannot buy another pass', () async {
+      await Rewards.addCoins(3333);
+      expect(await AdsService.buyAdFree(), isTrue);
+      await Rewards.addCoins(4000); // earned during the ad-free time
+      expect(Rewards.adFreeLocked, 4000);
+      now = now.add(const Duration(hours: 25)); // pass over
+      expect(AdsService.adFree, isFalse);
+      expect(await AdsService.buyAdFree(), isFalse);
+      expect(Rewards.balance, 4000);
+      // Other purchases use the locked coins first.
+      expect(await Rewards.spend(1000, reason: 'hint'), isTrue);
+      expect(Rewards.adFreeLocked, 3000);
+      await Rewards.addCoins(3333); // earned with ads on: usable
+      expect(Rewards.spendableForAdFree, 3333);
+      expect(await AdsService.buyAdFree(), isTrue);
+      expect(Rewards.balance, 3000);
+      _expectInvariant();
+    });
   });
 
   group('rewarded ads', () {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../core/account/account_service.dart';
+import '../core/daily/daily_hub_screen.dart';
 import '../core/game_info.dart';
 import '../core/i18n/i18n.dart';
 import '../core/rewards.dart';
@@ -14,6 +15,7 @@ import '../core/ui/festive/festive_painters.dart';
 import '../core/ui/festive/festive_palette.dart';
 import '../core/ui/ui.dart';
 import '../games/registry.dart';
+import 'game_chakra.dart';
 
 /// "Game of the day" pick: rotates through [list] by calendar date.
 GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
@@ -73,7 +75,11 @@ class _GamesTabState extends State<GamesTab> {
     return ValueListenableBuilder<AppLayout>(
       valueListenable: AppLayoutController.current,
       builder: (context, layout, _) =>
-          layout == AppLayout.festive ? _buildFestive(context) : _buildClassic(context),
+          switch (layout) {
+            AppLayout.classic => _buildClassic(context),
+            AppLayout.festive => _buildFestive(context),
+            AppLayout.chakra => _buildChakra(context),
+          },
     );
   }
 
@@ -152,6 +158,94 @@ class _GamesTabState extends State<GamesTab> {
 
   static Widget _thaliBanner(GameInfo g, String label, VoidCallback onTap) =>
       _ThaliBanner(g: g, label: label, onTap: onTap);
+
+  /// Festive header and banner, then every game on a diya chakra.
+  Widget _buildChakra(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final hPad = width < 360 ? 14.0 : 18.0;
+    final size = math.min(width - hPad * 2, 460.0);
+    final gotd = gameOfTheDay(games);
+    final extra = GameChakra.overflowOf(games, size);
+
+    return CustomScrollView(key: const ValueKey('chakra_layout'), slivers: [
+      const SliverToBoxAdapter(
+        child: RepaintBoundary(
+          child: SizedBox(
+            height: 44,
+            width: double.infinity,
+            child: CustomPaint(painter: ToranPainter()),
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(hPad, 2, hPad, 4),
+          child: _Header(onOpenShop: widget.onOpenShop, festive: true),
+        ),
+      ),
+      if (games.isNotEmpty) ...[
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(hPad, 14, hPad, 0),
+            child: _enter(
+              _ThaliBanner(g: gotd, label: tr('home.game_of_the_day'), onTap: () => _open(gotd)),
+              200,
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(hPad + 2, 20, hPad, 4),
+            child: Row(children: [
+              const SizedBox(width: 18, height: 22, child: CustomPaint(painter: DiyaPainter())),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(tr('home.all_games'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Festive.zariLight, fontSize: 18, fontWeight: FontWeight.w900)),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(tr('home.chakra_hint'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(color: Pal.textDim, fontSize: 12)),
+              ),
+            ]),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: _enter(
+                GameChakra(list: games, onOpen: _open, gameOfDay: gotd, size: size),
+                300,
+                dy: 0.05,
+              ),
+            ),
+          ),
+        ),
+      ],
+      SliverPadding(
+        padding: EdgeInsets.fromLTRB(hPad, 14, hPad, widget.bottomInset + 16),
+        sliver: SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: width >= 600 ? 3 : 2,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            mainAxisExtent: 216,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, i) => _FestiveGameCard(key: ValueKey('game_${extra[i].id}'), g: extra[i], onTap: () => _open(extra[i])),
+            childCount: extra.length,
+          ),
+        ),
+      ),
+    ]);
+  }
 
   /// Indian-festival layout: toran header, thali banner, saree-border cards.
   Widget _buildFestive(BuildContext context) {
@@ -292,6 +386,15 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         CoinPill(onTap: onOpenShop),
+        const SizedBox(width: 8),
+        GlassCard(
+          key: const ValueKey('home_daily'),
+          blur: 0,
+          radius: 18,
+          padding: const EdgeInsets.all(9),
+          onTap: () => DailyPage.open(context),
+          child: const Icon(Icons.calendar_month_rounded, color: Pal.text, size: 22),
+        ),
         const SizedBox(width: 8),
         GlassCard(
           key: const ValueKey('home_settings'),

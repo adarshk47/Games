@@ -11,6 +11,7 @@ import 'festive/festive_painters.dart';
 import 'glass_card.dart';
 import 'palette.dart';
 import '../cheer.dart';
+import '../../home/game_chakra.dart' show ChakraPreviewPainter;
 
 /// Bottom sheet with Sound / Music / Vibration switches, the theme picker and
 /// the daily reminder row. Opened from the home screen and from the speaker
@@ -541,12 +542,14 @@ class _LayoutOption extends StatelessWidget {
                 height: 64,
                 width: double.infinity,
                 child: CustomPaint(
-                  painter: LayoutPreviewPainter(
-                    festive: layout == AppLayout.festive,
-                    bg0: t.bg0,
-                    bg1: t.bg1,
-                    accent: t.accent,
-                  ),
+                  painter: layout == AppLayout.chakra
+                      ? ChakraPreviewPainter(bg0: t.bg0, bg1: t.bg1)
+                      : LayoutPreviewPainter(
+                          festive: layout == AppLayout.festive,
+                          bg0: t.bg0,
+                          bg1: t.bg1,
+                          accent: t.accent,
+                        ),
                 ),
               ),
               const SizedBox(height: 6),

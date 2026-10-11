@@ -274,11 +274,21 @@ class _ShopScreenState extends State<ShopScreen> {
                     label: active ? tr('shop.extend') : tr('shop.buy'),
                     compact: true,
                     color: active ? green : null,
-                    onTap: bal >= plan.price ? () => _buyPass(plan) : null,
+                    onTap: Rewards.spendableForAdFree >= plan.price
+                        ? () => _buyPass(plan)
+                        : null,
                   ),
                 ],
               ),
             ),
+          if (Rewards.adFreeLocked > 0) ...[
+            const SizedBox(height: 10),
+            Text(
+              tr('shop.adfree_locked', {'coins': Rewards.adFreeLocked}),
+              key: const ValueKey('adfree_locked_note'),
+              style: const TextStyle(color: Pal.textDim, fontSize: 12),
+            ),
+          ],
         ],
       ),
     );

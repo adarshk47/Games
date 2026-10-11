@@ -9,7 +9,10 @@ enum AppLayout {
   classic,
 
   /// Indian-festival look: toran header, saree-border cards, thali banner.
-  festive;
+  festive,
+
+  /// Festive look with every game on rings around a lit diya (default).
+  chakra;
 
   /// Localised label (keys `home.layout.<name>`).
   String get label => tr('home.layout.$name');
@@ -22,15 +25,20 @@ class AppLayoutController {
 
   static const kLayout = 'set.layout';
 
-  static final ValueNotifier<AppLayout> current = ValueNotifier<AppLayout>(AppLayout.classic);
+  static final ValueNotifier<AppLayout> current = ValueNotifier<AppLayout>(
+    AppLayout.chakra,
+  );
 
   static AppLayout get layout => current.value;
-  static bool get festive => current.value == AppLayout.festive;
+  static bool get festive => current.value != AppLayout.classic;
 
   /// Loads the saved layout (called from [AppThemeController.init]).
   static Future<void> init() async {
     final s = Storage.globalString(kLayout);
-    current.value = AppLayout.values.firstWhere((l) => l.name == s, orElse: () => AppLayout.classic);
+    current.value = AppLayout.values.firstWhere(
+      (l) => l.name == s,
+      orElse: () => AppLayout.chakra,
+    );
   }
 
   static Future<void> select(AppLayout l) async {

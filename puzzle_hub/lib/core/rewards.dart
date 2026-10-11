@@ -83,6 +83,27 @@ class Rewards {
   static int get spent => Storage.getInt(kSpent);
   static int get balance => Storage.getInt(kBalance);
 
+  /// Coins earned while ads were off (approved grant, coupon or pass). They
+  /// can be spent on anything except ad-free passes, and are used up first by
+  /// other purchases.
+  static const kAdFreeLocked = 'coins.adfree_locked';
+  static int get adFreeLocked {
+    final l = Storage.getInt(kAdFreeLocked);
+    final b = balance;
+    return l < 0 ? 0 : (l > b ? b : l);
+  }
+
+  /// Balance usable for an ad-free pass.
+  static int get spendableForAdFree => balance - adFreeLocked;
+
+  static bool get _adsOffNow {
+    try {
+      return AdsService.adFree;
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Call after login (and after lock/unlock) to load the user's balance.
   /// Also repairs / migrates the ledger so balance == earned - spent.
   static void reload() {
@@ -135,6 +156,9 @@ class Rewards {
     final s = spent;
     _writeLedger(e, s);
     coins.value = e - s;
+    if (_adsOffNow) {
+      Storage.setInt(kAdFreeLocked, adFreeLocked + n);
+    }
     CoinHistory.record(n, source: source, gameId: gameId);
     _toast('+$n 🪙${label == null ? '' : '  $label'}');
   }
@@ -152,7 +176,12 @@ class Rewards {
     final e = earned;
     final s = spent;
     if (n > e - s) return false;
+    final locked = adFreeLocked;
+    if (reason == 'adfree' && n > e - s - locked) return false;
     if (n == 0) return true;
+    if (reason != 'adfree' && locked > 0) {
+      Storage.setInt(kAdFreeLocked, locked > n ? locked - n : 0);
+    }
     _writeLedger(e, s + n);
     coins.value = e - s - n;
     CoinHistory.record(-n, source: reason, gameId: gameId);

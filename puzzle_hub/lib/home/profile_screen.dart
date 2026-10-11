@@ -7,6 +7,7 @@ import '../core/account/auth_screens.dart';
 import '../core/cloud/cloud_auth.dart';
 import '../core/cloud/cloud_service.dart';
 import '../core/cloud/leaderboard_screen.dart';
+import '../core/daily/daily_hub_screen.dart';
 import '../core/cloud/referral_service.dart';
 import '../core/cloud/sync_service.dart';
 import '../core/i18n/i18n.dart';
@@ -520,45 +521,90 @@ class _ProfileBodyState extends State<_ProfileBody> {
           ),
         GlassCard(
           glow: Pal.gold,
-          child: Row(
+          child: Column(
             children: [
-              CircleAvatar(
-                radius: 32,
-                backgroundColor: Pal.goldDeep,
-                child: Text(
-                  a.name.isEmpty ? '?' : a.name[0].toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      a.name,
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: Pal.goldDeep,
+                    child: Text(
+                      a.name.isEmpty ? '?' : a.name[0].toUpperCase(),
                       style: const TextStyle(
-                        color: Pal.text,
-                        fontSize: 22,
+                        fontSize: 30,
                         fontWeight: FontWeight.w900,
+                        color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      tr('home.profile.summary', {
-                        'plays': totalPlays,
-                        'wins': totalWins,
-                      }),
-                      style: const TextStyle(color: Pal.textDim, fontSize: 13),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          a.name,
+                          style: const TextStyle(
+                            color: Pal.text,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          tr('home.profile.summary', {
+                            'plays': totalPlays,
+                            'wins': totalWins,
+                          }),
+                          style: const TextStyle(
+                            color: Pal.textDim,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const CoinPill(),
+                ],
               ),
-              const CoinPill(),
+              const SizedBox(height: 14),
+              // Everything in one place, right under the name.
+              Row(
+                children: [
+                  _QuickAction(
+                    key: const ValueKey('profile_quick_settings'),
+                    icon: Icons.tune_rounded,
+                    label: tr('home.settings.tooltip'),
+                    onTap: () => showSettingsSheet(context),
+                  ),
+                  _QuickAction(
+                    key: const ValueKey('profile_quick_daily'),
+                    icon: Icons.calendar_month_rounded,
+                    label: tr('daily.title'),
+                    onTap: () => DailyPage.open(context),
+                  ),
+                  _QuickAction(
+                    key: const ValueKey('profile_quick_leaderboard'),
+                    icon: Icons.leaderboard_rounded,
+                    label: tr('cloud.lb.title'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const LeaderboardScreen(),
+                      ),
+                    ),
+                  ),
+                  _QuickAction(
+                    key: const ValueKey('profile_quick_records'),
+                    icon: Icons.bar_chart_rounded,
+                    label: tr('home.profile.records'),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const GameRecordsScreen(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -881,6 +927,50 @@ class GameRecordsScreen extends StatelessWidget {
             ),
           ),
       ],
+    ),
+  );
+}
+
+/// Small icon + label button in the profile header.
+class _QuickAction extends StatelessWidget {
+  const _QuickAction({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Expanded(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 3),
+      child: GlassCard(
+        blur: 0,
+        radius: 16,
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: Pal.gold, size: 22),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Pal.text,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
     ),
   );
 }

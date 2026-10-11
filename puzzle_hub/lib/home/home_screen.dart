@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../core/audio.dart';
-import '../core/daily/daily_hub_screen.dart';
+import '../core/cloud/leaderboard_screen.dart';
 import '../core/i18n/i18n.dart';
 import '../core/shop/shop_screen.dart';
 import '../core/ui/app_theme.dart';
@@ -47,10 +47,10 @@ class _HomeScreenState extends State<HomeScreen>
       Icons.sports_esports_rounded,
     ),
     _NavItem(
-      'daily',
-      'home.nav.daily',
-      Icons.calendar_today_outlined,
-      Icons.calendar_month_rounded,
+      'leaderboard',
+      'home.nav.leaderboard',
+      Icons.leaderboard_outlined,
+      Icons.leaderboard_rounded,
     ),
     _NavItem(
       'shop',
@@ -111,7 +111,8 @@ class _HomeScreenState extends State<HomeScreen>
             '${g.emoji ?? '🎮'} ${tr('home.welcome_play_gotd', {'game': g.title})}',
             () {
               if (mounted) {
-                Navigator.of(context).push(MaterialPageRoute(builder: g.builder));
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: g.builder));
               }
             },
             primary: true,
@@ -156,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen>
                         bottomInset: inset,
                         onOpenShop: () => _select(2),
                       ),
-                      padded(const DailyHubScreen()),
+                      padded(const LeaderboardScreen(embedded: true)),
                       padded(const ShopScreen()),
                       padded(const ProfileTab()),
                     ],

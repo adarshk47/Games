@@ -373,7 +373,9 @@ class LeaderboardService {
     });
   }
 
-  String _cacheKey(Board b) => 'cloud.lb.${b.id}';
+  // Per category: tiers must not share the "already sent" value (an old
+  // all-difficulty best would otherwise block every smaller tier score).
+  String _cacheKey(Board b) => 'cloud.lb.${b.docId}';
 
   /// The local value for a per-game board.
   static int localScore(Board b) => switch (b.metric) {
