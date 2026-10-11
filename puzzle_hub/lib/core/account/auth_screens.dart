@@ -190,7 +190,13 @@ class _LockScreenState extends State<LockScreen> {
   @override
   void initState() {
     super.initState();
-    if (AccountService.I.biometricEnabled) {
+    if (!AccountService.I.hasPin) {
+      // No app lock: go straight in (the home screen greets with a popup).
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await AccountService.I.loginWithoutPin(AccountService.I.name);
+        Rewards.reload();
+      });
+    } else if (AccountService.I.biometricEnabled) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _bio());
     }
   }
@@ -633,7 +639,10 @@ class WelcomeScreen extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(tr('account.or'), style: const TextStyle(color: Pal.textDim)),
+                        child: Text(
+                          tr('account.or'),
+                          style: const TextStyle(color: Pal.textDim),
+                        ),
                       ),
                       Expanded(
                         child: Divider(
@@ -724,7 +733,9 @@ class _CloudSignInPanelState extends State<CloudSignInPanel> {
       mainAxisSize: MainAxisSize.min,
       children: [
         PremiumButton(
-          label: _busy ? tr('account.signing_in') : tr('account.continue_google'),
+          label: _busy
+              ? tr('account.signing_in')
+              : tr('account.continue_google'),
           icon: Icons.g_mobiledata_rounded,
           color: const Color(0xFF4285F4),
           onTap: on ? _google : null,
@@ -824,9 +835,7 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
     }
     if (mode == _EmailMode.signUp) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(tr('account.signup_welcome', {'email': email})),
-        ),
+        SnackBar(content: Text(tr('account.signup_welcome', {'email': email}))),
       );
     }
     Navigator.of(context).pop(true);
@@ -941,7 +950,10 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
               onPressed: () => _setMode(_EmailMode.signUp),
               child: Text(
                 tr('account.new_here'),
-                style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Pal.gold,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ] else
@@ -949,7 +961,10 @@ class _EmailAuthScreenState extends State<EmailAuthScreen> {
               onPressed: () => _setMode(_EmailMode.signIn),
               child: Text(
                 tr('account.have_account'),
-                style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Pal.gold,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
         ],

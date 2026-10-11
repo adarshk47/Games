@@ -359,7 +359,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
     if (_ended) return;
     _ended = true;
     Storage.setBest(_bestKey(_tier), _g.score);
-    Rewards.onGameEnd('block_puzzle', score: _g.score, won: _g.score >= _tier.winScore);
+    Rewards.onGameEnd('block_puzzle', score: _g.score, won: _g.score >= _tier.winScore, tier: _tier.name);
     AppAudio.play(Sound.fail);
     _later(700.ms, () {
       final score = _g.score;

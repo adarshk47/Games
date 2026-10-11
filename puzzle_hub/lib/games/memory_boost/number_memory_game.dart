@@ -120,7 +120,7 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
     final key = numberBestKeyFor(tier);
     final prevBest = Storage.getInt(key);
     final newBest = Storage.setBest(key, reached);
-    Rewards.onGameEnd('memory_boost', score: Storage.getInt(key));
+    Rewards.onGameEnd('memory_boost', score: Storage.getInt(key), tier: tier.name);
     const milestones = {5: 1, 7: 2, 9: 3, 12: 3};
     milestones.forEach((n, st) {
       if (reached >= n && prevBest < n) {

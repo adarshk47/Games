@@ -233,7 +233,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     setState(() => _phase = _Phase.over);
     final isBest = Storage.setBest(_bestKey, _score);
     final stars = focusStars(info.mode, tier, _score);
-    Rewards.onGameEnd('focus_color', score: _score, won: stars >= 1);
+    Rewards.onGameEnd('focus_color', score: _score, won: stars >= 1, tier: tier.name);
     if (stars >= 1) {
       Rewards.onLevelComplete('focus_color', '${info.mode.name}-${tier.name}-star$stars', stars: stars, score: _score);
     }

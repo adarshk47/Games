@@ -215,7 +215,7 @@ class _CardBoardState extends State<_CardBoard> {
       }
     }
     gen++;
-    Rewards.onGameEnd('memory_boost', score: _tierStarTotal());
+    Rewards.onGameEnd('memory_boost', score: _tierStarTotal(), tier: widget.tier.name);
     final choice = await showResultDialog(
       context,
       title: tr('memory_boost.time_up'),

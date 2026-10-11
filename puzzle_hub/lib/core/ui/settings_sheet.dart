@@ -5,7 +5,9 @@ import '../daily/reminder_tile.dart';
 import '../i18n/i18n.dart';
 import '../i18n/language_picker.dart';
 import '../rewards.dart';
+import 'app_layout.dart';
 import 'app_theme.dart';
+import 'festive/festive_painters.dart';
 import 'glass_card.dart';
 import 'palette.dart';
 import '../cheer.dart';
@@ -228,6 +230,46 @@ class _SettingsSheet extends StatelessWidget {
                       ),
                     ),
                     const ThemePicker(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 2),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.dashboard_customize_rounded,
+                            color: Pal.gold,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  tr('home.settings.layout'),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Pal.text,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  tr('home.settings.layout_sub'),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Pal.textDim,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const LayoutPicker(),
                   ],
                 ),
               ),
@@ -415,6 +457,122 @@ class _Swatch extends StatelessWidget {
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Classic / Festive home layout selector with small painted previews.
+class LayoutPicker extends StatelessWidget {
+  const LayoutPicker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<AppLayout>(
+      valueListenable: AppLayoutController.current,
+      builder: (_, cur, _) => Padding(
+        padding: const EdgeInsets.fromLTRB(14, 8, 14, 4),
+        child: Row(
+          children: [
+            for (final l in AppLayout.values) ...[
+              if (l.index > 0) const SizedBox(width: 12),
+              Expanded(
+                child: _LayoutOption(
+                  key: ValueKey('layout_option_${l.name}'),
+                  layout: l,
+                  selected: l == cur,
+                  onTap: () {
+                    if (l != cur) AppLayoutController.select(l);
+                  },
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LayoutOption extends StatelessWidget {
+  const _LayoutOption({
+    super.key,
+    required this.layout,
+    required this.selected,
+    required this.onTap,
+  });
+  final AppLayout layout;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppThemeController.theme;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: layout.label,
+      child: Pressable(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: Colors.black.withValues(alpha: 0.18),
+            border: Border.all(
+              color: selected ? t.highlight : Pal.glassBorder,
+              width: selected ? 2 : 1,
+            ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: t.accent.withValues(alpha: 0.5),
+                      blurRadius: 14,
+                      spreadRadius: -4,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 64,
+                width: double.infinity,
+                child: CustomPaint(
+                  painter: LayoutPreviewPainter(
+                    festive: layout == AppLayout.festive,
+                    bg0: t.bg0,
+                    bg1: t.bg1,
+                    accent: t.accent,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (selected) ...[
+                    Icon(Icons.check_circle_rounded, color: t.highlight, size: 14),
+                    const SizedBox(width: 4),
+                  ],
+                  Flexible(
+                    child: Text(
+                      layout.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: selected ? Pal.text : Pal.textDim,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

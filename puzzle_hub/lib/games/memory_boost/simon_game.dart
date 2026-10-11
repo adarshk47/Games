@@ -175,7 +175,7 @@ class _SimonGameState extends State<_SimonGame> {
     final streak = logic.streak;
     final prevBest = Storage.getInt(bestKey);
     final newBest = Storage.setBest(bestKey, streak);
-    Rewards.onGameEnd('memory_boost', score: Storage.getInt(bestKey), won: streak >= 5);
+    Rewards.onGameEnd('memory_boost', score: Storage.getInt(bestKey), won: streak >= 5, tier: widget.tier.name);
     const milestones = {5: 1, 10: 2, 15: 3, 20: 3};
     milestones.forEach((m, st) {
       if (streak >= m && prevBest < m) {

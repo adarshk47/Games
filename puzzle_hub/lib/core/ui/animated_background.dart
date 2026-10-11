@@ -3,10 +3,12 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import 'app_theme.dart';
+import 'festive/festive_background.dart';
 
 /// Deep gradient with slowly drifting glow orbs. Cheap: one AnimationController,
 /// one CustomPaint. Colours follow [AppThemeController.theme]; [tint] shifts the
-/// main glow color per game.
+/// main glow color per game. Festive themes add diyas, petals, rangoli and
+/// sparkles on top (see [paintFestiveLayer]).
 class AnimatedBackground extends StatefulWidget {
   const AnimatedBackground({super.key, this.tint, this.child});
   final Color? tint;
@@ -78,6 +80,7 @@ class _OrbPainter extends CustomPainter {
     orb(0.15, 0.12, s.width * 0.7, tint, 0);
     orb(0.9, 0.45, s.width * 0.6, Color.lerp(tint, theme.highlight, 0.35)!, 2);
     orb(0.2, 0.9, s.width * 0.75, Color.lerp(tint, theme.orb2, 0.4)!, 4);
+    if (theme.festive) paintFestiveLayer(canvas, s, t, glow: tint, accent: theme.accent);
   }
 
   @override

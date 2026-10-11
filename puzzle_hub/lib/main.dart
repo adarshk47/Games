@@ -15,6 +15,7 @@ import 'core/ui/app_theme.dart';
 import 'home/home_screen.dart';
 import 'core/cheer.dart';
 import 'core/ads/coupon_service.dart';
+import 'core/ads/adfree_grant.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ Future<void> main() async {
   for (final init in [
     CloudService.init,
     CouponService.refresh,
+    AdFreeGrant.refresh,
     AdsService.init,
     ReminderService.init,
   ]) {

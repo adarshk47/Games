@@ -45,10 +45,13 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
-  late Board _board = leaderboards.firstWhere(
-    (b) => b.id == widget.initialBoard,
-    orElse: () => leaderboards.first,
-  );
+  late Board _board = () {
+    final b = leaderboards.firstWhere(
+      (b) => b.id == widget.initialBoard,
+      orElse: () => leaderboards.first,
+    );
+    return b.tiers.isEmpty ? b : b.withTier(b.tiers.first);
+  }();
   final String? _country = AccountService.I.country;
   late LeaderboardScope _scope = hasCountryScope(_country)
       ? defaultScope(_country)
@@ -115,7 +118,17 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   void _select(Board b) {
     if (b.id == _board.id) return;
-    _board = b;
+    _board = b.tiers.isEmpty
+        ? b
+        : b.withTier(
+            b.tiers.contains(_board.tier) ? _board.tier : b.tiers.first,
+          );
+    _reload();
+  }
+
+  void _selectTier(String t) {
+    if (t == _board.tier) return;
+    _board = _board.withTier(t);
     _reload();
   }
 
@@ -174,6 +187,31 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               ],
             ),
           ),
+          if (_board.tiers.isNotEmpty)
+            SizedBox(
+              height: 44,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                children: [
+                  for (final t in _board.tiers)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 8,
+                        top: 2,
+                        bottom: 2,
+                      ),
+                      child: _chip(
+                        t == 'classic'
+                            ? tr('game_2048.classic')
+                            : tr('common.tier.$t'),
+                        t == _board.tier,
+                        () => _selectTier(t),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           if (hasCountryScope(_country))
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 2, 14, 0),

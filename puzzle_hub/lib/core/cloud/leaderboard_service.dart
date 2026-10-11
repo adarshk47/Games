@@ -26,8 +26,37 @@ enum BoardMetric {
 /// A leaderboard. [gameId] null = the "Total stars" board.
 @immutable
 class Board {
-  const Board(this.id, this.title, this.emoji, {this.gameId, required this.maxScore, this.metric = BoardMetric.best});
+  const Board(
+    this.id,
+    this.title,
+    this.emoji, {
+    this.gameId,
+    required this.maxScore,
+    this.metric = BoardMetric.best,
+    this.tiers = const [],
+    this.tier,
+  });
   final String id;
+
+  /// Difficulty categories this board is split into (empty = one board).
+  final List<String> tiers;
+
+  /// Selected category; the Firestore board is `<id>__<tier>`.
+  final String? tier;
+
+  /// Firestore document id of this (category) board.
+  String get docId => tier == null ? id : '${id}__$tier';
+
+  Board withTier(String? t) => Board(
+    id,
+    title,
+    emoji,
+    gameId: gameId,
+    maxScore: maxScore,
+    metric: metric,
+    tiers: tiers,
+    tier: t,
+  );
   final String title;
   final String emoji;
   final String? gameId;
@@ -37,14 +66,59 @@ class Board {
   final int maxScore;
 }
 
-const totalStarsBoard = Board('total_stars', 'Total stars', '⭐', maxScore: 100000, metric: BoardMetric.totalStars);
+/// Difficulty categories used by score leaderboards.
+const kTiers = ['easy', 'medium', 'hard', 'extreme'];
+
+const totalStarsBoard = Board(
+  'total_stars',
+  'Total stars',
+  '⭐',
+  maxScore: 100000,
+  metric: BoardMetric.totalStars,
+);
 
 const List<Board> leaderboards = [
-  Board('game_2048', '2048', '🔢', gameId: 'game_2048', maxScore: 10000000),
-  Board('focus_color', 'Focus Color', '🎯', gameId: 'focus_color', maxScore: 1000000),
-  Board('memory_boost', 'Memory Boost', '🧠', gameId: 'memory_boost', maxScore: 1000000),
-  Board('block_puzzle', 'Block Puzzle', '🧱', gameId: 'block_puzzle', maxScore: 10000000),
-  Board('chess', 'Chess', '♟️', gameId: 'chess', maxScore: 1000000, metric: BoardMetric.wins),
+  Board(
+    'block_puzzle',
+    'Block Puzzle',
+    '🧱',
+    gameId: 'block_puzzle',
+    maxScore: 10000000,
+    tiers: kTiers,
+  ),
+  Board(
+    'game_2048',
+    '2048',
+    '🔢',
+    gameId: 'game_2048',
+    maxScore: 10000000,
+    tiers: [...kTiers, 'classic'],
+  ),
+  Board(
+    'chess',
+    'Chess',
+    '♟️',
+    gameId: 'chess',
+    maxScore: 1000000,
+    metric: BoardMetric.wins,
+    tiers: kTiers,
+  ),
+  Board(
+    'memory_boost',
+    'Memory Boost',
+    '🧠',
+    gameId: 'memory_boost',
+    maxScore: 1000000,
+    tiers: kTiers,
+  ),
+  Board(
+    'focus_color',
+    'Focus Color',
+    '🎯',
+    gameId: 'focus_color',
+    maxScore: 1000000,
+    tiers: kTiers,
+  ),
   totalStarsBoard,
 ];
 
@@ -59,7 +133,9 @@ Board? boardForGame(String gameId) {
 int totalStarsOf(Map<String, Object> keys) {
   var sum = 0;
   keys.forEach((k, v) {
-    if (v is int && v > 0 && (k.contains('.stars.') || k.endsWith('.stars'))) sum += v;
+    if (v is int && v > 0 && (k.contains('.stars.') || k.endsWith('.stars'))) {
+      sum += v;
+    }
   });
   return sum;
 }
@@ -87,21 +163,34 @@ bool hasCountryScope(String? code) {
 /// Scope the leaderboard opens with: India-first, so Indian players see the
 /// India board by default; everyone else starts on Global.
 LeaderboardScope defaultScope(String? country) =>
-    normalizeCountry(country) == 'IN' ? LeaderboardScope.country : LeaderboardScope.global;
+    normalizeCountry(country) == 'IN'
+    ? LeaderboardScope.country
+    : LeaderboardScope.global;
 
 /// The country filter for [scope] (null = no filter / global).
 String? scopeCountry(LeaderboardScope scope, String? country) =>
-    scope == LeaderboardScope.country && hasCountryScope(country) ? normalizeCountry(country) : null;
+    scope == LeaderboardScope.country && hasCountryScope(country)
+    ? normalizeCountry(country)
+    : null;
 
 /// Document body for `leaderboards/{board}/entries/{uid}` (without `updatedAt`).
-Map<String, Object> entryData({required String name, required int score, String? country}) {
+Map<String, Object> entryData({
+  required String name,
+  required int score,
+  String? country,
+}) {
   final cc = normalizeCountry(country);
   return {'name': name, 'score': score, 'country': ?cc};
 }
 
 @immutable
 class LeaderEntry {
-  const LeaderEntry({required this.uid, required this.name, required this.score, this.country});
+  const LeaderEntry({
+    required this.uid,
+    required this.name,
+    required this.score,
+    this.country,
+  });
   final String uid;
   final String name;
   final int score;
@@ -122,23 +211,33 @@ class LeaderboardPage {
 /// without Firebase. Firestore: `leaderboards/{board}/entries/{uid}`.
 abstract class LeaderboardStore {
   /// Highest scores first; only entries of [country] when it is set.
-  Future<List<LeaderEntry>> top(String board, {String? country, required int limit});
+  Future<List<LeaderEntry>> top(
+    String board, {
+    String? country,
+    required int limit,
+  });
   Future<LeaderEntry?> entry(String board, String uid);
 
   /// Number of entries with a higher score (within [country] when set).
   Future<int> countAbove(String board, int score, {String? country});
 
   /// Writes max(old, [score]) with [name] and [country]. Returns the stored score.
-  Future<int> put(String board, String uid, {required String name, required int score, String? country});
+  Future<int> put(
+    String board,
+    String uid, {
+    required String name,
+    required int score,
+    String? country,
+  });
   Future<void> delete(String board, String uid);
 }
 
 LeaderEntry _fromDoc(String uid, Map<String, dynamic>? d) => LeaderEntry(
-      uid: uid,
-      name: (d?['name'] as String?) ?? 'Player',
-      score: (d?['score'] as num?)?.toInt() ?? 0,
-      country: d?['country'] as String?,
-    );
+  uid: uid,
+  name: (d?['name'] as String?) ?? 'Player',
+  score: (d?['score'] as num?)?.toInt() ?? 0,
+  country: d?['country'] as String?,
+);
 
 class FirestoreLeaderboardStore implements LeaderboardStore {
   FirebaseFirestore get _db => FirebaseFirestore.instance;
@@ -153,8 +252,15 @@ class FirestoreLeaderboardStore implements LeaderboardStore {
   }
 
   @override
-  Future<List<LeaderEntry>> top(String board, {String? country, required int limit}) async {
-    final q = await _scoped(board, country).orderBy('score', descending: true).limit(limit).get();
+  Future<List<LeaderEntry>> top(
+    String board, {
+    String? country,
+    required int limit,
+  }) async {
+    final q = await _scoped(
+      board,
+      country,
+    ).orderBy('score', descending: true).limit(limit).get();
     return [for (final d in q.docs) _fromDoc(d.id, d.data())];
   }
 
@@ -167,12 +273,21 @@ class FirestoreLeaderboardStore implements LeaderboardStore {
   @override
   Future<int> countAbove(String board, int score, {String? country}) async {
     // Needs the composite index (country ASC, score ASC) for country scope.
-    final r = await _scoped(board, country).where('score', isGreaterThan: score).count().get();
+    final r = await _scoped(
+      board,
+      country,
+    ).where('score', isGreaterThan: score).count().get();
     return r.count ?? 0;
   }
 
   @override
-  Future<int> put(String board, String uid, {required String name, required int score, String? country}) {
+  Future<int> put(
+    String board,
+    String uid, {
+    required String name,
+    required int score,
+    String? country,
+  }) {
     final ref = _entries(board).doc(uid);
     return _db.runTransaction<int>((tx) async {
       final s = await tx.get(ref);
@@ -180,14 +295,20 @@ class FirestoreLeaderboardStore implements LeaderboardStore {
       final oldScore = (old?['score'] as num?)?.toInt() ?? 0;
       final best = score > oldScore ? score : oldScore;
       final body = entryData(name: name, score: best, country: country);
-      if (s.exists && best == oldScore && old?['name'] == body['name'] && old?['country'] == body['country']) return oldScore;
+      if (s.exists &&
+          best == oldScore &&
+          old?['name'] == body['name'] &&
+          old?['country'] == body['country']) {
+        return oldScore;
+      }
       tx.set(ref, {...body, 'updatedAt': FieldValue.serverTimestamp()});
       return best;
     });
   }
 
   @override
-  Future<void> delete(String board, String uid) => _entries(board).doc(uid).delete();
+  Future<void> delete(String board, String uid) =>
+      _entries(board).doc(uid).delete();
 }
 
 /// Loads the top [limit] of [board] in [scope] plus the player's own rank.
@@ -201,14 +322,16 @@ Future<LeaderboardPage> loadLeaderboard(
   int limit = LeaderboardService.topN,
 }) async {
   final cc = scopeCountry(scope, country);
-  final top = await store.top(board.id, country: cc, limit: limit);
+  final top = await store.top(board.docId, country: cc, limit: limit);
   if (uid == null) return LeaderboardPage(top: top);
   final i = top.indexWhere((e) => e.uid == uid);
   if (i >= 0) return LeaderboardPage(top: top, mine: top[i], myRank: i + 1);
-  final mine = await store.entry(board.id, uid);
+  final mine = await store.entry(board.docId, uid);
   // Not on this board, or (country scope) listed under another country.
-  if (mine == null || (cc != null && mine.country != cc)) return LeaderboardPage(top: top);
-  final above = await store.countAbove(board.id, mine.score, country: cc);
+  if (mine == null || (cc != null && mine.country != cc)) {
+    return LeaderboardPage(top: top);
+  }
+  final above = await store.countAbove(board.docId, mine.score, country: cc);
   return LeaderboardPage(top: top, mine: mine, myRank: above + 1);
 }
 
@@ -227,7 +350,10 @@ class LeaderboardService {
   StreamSubscription<RewardEvent>? _sub;
   Timer? _starsTimer;
 
-  bool get canSubmit => CloudService.available && CloudAuth.I.user.value != null && AccountService.I.loggedIn;
+  bool get canSubmit =>
+      CloudService.available &&
+      CloudAuth.I.user.value != null &&
+      AccountService.I.loggedIn;
 
   void start() {
     _sub ??= Rewards.events.listen((e) {
@@ -251,10 +377,16 @@ class LeaderboardService {
 
   /// The local value for a per-game board.
   static int localScore(Board b) => switch (b.metric) {
-        BoardMetric.best => Rewards.best(b.gameId!),
-        BoardMetric.wins => Rewards.wins(b.gameId!),
-        BoardMetric.totalStars => 0,
-      };
+    BoardMetric.best =>
+      b.tier == null
+          ? Rewards.best(b.gameId!)
+          : Rewards.bestIn(b.gameId!, b.tier!),
+    BoardMetric.wins =>
+      b.tier == null
+          ? Rewards.wins(b.gameId!)
+          : Rewards.winsIn(b.gameId!, b.tier!),
+    BoardMetric.totalStars => 0,
+  };
 
   /// Submits [score] if it beats what we already have on the board (or the
   /// name / country changed).
@@ -267,9 +399,17 @@ class LeaderboardService {
     final sentKey = _cacheKey(b);
     final tagKey = '$sentKey.tag';
     final tag = '$country|$name';
-    if (clamped <= Storage.getInt(sentKey) && Storage.getString(tagKey) == tag) return;
+    if (clamped <= Storage.getInt(sentKey) && Storage.getString(tagKey) == tag) {
+      return;
+    }
     try {
-      final written = await store.put(b.id, uid, name: name, score: clamped, country: country);
+      final written = await store.put(
+        b.docId,
+        uid,
+        name: name,
+        score: clamped,
+        country: country,
+      );
       await Storage.setInt(sentKey, written);
       await Storage.setString(tagKey, tag);
     } catch (e) {
@@ -286,25 +426,46 @@ class LeaderboardService {
   Future<void> submitTotalStars() async {
     if (!canSubmit) return;
     final prefs = await SharedPreferences.getInstance();
-    await submit(totalStarsBoard, totalStarsOf(LocalKv(prefs).readAll(Storage.userPrefix)));
+    await submit(
+      totalStarsBoard,
+      totalStarsOf(LocalKv(prefs).readAll(Storage.userPrefix)),
+    );
   }
 
   /// Submits the current records for every board (after login / sync).
   Future<void> submitAll() async {
     if (!canSubmit) return;
     for (final b in leaderboards) {
-      if (b.gameId != null) await submit(b, localScore(b));
+      if (b.gameId == null) continue;
+      if (b.tiers.isEmpty) {
+        await submit(b, localScore(b));
+      } else {
+        for (final t in b.tiers) {
+          await submit(b.withTier(t), localScore(b.withTier(t)));
+        }
+      }
     }
     await submitTotalStars();
   }
 
-  Future<LeaderboardPage> load(Board b, {LeaderboardScope scope = LeaderboardScope.global}) =>
-      loadLeaderboard(store, b, uid: CloudAuth.I.user.value?.uid, scope: scope, country: AccountService.I.country);
+  Future<LeaderboardPage> load(
+    Board b, {
+    LeaderboardScope scope = LeaderboardScope.global,
+  }) => loadLeaderboard(
+    store,
+    b,
+    uid: CloudAuth.I.user.value?.uid,
+    scope: scope,
+    country: AccountService.I.country,
+  );
 
   /// Account deletion: remove this user's entries from every board.
   Future<void> deleteMine(String uid) async {
     for (final b in leaderboards) {
       await store.delete(b.id, uid);
+      for (final t in b.tiers) {
+        await store.delete(b.withTier(t).docId, uid);
+      }
     }
   }
 }

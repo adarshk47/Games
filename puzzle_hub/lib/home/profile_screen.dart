@@ -569,68 +569,34 @@ class _ProfileBodyState extends State<_ProfileBody> {
         _actions(),
         const SizedBox(height: 18),
         _Head(tr('home.profile.records')),
-        for (final g in games)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: GlassCard(
-              blur: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              child: Row(
-                children: [
-                  Text(g.emoji ?? '🎮', style: const TextStyle(fontSize: 28)),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          g.title,
-                          style: const TextStyle(
-                            color: Pal.text,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          tr('home.profile.record_line', {
-                            'plays': Rewards.plays(g.id),
-                            'wins': Rewards.wins(g.id),
-                            'levels': Rewards.levels(g.id),
-                          }),
-                          style: const TextStyle(
-                            color: Pal.textDim,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
+        GlassCard(
+          key: const ValueKey('profile_records'),
+          blur: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const GameRecordsScreen())),
+          child: Row(
+            children: [
+              const Text('📊', style: TextStyle(fontSize: 28)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  tr('home.profile.records_open', {
+                    'plays': totalPlays,
+                    'wins': totalWins,
+                  }),
+                  style: const TextStyle(
+                    color: Pal.text,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
                   ),
-                  if (Rewards.best(g.id) > 0)
-                    Column(
-                      children: [
-                        Text(
-                          tr('common.best').toUpperCase(),
-                          style: const TextStyle(
-                            color: Pal.textDim,
-                            fontSize: 9,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        Text(
-                          '${Rewards.best(g.id)}',
-                          style: const TextStyle(
-                            color: Pal.gold,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
+                ),
               ),
-            ),
+              const Icon(Icons.chevron_right_rounded, color: Pal.textDim),
+            ],
           ),
+        ),
         const SizedBox(height: 10),
         _Head(tr('home.profile.account')),
         GlassCard(
@@ -838,6 +804,83 @@ class _Head extends StatelessWidget {
         fontWeight: FontWeight.w800,
         letterSpacing: 1,
       ),
+    ),
+  );
+}
+
+/// All game records on their own page (keeps the Profile tab short).
+class GameRecordsScreen extends StatelessWidget {
+  const GameRecordsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => GameScaffold(
+    title: tr('home.profile.records'),
+    body: ListView(
+      padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
+      children: [
+        for (final g in games)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: GlassCard(
+              blur: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: Row(
+                children: [
+                  Text(g.emoji ?? '🎮', style: const TextStyle(fontSize: 28)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          g.title,
+                          style: const TextStyle(
+                            color: Pal.text,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          tr('home.profile.record_line', {
+                            'plays': Rewards.plays(g.id),
+                            'wins': Rewards.wins(g.id),
+                            'levels': Rewards.levels(g.id),
+                          }),
+                          style: const TextStyle(
+                            color: Pal.textDim,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (Rewards.best(g.id) > 0)
+                    Column(
+                      children: [
+                        Text(
+                          tr('common.best').toUpperCase(),
+                          style: const TextStyle(
+                            color: Pal.textDim,
+                            fontSize: 9,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        Text(
+                          '${Rewards.best(g.id)}',
+                          style: const TextStyle(
+                            color: Pal.gold,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
+      ],
     ),
   );
 }

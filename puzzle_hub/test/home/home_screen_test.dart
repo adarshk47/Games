@@ -24,6 +24,9 @@ Future<void> _pumpHome(WidgetTester t, Size size) async {
   addTearDown(t.view.resetPhysicalSize);
   await t.pumpWidget(const MaterialApp(home: HomeScreen()));
   await t.pump(const Duration(seconds: 2));
+  // Dismiss the once-per-launch welcome dialog (if any) shown over home.
+  t.state<NavigatorState>(find.byType(Navigator).first).popUntil((r) => r.isFirst);
+  await t.pump(const Duration(milliseconds: 500));
 }
 
 int _stackIndex(WidgetTester t) => t.widget<IndexedStack>(find.byType(IndexedStack)).index!;

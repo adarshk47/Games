@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
+import 'app_layout.dart';
 
 /// One selectable colour theme. Drives the animated background, Material theme,
 /// home screen and bottom navigation. Game screens keep using the const [Pal]
@@ -19,6 +20,7 @@ class AppThemeData {
     required this.accent,
     required this.highlight,
     this.price = 0,
+    this.festive = false,
   // Private fields cannot be named initializing formals.
   // ignore: prefer_initializing_formals
   }) : _name = name;
@@ -45,6 +47,10 @@ class AppThemeData {
   final int price;
 
   bool get free => price == 0;
+
+  /// Festive themes paint diya glows, marigold petals, rangoli and sparkles
+  /// over the animated background.
+  final bool festive;
 
   LinearGradient get swatch => LinearGradient(
         begin: Alignment.topLeft,
@@ -130,8 +136,31 @@ class AppThemeController {
       highlight: Color(0xFFFFD369),
       price: 800,
     ),
+    // Indian festival themes (appended so saved indices stay valid).
+    AppThemeData(
+      id: 'utsav',
+      name: 'Utsav',
+      bg0: Color(0xFF1C0805), // deep kumkum
+      bg1: Color(0xFF4A1410), // sindoor maroon
+      orb: Color(0xFFE8590C), // marigold
+      orb2: Color(0xFF0F8A84), // peacock teal
+      accent: Color(0xFFFF8F1F), // genda orange
+      highlight: Color(0xFFFFC93C), // haldi
+      festive: true,
+    ),
+    AppThemeData(
+      id: 'diwali',
+      name: 'Diwali Night',
+      bg0: Color(0xFF10030E),
+      bg1: Color(0xFF3A0A2E), // maroon-purple night
+      orb: Color(0xFF6B1E5A),
+      orb2: Color(0xFFFF9F1C), // diya flame
+      accent: Color(0xFFE0A526), // zari gold
+      highlight: Color(0xFFFFE08A),
+      price: 500,
+      festive: true,
+    ),
   ];
-
   static final ValueNotifier<int> current = ValueNotifier<int>(0);
 
   /// Bumped whenever the unlocked set changes (so pickers can refresh).
@@ -143,6 +172,7 @@ class AppThemeController {
   static Future<void> init() async {
     final i = int.tryParse(Storage.globalString(_kTheme) ?? '') ?? 0;
     current.value = (i >= 0 && i < themes.length) ? i : 0;
+    await AppLayoutController.init();
   }
 
   static Set<String> get _unlockedIds =>

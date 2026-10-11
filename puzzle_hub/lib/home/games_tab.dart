@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -6,7 +8,10 @@ import '../core/game_info.dart';
 import '../core/i18n/i18n.dart';
 import '../core/rewards.dart';
 import '../core/ui/app_logo.dart';
+import '../core/ui/app_layout.dart';
 import '../core/ui/app_theme.dart';
+import '../core/ui/festive/festive_painters.dart';
+import '../core/ui/festive/festive_palette.dart';
 import '../core/ui/ui.dart';
 import '../games/registry.dart';
 
@@ -65,12 +70,20 @@ class _GamesTabState extends State<GamesTab> {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<AppLayout>(
+      valueListenable: AppLayoutController.current,
+      builder: (context, layout, _) =>
+          layout == AppLayout.festive ? _buildFestive(context) : _buildClassic(context),
+    );
+  }
+
+  Widget _buildClassic(BuildContext context) {
     final featured = games.where((g) => g.featured).toList();
     final width = MediaQuery.sizeOf(context).width;
     final cols = width >= 900 ? 4 : (width >= 600 ? 3 : 2);
     final hPad = width < 360 ? 14.0 : 18.0;
 
-    return CustomScrollView(slivers: [
+    return CustomScrollView(key: const ValueKey('classic_layout'), slivers: [
       SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.fromLTRB(hPad, 14, hPad, 4),
@@ -83,7 +96,7 @@ class _GamesTabState extends State<GamesTab> {
             padding: EdgeInsets.fromLTRB(hPad, 14, hPad, 0),
             child: _enter(
               featured.isNotEmpty
-                  ? _FeaturedCarousel(list: featured, onOpen: _open)
+                  ? _FeaturedCarousel(list: featured, onOpen: _open, banner: _classicBanner)
                   : _Banner(g: gameOfTheDay(games), label: tr('home.game_of_the_day'), onTap: () => _open(gameOfTheDay(games))),
               200,
             ),
@@ -133,11 +146,124 @@ class _GamesTabState extends State<GamesTab> {
       ),
     ]);
   }
+
+  static Widget _classicBanner(GameInfo g, String label, VoidCallback onTap) =>
+      _Banner(g: g, label: label, onTap: onTap);
+
+  static Widget _thaliBanner(GameInfo g, String label, VoidCallback onTap) =>
+      _ThaliBanner(g: g, label: label, onTap: onTap);
+
+  /// Indian-festival layout: toran header, thali banner, saree-border cards.
+  Widget _buildFestive(BuildContext context) {
+    final featured = games.where((g) => g.featured).toList();
+    final width = MediaQuery.sizeOf(context).width;
+    final cols = width >= 900 ? 4 : (width >= 600 ? 3 : 2);
+    final hPad = width < 360 ? 14.0 : 18.0;
+    final t = AppThemeController.theme;
+
+    return CustomScrollView(key: const ValueKey('festive_layout'), slivers: [
+      const SliverToBoxAdapter(
+        child: RepaintBoundary(
+          child: SizedBox(
+            key: ValueKey('festive_toran'),
+            height: 44,
+            width: double.infinity,
+            child: CustomPaint(painter: ToranPainter()),
+          ),
+        ),
+      ),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(hPad, 2, hPad, 4),
+          child: _Header(onOpenShop: widget.onOpenShop, festive: true),
+        ),
+      ),
+      if (games.isNotEmpty)
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(hPad, 14, hPad, 0),
+            child: _enter(
+              featured.isNotEmpty
+                  ? _FeaturedCarousel(list: featured, onOpen: _open, banner: _thaliBanner)
+                  : _ThaliBanner(
+                      g: gameOfTheDay(games), label: tr('home.game_of_the_day'), onTap: () => _open(gameOfTheDay(games))),
+              200,
+            ),
+          ),
+        ),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(hPad + 2, 22, hPad, 10),
+          child: Row(children: [
+            const SizedBox(width: 18, height: 22, child: CustomPaint(painter: DiyaPainter())),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(tr('home.all_games'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Festive.zariLight, fontSize: 18, fontWeight: FontWeight.w900)),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Festive.marigoldDeep, Festive.kumkum]),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Festive.zari.withValues(alpha: 0.8)),
+              ),
+              child: Text('${games.length}',
+                  style: const TextStyle(color: Pal.text, fontSize: 12, fontWeight: FontWeight.w800)),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Container(
+                height: 1.6,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [Festive.zari, t.highlight.withValues(alpha: 0)]),
+                ),
+              ),
+            ),
+          ]),
+        ),
+      ),
+      SliverPadding(
+        padding: EdgeInsets.fromLTRB(hPad, 0, hPad, widget.bottomInset + 16),
+        sliver: SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            mainAxisExtent: 216,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, i) => _enter(
+              _FestiveGameCard(key: ValueKey('game_${games[i].id}'), g: games[i], onTap: () => _open(games[i])),
+              300 + i * 70,
+              dy: 0.2,
+            ),
+            childCount: games.length,
+          ),
+        ),
+      ),
+    ]);
+  }
+}
+
+/// Short stat line for a game card and whether the game is still unplayed.
+(String, bool) _statOf(GameInfo g) {
+  final levels = Rewards.levels(g.id);
+  final best = Rewards.best(g.id);
+  final plays = Rewards.plays(g.id);
+  if (levels > 0) return ('⭐ $levels', false);
+  if (best > 0) return ('🏆 $best', false);
+  if (plays > 0) return ('▶ $plays', false);
+  return (tr('home.new_badge'), true);
 }
 
 class _Header extends StatelessWidget {
-  const _Header({this.onOpenShop});
+  const _Header({this.onOpenShop, this.festive = false});
   final VoidCallback? onOpenShop;
+  final bool festive;
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +280,10 @@ class _Header extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: ShaderMask(
-                shaderCallback: (r) => t.wordmark.createShader(r),
+                shaderCallback: (r) => (festive
+                        ? const LinearGradient(colors: [Festive.zariLight, Festive.marigold, Festive.zari])
+                        : t.wordmark)
+                    .createShader(r),
                 child: const Text('Master G',
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.4)),
               ),
@@ -178,11 +307,13 @@ class _Header extends StatelessWidget {
         a.justRegistered ? tr('home.welcome_new', {'name': name}) : tr('home.welcome_back', {'name': name}),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w800),
+        style: TextStyle(color: festive ? Festive.zariLight : Pal.text, fontSize: 20, fontWeight: FontWeight.w800),
       ).animate(delay: 100.ms).fadeIn(duration: 450.ms),
       const SizedBox(height: 2),
       Text(tr('home.tagline'),
-              maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Pal.textDim, fontSize: 14))
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: festive ? _sandal : Pal.textDim, fontSize: 14))
           .animate(delay: 150.ms)
           .fadeIn(duration: 450.ms),
     ]);
@@ -190,9 +321,12 @@ class _Header extends StatelessWidget {
 }
 
 class _FeaturedCarousel extends StatefulWidget {
-  const _FeaturedCarousel({required this.list, required this.onOpen});
+  const _FeaturedCarousel({required this.list, required this.onOpen, required this.banner});
   final List<GameInfo> list;
   final ValueChanged<GameInfo> onOpen;
+
+  /// Builds one page (classic glass banner or festive thali card).
+  final Widget Function(GameInfo g, String label, VoidCallback onTap) banner;
 
   @override
   State<_FeaturedCarousel> createState() => _FeaturedCarouselState();
@@ -211,7 +345,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   @override
   Widget build(BuildContext context) {
     final l = widget.list;
-    if (l.length == 1) return _Banner(g: l.first, label: tr('home.featured'), onTap: () => widget.onOpen(l.first));
+    if (l.length == 1) return widget.banner(l.first, tr('home.featured'), () => widget.onOpen(l.first));
     return Column(children: [
       SizedBox(
         height: _Banner.height,
@@ -221,7 +355,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
           onPageChanged: (p) => setState(() => _page = p),
           itemBuilder: (_, i) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: _Banner(g: l[i], label: tr('home.featured'), onTap: () => widget.onOpen(l[i])),
+            child: widget.banner(l[i], tr('home.featured'), () => widget.onOpen(l[i])),
           ),
         ),
       ),
@@ -336,20 +470,7 @@ class _GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final levels = Rewards.levels(g.id);
-    final best = Rewards.best(g.id);
-    final plays = Rewards.plays(g.id);
-    final String stat;
-    final isNew = levels <= 0 && best <= 0 && plays <= 0;
-    if (levels > 0) {
-      stat = '⭐ $levels';
-    } else if (best > 0) {
-      stat = '🏆 $best';
-    } else if (plays > 0) {
-      stat = '▶ $plays';
-    } else {
-      stat = tr('home.new_badge');
-    }
+    final (stat, isNew) = _statOf(g);
     return GlassCard(
       onTap: onTap,
       glow: g.color,
@@ -404,6 +525,225 @@ class _GameCard extends StatelessWidget {
             style: const TextStyle(color: Pal.textDim, fontSize: 11.5, height: 1.25)),
         const Spacer(),
       ]),
+    );
+  }
+}
+
+/// Sandalwood tone for secondary text on festive surfaces.
+const _sandal = Color(0xFFF3D9B1);
+
+/// Game emoji in a gradient disc surrounded by a painted mandala ring.
+class _MandalaEmoji extends StatelessWidget {
+  const _MandalaEmoji({required this.g, required this.size});
+  final GameInfo g;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final inner = size * 0.6;
+    return SizedBox.square(
+      dimension: size,
+      child: Stack(alignment: Alignment.center, children: [
+        Positioned.fill(child: CustomPaint(painter: MandalaRingPainter(color: g.color))),
+        Container(
+          width: inner,
+          height: inner,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: Pal.accent(g.color),
+            boxShadow: [BoxShadow(color: g.color.withValues(alpha: 0.6), blurRadius: 14, spreadRadius: -2)],
+          ),
+          child: g.emoji != null
+              ? Text(g.emoji!, style: TextStyle(fontSize: inner * 0.56))
+              : Icon(g.icon, size: inner * 0.6, color: Colors.white),
+        ),
+      ]),
+    );
+  }
+}
+
+/// Festive game card: silk-saree body with a temple border, paisley pallu,
+/// rangoli corners, zari edges and a mandala around the emoji.
+class _FestiveGameCard extends StatelessWidget {
+  const _FestiveGameCard({super.key, required this.g, required this.onTap});
+  final GameInfo g;
+  final VoidCallback onTap;
+
+  static const double _band = 24;
+
+  @override
+  Widget build(BuildContext context) {
+    final (stat, isNew) = _statOf(g);
+    final t = AppThemeController.theme;
+    return Pressable(
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(color: g.color.withValues(alpha: 0.3), blurRadius: 24, spreadRadius: -6),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 10, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: CustomPaint(
+          painter: SareeCardPainter(color: g.color, base: t.bg1, band: _band),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 12, 10, _band + 4),
+            child: Column(children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Festive.sindoor.withValues(alpha: 0.75),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: (isNew ? Pal.success : Festive.zari).withValues(alpha: 0.8)),
+                  ),
+                  child: Text(stat,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: isNew ? Pal.success : Festive.zariLight, fontSize: 10.5, fontWeight: FontWeight.w900)),
+                ),
+              ),
+              const Spacer(),
+              _MandalaEmoji(g: g, size: 78),
+              const SizedBox(height: 6),
+              Text(g.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
+              const SizedBox(height: 2),
+              Flexible(
+                child: Text(g.subtitle,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: _sandal, fontSize: 11.5, height: 1.25)),
+              ),
+              const Spacer(),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Festive "game of the day" / featured card: a decorated pooja thali with the
+/// game in the centre, on a gota-lace framed banner.
+class _ThaliBanner extends StatelessWidget {
+  const _ThaliBanner({required this.g, required this.label, required this.onTap});
+  final GameInfo g;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppThemeController.theme;
+    final levels = Rewards.levels(g.id);
+    return SizedBox(
+      height: _Banner.height,
+      child: Pressable(
+        key: const ValueKey('home_banner'),
+        onTap: onTap,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            boxShadow: [BoxShadow(color: Festive.marigold.withValues(alpha: 0.3), blurRadius: 28, spreadRadius: -4)],
+          ),
+          child: CustomPaint(
+            painter: GotaFramePainter(color: g.color, base: t.bg1),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+              child: LayoutBuilder(builder: (context, box) {
+                final plate = math.min(108.0, math.min(box.maxHeight, box.maxWidth * 0.34));
+                return Row(children: [
+                  SizedBox.square(
+                    dimension: plate,
+                    child: Stack(alignment: Alignment.center, children: [
+                      Positioned.fill(child: CustomPaint(painter: ThaliPainter(color: g.color))),
+                      Container(
+                        width: plate * 0.48,
+                        height: plate * 0.48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: Pal.accent(g.color),
+                          border: Border.all(color: Festive.zariLight, width: 1.5),
+                          boxShadow: [BoxShadow(color: g.color.withValues(alpha: 0.7), blurRadius: 14, spreadRadius: -2)],
+                        ),
+                        child: g.emoji != null
+                            ? Text(g.emoji!, style: TextStyle(fontSize: plate * 0.26))
+                            : Icon(g.icon, size: plate * 0.28, color: Colors.white),
+                      ),
+                    ]),
+                  )
+                      .animate(onPlay: (c) => c.repeat(reverse: true))
+                      .moveY(begin: -2.5, end: 2.5, duration: 2000.ms, curve: Curves.easeInOut),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(colors: [Festive.marigold, Festive.haldi]),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Festive.zariLight.withValues(alpha: 0.8)),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(label,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                      color: Festive.sindoor,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.2)),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(g.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w900, color: Colors.white)),
+                          const SizedBox(height: 2),
+                          Flexible(
+                            child: Text(g.subtitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(color: _sandal, fontSize: 12.5, height: 1.25)),
+                          ),
+                          if (levels > 0) ...[
+                            const SizedBox(height: 4),
+                            Text(tr('home.levels_cleared', {'n': levels}),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(color: Festive.zariLight, fontSize: 11.5, fontWeight: FontWeight.w800)),
+                          ],
+                        ]),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: Festive.zariGradient,
+                      boxShadow: [BoxShadow(color: Festive.zari.withValues(alpha: 0.5), blurRadius: 10)],
+                    ),
+                    child: const Icon(Icons.play_arrow_rounded, color: Festive.sindoor, size: 24),
+                  ),
+                ]);
+              }),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

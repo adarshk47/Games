@@ -34,6 +34,17 @@ service cloud.firestore {
     }
 
     // Optional 'country' field: if present, exactly two capital letters.
+    // Category boards are '<board>__<tier>' (e.g. 'game_2048__hard').
+    function baseBoard(b) {
+      return b.split('__')[0];
+    }
+
+    function validBoard(b) {
+      return baseBoard(b) in maxScores()
+        && (b.split('__').size() == 1
+          || (b.split('__').size() == 2 && b.split('__')[1] in ['easy', 'medium', 'hard', 'extreme', 'classic']));
+    }
+
     function validCountry(d) {
       return !('country' in d) || (d.country is string && d.country.matches('^[A-Z]{2}$'));
     }
@@ -106,7 +117,7 @@ service cloud.firestore {
       allow read: if signedIn();
       allow delete: if isOwner(uid);
       allow create, update: if isOwner(uid)
-        && board in maxScores()
+        && validBoard(board)
         && request.resource.data.keys().hasOnly(['name', 'score', 'country', 'updatedAt'])
         && validCountry(request.resource.data)
         && request.resource.data.name is string
@@ -114,12 +125,19 @@ service cloud.firestore {
         && request.resource.data.name.size() <= 24
         && request.resource.data.score is int
         && request.resource.data.score >= 0
-        && request.resource.data.score <= maxScores()[board]
+        && request.resource.data.score <= maxScores()[baseBoard(board)]
         && request.resource.data.updatedAt == request.time
         && (resource == null || request.resource.data.score >= resource.data.score);
     }
 
     // Everything else is closed.
+    // --------------------------------------------------------- ad-free grants
+    // Created by the developer: adfree_grants/{uid} = {until: timestamp, plan}.
+    match /adfree_grants/{uid} {
+      allow get: if isOwner(uid);
+      allow list, write: if false;
+    }
+
     // --------------------------------------------------------------- coupons
     // Created by the developer in the console: coupons/{CODE} = {active: true}.
     // Players can read a code only if they know it; no listing, no writes.

@@ -172,12 +172,14 @@ class Rewards {
     String levelKey, {
     int stars = 0,
     int? score,
+    String? tier,
   }) {
     final done = 'rec.$gameId.done.$levelKey';
     final first = !Storage.getBool(done);
     if (first) Storage.setBool(done, true);
     final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
+    _recordTier(gameId, tier, won: true, score: score);
     AppAudio.play(Sound.win);
     Cheer.win();
     addCoins(
@@ -205,8 +207,14 @@ class Rewards {
   }
 
   /// A run ended (score based games). Winning pays 2 coins.
-  static void onGameEnd(String gameId, {int? score, bool won = false}) {
+  static void onGameEnd(
+    String gameId, {
+    int? score,
+    bool won = false,
+    String? tier,
+  }) {
     _record(gameId, won: won, score: score);
+    _recordTier(gameId, tier, won: won, score: score);
     final pay = runReward(score: score, won: won);
     if (pay > 0) addCoins(pay, source: 'game', gameId: gameId);
     won ? Cheer.win() : Cheer.lose();
@@ -217,6 +225,24 @@ class Rewards {
       RewardEvent(gameId: gameId, type: 'run', score: score, won: won),
     );
   }
+
+  /// Per-difficulty records for category leaderboards (`rec.<game>.t.<tier>.*`).
+  static void _recordTier(
+    String gameId,
+    String? tier, {
+    required bool won,
+    int? score,
+  }) {
+    if (tier == null) return;
+    final p = 'rec.$gameId.t.$tier';
+    if (won) Storage.setInt('$p.wins', Storage.getInt('$p.wins') + 1);
+    if (score != null) Storage.setBest('$p.best', score);
+  }
+
+  static int bestIn(String g, String tier) =>
+      Storage.getInt('rec.$g.t.$tier.best');
+  static int winsIn(String g, String tier) =>
+      Storage.getInt('rec.$g.t.$tier.wins');
 
   static void _record(
     String gameId, {

@@ -469,9 +469,9 @@ class _ChessScreenState extends State<ChessScreen> {
         final n = Storage.getInt(ck) + 1;
         Storage.setInt(ck, n);
         final stars = switch (_level) { ChessLevel.easy => 1, ChessLevel.medium => 2, _ => 3 };
-        Rewards.onLevelComplete('chess', '${_level.name}-${_tc.id}-win-$n', stars: stars, score: tierScore);
+        Rewards.onLevelComplete('chess', '${_level.name}-${_tc.id}-win-$n', stars: stars, score: tierScore, tier: _level.name);
       } else {
-        Rewards.onGameEnd('chess', score: r == ChessResult.draw ? tierScore ~/ 4 : 0, won: false);
+        Rewards.onGameEnd('chess', score: r == ChessResult.draw ? tierScore ~/ 4 : 0, won: false, tier: _level.name);
       }
       return won;
     }

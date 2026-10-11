@@ -86,7 +86,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   void _reportOver() {
     if (_overReported) return;
     _overReported = true;
-    Rewards.onGameEnd('game_2048', score: _g.score, won: false);
+    Rewards.onGameEnd('game_2048', score: _g.score, won: false, tier: _g.tier.name);
   }
 
   void _save() {

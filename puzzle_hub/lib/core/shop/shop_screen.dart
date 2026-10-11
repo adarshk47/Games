@@ -9,6 +9,7 @@ import '../rewards.dart';
 import '../ui/ui.dart';
 import '../economy/coin_history_screen.dart';
 import '../ads/coupon_service.dart';
+import '../ads/adfree_grant.dart';
 
 /// Coin shop body. Shown as a tab inside the home's bottom navigation (the
 /// animated background is already behind it), so no Scaffold / back button.
@@ -117,6 +118,8 @@ class _ShopScreenState extends State<ShopScreen> {
             _historyCard(),
             const SizedBox(height: 14),
             const _CouponCard(),
+            const SizedBox(height: 14),
+            const _AdFreeRequestCard(),
           ],
         ),
       ),
@@ -487,6 +490,112 @@ class _CouponCardState extends State<_CouponCard> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// "Remove ads completely" – request an approved ad-free period by email.
+class _AdFreeRequestCard extends StatefulWidget {
+  const _AdFreeRequestCard();
+
+  @override
+  State<_AdFreeRequestCard> createState() => _AdFreeRequestCardState();
+}
+
+class _AdFreeRequestCardState extends State<_AdFreeRequestCard> {
+  AdFreeRequestPlan _plan = AdFreeRequestPlan.m3;
+  String? _msg;
+
+  static String _date(DateTime d) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${two(d.day)}-${two(d.month)}-${d.year} ${two(d.hour)}:${two(d.minute)}';
+  }
+
+  Future<void> _send() async {
+    final ok = await AdFreeGrant.sendRequest(_plan);
+    if (!mounted) return;
+    setState(() => _msg = ok ? null : tr('shop.adfree_req.signin'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<DateTime?>(
+      valueListenable: AdFreeGrant.until,
+      builder: (_, until, _) {
+        final active = AdFreeGrant.active;
+        final reqAt = AdFreeGrant.requestedAt;
+        final reqPlan = AdFreeGrant.requestedPlan;
+        return GlassCard(
+          key: const ValueKey('adfree_request_card'),
+          glow: active ? Pal.success : null,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                tr('shop.adfree_req.title'),
+                style: const TextStyle(
+                  color: Pal.text,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 6),
+              if (active)
+                Text(
+                  tr('shop.adfree_req.active', {'date': _date(until!)}),
+                  style: const TextStyle(
+                    color: Pal.success,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              else ...[
+                Text(
+                  tr('shop.adfree_req.sub'),
+                  style: const TextStyle(color: Pal.textDim, fontSize: 13),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final p in AdFreeRequestPlan.values)
+                      ChoiceChip(
+                        label: Text(tr('shop.adfree_req.plan.${p.name}')),
+                        selected: p == _plan,
+                        onSelected: (_) => setState(() => _plan = p),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                PremiumButton(
+                  key: const ValueKey('adfree_request_send'),
+                  label: tr('shop.adfree_req.send'),
+                  icon: Icons.mail_rounded,
+                  compact: true,
+                  onTap: _send,
+                ),
+                if (reqAt != null && reqPlan != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    tr('shop.adfree_req.pending', {
+                      'date': _date(reqAt),
+                      'plan': tr('shop.adfree_req.plan.${reqPlan.name}'),
+                    }),
+                    style: const TextStyle(color: Pal.gold, fontSize: 12),
+                  ),
+                ],
+                if (_msg != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    _msg!,
+                    style: const TextStyle(color: Pal.danger, fontSize: 13),
+                  ),
+                ],
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }

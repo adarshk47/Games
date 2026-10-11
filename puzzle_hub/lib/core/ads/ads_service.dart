@@ -10,6 +10,7 @@ import '../rewards.dart';
 import '../storage.dart';
 import '../features.dart';
 import 'coupon_service.dart';
+import 'adfree_grant.dart';
 
 /// Ad unit ids.
 ///
@@ -335,7 +336,7 @@ class AdsService {
   /// True while the 24h ad-free pass is active.
   static bool get adFree {
     try {
-      if (CouponService.noAds.value) return true;
+      if (CouponService.noAds.value || AdFreeGrant.active) return true;
       final u = adFreeUntil;
       return u != null && u.isAfter(clock());
     } catch (_) {
