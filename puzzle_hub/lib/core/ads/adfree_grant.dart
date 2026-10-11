@@ -26,8 +26,9 @@ enum AdFreeRequestPlan {
 /// The player sends a request email (name, user id, plan, date and time). The
 /// developer approves it by creating, in the Firebase console,
 /// `adfree_grants/{USER_ID} = { until: <timestamp>, plan: "3 months" }`.
-/// Until that time the app shows no ads. Deleting the document or moving
-/// `until` into the past brings ads back at the next app start.
+/// Until that time the app shows no ads. Setting `revoked: true`, deleting the
+/// document or moving `until` into the past brings ads back the next time the
+/// app starts or the Shop is opened.
 class AdFreeGrant {
   AdFreeGrant._();
 
@@ -73,8 +74,10 @@ class AdFreeGrant {
           .doc(uid)
           .get()
           .timeout(const Duration(seconds: 10));
-      final t = d.data()?['until'];
-      final u = t is Timestamp ? t.toDate() : null;
+      final data = d.data();
+      final t = data?['until'];
+      // `revoked: true` (or deleting the document) brings ads back.
+      final u = t is Timestamp && data?['revoked'] != true ? t.toDate() : null;
       await Storage.setInt(_kUntil, u?.millisecondsSinceEpoch ?? 0);
       until.value = u;
     } catch (e) {

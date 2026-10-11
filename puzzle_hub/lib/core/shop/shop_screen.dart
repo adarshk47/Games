@@ -504,6 +504,12 @@ class _AdFreeRequestCard extends StatefulWidget {
 
 class _AdFreeRequestCardState extends State<_AdFreeRequestCard> {
   AdFreeRequestPlan _plan = AdFreeRequestPlan.m3;
+
+  @override
+  void initState() {
+    super.initState();
+    AdFreeGrant.refresh(); // pick up approvals / revokes without a restart
+  }
   String? _msg;
 
   static String _date(DateTime d) {
