@@ -13,6 +13,7 @@ import 'hexa_sort.dart';
 import 'focus_color.dart';
 import 'game_2048.dart';
 import 'home.dart';
+import 'howto.dart';
 import 'maze_escape.dart';
 import 'memory_boost.dart';
 import 'minesweeper.dart';
@@ -38,6 +39,7 @@ final Map<String, Map<String, String>> allStrings = {
   ...hexaSortStrings,
   ...focusColorStrings,
   ...game2048Strings,
+  ...howtoStrings,
   ...homeStrings,
   ...mazeEscapeStrings,
   ...memoryBoostStrings,

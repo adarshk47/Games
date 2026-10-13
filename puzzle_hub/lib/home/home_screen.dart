@@ -115,8 +115,7 @@ class _HomeScreenState extends State<HomeScreen>
             '${g.emoji ?? '🎮'} ${tr('home.welcome_play_gotd', {'game': g.title})}',
             () {
               if (mounted) {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: g.builder));
+                openGame(context, g);
               }
             },
             primary: true,
