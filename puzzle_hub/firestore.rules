@@ -144,6 +144,16 @@ service cloud.firestore {
     match /coupons/{code} {
       allow get: if true;
       allow list, write: if false;
+
+      // One log entry per player who used the code. The player may create
+      // and read their own; only the developer (console) can revoke/delete.
+      match /redemptions/{uid} {
+        allow get: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && request.resource.data.uid == uid
+          && !('revoked' in request.resource.data);
+        allow list, update, delete: if false;
+      }
     }
 
     match /{document=**} {

@@ -510,6 +510,7 @@ class _AdFreeRequestCardState extends State<_AdFreeRequestCard> {
   void initState() {
     super.initState();
     AdFreeGrant.refresh(); // pick up approvals / revokes without a restart
+    CouponService.refresh();
   }
   String? _msg;
 
