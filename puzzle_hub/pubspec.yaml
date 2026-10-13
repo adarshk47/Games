@@ -53,6 +53,8 @@ dependencies:
   play_install_referrer: ^0.5.0
   flutter_tts: ^4.2.5
   url_launcher: ^6.3.3
+  in_app_review: ^2.0.12
+  in_app_update: ^5.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

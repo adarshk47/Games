@@ -405,17 +405,26 @@ class _Row extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         child: Row(
           children: [
+            // Serial number on every row; the top 5 also get their medal.
             SizedBox(
-              width: 40,
-              child: medal != null
-                  ? Text(medal, style: const TextStyle(fontSize: 24))
-                  : Text(
-                      '#$rank',
-                      style: const TextStyle(
-                        color: Pal.textDim,
-                        fontWeight: FontWeight.w800,
-                      ),
+              width: medal != null ? 64 : 44,
+              child: Row(
+                children: [
+                  Text(
+                    '$rank.',
+                    key: ValueKey('lb_rank_$rank'),
+                    style: TextStyle(
+                      color: tier?.color ?? Pal.textDim,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15,
                     ),
+                  ),
+                  if (medal != null) ...[
+                    const SizedBox(width: 4),
+                    Text(medal, style: const TextStyle(fontSize: 20)),
+                  ],
+                ],
+              ),
             ),
             Expanded(
               child: Column(

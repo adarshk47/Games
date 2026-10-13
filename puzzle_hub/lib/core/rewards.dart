@@ -8,6 +8,7 @@ import 'ads/ads_service.dart';
 import 'audio.dart';
 import 'i18n/i18n.dart';
 import 'storage.dart';
+import 'store/app_store.dart';
 import 'ui/palette.dart';
 import 'cheer.dart';
 
@@ -209,6 +210,7 @@ class Rewards {
     final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     _recordTier(gameId, tier, won: true, score: score);
+    unawaited(AppStore.onWin());
     AppAudio.play(Sound.win);
     Cheer.win();
     addCoins(
@@ -244,6 +246,7 @@ class Rewards {
   }) {
     _record(gameId, won: won, score: score);
     _recordTier(gameId, tier, won: won, score: score);
+    if (won) unawaited(AppStore.onWin());
     final pay = runReward(score: score, won: won);
     if (pay > 0) addCoins(pay, source: 'game', gameId: gameId);
     won ? Cheer.win() : Cheer.lose();

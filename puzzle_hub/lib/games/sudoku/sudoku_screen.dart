@@ -856,7 +856,10 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
               children: [
                 for (var r = 0; r < 9; r++)
                   Expanded(
+                    // Stretch: an empty cell has no content, so without this it
+                    // would be 0 px tall and could not be tapped.
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         for (var c = 0; c < 9; c++) Expanded(child: _cell(g, r, c, selV, sr, sc)),
                       ],

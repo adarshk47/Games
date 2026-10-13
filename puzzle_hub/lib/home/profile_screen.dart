@@ -21,6 +21,7 @@ import '../core/account/country_select.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_info.dart';
+import '../core/store/app_store.dart';
 
 /// Account, cloud, coins and per-game records (pushed full screen).
 class ProfileScreen extends StatelessWidget {
@@ -776,6 +777,37 @@ class _ProfileBodyState extends State<_ProfileBody> {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Column(
             children: [
+              ListTile(
+                key: const ValueKey('profile_rate'),
+                leading: const Text('⭐', style: TextStyle(fontSize: 22)),
+                title: Text(
+                  tr('home.profile.rate'),
+                  style: const TextStyle(color: Pal.text),
+                ),
+                subtitle: Text(
+                  tr('home.profile.rate_sub'),
+                  style: const TextStyle(color: Pal.textDim),
+                ),
+                trailing: const Icon(
+                  Icons.open_in_new_rounded,
+                  color: Pal.textDim,
+                  size: 18,
+                ),
+                onTap: AppStore.openStorePage,
+              ),
+              ListTile(
+                key: const ValueKey('profile_feedback'),
+                leading: const Icon(Icons.mail_rounded, color: Pal.text),
+                title: Text(
+                  tr('home.profile.feedback'),
+                  style: const TextStyle(color: Pal.text),
+                ),
+                subtitle: Text(
+                  tr('home.profile.feedback_sub'),
+                  style: const TextStyle(color: Pal.textDim),
+                ),
+                onTap: AppStore.sendFeedback,
+              ),
               ListTile(
                 key: const ValueKey('profile_privacy'),
                 leading: const Icon(Icons.privacy_tip_rounded, color: Pal.text),

@@ -196,8 +196,6 @@ class _ShopScreenState extends State<ShopScreen> {
   );
 
   Widget _adCard() {
-    final left = AdsService.rewardedRemainingToday;
-    final wait = AdsService.rewardedCooldownLeft;
     const blue = Color(0xFF4DA8FF);
     return GlassCard(
       glow: blue,
@@ -208,21 +206,14 @@ class _ShopScreenState extends State<ShopScreen> {
           Expanded(
             child: _title(
               tr('shop.watch_ad_title', {'coins': AdsService.rewardedCoins}),
-              left <= 0
-                  ? tr('shop.come_back')
-                  : wait > Duration.zero
-                  ? tr('shop.ad_wait', {'time': _fmt(wait)})
-                  : tr('shop.ads_left', {
-                      'left': left,
-                      'cap': AdsService.dailyRewardedCap,
-                    }),
+              tr('shop.ads_unlimited', {'n': AdsService.rewardedToday}),
             ),
           ),
           PremiumButton(
             label: _busy ? '…' : tr('shop.watch'),
             compact: true,
             color: blue,
-            onTap: _busy || left <= 0 || wait > Duration.zero ? null : _watchAd,
+            onTap: _busy ? null : _watchAd,
           ),
         ],
       ),

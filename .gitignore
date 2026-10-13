@@ -1,1 +1,4 @@
 google-services.json
+
+# local APK copies
+/MasterG-*.apk

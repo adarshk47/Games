@@ -49,10 +49,8 @@ class AdsService {
 
   // ---- Tunables --------------------------------------------------------------
   static const rewardedCoins = 25;
-  static const dailyRewardedCap = 15;
 
   /// Minimum wait between two coin-reward ads.
-  static const rewardedCooldown = Duration(minutes: 5);
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
   static const levelsPerInterstitial = 1; // after every game end
@@ -290,26 +288,9 @@ class AdsService {
       ? Storage.getInt(_kRewardCount)
       : 0;
 
-  /// Coin-reward ads still allowed today.
-  static int get rewardedRemainingToday =>
-      (dailyRewardedCap - rewardedToday).clamp(0, dailyRewardedCap);
-
-  /// The shop's "Watch ad: +25 coins" action. Returns coins granted (0 if the
-  /// daily cap is reached or the ad was not completed).
-  /// Time until the next coin-reward ad may be watched (zero = ready now).
-  static Duration get rewardedCooldownLeft {
-    final last = Storage.getInt(_kRewardLast);
-    if (last <= 0) return Duration.zero;
-    final left = DateTime.fromMillisecondsSinceEpoch(last)
-        .add(rewardedCooldown)
-        .difference(clock());
-    return left.isNegative ? Duration.zero : left;
-  }
-
+  /// The shop's "Watch ad: +25 coins" action: no daily cap and no waiting
+  /// time. Returns the coins granted (0 if the ad was not completed).
   static Future<int> watchAdForCoins() async {
-    if (rewardedRemainingToday <= 0 || rewardedCooldownLeft > Duration.zero) {
-      return 0;
-    }
     final ok = await showRewarded(reason: 'coins');
     if (!ok) return 0;
     final today = _today();

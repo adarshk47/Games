@@ -127,20 +127,13 @@ void main() {
   });
 
   group('rewarded ads', () {
-    test('daily cap of 15 with a 5 minute gap, resets next day', () async {
+    test('no daily cap and no waiting time between coin ads', () async {
       AdsService.rewardedOverride = (_) async => true;
-      now = DateTime(now.year, now.month, now.day, 1); // keep all 15 on one day
-      for (var i = 0; i < 15; i++) {
+      for (var i = 0; i < 30; i++) {
         expect(await AdsService.watchAdForCoins(), 25);
-        expect(await AdsService.watchAdForCoins(), 0, reason: 'cooldown');
-        now = now.add(const Duration(minutes: 5));
       }
-      expect(await AdsService.watchAdForCoins(), 0);
-      expect(AdsService.rewardedRemainingToday, 0);
-      expect(Rewards.balance, 375);
-      now = now.add(const Duration(days: 1));
-      expect(AdsService.rewardedRemainingToday, 15);
-      expect(await AdsService.watchAdForCoins(), 25);
+      expect(Rewards.balance, 750);
+      expect(AdsService.rewardedToday, 30);
       _expectInvariant();
     });
 
@@ -148,7 +141,7 @@ void main() {
       AdsService.rewardedOverride = (_) async => false;
       expect(await AdsService.watchAdForCoins(), 0);
       expect(Rewards.balance, 0);
-      expect(AdsService.rewardedRemainingToday, 15);
+      expect(AdsService.rewardedToday, 0);
     });
 
     test('ads are a no-op on the test host', () async {

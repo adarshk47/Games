@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,6 +17,7 @@ import 'home/home_screen.dart';
 import 'core/cheer.dart';
 import 'core/ads/coupon_service.dart';
 import 'core/ads/adfree_grant.dart';
+import 'core/store/app_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,6 +43,8 @@ Future<void> main() async {
   }
   AppAudio.startMusic();
   runApp(const PuzzleHubApp());
+  // After the first frame: Play shows its own dialog if an update exists.
+  unawaited(Future<void>.delayed(const Duration(seconds: 3), AppStore.checkForUpdate));
 }
 
 class PuzzleHubApp extends StatelessWidget {
