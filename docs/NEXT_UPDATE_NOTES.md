@@ -37,3 +37,17 @@ Do NOT start until the user says so.
     "Send feedback" (email to aiforsmart@gmail.com) so anyone can give it any time.
 
 **Started 2026-10-13.**
+
+## Status 2026-10-13 (v1.0.10+14 installed on phone, all 797 tests pass)
+Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
+
+### Still to do (user will check the app and add improvements first – wait for go)
+- **Point 3: home-screen widget 1×3** – not started.
+- **Chakra: go back to the earlier version** – user prefers the first chakra (about 12 games
+  on the wheel, the rest as cards below it). Revert commit "Chakra fits every game…"
+  (game_chakra.dart itemSize/radii/hub changes + test/home/chakra_fit_test.dart).
+- Long game titles wrap to two lines in the top bar since the ❓ button was added
+  (e.g. "Block Puzzle · Extreme") – shrink/ellipsize the title.
+- Undo is not in Block Puzzle, Hexa Sort, Screw Jam, Bus Jam (ask if wanted).
+- Build the AAB for 1.0.10 after the next round; user must re-publish firestore.rules
+  (coupon redemptions rule).
