@@ -18,6 +18,8 @@
 ///  * counters (`plays`, `wins`, `levels`, `completed`, `unlocked`, `level`,
 ///    `sessions`, `minutes`, `played`, `last`) -> max.
 ///  * everything else                 -> local wins.
+/// Before all of that, a player's "delete records" for a game wins: the side
+/// whose `recreset.<game>.last` is older loses its `rec.<game>.*` keys.
 /// A key present on only one side is always taken from that side (union),
 /// except saved games, which follow their updatedAt meta (deletions win when
 /// they are newer).
@@ -182,6 +184,7 @@ class SyncMerge {
   }) {
     final values = <String, Object>{};
     final meta = <String, KeyMeta>{};
+    (local, remote) = applyRecordResets(local, remote);
     final keys = <String>{...local.keys, ...remote.keys, ...localMeta.keys, ...remoteMeta.keys};
 
     for (final k in keys) {
@@ -230,6 +233,34 @@ class SyncMerge {
       values['coins'] = e - s;
     }
     return MergeResult(values: values, meta: meta);
+  }
+
+  static final _reset = RegExp(r'^recreset\.(.+)\.last$');
+
+  /// Drops `rec.<game>.*` from the side that has not seen the latest
+  /// "delete records" of that game (so old records cannot come back).
+  static (Map<String, Object>, Map<String, Object>) applyRecordResets(
+    Map<String, Object> local,
+    Map<String, Object> remote,
+  ) {
+    final latest = <String, int>{};
+    for (final m in [local, remote]) {
+      for (final e in m.entries) {
+        final g = _reset.firstMatch(e.key)?.group(1);
+        final v = e.value;
+        if (g != null && v is num && v.toInt() > (latest[g] ?? 0)) latest[g] = v.toInt();
+      }
+    }
+    if (latest.isEmpty) return (local, remote);
+    Map<String, Object> clean(Map<String, Object> m) {
+      final out = Map<String, Object>.of(m);
+      latest.forEach((g, t) {
+        if (_i(m, 'recreset.$g.last') < t) out.removeWhere((k, _) => k.startsWith('rec.$g.'));
+      });
+      return out;
+    }
+
+    return (clean(local), clean(remote));
   }
 
   /// [meta] with content hashes of [values] filled in, i.e. the local meta to

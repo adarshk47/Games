@@ -295,6 +295,17 @@ class Rewards {
   static int levels(String g) => Storage.getInt('rec.$g.levels');
   static int best(String g) => Storage.getInt('rec.$g.best');
 
+  /// Deletes every record of [gameId] (plays, wins, bests, per-difficulty
+  /// records). The `recreset.*` marker makes the deletion win over older
+  /// records on the cloud copy / other phones.
+  static Future<void> resetRecords(String gameId) async {
+    await Storage.clearPrefix('${Storage.userPrefix}rec.$gameId.');
+    await Storage.setInt(
+      'recreset.$gameId.last',
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+
   static OverlayEntry? _entry;
 
   static void _toast(String text) {

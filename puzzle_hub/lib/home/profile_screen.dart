@@ -21,6 +21,8 @@ import '../core/account/country_select.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/app_info.dart';
+import '../core/game_info.dart';
+import '../core/ads/ads_service.dart';
 import '../core/store/app_store.dart';
 
 /// Account, cloud, coins and per-game records (pushed full screen).
@@ -887,8 +889,59 @@ class _Head extends StatelessWidget {
 }
 
 /// All game records on their own page (keeps the Profile tab short).
-class GameRecordsScreen extends StatelessWidget {
+class GameRecordsScreen extends StatefulWidget {
   const GameRecordsScreen({super.key});
+
+  @override
+  State<GameRecordsScreen> createState() => _GameRecordsScreenState();
+}
+
+class _GameRecordsScreenState extends State<GameRecordsScreen> {
+  static bool _hasRecords(GameInfo g) =>
+      Rewards.plays(g.id) > 0 ||
+      Rewards.wins(g.id) > 0 ||
+      Rewards.levels(g.id) > 0 ||
+      Rewards.best(g.id) > 0;
+
+  void _snack(String m) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+
+  /// Deleting your own records costs one ad (free for ad-free players).
+  Future<void> _reset(GameInfo g) async {
+    final needAd = AdsService.featuresOn && !AdsService.adFree;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(tr('home.records.reset_title', {'game': g.title})),
+        content: Text(
+          tr(needAd ? 'home.records.reset_q_ad' : 'home.records.reset_q'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(tr('common.cancel')),
+          ),
+          TextButton(
+            key: const ValueKey('records_reset_confirm'),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              tr(needAd ? 'home.records.reset_btn_ad' : 'home.records.reset_btn'),
+              style: const TextStyle(color: Pal.danger),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    if (needAd && !await AdsService.showRewarded(reason: 'reset_records')) {
+      if (mounted) _snack(tr('shop.no_ad'));
+      return;
+    }
+    await Rewards.resetRecords(g.id);
+    if (!mounted) return;
+    setState(() {});
+    _snack(tr('home.records.deleted', {'game': g.title}));
+  }
 
   @override
   Widget build(BuildContext context) => GameScaffold(
@@ -953,6 +1006,16 @@ class GameRecordsScreen extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  if (_hasRecords(g))
+                    IconButton(
+                      key: ValueKey('records_reset_${g.id}'),
+                      tooltip: tr('home.records.reset_btn'),
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Pal.textDim,
+                      ),
+                      onPressed: () => _reset(g),
                     ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../core/ads/banner_strip.dart';
 import '../core/audio.dart';
 import '../core/cloud/leaderboard_screen.dart';
 import '../core/i18n/i18n.dart';
@@ -21,7 +22,10 @@ const double _kNavMargin = 12;
 /// Space the floating bar occupies at the bottom of the screen; tab bodies keep
 /// at least this much bottom padding so content is never hidden behind it.
 double navBarInset(BuildContext context) =>
-    kNavBarHeight + _kNavMargin * 2 + MediaQuery.paddingOf(context).bottom;
+    kNavBarHeight +
+    _kNavMargin * 2 +
+    MediaQuery.paddingOf(context).bottom +
+    (BannerStrip.showing.value ? BannerStrip.height : 0);
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -128,7 +132,12 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+    valueListenable: BannerStrip.showing,
+    builder: (context, _, _) => _build(context),
+  );
+
+  Widget _build(BuildContext context) {
     final inset = navBarInset(context);
     // External tab bodies get plain bottom padding; the games tab scrolls under
     // the glass bar and pads its own last sliver instead.
@@ -169,7 +178,14 @@ class _HomeScreenState extends State<HomeScreen>
               left: 0,
               right: 0,
               bottom: 0,
-              child: _BottomNav(items: _items, index: _tab, onTap: _select),
+              // Banner (menu screens only) sits just above the nav bar.
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const BannerStrip(),
+                  _BottomNav(items: _items, index: _tab, onTap: _select),
+                ],
+              ),
             ),
           ],
         ),
