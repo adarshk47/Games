@@ -18,6 +18,7 @@ import 'core/cheer.dart';
 import 'core/ads/coupon_service.dart';
 import 'core/ads/adfree_grant.dart';
 import 'core/store/app_store.dart';
+import 'core/ads/offline_guard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,6 +76,7 @@ class PuzzleHubApp extends StatelessWidget {
         darkTheme: buildTheme(Brightness.dark),
         themeMode: ThemeMode.dark,
         home: const AuthGate(home: HomeScreen()),
+        builder: (_, child) => OfflineGate(child: child ?? const SizedBox()),
       ),
     );
   }
