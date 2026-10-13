@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
-import '../../core/economy/continue_offer.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
@@ -16,6 +15,7 @@ import 'logic/chess_engine.dart';
 import 'logic/chess_game.dart';
 import 'logic/chess_positions.dart';
 import 'widgets/chess_board.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 const _tint = Color(0xFFC08A4E);
 
@@ -61,7 +61,6 @@ class _ChessScreenState extends State<ChessScreen> {
   int? _selected;
   int? _animMove;
   int _animSeq = 0;
-  int _freeUndos = 1;
   bool _manualFlip = false;
   bool _clockRunning = false;
   bool _finished = false;
@@ -138,7 +137,6 @@ class _ChessScreenState extends State<ChessScreen> {
       _thinking = false;
       _selected = null;
       _animMove = null;
-      _freeUndos = 1;
       _manualFlip = false;
       _clockRunning = false;
       _finished = false;
@@ -305,16 +303,22 @@ class _ChessScreenState extends State<ChessScreen> {
     return g.moves.length >= (_playerWhite == _startWhite ? 2 : 3);
   }
 
+  /// Full moves (yours + the reply) that can be taken back.
+  int get _undoDepth {
+    final g = _game;
+    if (g == null) return 0;
+    final base = _playerWhite == _startWhite ? 0 : 1;
+    return (g.moves.length - base) ~/ 2;
+  }
+
   Future<void> _undo() async {
     if (!_canUndo) return;
-    if (_freeUndos > 0) {
-      _freeUndos--;
-    } else {
-      final ok = await showContinueOffer(context, OfferKind.undo);
-      if (!ok || !mounted || !_canUndo) return;
-    }
+    final steps = await UndoOffer.ask(context, available: _undoDepth);
+    if (!mounted || steps == 0) return;
     setState(() {
-      _game!.undo(2);
+      for (var k = 0; k < steps && _canUndo; k++) {
+        _game!.undo(2);
+      }
       _selected = null;
       _animMove = null;
     });
@@ -932,7 +936,7 @@ class _ChessScreenState extends State<ChessScreen> {
             child: _ctrl(
               const ValueKey('undoBtn'),
               Icons.undo_rounded,
-              _freeUndos > 0 ? tr('chess.undo_free') : tr('common.undo'),
+              tr('common.undo'),
               _canUndo ? _undo : null,
             ),
           ),

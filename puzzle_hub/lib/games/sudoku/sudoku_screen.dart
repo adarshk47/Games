@@ -14,6 +14,7 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/sudoku_logic.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 const _saveKey = 'sudoku.save';
 String _bestKey(Difficulty d) => 'sudoku.best.${d.name}';
@@ -236,14 +237,18 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
     _save();
   }
 
-  void _undo() {
+  Future<void> _undo() async {
     final g = _g;
     if (!_active || g == null || g.undo.isEmpty) return;
+    final steps = await UndoOffer.ask(context, available: g.undo.length);
+    if (!mounted || steps == 0 || !_active) return;
     AppAudio.play(Sound.tap);
     setState(() {
-      final s = g.undo.removeLast();
-      g.cur = s[0];
-      g.notes = s[1];
+      for (var k = 0; k < steps && g.undo.isNotEmpty; k++) {
+        final s = g.undo.removeLast();
+        g.cur = s[0];
+        g.notes = s[1];
+      }
     });
     _save();
   }

@@ -367,6 +367,9 @@ class FlowGame {
   bool get solved => board.isSolved;
   bool get canUndo => _undo.isNotEmpty;
 
+  /// How many moves can be taken back.
+  int get undoDepth => _undo.length;
+
   int? begin(int cell) {
     if (solved) return null;
     _pre = board.snapshot();

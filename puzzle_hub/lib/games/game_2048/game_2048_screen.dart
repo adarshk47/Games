@@ -12,6 +12,7 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/game_2048_logic.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 const _tint = Color(0xFFFB923C);
 const _slideMs = 120;
@@ -115,18 +116,18 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     _save();
   }
 
+  /// Back 1, 2 or 3 moves: one ad (or 10 coins) per step.
   Future<void> _undo() async {
-    if (_g.undo()) {
-      _afterUndo();
-      return;
-    }
     if (!_g.hasHistory || _dialogOpen) return;
-    // Free undos used up: offer a paid one.
     _dialogOpen = true;
-    final paid = await showContinueOffer(context, OfferKind.undo);
+    final steps = await UndoOffer.ask(context, available: _g.historyDepth);
     _dialogOpen = false;
-    if (!mounted || !paid) return;
-    if (_g.paidUndo()) _afterUndo();
+    if (!mounted) return;
+    var done = 0;
+    for (var k = 0; k < steps && _g.paidUndo(); k++) {
+      done++;
+    }
+    if (done > 0) _afterUndo();
   }
 
   void _afterUndo() {
@@ -252,7 +253,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       title: '2048',
       tint: _tint,
       actions: [
-        BarAction(icon: Icons.undo_rounded, tooltip: tr('game_2048.undo_tip', {'n': _g.undosLeft}), onTap: _g.hasHistory ? _undo : null),
+        BarAction(icon: Icons.undo_rounded, tooltip: tr('common.undo'), onTap: _g.hasHistory ? _undo : null),
         BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: _restart),
       ],
       body: Focus(

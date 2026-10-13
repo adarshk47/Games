@@ -11,6 +11,7 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/ball_sort_logic.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 const _kMarkersKey = 'ball_sort.markers';
 
@@ -167,10 +168,15 @@ class _BallSortGameState extends State<BallSortGame> {
     setState(() => _load(_level));
   }
 
-  void _undo() {
+  Future<void> _undo() async {
     if (_history.isEmpty) return;
+    final steps = await UndoOffer.ask(context, available: _history.length);
+    if (!mounted || steps == 0 || _history.isEmpty) return;
     AppAudio.play(Sound.tap);
     setState(() {
+      for (var k = 1; k < steps && _history.length > 1; k++) {
+        _history.removeLast();
+      }
       _state = _history.removeLast();
       _selected = null;
       _lastDest = -1;

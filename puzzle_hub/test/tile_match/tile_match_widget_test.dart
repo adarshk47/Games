@@ -128,18 +128,20 @@ void main() {
     await _finish(t);
   });
 
-  testWidgets('undo and shuffle: one free each, then a paid offer', (t) async {
+  testWidgets('undo opens the go-back offer; shuffle: one free, then paid', (t) async {
     await _setup(t, const TileMatchGame(tier: TmTier.easy, level: 3), coins: 0);
     final lv = tmGenerate(TmTier.easy, 3);
     await _tapTile(t, lv.solution.first);
     expect(find.text('${lv.tiles.length} tiles left'), findsOneWidget); // tray tiles still count
     final undo = find.byKey(const ValueKey('tm_undo'));
     final shuffle = find.byKey(const ValueKey('tm_shuffle'));
-    expect(find.descendant(of: undo, matching: find.text('1')), findsOneWidget);
+    // Undo always opens the "go back" offer (ads or coins, up to 3 steps).
     await t.tap(undo);
     await _settle(t, 2);
-    expect(find.descendant(of: undo, matching: find.text('1')), findsNothing);
-    expect(find.text('Undo move?'), findsNothing);
+    expect(find.text('Go back'), findsWidgets);
+    expect(find.byKey(const ValueKey('undo_coins_1')), findsOneWidget);
+    await t.tap(find.text('Cancel'));
+    await _settle(t, 2);
     await t.tap(shuffle);
     await _settle(t, 2);
     expect(find.text('Tiles shuffled!'), findsOneWidget);
@@ -154,8 +156,7 @@ void main() {
     await _tapTile(t, free);
     await t.tap(undo);
     await _settle(t, 2);
-    expect(find.text('Undo move?'), findsOneWidget);
-    expect(find.text('Use 10 coins'), findsOneWidget);
+    expect(find.byKey(const ValueKey('undo_coins_1')), findsOneWidget);
     await t.tap(find.text('Cancel'));
     await _settle(t, 2);
     await _finish(t);

@@ -471,6 +471,9 @@ class TmGame {
   bool get lost => tray.length >= capacity;
   bool get over => won || lost;
   bool get canUndo => _history.isNotEmpty && !won;
+
+  /// Moves that can be taken back.
+  int get undoDepth => won ? 0 : _history.length;
   int get tilesLeft => onBoard.length + tray.length;
 
   bool isFree(int id) => onBoard.contains(id) && level.above[id].every((a) => !onBoard.contains(a));

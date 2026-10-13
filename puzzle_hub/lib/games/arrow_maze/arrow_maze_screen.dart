@@ -13,6 +13,7 @@ import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/arrow_maze_logic.dart';
 import 'progress.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 class ArrowMazeTheme {
   final String name;
@@ -611,16 +612,20 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     if (h != null) _kick();
   }
 
-  void _undo() {
-    if (over) return;
-    final id = board.undo();
-    if (id == null) return;
-    setState(() {
-      _fx.removeWhere((f) => f.id == id);
-      if (moves > 0) moves--;
-      hinted = null;
-      version++;
-    });
+  Future<void> _undo() async {
+    if (over || board.history.isEmpty) return;
+    final steps = await UndoOffer.ask(context, available: board.history.length);
+    if (!mounted || over) return;
+    for (var k = 0; k < steps; k++) {
+      final id = board.undo();
+      if (id == null) break;
+      setState(() {
+        _fx.removeWhere((f) => f.id == id);
+        if (moves > 0) moves--;
+        hinted = null;
+        version++;
+      });
+    }
   }
 
   int get _stars => (3 - (maxLives - lives)).clamp(1, 3);

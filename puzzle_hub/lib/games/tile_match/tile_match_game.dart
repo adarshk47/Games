@@ -12,8 +12,8 @@ import '../../core/ui/ui.dart';
 import 'logic/tile_match_logic.dart';
 import 'progress.dart';
 import 'tile_art.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
-const _kFreeUndos = 1;
 const _kFreeShuffles = 1;
 const _kFlightMs = 280;
 const _kBurstMs = 320;
@@ -272,14 +272,18 @@ class _TileMatchGameState extends State<TileMatchGame> {
 
   Future<void> _undo() async {
     if (_busy || _won || !_g.canUndo || _g.lost) return;
-    if (!await _payIfNeeded(_undos, _kFreeUndos, OfferKind.undo)) return;
-    if (!_g.canUndo) return;
+    _busy = true;
+    final steps = await UndoOffer.ask(context, available: _g.undoDepth);
+    _busy = false;
+    if (!mounted || steps == 0 || !_g.canUndo) return;
     AppAudio.play(Sound.pop);
     setState(() {
-      final t = _g.undo();
-      if (t != null) _popIn[t] = ++_serial;
+      for (var k = 0; k < steps && _g.canUndo; k++) {
+        final t = _g.undo();
+        if (t != null) _popIn[t] = ++_serial;
+        _undos++;
+      }
       _shown = [..._g.tray];
-      _undos++;
     });
   }
 
@@ -300,7 +304,6 @@ class _TileMatchGameState extends State<TileMatchGame> {
 
   @override
   Widget build(BuildContext context) {
-    final freeUndo = math.max(0, _kFreeUndos - _undos);
     final freeShuffle = math.max(0, _kFreeShuffles - _shuffles);
     final plays = TmProgress.playsLeft(_tier, _level);
     final idle = !_busy && !_won && !_g.over;
@@ -350,7 +353,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
                     key: const ValueKey('tm_undo'),
                     icon: Icons.undo_rounded,
                     label: tr('common.undo'),
-                    badge: freeUndo > 0 ? '$freeUndo' : _coin,
+                    badge: '📺',
                     color: const Color(0xFF4DA8FF),
                     onTap: idle && _g.canUndo ? _undo : null,
                   ),

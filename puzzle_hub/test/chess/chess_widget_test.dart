@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/i18n/i18n.dart';
 import 'package:puzzle_hub/core/storage.dart';
 import 'package:puzzle_hub/games/chess/chess_screen.dart';
@@ -54,7 +55,7 @@ Future<void> disposeScreen(WidgetTester t) async {
 }
 
 void main() {
-  testWidgets('3-min game vs computer: move, AI replies, free undo', (t) async {
+  testWidgets('3-min game vs computer: move, AI replies, undo with an ad', (t) async {
     await openChess(t);
     expect(find.text('Chess'), findsWidgets);
     await t.tap(find.byKey(const ValueKey('mode_cpu')));
@@ -77,9 +78,16 @@ void main() {
     // Black's clock started after white's first move.
     await t.pump(const Duration(milliseconds: 300));
 
-    // Free undo takes back both moves.
+    // Undo: one ad takes back your move and the reply.
+    AdsService.rewardedOverride = (_) async => true;
+    addTearDown(() => AdsService.rewardedOverride = null);
+    AdsService.debugForceEnabled = true;
+    addTearDown(() => AdsService.debugForceEnabled = false);
     await t.tap(find.byKey(const ValueKey('undoBtn')));
-    await t.pump(const Duration(milliseconds: 300));
+    await t.pump(const Duration(milliseconds: 500));
+    await t.pump(const Duration(milliseconds: 100));
+    await t.tap(find.byKey(const ValueKey('undo_ads_1')));
+    await t.pump(const Duration(milliseconds: 500));
     expect(find.text('No moves yet'), findsOneWidget);
     await disposeScreen(t);
   });

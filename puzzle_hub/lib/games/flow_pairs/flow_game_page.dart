@@ -11,6 +11,7 @@ import '../../core/ui/ui.dart';
 import 'flow_painter.dart';
 import 'logic/flow_logic.dart';
 import 'progress.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 const flowTint = Color(0xFF5EEAD4);
 
@@ -219,9 +220,15 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
     });
   }
 
-  void _undo() {
-    if (_finished) return;
-    if (_game.undo()) {
+  Future<void> _undo() async {
+    if (_finished || !_game.canUndo) return;
+    final steps = await UndoOffer.ask(context, available: _game.undoDepth);
+    if (!mounted || _finished) return;
+    var done = 0;
+    for (var k = 0; k < steps && _game.undo(); k++) {
+      done++;
+    }
+    if (done > 0) {
       AppAudio.play(Sound.pop, volume: 0.4);
       _bump();
     }

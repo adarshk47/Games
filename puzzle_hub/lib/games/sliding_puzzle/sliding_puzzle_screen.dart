@@ -11,6 +11,7 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/sliding_logic.dart';
+import 'package:puzzle_hub/core/economy/undo_offer.dart';
 
 const _tint = Color(0xFFB794FF);
 
@@ -327,11 +328,15 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
     }
   }
 
-  void _undo() {
+  Future<void> _undo() async {
     if (_won || _history.isEmpty) return;
+    final steps = await UndoOffer.ask(context, available: _history.length);
+    if (!mounted || steps == 0 || _won) return;
     setState(() {
-      _board = _history.removeLast();
-      _moves--;
+      for (var k = 0; k < steps && _history.isNotEmpty; k++) {
+        _board = _history.removeLast();
+        _moves--;
+      }
     });
     AppAudio.play(Sound.slide, volume: 0.3);
   }

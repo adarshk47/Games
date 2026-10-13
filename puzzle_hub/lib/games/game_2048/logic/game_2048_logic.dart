@@ -94,6 +94,9 @@ class Game2048 {
   /// Whether a previous board is available (free or paid undo).
   bool get hasHistory => _history.isNotEmpty;
 
+  /// Moves that can be taken back.
+  int get historyDepth => _history.length;
+
   int get target => _target;
   bool isStone(int r, int c) => stones.contains(r * size + c);
   bool get canUndo => undosLeft > 0 && _history.isNotEmpty;
