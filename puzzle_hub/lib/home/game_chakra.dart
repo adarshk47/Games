@@ -30,21 +30,30 @@ class GameChakra extends StatefulWidget {
   @override
   State<GameChakra> createState() => _GameChakraState();
 
-  /// Medallion diameter for a wheel of side [size].
-  static double itemSize(double size) => (size * 0.17).clamp(48.0, 72.0);
+  /// Largest medallion diameter (72 down to 40) at which [count] games fit
+  /// on the rings of a wheel of side [size].
+  static double itemSize(double size, [int count = 0]) {
+    final start = (size * 0.17).clamp(48.0, 72.0);
+    for (var d = start; d >= 40; d -= 2) {
+      final caps = radii(size, d).map((r) => capacity(r, d));
+      if (caps.fold<int>(0, (a, b) => a + b) >= count) return d;
+    }
+    return 40;
+  }
 
   static double _labelGap(double d) => d * 0.62;
 
-  /// Radii of the rings, outer first.
-  static List<double> radii(double size) {
-    final d = itemSize(size);
-    final outer = size / 2 - _labelGap(d);
+  /// Radii of the rings for medallions of size [d], outer first. An inner
+  /// ring is added while it stays clear of the diya in the centre.
+  static List<double> radii(double size, [double? d]) {
+    final m = d ?? itemSize(size);
+    final outer = size / 2 - _labelGap(m);
     final rings = <double>[outer];
-    var r = outer - d * 1.42;
-    final hub = size * 0.15 + d * 0.6;
-    while (r > hub) {
+    final hubR = size * 0.13;
+    var r = outer - m * 1.35;
+    while (r - m / 2 >= hubR + 2) {
       rings.add(r);
-      r -= d * 1.42;
+      r -= m * 1.35;
     }
     return rings;
   }
@@ -53,10 +62,10 @@ class GameChakra extends StatefulWidget {
       (2 * math.pi * radius / (d * 1.18)).floor();
 
   /// How many games go on each ring (outer first); the sum may be less than
-  /// [count] when the wheel is full.
+  /// [count] when even the smallest medallions do not fit.
   static List<int> split(int count, double size) {
-    final d = itemSize(size);
-    final rs = radii(size);
+    final d = itemSize(size, count);
+    final rs = radii(size, d);
     final caps = [for (final r in rs) capacity(r, d)];
     final out = List<int>.filled(rs.length, 0);
     var left = count;
@@ -107,10 +116,10 @@ class _GameChakraState extends State<GameChakra> {
   @override
   Widget build(BuildContext context) {
     final size = widget.size;
-    final d = GameChakra.itemSize(size);
-    final rs = GameChakra.radii(size);
+    final d = GameChakra.itemSize(size, widget.list.length);
+    final rs = GameChakra.radii(size, d);
     final counts = GameChakra.split(widget.list.length, size);
-    final hub = size * 0.3;
+    final hub = size * 0.26;
 
     final items = <Widget>[];
     var gi = 0;
