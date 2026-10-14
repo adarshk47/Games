@@ -11,6 +11,7 @@ import '../../core/ui/ui.dart';
 import 'logic/screw_jam_logic.dart';
 import 'progress.dart';
 import 'screw_art.dart';
+import '../../core/economy/undo_offer.dart';
 
 const _kFreeHints = 2;
 const _boxW = 92.0, _boxH = 54.0;
@@ -56,6 +57,9 @@ class ScrewJamGame extends StatefulWidget {
 class _ScrewJamGameState extends State<ScrewJamGame> {
   late int _level;
   late SjGame _g;
+
+  /// Game copies before each of the last 3 moves (undo).
+  final List<SjGame> _history = [];
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
   final _slotKeys = [for (var i = 0; i < kSjSlots; i++) GlobalKey()];
@@ -92,6 +96,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
     _level = level;
     SjProgress.setCurrent(_tier, level);
     _g = SjGame(sjGenerate(_tier, level));
+    _history.clear();
     _epoch++;
     _flights.clear();
     _ghosts.clear();
@@ -105,6 +110,29 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
     _won = false;
     _toast = null;
     _shake = -1;
+  }
+
+  /// Back 1-3 moves: one ad (or 10 coins) per step.
+  Future<void> _undo() async {
+    if (_busy || _won || _history.isEmpty) return;
+    _busy = true;
+    final steps = await UndoOffer.ask(context, available: _history.length);
+    _busy = false;
+    if (!mounted || steps == 0 || _won) return;
+    AppAudio.play(Sound.tap);
+    setState(() {
+      for (var k = 0; k < steps && _history.isNotEmpty; k++) {
+        _g = _history.removeLast();
+      }
+      _epoch++;
+      _flights.clear();
+      _ghosts.clear();
+      _falls.clear();
+      _inFlight.clear();
+      _arrivalDelay.clear();
+      _hint = null;
+      _shake = -1;
+    });
   }
 
   /// Restart / replay / try again: each one counts as a play of a bought
@@ -215,6 +243,8 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
     }
     final from = _screwPos(id);
     final trayBefore = [for (var i = 0; i < _g.trayCapacity; i++) _trayHole(i)];
+    _history.add(_g.clone());
+    if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
     final m = _g.tap(id)!;
     AppAudio.play(Sound.pop);
     AppAudio.haptic();
@@ -416,6 +446,14 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
                 runSpacing: 8,
                 children: [
                   _Pill(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart, big: true),
+                  _Pill(
+                    key: const ValueKey('sj_undo'),
+                    icon: Icons.undo_rounded,
+                    label: tr('common.undo'),
+                    trailing: '📺',
+                    onTap: _g.over || _won || _history.isEmpty ? null : _undo,
+                    big: true,
+                  ),
                   _Pill(
                     icon: Icons.lightbulb_rounded,
                     label: freeHints > 0
@@ -775,7 +813,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.icon, required this.label, this.onTap, this.big = false, this.trailing});
+  const _Pill({super.key, required this.icon, required this.label, this.onTap, this.big = false, this.trailing});
   final IconData icon;
   final String label;
   final VoidCallback? onTap;

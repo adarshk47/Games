@@ -9,6 +9,7 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/block_logic.dart';
+import '../../core/economy/undo_offer.dart';
 
 const _tint = Color(0xFFFF6FB5);
 const _milestones = [500, 1000, 2500];
@@ -255,6 +256,18 @@ class _BlockGameViewState extends State<_BlockGameView> {
     _anchor = null;
   }
 
+  /// Back 1-3 placements: one ad (or 10 coins) per step.
+  Future<void> _undo() async {
+    if (_ended || _g.undoDepth == 0 || _dragSlot != null) return;
+    final steps = await UndoOffer.ask(context, available: _g.undoDepth);
+    if (!mounted || steps == 0 || _ended) return;
+    setState(() {
+      for (var k = 0; k < steps && _g.undo(); k++) {}
+      _flashes.clear();
+      _pops.clear();
+    });
+  }
+
   // ---- drag handling
 
   Offset? _boardOrigin() {
@@ -387,6 +400,11 @@ class _BlockGameViewState extends State<_BlockGameView> {
       tint: _tint,
       onBack: widget.onMenu,
       actions: [
+        BarAction(
+          icon: Icons.undo_rounded,
+          tooltip: tr('common.undo'),
+          onTap: _ended || _g.undoDepth == 0 ? null : _undo,
+        ),
         BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: () => setState(_newGame)),
       ],
       body: LayoutBuilder(builder: (context, bc) {

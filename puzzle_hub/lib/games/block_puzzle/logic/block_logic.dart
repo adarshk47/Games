@@ -129,6 +129,24 @@ class BlockGame {
   int streak = 0; // consecutive placements that cleared lines
   bool over = false;
 
+  /// Board / tray / score before each of the last 3 placements (undo).
+  final List<(List<List<int>>, List<Piece?>, int, int)> _undo = [];
+  static const maxUndo = 3;
+
+  int get undoDepth => _undo.length;
+
+  /// Takes back the last placement. Returns false when there is none.
+  bool undo() {
+    if (_undo.isEmpty) return false;
+    final (g, t, sc, st) = _undo.removeLast();
+    grid = g;
+    tray = t;
+    score = sc;
+    streak = st;
+    over = false;
+    return true;
+  }
+
   void _prefill() {
     var left = tier.prefill;
     var guard = 0;
@@ -189,6 +207,8 @@ class BlockGame {
   PlaceResult? place(int slot, int r, int c) {
     final p = tray[slot];
     if (p == null || over || !canPlace(p, r, c)) return null;
+    _undo.add(([for (final row in grid) List<int>.from(row)], List<Piece?>.from(tray), score, streak));
+    if (_undo.length > maxUndo) _undo.removeAt(0);
     for (final (dr, dc) in p.cells) {
       grid[r + dr][c + dc] = p.color;
     }

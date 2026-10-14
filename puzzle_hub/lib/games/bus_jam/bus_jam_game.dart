@@ -11,6 +11,7 @@ import '../../core/ui/ui.dart';
 import 'bus_art.dart';
 import 'logic/bus_jam_logic.dart';
 import 'progress.dart';
+import '../../core/economy/undo_offer.dart';
 
 const _kFreeHints = 2;
 
@@ -44,6 +45,9 @@ class BusJamGame extends StatefulWidget {
 class _BusJamGameState extends State<BusJamGame> {
   late int _level;
   late BjGame _g;
+
+  /// Game copies before each of the last 3 moves (undo).
+  final List<BjGame> _history = [];
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
   final _busKey = GlobalKey();
@@ -79,6 +83,7 @@ class _BusJamGameState extends State<BusJamGame> {
     _level = level;
     BjProgress.setCurrent(_tier, level);
     _g = BjGame(bjGenerate(_tier, level));
+    _history.clear();
     _epoch++;
     _walks.clear();
     _ghosts.clear();
@@ -91,6 +96,28 @@ class _BusJamGameState extends State<BusJamGame> {
     _won = false;
     _toast = null;
     _shake = -1;
+  }
+
+  /// Back 1-3 moves: one ad (or 10 coins) per step.
+  Future<void> _undo() async {
+    if (_busy || _won || _history.isEmpty) return;
+    _busy = true;
+    final steps = await UndoOffer.ask(context, available: _history.length);
+    _busy = false;
+    if (!mounted || steps == 0 || _won) return;
+    AppAudio.play(Sound.tap);
+    setState(() {
+      for (var k = 0; k < steps && _history.isNotEmpty; k++) {
+        _g = _history.removeLast();
+      }
+      _epoch++;
+      _walks.clear();
+      _ghosts.clear();
+      _inFlight.clear();
+      _arrivalDelay.clear();
+      _hint = null;
+      _shake = -1;
+    });
   }
 
   /// Restart / replay / try again: each one counts as a play of a bought
@@ -210,6 +237,8 @@ class _BusJamGameState extends State<BusJamGame> {
       return;
     }
     final slotsBefore = [for (var i = 0; i < _g.waiting.length; i++) _slotPos(i)];
+    _history.add(_g.clone());
+    if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
     final m = _g.tap(id)!;
     AppAudio.play(Sound.pop);
     AppAudio.haptic();
@@ -397,6 +426,17 @@ class _BusJamGameState extends State<BusJamGame> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(child: _Pill(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart, big: true)),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: _Pill(
+                      key: const ValueKey('bj_undo'),
+                      icon: Icons.undo_rounded,
+                      label: tr('common.undo'),
+                      trailing: '📺',
+                      onTap: _g.over || _won || _history.isEmpty ? null : _undo,
+                      big: true,
+                    ),
+                  ),
                   const SizedBox(width: 10),
                   Flexible(
                     child: _Pill(
@@ -791,7 +831,7 @@ class _LanePainter extends CustomPainter {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.icon, required this.label, this.onTap, this.big = false, this.trailing});
+  const _Pill({super.key, required this.icon, required this.label, this.onTap, this.big = false, this.trailing});
   final IconData icon;
   final String label;
   final VoidCallback? onTap;

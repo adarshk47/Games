@@ -12,6 +12,7 @@ import '../../core/ui/ui.dart';
 import 'hexa_art.dart';
 import 'logic/hexa_sort_logic.dart';
 import 'progress.dart';
+import '../../core/economy/undo_offer.dart';
 
 const _kFreeRefresh = 1;
 const _kMaxContinues = 3;
@@ -47,6 +48,9 @@ class HexaSortGame extends StatefulWidget {
 class _HexaSortGameState extends State<HexaSortGame> {
   late int _level;
   late HsGame _g;
+
+  /// Game copies before each of the last 3 moves (undo).
+  final List<HsGame> _history = [];
   late List<List<int>> _display;
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
@@ -85,6 +89,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
     HsProgress.setCurrent(_tier, _level);
     HsProgress.onStart(_tier, _level);
     _g = HsGame(_levelData(_level));
+    _history.clear();
     _display = [for (final s in _g.stacks) List<int>.of(s)];
     _epoch++;
     _flights.clear();
@@ -172,8 +177,11 @@ class _HexaSortGameState extends State<HexaSortGame> {
       _flash(tr('hexa_sort.occupied'));
       return;
     }
+    final before = _g.clone();
     final m = _g.place(offer, cell);
     if (m == null) return;
+    _history.add(before);
+    if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
     AppAudio.play(Sound.pop);
     AppAudio.haptic();
     setState(() {
@@ -303,6 +311,32 @@ class _HexaSortGameState extends State<HexaSortGame> {
     });
   }
 
+  /// Back 1-3 moves: one ad (or 10 coins) per step.
+  Future<void> _undo() async {
+    if (_busy || _won || _history.isEmpty) return;
+    _busy = true;
+    final steps = await UndoOffer.ask(context, available: _history.length);
+    _busy = false;
+    if (!mounted || steps == 0 || _won) return;
+    AppAudio.play(Sound.tap);
+    setState(() {
+      for (var k = 0; k < steps && _history.isNotEmpty; k++) {
+        _g = _history.removeLast();
+      }
+      _display = [for (final s in _g.stacks) List<int>.of(s)];
+      _epoch++;
+      _flights.clear();
+      _bursts.clear();
+      _drops.clear();
+      _selected = _firstOffer();
+      _shownCleared = _g.cleared;
+      _dragOffer = null;
+      _dragPos = null;
+      _hover = null;
+      _offerSerial++;
+    });
+  }
+
   void _revive() {
     final before = [for (final s in _g.stacks) List<int>.of(s)];
     final cells = _g.revive();
@@ -428,6 +462,14 @@ class _HexaSortGameState extends State<HexaSortGame> {
                 runSpacing: 8,
                 children: [
                   _Pill(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart, big: true),
+                  _Pill(
+                    key: const ValueKey('hs_undo'),
+                    icon: Icons.undo_rounded,
+                    label: tr('common.undo'),
+                    trailing: '📺',
+                    onTap: off || _history.isEmpty ? null : _undo,
+                    big: true,
+                  ),
                   _Pill(
                     icon: Icons.autorenew_rounded,
                     label: freeRefresh > 0
@@ -776,7 +818,7 @@ class _EmptySlotPainter extends CustomPainter {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.icon, required this.label, this.onTap, this.big = false, this.trailing});
+  const _Pill({super.key, required this.icon, required this.label, this.onTap, this.big = false, this.trailing});
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
