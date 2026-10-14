@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../i18n/i18n.dart';
 import 'cloud_auth.dart';
+import 'web_firebase_options.dart';
 import 'leaderboard_service.dart';
 import 'referral_service.dart';
 import 'sync_service.dart';
@@ -28,11 +29,13 @@ class CloudService {
     // The install referrer works without Firebase; read it once on first run
     // (in the background so it never delays app start).
     unawaited(ReferralService.I.captureInstallReferrer());
-    if (kIsWeb || !(Platform.isAndroid || Platform.isIOS)) return;
+    if (!kIsWeb && !(Platform.isAndroid || Platform.isIOS)) return;
     try {
-      // No options: uses the google-services.json resources. Missing file =>
-      // throws => we stay offline.
-      if (Firebase.apps.isEmpty) await Firebase.initializeApp();
+      // Android: no options = the google-services.json resources (missing
+      // file => throws => we stay offline). Web: the MasterG web app config.
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp(options: kIsWeb ? webFirebaseOptions : null);
+      }
       available = true;
     } catch (e) {
       debugPrint('Firebase unavailable: $e');

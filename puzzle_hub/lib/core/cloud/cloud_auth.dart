@@ -98,6 +98,12 @@ class CloudAuth {
   Future<String?> signInWithGoogle() async {
     if (!CloudService.available) return CloudService.pendingText;
     try {
+      if (kIsWeb) {
+        // Browsers: Firebase's own Google popup.
+        final res = await _auth.signInWithPopup(GoogleAuthProvider());
+        if (res.user != null) await _completeSignIn(res.user!);
+        return null;
+      }
       await _ensureGoogle();
       final acc = await GoogleSignIn.instance.authenticate();
       final idToken = acc.authentication.idToken;
@@ -206,7 +212,9 @@ class CloudAuth {
     final u = CloudService.available ? _auth.currentUser : null;
     if (u == null) return tr('cloud.err.not_signed_in');
     try {
-      if (user.value?.isGoogle ?? false) {
+      if ((user.value?.isGoogle ?? false) && kIsWeb) {
+        await u.reauthenticateWithPopup(GoogleAuthProvider());
+      } else if (user.value?.isGoogle ?? false) {
         await _ensureGoogle();
         final acc = await GoogleSignIn.instance.authenticate();
         final t = acc.authentication.idToken;

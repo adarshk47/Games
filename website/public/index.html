@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Master G – 16 Brain Puzzle Games | Play free</title>
+<meta name="description" content="Master G: 16 brain puzzle games in one app – Block Puzzle, 2048, Chess, Sudoku, Ball Sort, Maze and more. Play free in your browser, on iPhone or Android, in 9 languages.">
+<meta name="theme-color" content="#4A1410">
+<link rel="icon" href="/play/favicon.png">
+<link rel="apple-touch-icon" href="/play/icons/apple-touch-icon.png">
+<meta property="og:title" content="Master G – 16 Brain Puzzle Games">
+<meta property="og:description" content="Block Puzzle, 2048, Chess, Sudoku and more. Free on web, iPhone and Android.">
+<meta property="og:image" content="/assets/feature.png">
+<style>
+  :root {
+    --bg0: #1c0805; --bg1: #4a1410; --gold: #ffd369; --zari: #d4af37;
+    --marigold: #ff9f1c; --text: #fff7ea; --dim: #e6cfb3; --card: rgba(255,255,255,.07);
+    --border: rgba(255,224,138,.28);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    color: var(--text);
+    background: radial-gradient(1200px 600px at 20% -10%, #7a2a14 0%, transparent 60%),
+                radial-gradient(900px 500px at 110% 10%, #3b1a6b 0%, transparent 55%),
+                linear-gradient(180deg, var(--bg1), var(--bg0) 60%);
+    min-height: 100vh;
+    line-height: 1.55;
+  }
+  a { color: var(--gold); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+  .toran { height: 14px; background:
+      radial-gradient(circle at 10px 4px, var(--marigold) 6px, transparent 7px) 0 0/20px 14px repeat-x; opacity: .9; }
+  header { display: flex; align-items: center; gap: 12px; padding: 18px 0 6px; }
+  header img { width: 52px; height: 52px; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+  header .name { font-size: 26px; font-weight: 900; background: linear-gradient(90deg, #ffe08a, var(--marigold), var(--zari));
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  header nav { margin-left: auto; display: flex; gap: 14px; font-size: 14px; flex-wrap: wrap; justify-content: flex-end; }
+  header nav a { color: var(--dim); text-decoration: none; }
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; align-items: center; padding: 28px 0 10px; }
+  .hero h1 { font-size: clamp(30px, 6vw, 48px); line-height: 1.1; margin: 0 0 12px; }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: var(--dim); font-size: 17px; margin: 0 0 20px; }
+  .cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: 999px;
+    font-weight: 800; text-decoration: none; font-size: 16px; }
+  .btn.play { background: linear-gradient(135deg, #ffc93c, #ff8f1f); color: #3a1206; box-shadow: 0 10px 28px rgba(255,159,28,.35); }
+  .btn.alt { border: 1px solid var(--border); color: var(--text); background: var(--card); }
+  .hero .shot { justify-self: center; width: min(300px, 80vw); border-radius: 28px; border: 2px solid var(--zari);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; color: var(--dim); font-size: 13px; }
+  .badges span { background: var(--card); border: 1px solid var(--border); padding: 5px 10px; border-radius: 999px; }
+  section { padding: 28px 0; }
+  h2 { font-size: 26px; margin: 0 0 6px; }
+  .sub { color: var(--dim); margin: 0 0 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; }
+  .card .e { font-size: 30px; }
+  .card h3 { margin: 4px 0 2px; font-size: 17px; }
+  .card p { margin: 0; color: var(--dim); font-size: 14px; }
+  .steps { counter-reset: s; display: grid; gap: 10px; padding: 0; list-style: none; }
+  .steps li { counter-increment: s; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px 12px 52px; position: relative; }
+  .steps li::before { content: counter(s); position: absolute; left: 14px; top: 11px; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gold); color: #3a1206; font-weight: 900; display: grid; place-items: center; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  footer { padding: 26px 0 40px; color: var(--dim); font-size: 14px; border-top: 1px solid var(--border); margin-top: 20px; }
+  footer .links { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; text-align: center; }
+    .cta, .badges { justify-content: center; }
+    .two { grid-template-columns: 1fr; }
+    header nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="toran"></div>
+<div class="wrap">
+  <header>
+    <img src="/play/icons/Icon-192.png" alt="Master G icon">
+    <div class="name">Master G</div>
+    <nav>
+      <a href="#games">Games</a>
+      <a href="#install">Install on iPhone</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="mailto:aiforsmart@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Your daily <span>brain gym</span> – 16 puzzle games in one app</h1>
+      <p>Block Puzzle, 2048, Chess, Sudoku, Ball Sort, Maze and more. Easy to Extreme levels, leaderboards and
+        festive themes – free in your browser, on iPhone and on Android, in 9 languages.</p>
+      <div class="cta">
+        <a class="btn play" href="/play/">▶ Play now</a>
+        <a class="btn alt" href="https://play.google.com/store/apps/details?id=com.memorypuzzle.app">Get it on Google Play</a>
+        <a class="btn alt" href="#install"> Install on iPhone</a>
+      </div>
+      <div class="badges">
+        <span>No download needed</span><span>Works offline</span><span>Hindi · English · Hinglish · +6</span>
+      </div>
+    </div>
+    <img class="shot" src="/assets/home.png" alt="Master G home screen with the Diya Chakra of games">
+  </div>
+
+  <section id="games">
+    <h2>16 games for memory, focus and logic</h2>
+    <p class="sub">Every game has Easy, Medium, Hard and Extreme – and a "How to play" guide inside.</p>
+    <div class="grid">
+      <div class="card"><div class="e">🧱</div><h3>Block Puzzle</h3><p>Drop blocks and clear full rows and columns.</p></div>
+      <div class="card"><div class="e">➰</div><h3>Arrow Maze</h3><p>Slide every arrow out of the board.</p></div>
+      <div class="card"><div class="e">🧭</div><h3>Maze Escape</h3><p>Find the exit – or remember the hidden path.</p></div>
+      <div class="card"><div class="e">🧪</div><h3>Ball Sort</h3><p>Sort coloured balls into tubes.</p></div>
+      <div class="card"><div class="e">🔶</div><h3>2048</h3><p>Merge tiles to reach the target.</p></div>
+      <div class="card"><div class="e">♟️</div><h3>Chess</h3><p>Blitz 2, 3, 5, 10 min vs computer or a friend.</p></div>
+      <div class="card"><div class="e">🧠</div><h3>Memory Boost</h3><p>Card Match, Simon and Number Memory.</p></div>
+      <div class="card"><div class="e">🔗</div><h3>Flow</h3><p>Connect dots of the same colour.</p></div>
+      <div class="card"><div class="e">🧩</div><h3>Sliding Puzzle</h3><p>Put the tiles back in order.</p></div>
+      <div class="card"><div class="e">💣</div><h3>Minesweeper</h3><p>Clear the board without hitting a mine.</p></div>
+      <div class="card"><div class="e">🔩</div><h3>Screw Jam</h3><p>Unscrew bolts in the right order.</p></div>
+      <div class="card"><div class="e">🚌</div><h3>Bus Jam</h3><p>Seat every passenger on the right bus.</p></div>
+      <div class="card"><div class="e">🀄</div><h3>Tile Match</h3><p>Match three tiles and clear the board.</p></div>
+      <div class="card"><div class="e">⬢</div><h3>Hexa Sort</h3><p>Stack and merge hexagons by colour.</p></div>
+      <div class="card"><div class="e">🔢</div><h3>Sudoku</h3><p>Classic number puzzle, plus a daily puzzle.</p></div>
+      <div class="card"><div class="e">🎨</div><h3>Focus Colors</h3><p>Stroop, Odd One Out and Match Rule.</p></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="two">
+      <div>
+        <h2> Install on iPhone / iPad</h2>
+        <p class="sub">No App Store needed – add Master G to your home screen:</p>
+        <ol class="steps">
+          <li>Open <b>this page in Safari</b> and tap <b>Play now</b>.</li>
+          <li>Tap the <b>Share</b> button (square with an arrow ↑) at the bottom.</li>
+          <li>Scroll and tap <b>Add to Home Screen</b>, then <b>Add</b>.</li>
+          <li>Open <b>Master G</b> from your home screen – it runs full screen like an app.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>🤖 Android</h2>
+        <p class="sub">Get the full app with widgets and shortcuts:</p>
+        <ol class="steps">
+          <li><a href="https://play.google.com/store/apps/details?id=com.memorypuzzle.app">Open Master G on Google Play</a> and tap <b>Install</b>.</li>
+          <li>Or play right here in Chrome: tap <b>Play now</b> → menu ⋮ → <b>Add to Home screen</b>.</li>
+        </ol>
+        <h2 style="margin-top:22px">☁️ Your progress</h2>
+        <p class="sub">Sign in with Google or email inside the game to keep your coins, records and leaderboard
+          place on every device.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="/play/">Play</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/delete-account.html">Delete account &amp; data</a>
+      <a href="mailto:aiforsmart@gmail.com">aiforsmart@gmail.com</a>
+    </div>
+    © 2026 Adarsh Kumar · Ideal World. All rights reserved.
+  </footer>
+</div>
+</body>
+</html>
