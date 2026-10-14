@@ -8,16 +8,16 @@
     "cleanUrls": false,
     "headers": [
       {
-        "source": "/play/**/*.@(js|wasm|json|png|otf|ttf)",
+        "source": "/play/**/*.@(png|otf|ttf|mp3|wav|ogg)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=3600"
+            "value": "public, max-age=86400"
           }
         ]
       },
       {
-        "source": "/play/index.html",
+        "source": "/play/**/*.@(js|json|wasm|html)",
         "headers": [
           {
             "key": "Cache-Control",
@@ -26,7 +26,7 @@
         ]
       },
       {
-        "source": "/play/flutter_service_worker.js",
+        "source": "/play/",
         "headers": [
           {
             "key": "Cache-Control",
