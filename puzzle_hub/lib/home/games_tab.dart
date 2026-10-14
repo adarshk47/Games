@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ import '../core/ui/ui.dart';
 import '../core/ui/how_to_play.dart';
 import '../games/registry.dart';
 import 'game_chakra.dart';
+import '../core/shortcuts/game_shortcuts.dart';
 
 /// "Game of the day" pick: rotates through [list] by calendar date.
 GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
@@ -30,7 +32,12 @@ GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
 }
 
 /// Opens [g] with the hub's fade + slide transition.
-Future<void> openGame(BuildContext context, GameInfo g) => HowToPlay.run(
+Future<void> openGame(BuildContext context, GameInfo g) {
+  unawaited(GameShortcuts.played(g.id, games)); // widget / icon shortcuts
+  return _openGame(context, g);
+}
+
+Future<void> _openGame(BuildContext context, GameInfo g) => HowToPlay.run(
   g,
   () => Navigator.of(context).push(
     PageRouteBuilder(

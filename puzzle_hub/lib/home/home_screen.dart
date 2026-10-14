@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'profile_screen.dart';
 import '../core/account/account_service.dart';
 import '../core/game_info.dart';
 import '../games/registry.dart';
+import '../core/shortcuts/game_shortcuts.dart';
 
 /// Height of the floating bottom navigation bar (without its outer margin).
 const double kNavBarHeight = 66;
@@ -82,10 +84,30 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    GameShortcuts.pending.addListener(_openPending);
+    unawaited(GameShortcuts.refresh(games));
+    final fromShortcut = GameShortcuts.pending.value != null;
     if (!_welcomed) {
       _welcomed = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) => _showWelcome());
+      // Opened from the widget / an icon shortcut: go straight to that game.
+      if (!fromShortcut) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _showWelcome());
+      }
     }
+    if (fromShortcut) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openPending());
+    }
+  }
+
+  /// Opens the game a widget tap / icon shortcut asked for.
+  void _openPending() {
+    final id = GameShortcuts.pending.value;
+    if (id == null || !mounted) return;
+    GameShortcuts.pending.value = null;
+    final g = games.where((x) => x.id == id);
+    if (g.isEmpty) return;
+    Navigator.of(context).popUntil((r) => r.isFirst);
+    openGame(context, g.first);
   }
 
   /// Same pick as the Games tab banner: one game per calendar day.
@@ -126,6 +148,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
+    GameShortcuts.pending.removeListener(_openPending);
     _fade.dispose();
     super.dispose();
   }

@@ -19,6 +19,7 @@ import 'core/ads/coupon_service.dart';
 import 'core/ads/adfree_grant.dart';
 import 'core/store/app_store.dart';
 import 'core/ads/offline_guard.dart';
+import 'core/shortcuts/game_shortcuts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,7 @@ Future<void> main() async {
     }
   }
   AppAudio.startMusic();
+  unawaited(GameShortcuts.init()); // widget taps / icon shortcuts
   runApp(const PuzzleHubApp());
   // After the first frame: Play shows its own dialog if an update exists.
   unawaited(Future<void>.delayed(const Duration(seconds: 3), AppStore.checkForUpdate));

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="games_widget_desc">Open your favourite Master G games in one tap</string>
+    <string name="games_widget_label">Master G games</string>
+</resources>

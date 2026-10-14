@@ -42,6 +42,18 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-4083049312549641~9106028856"/>
+        <!-- Home-screen widget: 1 row x 3 games, each opens its game. -->
+        <receiver
+            android:name=".GamesWidgetProvider"
+            android:exported="false"
+            android:label="@string/games_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/games_widget_info" />
+        </receiver>
         <!-- Daily reminder notifications (flutter_local_notifications). -->
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">

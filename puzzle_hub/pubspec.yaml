@@ -56,6 +56,8 @@ dependencies:
   in_app_review: ^2.0.12
   in_app_update: ^5.0.0
   connectivity_plus: ^7.3.2
+  home_widget: ^0.10.0
+  quick_actions: ^1.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
