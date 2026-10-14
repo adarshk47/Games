@@ -51,14 +51,20 @@ class GameScaffold extends StatelessWidget {
                 ),
                 const SizedBox(width: 14),
               ],
+              // One line: long titles shrink instead of wrapping.
               Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: Pal.text,
-                    fontSize: embedded ? 26 : 22,
-                    fontWeight: embedded ? FontWeight.w900 : FontWeight.w800,
-                    letterSpacing: 0.3,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: Pal.text,
+                      fontSize: embedded ? 26 : 22,
+                      fontWeight: embedded ? FontWeight.w900 : FontWeight.w800,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ),
               ),
