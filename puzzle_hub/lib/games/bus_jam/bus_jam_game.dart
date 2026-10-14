@@ -12,6 +12,7 @@ import 'bus_art.dart';
 import 'logic/bus_jam_logic.dart';
 import 'progress.dart';
 import '../../core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _kFreeHints = 2;
 
@@ -48,6 +49,7 @@ class _BusJamGameState extends State<BusJamGame> {
 
   /// Game copies before each of the last 3 moves (undo).
   final List<BjGame> _history = [];
+  bool _retryUsed = false;
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
   final _busKey = GlobalKey();
@@ -84,6 +86,7 @@ class _BusJamGameState extends State<BusJamGame> {
     BjProgress.setCurrent(_tier, level);
     _g = BjGame(bjGenerate(_tier, level));
     _history.clear();
+    _retryUsed = false;
     _epoch++;
     _walks.clear();
     _ghosts.clear();
@@ -105,11 +108,15 @@ class _BusJamGameState extends State<BusJamGame> {
     final steps = await UndoOffer.ask(context, available: _history.length);
     _busy = false;
     if (!mounted || steps == 0 || _won) return;
+    _stepBack();
+  }
+
+  void _stepBack() {
+    if (_history.isEmpty) return;
     AppAudio.play(Sound.tap);
     setState(() {
-      for (var k = 0; k < steps && _history.isNotEmpty; k++) {
-        _g = _history.removeLast();
-      }
+      _g = _history.removeLast();
+      _busy = false;
       _epoch++;
       _walks.clear();
       _ghosts.clear();
@@ -343,16 +350,12 @@ class _BusJamGameState extends State<BusJamGame> {
     AppAudio.play(Sound.fail);
     AppAudio.haptic();
     _later(afterMs + 300, () async {
-      if (_g.canAddSlot) {
-        final paid = await showContinueOffer(context, OfferKind.extraLife);
+      if (!_retryUsed && _history.isNotEmpty) {
+        _retryUsed = true;
+        final again = await LoseRetry.offer(context);
         if (!mounted) return;
-        if (paid) {
-          AppAudio.play(Sound.success);
-          setState(() {
-            _g.addSlot();
-            _continues++;
-            _busy = false;
-          });
+        if (again) {
+          _stepBack();
           return;
         }
       }

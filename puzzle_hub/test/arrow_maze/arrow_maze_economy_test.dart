@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/economy/level_gate.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
@@ -90,20 +91,20 @@ void main() {
     final at = rect.topLeft +
         Offset((blocked.head % board.cols + 1) * cell,
             (blocked.head ~/ board.cols + 1) * cell);
+    AdsService.rewardedOverride = (_) async => true;
+    addTearDown(() => AdsService.rewardedOverride = null);
     await t.tapAt(at);
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Use 30 coins'));
+    expect(find.text('One more chance!'), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('retry_yes')));
     await _settle(t);
-    expect(Rewards.balance, 50);
+    expect(Rewards.balance, 80, reason: 'the second chance is an ad, not coins');
     expect(find.text('Out of lives'), findsNothing);
 
-    // Second loss: decline -> normal lose dialog.
+    // Second loss: no more chances -> normal lose dialog.
     await t.tapAt(at);
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Cancel'));
-    await _settle(t);
+    expect(find.text('One more chance!'), findsNothing);
     expect(find.text('Out of lives'), findsOneWidget);
 
     await t.pumpWidget(const SizedBox());

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/economy/level_gate.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
@@ -67,7 +68,7 @@ void main() {
     expect(MazeProgress.canPlay(MazeTier.hard, 7, mode: MazeMode.memory), isFalse);
   });
 
-  testWidgets('memory extreme: paid continue adds 3 bumps, paid peek', (t) async {
+  testWidgets('memory extreme: second chance (ad) adds 3 bumps, paid peek', (t) async {
     await t.binding.setSurfaceSize(const Size(800, 1200));
     await _coins(100);
     final cfg = MemLevel.of(MazeTier.extreme, 1);
@@ -91,12 +92,14 @@ void main() {
       await t.pump(const Duration(milliseconds: 600));
     }
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Use 30 coins'));
+    expect(find.text('One more chance!'), findsOneWidget);
+    AdsService.rewardedOverride = (_) async => true;
+    addTearDown(() => AdsService.rewardedOverride = null);
+    await t.tap(find.byKey(const ValueKey('retry_yes')));
     await _settle(t);
     expect(find.text('Bumps 3 / 6'), findsOneWidget);
     expect(find.text('Hit the walls!'), findsNothing);
-    expect(Rewards.balance, 50);
+    expect(Rewards.balance, 80, reason: 'the second chance is an ad, not coins');
 
     await t.pumpWidget(const SizedBox());
     await t.pump(const Duration(seconds: 4));

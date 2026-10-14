@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/economy/level_gate.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
@@ -121,36 +122,29 @@ void main() {
     await _finish(t);
   });
 
-  testWidgets('full board offers to clear space, declining loses', (t) async {
+  testWidgets('full board: one more chance (ad, one step back) once, then it is over', (t) async {
     final lv = _row(script: [
       [0],
       [1],
       [2],
     ], goal: 10);
+    AdsService.rewardedOverride = (_) async => true;
+    addTearDown(() => AdsService.rewardedOverride = null);
     await _setup(t, HexaSortGame(tier: HsTier.easy, level: 1, custom: lv), coins: 100);
     await _place(t, 0, 0);
     await _place(t, 1, 1);
     await _place(t, 2, 2);
     await _settle(t, 3);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Use 30 coins'));
+    expect(find.text('One more chance!'), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('retry_yes')));
     await _settle(t, 2);
-    expect(Rewards.balance, 70);
+    expect(Rewards.balance, 100, reason: 'no coins are used');
     expect(find.text('Board full!'), findsNothing);
-    // Every cell was freed: placing again works.
-    await _place(t, 0, 1);
-    expect(find.text('Pick an empty cell'), findsNothing);
-    await _finish(t);
-
-    // Declining shows the loss dialog.
-    await _setup(t, HexaSortGame(tier: HsTier.easy, level: 1, custom: lv));
-    await _place(t, 0, 0);
-    await _place(t, 1, 1);
-    await _place(t, 2, 2);
+    // Back before the last placement: cell 2 is free again. Filling it
+    // again loses for good (no second chance).
+    await _place(t, 2, 2); // the offer used last is back in its slot
     await _settle(t, 3);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tapAt(const Offset(4, 4)); // dismiss the offer
-    await _settle(t, 3);
+    expect(find.text('One more chance!'), findsNothing);
     expect(find.text('Board full!'), findsOneWidget);
     await t.tap(find.text('Try again'));
     await _settle(t, 2);

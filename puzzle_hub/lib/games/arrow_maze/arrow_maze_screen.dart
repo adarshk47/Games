@@ -14,6 +14,7 @@ import '../../core/ui/ui.dart';
 import 'logic/arrow_maze_logic.dart';
 import 'progress.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 class ArrowMazeTheme {
   final String name;
@@ -481,7 +482,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   int hintsLeft = 0;
   int moves = 0;
   int continuesUsed = 0;
-  static const maxContinues = 2;
+  static const maxContinues = 1;
   int? hinted;
   bool over = false;
   int version = 0;
@@ -578,7 +579,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     if (!mounted) return;
     if (continuesUsed < maxContinues) {
       final id = loadId;
-      final ok = await showContinueOffer(context, OfferKind.extraLife);
+      final ok = await LoseRetry.offer(context);
       if (!mounted || id != loadId) return;
       if (ok) {
         setState(() {

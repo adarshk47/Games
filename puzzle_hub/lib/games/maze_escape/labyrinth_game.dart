@@ -12,6 +12,7 @@ import 'logic/levels.dart';
 import 'logic/maze.dart';
 import 'maze_escape_screen.dart';
 import 'progress.dart';
+import '../../core/economy/lose_retry.dart';
 
 /// Labyrinth mode: swipe the explorer through a perfect maze to the exit.
 class LabyrinthGame extends StatefulWidget {
@@ -47,7 +48,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   bool _fired = false;
   int _attempt = 0;
   int continuesUsed = 0;
-  static const maxContinues = 2;
+  static const maxContinues = 1;
 
   @override
   void initState() {
@@ -218,7 +219,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
     if (!mounted) return;
     if (continuesUsed < maxContinues) {
       final a = _attempt;
-      final ok = await showContinueOffer(context, OfferKind.extraLife);
+      final ok = await LoseRetry.offer(context);
       if (!mounted || a != _attempt) return;
       if (ok) {
         setState(() {

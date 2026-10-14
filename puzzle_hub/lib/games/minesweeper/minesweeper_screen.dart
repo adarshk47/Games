@@ -10,6 +10,7 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/minesweeper_logic.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _tint = Color(0xFFFB923C);
 const _maxHints = 3;
@@ -59,6 +60,10 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
   final Map<int, int> _delay = {};
   int _moveSeq = 0;
 
+  /// Board before the last move, and whether the one retry was used.
+  (List<bool>, List<bool>, MineStatus, int?)? _snap;
+  bool _retryUsed = false;
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -72,6 +77,8 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
     setState(() {
       _tier = t;
       _game = MineGame.forTier(t);
+      _snap = null;
+      _retryUsed = false;
       _elapsed = 0;
       _hintsUsed = 0;
       _flagMode = false;
@@ -117,7 +124,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
           _delay[i] = 150 + d * 40;
         }
       }
-      _finish(false);
+      _onLost();
     } else if (g.status == MineStatus.won) {
       _timer?.cancel();
       AppAudio.play(Sound.success);
@@ -132,6 +139,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
   void _tap(int i) {
     final g = _game;
     if (g == null || g.over) return;
+    _snap = g.snapshot();
     if (g.revealed[i]) {
       final r = g.chord(i);
       if (r.isNotEmpty || g.status == MineStatus.lost) setState(() => _afterMove(r, i));
@@ -165,6 +173,29 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
     if (r.isEmpty) return;
     _hintsUsed++;
     setState(() => _afterMove(r, r.first));
+  }
+
+  /// Hit a mine: one more chance per game (ad → back to before that tap).
+  Future<void> _onLost() async {
+    final g = _game;
+    final snap = _snap;
+    if (g != null && snap != null && !_retryUsed) {
+      _retryUsed = true;
+      await Future<void>.delayed(const Duration(milliseconds: 900));
+      if (!mounted || !identical(_game, g)) return;
+      if (await LoseRetry.offer(context)) {
+        if (!mounted || !identical(_game, g)) return;
+        setState(() {
+          g.restore(snap);
+          _delay.clear();
+          _moveSeq++;
+        });
+        if (g.status == MineStatus.playing) _tickStart();
+        return;
+      }
+      if (!mounted || !identical(_game, g)) return;
+    }
+    _finish(false);
   }
 
   void _finish(bool won) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
-import '../../core/economy/continue_offer.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
@@ -10,6 +9,7 @@ import '../../core/ui/ui.dart';
 import 'logic/mb_tiers.dart';
 import 'logic/simon_logic.dart';
 import 'mb_widgets.dart';
+import '../../core/economy/lose_retry.dart';
 
 enum _Phase { idle, watching, input, over }
 
@@ -152,7 +152,7 @@ class _SimonGameState extends State<_SimonGame> {
         AppAudio.haptic(true);
         setState(() => phase = _Phase.watching);
         final my = ++round;
-        final paid = await showContinueOffer(context, OfferKind.extraLife);
+        final paid = await LoseRetry.offer(context);
         if (!mounted || my != round) return;
         if (paid) {
           logic.restartInput();

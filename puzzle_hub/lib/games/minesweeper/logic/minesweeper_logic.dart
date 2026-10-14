@@ -64,6 +64,19 @@ class MineGame {
   int get revealedCount => revealed.where((r) => r).length;
   bool get over => status == MineStatus.won || status == MineStatus.lost;
 
+  /// State before a move (for "one step back" after hitting a mine).
+  (List<bool>, List<bool>, MineStatus, int?) snapshot() =>
+      (List<bool>.of(revealed), List<bool>.of(flagged), status, explodedAt);
+
+  void restore((List<bool>, List<bool>, MineStatus, int?) s) {
+    for (var i = 0; i < revealed.length; i++) {
+      revealed[i] = s.$1[i];
+      flagged[i] = s.$2[i];
+    }
+    status = s.$3;
+    explodedAt = s.$4;
+  }
+
   int idx(int r, int c) => r * cols + c;
 
   Iterable<int> neighbors(int i) sync* {

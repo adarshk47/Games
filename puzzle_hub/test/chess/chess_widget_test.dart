@@ -86,8 +86,6 @@ void main() {
     await t.tap(find.byKey(const ValueKey('undoBtn')));
     await t.pump(const Duration(milliseconds: 500));
     await t.pump(const Duration(milliseconds: 100));
-    await t.tap(find.byKey(const ValueKey('undo_ads_1')));
-    await t.pump(const Duration(milliseconds: 500));
     expect(find.text('No moves yet'), findsOneWidget);
     await disposeScreen(t);
   });

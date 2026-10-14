@@ -15,6 +15,7 @@ import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/sudoku_logic.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _saveKey = 'sudoku.save';
 String _bestKey(Difficulty d) => 'sudoku.best.${d.name}';
@@ -294,12 +295,18 @@ class _SudokuScreenState extends State<SudokuScreen> with TickerProviderStateMix
   Future<void> _offerExtraLife(_Game g) async {
     g.lifeOffered = true;
     _offerOpen = true;
-    final paid = await showContinueOffer(context, OfferKind.extraLife);
+    final again = await LoseRetry.offer(context);
     _offerOpen = false;
     if (!mounted || !identical(_g, g)) return;
-    if (paid) {
+    if (again) {
       AppAudio.play(Sound.success);
       setState(() {
+        // One step back: remove the wrong number and its mistake.
+        if (g.undo.isNotEmpty) {
+          final s = g.undo.removeLast();
+          g.cur = s[0];
+          g.notes = s[1];
+        }
         g.mistakes = math.max(0, g.mistakes - 1);
         _over = false;
       });

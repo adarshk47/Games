@@ -10,6 +10,7 @@ import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/block_logic.dart';
 import '../../core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _tint = Color(0xFFFF6FB5);
 const _milestones = [500, 1000, 2500];
@@ -209,6 +210,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
   final _pops = <_Pop>[];
   int _best = 0;
   bool _ended = false;
+  bool _retryUsed = false;
 
   int? _dragSlot;
   Offset _finger = Offset.zero;
@@ -252,6 +254,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
     _flashes.clear();
     _pops.clear();
     _ended = false;
+    _retryUsed = false;
     _dragSlot = null;
     _anchor = null;
   }
@@ -365,7 +368,27 @@ class _BlockGameViewState extends State<_BlockGameView> {
         Rewards.onLevelComplete('block_puzzle', '${_tier.name}-score$m', stars: i + 1, score: _g.score);
       }
     }
-    if (_g.over) _gameOver();
+    if (_g.over) _onNoMoves();
+  }
+
+  /// No block fits: one more chance per game (ad → one step back).
+  Future<void> _onNoMoves() async {
+    if (!_retryUsed && _g.undoDepth > 0) {
+      _retryUsed = true;
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return;
+      if (await LoseRetry.offer(context)) {
+        if (!mounted) return;
+        setState(() {
+          _g.undo();
+          _flashes.clear();
+          _pops.clear();
+        });
+        return;
+      }
+      if (!mounted) return;
+    }
+    _gameOver();
   }
 
   void _gameOver() {

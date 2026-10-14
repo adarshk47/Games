@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
-import '../../core/economy/continue_offer.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
@@ -15,6 +14,7 @@ import 'logic/focus_difficulty.dart';
 import 'logic/odd_logic.dart';
 import 'logic/rule_logic.dart';
 import 'logic/stroop_logic.dart';
+import '../../core/economy/lose_retry.dart';
 
 const focusTint = Color(0xFF5EEAD4);
 
@@ -215,7 +215,7 @@ class _FocusPlayScreenState extends State<FocusPlayScreen> with TickerProviderSt
     if (!_continueUsed && _phase == _Phase.playing) {
       _continueUsed = true;
       _offering = true;
-      final paid = await showContinueOffer(context, OfferKind.extraLife);
+      final paid = await LoseRetry.offer(context);
       if (!mounted) return;
       _offering = false;
       if (paid) {

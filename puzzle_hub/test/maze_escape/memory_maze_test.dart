@@ -182,9 +182,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
     }
     await tester.pump(const Duration(seconds: 1));
-    // Continue offer first (no coins); decline it.
-    expect(find.text('Keep going?'), findsOneWidget);
-    await tester.tap(find.text('Cancel'));
+    // One more chance is offered first; decline it.
+    expect(find.text('One more chance!'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('retry_no')));
     await tester.pump(const Duration(seconds: 1));
     expect(find.text('Hit the walls!'), findsOneWidget);
     expect(MazeProgress.stars(MazeTier.extreme, 1, mode: MazeMode.memory), 0);

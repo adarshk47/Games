@@ -13,9 +13,9 @@ import 'hexa_art.dart';
 import 'logic/hexa_sort_logic.dart';
 import 'progress.dart';
 import '../../core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _kFreeRefresh = 1;
-const _kMaxContinues = 3;
 const _gapMs = 70, _flyMs = 300, _dropMs = 280;
 
 /// A tile flying between two stacks.
@@ -51,6 +51,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
 
   /// Game copies before each of the last 3 moves (undo).
   final List<HsGame> _history = [];
+  bool _retryUsed = false;
   late List<List<int>> _display;
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
@@ -90,6 +91,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
     HsProgress.onStart(_tier, _level);
     _g = HsGame(_levelData(_level));
     _history.clear();
+    _retryUsed = false;
     _display = [for (final s in _g.stacks) List<int>.of(s)];
     _epoch++;
     _flights.clear();
@@ -288,11 +290,12 @@ class _HexaSortGameState extends State<HexaSortGame> {
     AppAudio.play(Sound.fail);
     AppAudio.haptic();
     _later(700, () async {
-      if (_g.continues < _kMaxContinues) {
-        final paid = await showContinueOffer(context, OfferKind.extraLife);
+      if (!_retryUsed && _history.isNotEmpty) {
+        _retryUsed = true;
+        final again = await LoseRetry.offer(context);
         if (!mounted) return;
-        if (paid) {
-          _revive();
+        if (again) {
+          _stepBack();
           return;
         }
       }
@@ -311,18 +314,22 @@ class _HexaSortGameState extends State<HexaSortGame> {
     });
   }
 
-  /// Back 1-3 moves: one ad (or 10 coins) per step.
+  /// Back one move: one ad per tap (max 3 in a row).
   Future<void> _undo() async {
     if (_busy || _won || _history.isEmpty) return;
     _busy = true;
     final steps = await UndoOffer.ask(context, available: _history.length);
     _busy = false;
     if (!mounted || steps == 0 || _won) return;
+    _stepBack();
+  }
+
+  void _stepBack() {
+    if (_history.isEmpty) return;
     AppAudio.play(Sound.tap);
     setState(() {
-      for (var k = 0; k < steps && _history.isNotEmpty; k++) {
-        _g = _history.removeLast();
-      }
+      _g = _history.removeLast();
+      _busy = false;
       _display = [for (final s in _g.stacks) List<int>.of(s)];
       _epoch++;
       _flights.clear();
@@ -335,23 +342,6 @@ class _HexaSortGameState extends State<HexaSortGame> {
       _hover = null;
       _offerSerial++;
     });
-  }
-
-  void _revive() {
-    final before = [for (final s in _g.stacks) List<int>.of(s)];
-    final cells = _g.revive();
-    AppAudio.play(Sound.success);
-    setState(() {
-      for (final c in cells) {
-        final s = before[c];
-        _bursts.add(_Burst(++_serial, c, s.isEmpty ? Colors.white : hsColor(s.last), 0));
-      }
-      _display = [for (final s in _g.stacks) List<int>.of(s)];
-      _busy = false;
-    });
-    final serial = _serial;
-    _later(950, () => setState(() => _bursts.removeWhere((b) => b.serial <= serial)));
-    _flash(tr('hexa_sort.revived'), good: true);
   }
 
   Future<void> _refresh() async {

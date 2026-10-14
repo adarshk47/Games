@@ -12,6 +12,7 @@ import 'logic/levels.dart';
 import 'logic/maze.dart';
 import 'maze_escape_screen.dart';
 import 'progress.dart';
+import '../../core/economy/lose_retry.dart';
 
 /// Memory Maze: study the maze, then walk it in the dark from memory.
 class MemoryMazeGame extends StatefulWidget {
@@ -56,7 +57,7 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
   /// Bumps allowed (0 = unlimited); grows when the player buys a continue.
   int maxBumps = 0;
   int continuesUsed = 0;
-  static const maxContinues = 2;
+  static const maxContinues = 1;
 
   int get _totalPreviewMs => cfg.previewMs + _fadeMs;
 
@@ -239,7 +240,7 @@ class _MemoryMazeGameState extends State<MemoryMazeGame> with TickerProviderStat
     if (!mounted) return;
     if (continuesUsed < maxContinues) {
       final a = _attempt;
-      final ok = await showContinueOffer(context, OfferKind.extraLife);
+      final ok = await LoseRetry.offer(context);
       if (!mounted || a != _attempt) return;
       if (ok) {
         setState(() {

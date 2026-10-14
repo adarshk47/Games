@@ -6,13 +6,13 @@ import 'package:flutter/services.dart' show KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/audio.dart';
-import '../../core/economy/continue_offer.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/game_2048_logic.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _tint = Color(0xFFFB923C);
 const _slideMs = 120;
@@ -189,19 +189,19 @@ class _Game2048ScreenState extends State<Game2048Screen> {
   }
 
   Future<void> _showOver() async {
-    if (!_g.continued && _g.tiles.length > 1) {
-      // One paid continue per game: clear the 2 smallest tiles.
+    if (!_g.continued && _g.hasHistory) {
+      // One more chance per game: watch an ad and go one move back.
+      _g.continued = true;
       _dialogOpen = true;
-      final paid = await showContinueOffer(context, OfferKind.extraLife);
+      final again = await LoseRetry.offer(context);
       _dialogOpen = false;
       if (!mounted) return;
-      if (paid && _g.removeSmallest(2)) {
+      if (again && _g.paidUndo()) {
         AppAudio.play(Sound.success);
         setState(() => _ghosts = []);
         _save();
-        if (_g.hasMoves) return;
+        return;
       }
-      _g.continued = true;
       _save();
     }
     AppAudio.play(Sound.fail);

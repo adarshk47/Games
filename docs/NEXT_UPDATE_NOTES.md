@@ -51,3 +51,6 @@ Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
 - Undo is not in Block Puzzle, Hexa Sort, Screw Jam, Bus Jam (ask if wanted).
 - Build the AAB for 1.0.10 after the next round; user must re-publish firestore.rules
   (coupon redemptions rule).
+15. **Rate each game** – players can rate individual games (stars) inside the app.
+16. **Which game is played most** – the developer must be able to see play counts per game
+    (and the per-game ratings), e.g. Firestore `game_stats/{gameId}` counters or Firebase Analytics.

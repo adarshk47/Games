@@ -13,6 +13,7 @@ import '../../core/ui/ui.dart';
 import 'logic/card_deck.dart';
 import 'logic/mb_tiers.dart';
 import 'mb_widgets.dart';
+import '../../core/economy/lose_retry.dart';
 
 class CardMatchScreen extends StatefulWidget {
   const CardMatchScreen({super.key});
@@ -198,7 +199,7 @@ class _CardBoardState extends State<_CardBoard> {
     AppAudio.haptic(true);
     if (!extraTimeUsed) {
       extraTimeUsed = true;
-      final paid = await showContinueOffer(context, OfferKind.extraLife);
+      final paid = await LoseRetry.offer(context);
       if (!mounted) return;
       if (paid) {
         gen++; // cancel any pending peek/flip callbacks

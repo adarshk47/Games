@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/economy/level_gate.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
@@ -97,8 +98,10 @@ void main() {
     await _finish(t);
   });
 
-  testWidgets('full tray offers an extra slot, declining loses', (t) async {
+  testWidgets('full tray: one more chance (ad, one step back) once, then it is over', (t) async {
     const tier = SjTier.extreme;
+    AdsService.rewardedOverride = (_) async => true;
+    addTearDown(() => AdsService.rewardedOverride = null);
     await _setup(t, const ScrewJamGame(tier: tier, level: 1), coins: 100, size: const Size(400, 860));
     final g = SjGame(sjGenerate(tier, 1));
     final line = _losingLine(g);
@@ -107,22 +110,22 @@ void main() {
       await _tapScrew(t, s);
     }
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Use 30 coins'));
+    expect(find.text('One more chance!'), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('retry_yes')));
     await _settle(t);
     expect(find.text('Tray full!'), findsNothing);
-    expect(Rewards.balance, 70);
-    // Keep filling the bigger tray, then decline.
-    g.addTraySlot();
-    final more = _losingLine(g);
-    expect(g.lost, isTrue);
+    expect(Rewards.balance, 100, reason: 'no coins are used');
+    final back = SjGame(sjGenerate(tier, 1));
+    for (final s in line.sublist(0, line.length - 1)) {
+      back.tap(s);
+    }
+    final more = _losingLine(back);
+    expect(back.lost, isTrue);
     for (final s in more) {
       await _tapScrew(t, s);
     }
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Cancel'));
-    await _settle(t);
+    expect(find.text('One more chance!'), findsNothing);
     expect(find.text('Tray full!'), findsOneWidget);
     await t.tap(find.text('Try again'));
     await _settle(t, 2);

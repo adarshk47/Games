@@ -13,6 +13,7 @@ import 'logic/tile_match_logic.dart';
 import 'progress.dart';
 import 'tile_art.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/economy/lose_retry.dart';
 
 const _kFreeShuffles = 1;
 const _kFlightMs = 280;
@@ -233,12 +234,12 @@ class _TileMatchGameState extends State<TileMatchGame> {
   Future<void> _onLost() async {
     AppAudio.play(Sound.fail);
     AppAudio.haptic(true);
-    final paid = await showContinueOffer(context, OfferKind.extraLife);
+    final again = _continues == 0 && await LoseRetry.offer(context);
     if (!mounted) return;
-    if (paid) {
+    if (again) {
       AppAudio.play(Sound.success);
       setState(() {
-        final back = _g.returnLast(3);
+        final back = _g.returnLast(1);
         for (final t in back) {
           _popIn[t] = ++_serial;
         }
@@ -246,7 +247,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
         _continues++;
         _busy = false;
       });
-      _flash(tr('tile_match.returned'));
+      _flash(tr('retry.back'));
       return;
     }
     showPremiumDialog(

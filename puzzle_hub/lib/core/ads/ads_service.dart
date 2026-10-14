@@ -231,11 +231,19 @@ class AdsService {
 
   // ---- Rewarded --------------------------------------------------------------
 
+  /// After [showRewarded] returned false: true when no ad could be shown at
+  /// all (not loaded, no network), false when the player closed it early.
+  static bool lastRewardedUnavailable = false;
+
   /// Shows a rewarded ad; returns true only if the user earned the reward.
   static Future<bool> showRewarded({String reason = ''}) async {
+    lastRewardedUnavailable = false;
     final o = rewardedOverride;
     if (o != null) return o(reason);
-    if (!kAdsEnabled || !_ready || _showing) return false;
+    if (!kAdsEnabled || !_ready || _showing) {
+      lastRewardedUnavailable = !_showing;
+      return false;
+    }
     try {
       if (_rewarded == null) {
         _loadRewarded();
@@ -248,7 +256,10 @@ class AdsService {
         }
       }
       final ad = _rewarded;
-      if (ad == null) return false;
+      if (ad == null) {
+        lastRewardedUnavailable = true; // no fill / no network
+        return false;
+      }
       _rewarded = null;
       _showing = true;
       var earned = false;
@@ -259,6 +270,7 @@ class AdsService {
           if (!closed.isCompleted) closed.complete();
         },
         onAdFailedToShowFullScreenContent: (a, e) {
+          lastRewardedUnavailable = true;
           a.dispose();
           if (!closed.isCompleted) closed.complete();
         },
@@ -272,6 +284,7 @@ class AdsService {
       return earned;
     } catch (e) {
       debugPrint('rewarded show failed: $e');
+      lastRewardedUnavailable = true;
       _showing = false;
       _loadRewarded();
       return false;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/economy/level_gate.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
@@ -94,8 +95,10 @@ void main() {
     await _finish(t);
   });
 
-  testWidgets('full tray offers a continue that returns 3 tiles; declining loses', (t) async {
+  testWidgets('full tray: one more chance (ad, one step back) once, then it is over', (t) async {
     const tier = TmTier.extreme;
+    AdsService.rewardedOverride = (_) async => true;
+    addTearDown(() => AdsService.rewardedOverride = null);
     await _setup(t, const TileMatchGame(tier: tier, level: 1), coins: 100, size: const Size(400, 860));
     final g = TmGame(tmGenerate(tier, 1));
     final line = losingLine(g);
@@ -104,23 +107,21 @@ void main() {
       await _tapTile(t, id);
     }
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Use 30 coins'));
+    expect(find.text('One more chance!'), findsOneWidget);
+    await t.tap(find.byKey(const ValueKey('retry_yes')));
     await _settle(t, 2);
     expect(find.text('Tray full!'), findsNothing);
-    expect(find.text('3 tiles went back to the board'), findsOneWidget);
-    expect(Rewards.balance, 70);
-    // Fill it again, then decline.
-    g.returnLast();
+    expect(find.text('One step back – try again!'), findsOneWidget);
+    expect(Rewards.balance, 100, reason: 'no coins are used');
+    // Fill it again: no second chance.
+    g.returnLast(1);
     final more = losingLine(g);
     expect(g.lost, isTrue);
     for (final id in more) {
       await _tapTile(t, id);
     }
     await _settle(t);
-    expect(find.text('Keep going?'), findsOneWidget);
-    await t.tap(find.text('Cancel'));
-    await _settle(t);
+    expect(find.text('One more chance!'), findsNothing);
     expect(find.text('Tray full!'), findsOneWidget);
     await t.tap(find.text('Try again'));
     await _settle(t, 2);
@@ -135,13 +136,13 @@ void main() {
     expect(find.text('${lv.tiles.length} tiles left'), findsOneWidget); // tray tiles still count
     final undo = find.byKey(const ValueKey('tm_undo'));
     final shuffle = find.byKey(const ValueKey('tm_shuffle'));
-    // Undo always opens the "go back" offer (ads or coins, up to 3 steps).
+    // Undo plays an ad straight away and takes the move back.
+    var ads = 0;
+    AdsService.rewardedOverride = (_) async => ++ads > 0;
+    addTearDown(() => AdsService.rewardedOverride = null);
     await t.tap(undo);
     await _settle(t, 2);
-    expect(find.text('Go back'), findsWidgets);
-    expect(find.byKey(const ValueKey('undo_coins_1')), findsOneWidget);
-    await t.tap(find.text('Cancel'));
-    await _settle(t, 2);
+    expect(ads, 1);
     await t.tap(shuffle);
     await _settle(t, 2);
     expect(find.text('Tiles shuffled!'), findsOneWidget);
@@ -150,15 +151,13 @@ void main() {
     expect(find.text('Need a hint?'), findsOneWidget);
     await t.tap(find.text('Cancel'));
     await _settle(t, 2);
-    // Undo is disabled with an empty history; after a move it asks for coins.
+    // After another move, undo again costs one more ad.
     final g = TmGame(lv);
     final free = g.freeTiles.first;
     await _tapTile(t, free);
     await t.tap(undo);
     await _settle(t, 2);
-    expect(find.byKey(const ValueKey('undo_coins_1')), findsOneWidget);
-    await t.tap(find.text('Cancel'));
-    await _settle(t, 2);
+    expect(ads, 2);
     await _finish(t);
   });
 
