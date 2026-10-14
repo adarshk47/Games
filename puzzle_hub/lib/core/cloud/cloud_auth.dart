@@ -54,6 +54,17 @@ class CloudAuth {
     });
     AccountService.I.addListener(_onLocalChanged);
     _wasLocalLoggedIn = AccountService.I.loggedIn;
+    if (kIsWeb) unawaited(_finishRedirect());
+  }
+
+  /// Web: back from the Google page after a redirect sign-in.
+  Future<void> _finishRedirect() async {
+    try {
+      final res = await _auth.getRedirectResult();
+      if (res.user != null) await _completeSignIn(res.user!);
+    } catch (e) {
+      debugPrint('redirect sign-in: $e');
+    }
   }
 
   static CloudUser _map(User u) => CloudUser(
@@ -99,10 +110,19 @@ class CloudAuth {
     if (!CloudService.available) return CloudService.pendingText;
     try {
       if (kIsWeb) {
-        // Browsers: Firebase's own Google popup.
-        final res = await _auth.signInWithPopup(GoogleAuthProvider());
-        if (res.user != null) await _completeSignIn(res.user!);
-        return null;
+        // Browsers: Google popup; if the browser blocks it (common on phones,
+        // iPhone Safari) go to the Google page and come back (redirect).
+        final provider = GoogleAuthProvider()..setCustomParameters({'prompt': 'select_account'});
+        try {
+          final res = await _auth.signInWithPopup(provider);
+          if (res.user != null) await _completeSignIn(res.user!);
+          return null;
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'popup-closed-by-user' || e.code == 'cancelled-popup-request') return '';
+          if (e.code != 'popup-blocked' && e.code != 'operation-not-supported-in-this-environment') rethrow;
+          await _auth.signInWithRedirect(provider);
+          return '';
+        }
       }
       await _ensureGoogle();
       final acc = await GoogleSignIn.instance.authenticate();
