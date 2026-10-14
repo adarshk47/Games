@@ -24,6 +24,7 @@ import '../core/app_info.dart';
 import '../core/game_info.dart';
 import '../core/ads/ads_service.dart';
 import '../core/store/app_store.dart';
+import '../core/cloud/game_stats.dart';
 
 /// Account, cloud, coins and per-game records (pushed full screen).
 class ProfileScreen extends StatelessWidget {
@@ -982,6 +983,18 @@ class _GameRecordsScreenState extends State<GameRecordsScreen> {
                             color: Pal.textDim,
                             fontSize: 12,
                           ),
+                        ),
+                        const SizedBox(height: 4),
+                        // Rate this game (1-5 stars).
+                        RateStars(
+                          gameId: g.id,
+                          size: 20,
+                          onPick: (stars) async {
+                            final ok = await GameStats.rate(g.id, stars);
+                            if (!mounted) return;
+                            setState(() {});
+                            _snack(tr(ok ? 'rate_game.thanks' : 'rate_game.signin'));
+                          },
                         ),
                       ],
                     ),

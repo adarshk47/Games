@@ -11,6 +11,7 @@ import 'storage.dart';
 import 'store/app_store.dart';
 import 'ui/palette.dart';
 import 'cheer.dart';
+import 'cloud/game_stats.dart';
 
 /// Coins + per-game records for the signed-in user. All data goes through
 /// [Storage], so it is automatically per-account.
@@ -210,7 +211,7 @@ class Rewards {
     final reward = levelReward(firstTime: first, stars: stars);
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     _recordTier(gameId, tier, won: true, score: score);
-    unawaited(AppStore.onWin());
+    unawaited(_afterWin(gameId));
     AppAudio.play(Sound.win);
     Cheer.win();
     addCoins(
@@ -246,7 +247,7 @@ class Rewards {
   }) {
     _record(gameId, won: won, score: score);
     _recordTier(gameId, tier, won: won, score: score);
-    if (won) unawaited(AppStore.onWin());
+    if (won) unawaited(_afterWin(gameId));
     final pay = runReward(score: score, won: won);
     if (pay > 0) addCoins(pay, source: 'game', gameId: gameId);
     won ? Cheer.win() : Cheer.lose();
@@ -294,6 +295,13 @@ class Rewards {
   static int wins(String g) => Storage.getInt('rec.$g.wins');
   static int levels(String g) => Storage.getInt('rec.$g.levels');
   static int best(String g) => Storage.getInt('rec.$g.best');
+
+  /// Now and then after a win: rate the app, or (if not) rate this game.
+  static Future<void> _afterWin(String gameId) async {
+    try {
+      if (!await AppStore.onWin()) await GameStats.maybeAskAfterWin(gameId);
+    } catch (_) {}
+  }
 
   /// Deletes every record of [gameId] (plays, wins, bests, per-difficulty
   /// records). The `recreset.*` marker makes the deletion win over older

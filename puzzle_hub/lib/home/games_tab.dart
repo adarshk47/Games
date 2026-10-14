@@ -19,6 +19,7 @@ import '../core/ui/how_to_play.dart';
 import '../games/registry.dart';
 import 'game_chakra.dart';
 import '../core/shortcuts/game_shortcuts.dart';
+import '../core/cloud/game_stats.dart';
 
 /// "Game of the day" pick: rotates through [list] by calendar date.
 GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
@@ -34,6 +35,7 @@ GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
 /// Opens [g] with the hub's fade + slide transition.
 Future<void> openGame(BuildContext context, GameInfo g) {
   unawaited(GameShortcuts.played(g.id, games)); // widget / icon shortcuts
+  GameStats.played(g.id); // developer: which game is played most
   return _openGame(context, g);
 }
 

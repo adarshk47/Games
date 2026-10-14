@@ -156,6 +156,34 @@ service cloud.firestore {
       }
     }
 
+    // ------------------------------------------------------------ game stats
+    // game_stats/{gameId}: plays, ratings, stars, r1..r5 (counters only).
+    match /game_stats/{gameId} {
+      function cnt(f) {
+        return resource == null ? 0 : resource.data.get(f, 0);
+      }
+      function step(f, lo, hi) {
+        return request.resource.data.get(f, 0) - cnt(f) >= lo
+          && request.resource.data.get(f, 0) - cnt(f) <= hi;
+      }
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['plays', 'ratings', 'stars', 'r1', 'r2', 'r3', 'r4', 'r5'])
+        && step('plays', 0, 1)
+        && (signedIn() || !(request.resource.data.diff(resource == null ? {} : resource.data).affectedKeys().hasAny(['ratings', 'stars', 'r1', 'r2', 'r3', 'r4', 'r5'])))
+        && step('ratings', 0, 1) && step('stars', -4, 5)
+        && step('r1', -1, 1) && step('r2', -1, 1) && step('r3', -1, 1) && step('r4', -1, 1) && step('r5', -1, 1);
+      allow delete: if false;
+
+      match /ratings/{uid} {
+        allow get: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['stars', 'at'])
+          && request.resource.data.stars is int
+          && request.resource.data.stars >= 1 && request.resource.data.stars <= 5;
+        allow list, delete: if false;
+      }
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
