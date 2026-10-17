@@ -12,6 +12,7 @@ import 'logic/mb_tiers.dart';
 import 'logic/number_logic.dart';
 import 'mb_widgets.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/economy/hint_ad.dart';
 
 enum _Phase { setup, show, input, feedback }
 
@@ -59,6 +60,18 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
     setState(() => phase = _Phase.show);
     await Future.delayed(params.displayFor(number.length));
     if (!mounted || my != token) return;
+    setState(() => phase = _Phase.input);
+  }
+
+  /// Hint: one ad → the same number is shown once more.
+  Future<void> _showAgain() async {
+    if (phase != _Phase.input) return;
+    final my = token;
+    if (!await HintAd.ask(context) || !mounted || my != token || phase != _Phase.input) return;
+    final again = ++token;
+    setState(() => phase = _Phase.show);
+    await Future.delayed(params.displayFor(number.length));
+    if (!mounted || again != token) return;
     setState(() => phase = _Phase.input);
   }
 
@@ -151,6 +164,10 @@ class _NumberMemoryScreenState extends State<NumberMemoryScreen> {
           ? tr('memory_boost.number.title')
           : '${tr('memory_boost.number.short')} - ${tierName(tier)}',
       tint: mbTint,
+      actions: [
+        if (phase == _Phase.input)
+          BarAction(icon: Icons.visibility_rounded, tooltip: tr('memory_boost.show_again'), onTap: _showAgain),
+      ],
       onBack: phase == _Phase.setup
           ? null
           : () {

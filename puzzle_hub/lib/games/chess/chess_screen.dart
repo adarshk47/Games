@@ -17,6 +17,7 @@ import 'logic/chess_game.dart';
 import 'logic/chess_positions.dart';
 import 'widgets/chess_board.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/economy/hint_ad.dart';
 
 const _tint = Color(0xFFC08A4E);
 
@@ -380,6 +381,40 @@ class _ChessScreenState extends State<ChessScreen> {
   }
 
   // ---------------------------------------------------------------- actions
+
+  bool _hinting = false;
+
+  /// One ad → the engine's best move for you: the piece is selected and the
+  /// move is named ("Hint: e2 → e4").
+  Future<void> _hint() async {
+    final g = _game;
+    if (g == null || g.over || !_humanTurn || _hinting) return;
+    _hinting = true;
+    try {
+      if (!await HintAd.ask(context) || !mounted || _game != g || !_humanTurn) return;
+      final req = chessSearchRequest(g.pos, g.hashHistory, const AiConfig(4, 900, 0), seed: 7);
+      String uci;
+      try {
+        uci = await compute(chessSearchEntry, req);
+      } catch (_) {
+        uci = chessSearchEntry({...req, 'depth': 2, 'time': 300});
+      }
+      if (!mounted || _game != g || !_humanTurn) return;
+      final m = g.pos.findUci(uci);
+      if (m == null) return;
+      AppAudio.play(Sound.pop);
+      setState(() => _selected = moveFrom(m));
+      ScaffoldMessenger.maybeOf(context)
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text('💡 ${sqName(moveFrom(m))} → ${sqName(moveTo(m))}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+          duration: const Duration(seconds: 4),
+        ));
+    } finally {
+      _hinting = false;
+    }
+  }
 
   bool get _canUndo {
     final g = _game;
@@ -1027,6 +1062,14 @@ class _ChessScreenState extends State<ChessScreen> {
               _canUndo ? _undo : null,
             ),
           ),
+        Expanded(
+          child: _ctrl(
+            const ValueKey('hintBtn'),
+            Icons.lightbulb_rounded,
+            tr('common.hint'),
+            live && _humanTurn ? _hint : null,
+          ),
+        ),
         Expanded(child: _ctrl(const ValueKey('drawBtn'), Icons.handshake_rounded, tr('chess.offer_draw'), live && g.moves.isNotEmpty ? _offerDraw : null)),
         Expanded(child: _ctrl(const ValueKey('resignBtn'), Icons.flag_rounded, tr('chess.resign'), live ? _resign : null)),
         Expanded(child: _ctrl(const ValueKey('flipBtn'), Icons.swap_vert_rounded, tr('chess.flip'), () => setState(() => _manualFlip = !_manualFlip))),

@@ -10,6 +10,7 @@ import 'logic/mb_tiers.dart';
 import 'logic/simon_logic.dart';
 import 'mb_widgets.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/economy/hint_ad.dart';
 
 enum _Phase { idle, watching, input, over }
 
@@ -118,6 +119,15 @@ class _SimonGameState extends State<_SimonGame> {
     }
     if (!mounted || my != round) return;
     setState(() => phase = _Phase.input);
+  }
+
+  /// Hint: one ad → the sequence plays again (your input starts over).
+  Future<void> _showAgain() async {
+    if (phase != _Phase.input) return;
+    final my = round;
+    if (!await HintAd.ask(context) || !mounted || my != round || phase != _Phase.input) return;
+    logic.restartInput();
+    _playback(++round);
   }
 
   Future<void> _tap(int pad) async {
@@ -260,6 +270,17 @@ class _SimonGameState extends State<_SimonGame> {
                   child: PremiumButton(label: tr('memory_boost.start'), icon: Icons.play_arrow_rounded, onTap: _startGame)
                       .animate(onPlay: (c) => c.repeat(reverse: true))
                       .scale(begin: const Offset(1, 1), end: const Offset(1.05, 1.05), duration: 900.ms),
+                )
+              : phase == _Phase.input
+              ? Center(
+                  child: PremiumButton(
+                    key: const ValueKey('simon_hint'),
+                    label: tr('memory_boost.show_again'),
+                    icon: Icons.replay_rounded,
+                    compact: true,
+                    color: const Color(0xFFE0A526),
+                    onTap: _showAgain,
+                  ),
                 )
               : null,
         ),

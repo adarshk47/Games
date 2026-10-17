@@ -63,4 +63,15 @@ const Map<String, Map<String, String>> memoryBoostStrings = {
   'memory_boost.number.it_was': {'en': "It was {n}", 'hi': "यह {n} था", 'hinglish': "Ye {n} tha", 'te': "అది {n}", 'ta': "அது {n}", 'pa': "ਇਹ {n} ਸੀ", 'bho': "ई {n} रहे", 'mr': "ती {n} होती", 'sa': "सा {n} आसीत्"},
   'memory_boost.number.you_typed': {'en': "You typed {n}", 'hi': "आपने {n} टाइप किया", 'hinglish': "Tumne {n} type kiya", 'te': "నువ్వు {n} టైప్ చేశావు", 'ta': "நீ {n} தட்டச்சு செய்தாய்", 'pa': "ਤੁਸੀਂ {n} ਟਾਈਪ ਕੀਤਾ", 'bho': "रउआ {n} टाइप कइनी", 'mr': "तुम्ही {n} टाइप केले", 'sa': "भवता {n} लिखितम्"},
   'memory_boost.number.round_n': {'en': "Round {n}", 'hi': "राउंड {n}", 'hinglish': "Round {n}", 'te': "రౌండ్ {n}", 'ta': "சுற்று {n}", 'pa': "ਰਾਊਂਡ {n}", 'bho': "राउंड {n}", 'mr': "फेरी {n}", 'sa': "चरणम् {n}"},
+  'memory_boost.show_again': {
+    'en': "Show again 📺",
+    'hi': "फिर दिखाओ 📺",
+    'hinglish': "Phir dikhao 📺",
+    'te': "మళ్ళీ చూపించు 📺",
+    'ta': "மீண்டும் காட்டு 📺",
+    'pa': "ਫਿਰ ਦਿਖਾਓ 📺",
+    'bho': "फेर देखाईं 📺",
+    'mr': "पुन्हा दाखवा 📺",
+    'sa': "पुनः दर्शयत 📺",
+  },
 };

@@ -15,6 +15,7 @@ import 'progress.dart';
 import '../../core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
 import '../../core/move_log.dart';
+import '../../core/economy/hint_ad.dart';
 
 const _kFreeRefresh = 1;
 const _gapMs = 70, _flyMs = 300, _dropMs = 280;
@@ -214,6 +215,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
     final before = _g.clone();
     final m = _g.place(offer, cell);
     if (m == null) return;
+    _hintCell = null;
     _log.add([offer, cell]);
     _history.add(before);
     if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
@@ -384,6 +386,47 @@ class _HexaSortGameState extends State<HexaSortGame> {
     });
   }
 
+  /// Cell suggested by the hint (glows until something is placed).
+  int? _hintCell;
+
+  /// Best (offer, cell): most hexagons cleared, then most merges, never a
+  /// placement that fills the board.
+  (int, int)? _bestPlacement() {
+    (int, int)? best;
+    var bestScore = -1 << 30;
+    for (var o = 0; o < _g.offers.length; o++) {
+      if (_g.offers[o] == null) continue;
+      for (final c in _g.board.openCells) {
+        if (_g.stacks[c].isNotEmpty) continue;
+        final sim = _g.clone();
+        final m = sim.place(o, c);
+        if (m == null) continue;
+        final score = m.cleared * 100 + m.steps.length * 8 + (sim.lost ? -100000 : 0) + sim.emptyCells.length;
+        if (score > bestScore) {
+          bestScore = score;
+          best = (o, c);
+        }
+      }
+    }
+    return best;
+  }
+
+  /// One ad → which stack to place where.
+  Future<void> _showHint() async {
+    if (_busy || _won || _g.over) return;
+    final h = _bestPlacement();
+    if (h == null) return;
+    _busy = true;
+    final ok = await HintAd.ask(context);
+    _busy = false;
+    if (!ok || !mounted || _won || _g.over) return;
+    AppAudio.play(Sound.pop);
+    setState(() {
+      _selected = h.$1;
+      _hintCell = h.$2;
+    });
+  }
+
   Future<void> _refresh() async {
     if (_busy || _g.over) return;
     if (_refreshUsed >= _kFreeRefresh) {
@@ -493,6 +536,14 @@ class _HexaSortGameState extends State<HexaSortGame> {
                 runSpacing: 8,
                 children: [
                   _Pill(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart, big: true),
+                  _Pill(
+                    key: const ValueKey('hs_hint'),
+                    icon: Icons.lightbulb_rounded,
+                    label: tr('common.hint'),
+                    trailing: '📺',
+                    onTap: off ? null : _showHint,
+                    big: true,
+                  ),
                   _Pill(
                     key: const ValueKey('hs_undo'),
                     icon: Icons.undo_rounded,
@@ -614,7 +665,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
                 painter: HsBoardPainter(
                   geo: geo,
                   empty: empty,
-                  highlight: _hover,
+                  highlight: _hover ?? _hintCell,
                   targets: showTargets ? empty : const {},
                 ),
               ),

@@ -15,6 +15,7 @@ import 'tile_art.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
 import '../../core/move_log.dart';
+import '../../core/economy/hint_ad.dart';
 
 const _kFreeShuffles = 1;
 const _kFlightMs = 280;
@@ -190,6 +191,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
     }
     final m = _m;
     final from = m == null ? null : _toRoot(_boardKey, m.origin(_g.level.tiles[id]));
+    _hintId = null;
     final mv = _g.tap(id)!;
     _log.add(id);
     final to = _toRoot(_trayKey, _slotOrigin(mv.index));
@@ -327,6 +329,34 @@ class _TileMatchGameState extends State<TileMatchGame> {
     });
   }
 
+  /// Board tile suggested by the hint (glows gold until tapped).
+  int? _hintId;
+
+  /// A good next tile: completes a triple in the tray, else pairs with a tray
+  /// tile, else a kind with three free tiles, else any free tile.
+  int? _bestTile() {
+    final free = _g.freeTiles.toList();
+    if (free.isEmpty) return null;
+    int inTray(int id) => _g.tray.where((t) => _g.icons[t] == _g.icons[id]).length;
+    int freeOfKind(int id) => free.where((t) => _g.icons[t] == _g.icons[id]).length;
+    free.sort((a, b) {
+      final ta = inTray(a), tb = inTray(b);
+      if (ta != tb) return tb.compareTo(ta);
+      return freeOfKind(b).compareTo(freeOfKind(a));
+    });
+    return free.first;
+  }
+
+  /// One ad → which tile to pick next.
+  Future<void> _showHint() async {
+    if (_busy || _won || _g.over) return;
+    final id = _bestTile();
+    if (id == null) return;
+    if (!await HintAd.ask(context) || !mounted || _won || _g.over) return;
+    AppAudio.play(Sound.pop);
+    setState(() => _hintId = id);
+  }
+
   Future<void> _shuffle() async {
     if (_busy || _won || _g.over || _g.onBoard.length < 2) return;
     if (!await _payIfNeeded(_shuffles, _kFreeShuffles, OfferKind.hint)) return;
@@ -397,6 +427,14 @@ class _TileMatchGameState extends State<TileMatchGame> {
                     badge: '📺',
                     color: const Color(0xFF4DA8FF),
                     onTap: idle && _g.canUndo ? _undo : null,
+                  ),
+                  _Booster(
+                    key: const ValueKey('tm_hint'),
+                    icon: Icons.lightbulb_rounded,
+                    label: tr('common.hint'),
+                    badge: '📺',
+                    color: const Color(0xFFE0A526),
+                    onTap: idle ? _showHint : null,
                   ),
                   _Booster(
                     key: const ValueKey('tm_shuffle'),
@@ -495,7 +533,12 @@ class _TileMatchGameState extends State<TileMatchGame> {
   Widget _tileAt(TmTile t, TmBoardMetrics m) {
     final o = m.origin(t);
     final free = _g.isFree(t.id);
-    Widget tile = TileView(icon: _g.icons[t.id], size: m.tileSize, covered: !free);
+    Widget tile = TileView(
+      icon: _g.icons[t.id],
+      size: m.tileSize,
+      covered: !free,
+      glow: _hintId == t.id ? Pal.gold : null,
+    );
     if (_shake == t.id) {
       tile = tile.animate(key: ValueKey('shake$_shakeSerial')).shake(hz: 6, rotation: 0.06, duration: 380.ms);
     }
@@ -693,7 +736,7 @@ class _Booster extends StatelessWidget {
   Widget build(BuildContext context) {
     final off = onTap == null;
     final body = SizedBox(
-      width: 96,
+      width: 78,
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Stack(clipBehavior: Clip.none, children: [
           Container(
