@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ const _tint = Color(0xFFFF6FB5);
 const _milestones = [500, 1000, 2500];
 
 String _bestKey(Tier t) => 'block.${t.name}.best';
+String _saveKey(Tier t) => 'block.${t.name}.save';
 
 String _tierLabel(Tier t) => tr('common.tier.${t.name}');
 
@@ -91,7 +93,12 @@ class _TierMenu extends StatelessWidget {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Row(children: [
                           Text(_tierLabel(t), style: const TextStyle(color: Pal.text, fontSize: 20, fontWeight: FontWeight.w900)),
-                          if (t.index == last) ...[
+                          if ((Storage.getString(_saveKey(t)) ?? '').isNotEmpty) ...[
+                            const SizedBox(width: 8),
+                            Text('▶ ${tr('common.continue').toUpperCase()}',
+                                key: ValueKey('bp_continue_${t.name}'),
+                                style: const TextStyle(color: Pal.success, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                          ] else if (t.index == last) ...[
                             const SizedBox(width: 8),
                             Text(tr('common.last_played').toUpperCase(),
                                 style: const TextStyle(color: _tint, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
@@ -228,6 +235,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
 
   @override
   void dispose() {
+    _save();
     for (final t in _timers) {
       t.cancel();
     }
@@ -243,14 +251,44 @@ class _BlockGameViewState extends State<_BlockGameView> {
     _timers.add(t);
   }
 
-  void _newGame() {
+  /// Saves the running game so it can be continued later.
+  void _save() {
+    if (_ended || _g.over) {
+      Storage.remove(_saveKey(_tier));
+    } else {
+      Storage.setString(_saveKey(_tier), jsonEncode(_g.toJson()));
+    }
+  }
+
+  /// Continues the saved game of this difficulty, if there is one.
+  bool _resume() {
+    final raw = Storage.getString(_saveKey(_tier));
+    if (raw == null || raw.isEmpty) return false;
+    BlockGame? g;
+    try {
+      g = BlockGame.fromJson(_tier, jsonDecode(raw) as Map<String, dynamic>);
+    } catch (_) {}
+    if (g == null || g.over) return false;
+    _g = g;
+    for (final m in _milestones) {
+      if (g.score >= m) _paid.add(m);
+    }
+    return true;
+  }
+
+  void _restart() {
+    Storage.remove(_saveKey(_tier));
+    _newGame(resume: false);
+  }
+
+  void _newGame({bool resume = true}) {
     for (final t in _timers) {
       t.cancel();
     }
     _timers.clear();
-    _g = BlockGame(_tier);
-    _best = Storage.getInt(_bestKey(_tier));
     _paid.clear();
+    if (!resume || !_resume()) _g = BlockGame(_tier);
+    _best = Storage.getInt(_bestKey(_tier));
     _flashes.clear();
     _pops.clear();
     _ended = false;
@@ -269,6 +307,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
       _flashes.clear();
       _pops.clear();
     });
+    _save();
   }
 
   // ---- drag handling
@@ -368,6 +407,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
         Rewards.onLevelComplete('block_puzzle', '${_tier.name}-score$m', stars: i + 1, score: _g.score);
       }
     }
+    _save();
     if (_g.over) _onNoMoves();
   }
 
@@ -384,6 +424,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
           _flashes.clear();
           _pops.clear();
         });
+        _save();
         return;
       }
       if (!mounted) return;
@@ -394,6 +435,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
   void _gameOver() {
     if (_ended) return;
     _ended = true;
+    Storage.remove(_saveKey(_tier));
     Storage.setBest(_bestKey(_tier), _g.score);
     Rewards.onGameEnd('block_puzzle', score: _g.score, won: _g.score >= _tier.winScore, tier: _tier.name);
     AppAudio.play(Sound.fail);
@@ -407,7 +449,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
         stars: score >= _milestones[2] ? 3 : score >= _milestones[1] ? 2 : score >= _milestones[0] ? 1 : 0,
         color: _tint,
         actions: [
-          DialogAction(tr('common.play_again'), () => setState(_newGame), primary: true),
+          DialogAction(tr('common.play_again'), () => setState(_restart), primary: true),
           DialogAction(tr('common.menu'), widget.onMenu),
         ],
       );
@@ -428,7 +470,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
           tooltip: tr('common.undo'),
           onTap: _ended || _g.undoDepth == 0 ? null : _undo,
         ),
-        BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: () => setState(_newGame)),
+        BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: () => setState(_restart)),
       ],
       body: LayoutBuilder(builder: (context, bc) {
         const trayH = 130.0;

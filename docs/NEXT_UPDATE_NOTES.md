@@ -54,3 +54,13 @@ Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
 15. **Rate each game** – players can rate individual games (stars) inside the app.
 16. **Which game is played most** – the developer must be able to see play counts per game
     (and the per-game ratings), e.g. Firestore `game_stats/{gameId}` counters or Firebase Analytics.
+
+## Round 2026-10-17 (in progress)
+17. **Save & continue every game** – leaving mid-game must resume where you left (only 2048 and
+    Sudoku did). Block Puzzle done.
+18. **Hint in every game** – "what is the next good move" (missing in Block Puzzle, Ball Sort,
+    Sliding Puzzle, Focus Colors, Hexa, Chess, Memory...).
+19. **New, nicer logo / app icon.**
+20. **Arrow Maze shapes** – boards shaped like a train, bus, plane, mountain, city skyline (city
+    in the background) or letters/quotes; arrows slide out of that shape.
+21. Production access answers given in chat (closed test ends 2026-10-18).

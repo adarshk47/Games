@@ -135,6 +135,41 @@ class BlockGame {
 
   int get undoDepth => _undo.length;
 
+  /// Saved-game snapshot (board, tray, score) so a game can be continued.
+  Map<String, Object> toJson() => {
+        'tier': tier.name,
+        'grid': [for (final row in grid) List<int>.of(row)],
+        'tray': [
+          for (final p in tray)
+            p == null ? null : {'c': p.color, 'cells': [for (final (r, c) in p.cells) [r, c]]},
+        ],
+        'score': score,
+        'streak': streak,
+      };
+
+  /// Rebuilds a game from [toJson]; null if the data does not fit [tier].
+  static BlockGame? fromJson(Tier tier, Map<String, dynamic> j) {
+    try {
+      if (j['tier'] != tier.name) return null;
+      final grid = [for (final row in j['grid'] as List) (row as List).cast<int>().toList()];
+      if (grid.length != tier.boardSize) return null;
+      final g = BlockGame.custom(tier, grid);
+      g.tray = [
+        for (final p in j['tray'] as List)
+          p == null
+              ? null
+              : Piece([for (final rc in (p as Map)['cells'] as List) ((rc as List)[0] as int, rc[1] as int)], p['c'] as int),
+      ];
+      g.score = j['score'] as int;
+      g.streak = j['streak'] as int;
+      if (g.tray.every((p) => p == null)) g.refill();
+      g.over = g.isGameOver;
+      return g;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Takes back the last placement. Returns false when there is none.
   bool undo() {
     if (_undo.isEmpty) return false;
