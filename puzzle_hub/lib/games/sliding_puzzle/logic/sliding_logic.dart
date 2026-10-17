@@ -115,6 +115,77 @@ class SlidingLogic {
   }
 
   /// Par (move target) for a scramble depth.
+  /// Hint: index of the tile to tap next. Searches the real solution
+  /// (IDA* with Manhattan distance) within [budget] nodes; on big boards it
+  /// falls back to the single move that helps most. Null when solved.
+  static int? hintMove(List<int> t, int n, {int budget = 60000}) {
+    if (isSolved(t)) return null;
+    int manhattan(List<int> b) {
+      var d = 0;
+      for (var i = 0; i < b.length; i++) {
+        final v = b[i];
+        if (v == 0) continue;
+        d += ((v - 1) ~/ n - i ~/ n).abs() + ((v - 1) % n - i % n).abs();
+      }
+      return d;
+    }
+
+    List<int> neighbours(int blank) => [
+          if (blank >= n) blank - n,
+          if (blank < n * n - n) blank + n,
+          if (blank % n > 0) blank - 1,
+          if (blank % n < n - 1) blank + 1,
+        ];
+
+    var nodes = 0;
+    int? first;
+    final b = List<int>.of(t);
+    // Depth-first search bounded by f = g + h; returns -1 when solved.
+    int search(int blank, int g, int bound, int prev) {
+      final h = manhattan(b);
+      final f = g + h;
+      if (f > bound) return f;
+      if (h == 0) return -1;
+      if (++nodes > budget) return 1 << 30;
+      var min = 1 << 30;
+      for (final nb in neighbours(blank)) {
+        if (nb == prev) continue;
+        b[blank] = b[nb];
+        b[nb] = 0;
+        if (g == 0) first = nb;
+        final r = search(nb, g + 1, bound, blank);
+        b[nb] = b[blank];
+        b[blank] = 0;
+        if (r == -1) return -1;
+        if (r < min) min = r;
+      }
+      return min;
+    }
+
+    final blank0 = t.indexOf(0);
+    var bound = manhattan(b);
+    while (nodes <= budget) {
+      final r = search(blank0, 0, bound, -1);
+      if (r == -1) return first;
+      if (r >= 1 << 30) break;
+      bound = r;
+    }
+    // Too big to solve quickly: the move that lowers the distance most.
+    int? best;
+    var bestD = 1 << 30;
+    for (final nb in neighbours(blank0)) {
+      final c = List<int>.of(t)
+        ..[blank0] = t[nb]
+        ..[nb] = 0;
+      final d = manhattan(c);
+      if (d < bestD) {
+        bestD = d;
+        best = nb;
+      }
+    }
+    return best;
+  }
+
   static int par(int depth) => depth;
 
   /// 3 stars within 1.5x par, 2 within 2.5x par, otherwise 1.

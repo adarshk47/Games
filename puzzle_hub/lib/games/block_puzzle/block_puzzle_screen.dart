@@ -12,6 +12,7 @@ import '../../core/ui/ui.dart';
 import 'logic/block_logic.dart';
 import '../../core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/economy/hint_ad.dart';
 
 const _tint = Color(0xFFFF6FB5);
 const _milestones = [500, 1000, 2500];
@@ -223,6 +224,9 @@ class _BlockGameViewState extends State<_BlockGameView> {
   Offset _finger = Offset.zero;
   (int, int)? _anchor;
   bool _valid = false;
+
+  /// Hint shown on the board: tray slot + top-left cell, in gold.
+  (int, int, int)? _hint;
   double _boardCell = 40;
 
   Tier get _tier => widget.tier;
@@ -297,6 +301,20 @@ class _BlockGameViewState extends State<_BlockGameView> {
     _anchor = null;
   }
 
+  /// One ad → the best place for one of the tray blocks, shown in gold.
+  Future<void> _showHint() async {
+    if (_ended || _dragSlot != null) return;
+    final h = _g.bestPlacement();
+    if (h == null) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(tr('hint.none'))));
+      return;
+    }
+    if (!await HintAd.ask(context) || !mounted || _ended) return;
+    AppAudio.play(Sound.pop);
+    setState(() => _hint = h);
+    _later(const Duration(seconds: 5), () => setState(() => _hint = null));
+  }
+
   /// Back 1-3 placements: one ad (or 10 coins) per step.
   Future<void> _undo() async {
     if (_ended || _g.undoDepth == 0 || _dragSlot != null) return;
@@ -348,6 +366,7 @@ class _BlockGameViewState extends State<_BlockGameView> {
     final c = ((tl.dx - o.dx - _pad) / _boardCell).round();
     final r = ((tl.dy - o.dy - _pad) / _boardCell).round();
     _anchor = (r, c);
+    _hint = null;
     _valid = _g.canPlace(p, r, c);
   }
 
@@ -466,6 +485,11 @@ class _BlockGameViewState extends State<_BlockGameView> {
       onBack: widget.onMenu,
       actions: [
         BarAction(
+          icon: Icons.lightbulb_rounded,
+          tooltip: tr('common.hint'),
+          onTap: _ended ? null : _showHint,
+        ),
+        BarAction(
           icon: Icons.undo_rounded,
           tooltip: tr('common.undo'),
           onTap: _ended || _g.undoDepth == 0 ? null : _undo,
@@ -539,6 +563,13 @@ class _BlockGameViewState extends State<_BlockGameView> {
       }
     }
     final ghostColor = dp == null ? Colors.white : Pal.accents[dp.color % 8];
+    final hintCells = <int>{};
+    final h = _hint;
+    if (h != null && dp == null && h.$1 < _g.tray.length && _g.tray[h.$1] != null) {
+      for (final (dr, dc) in _g.tray[h.$1]!.cells) {
+        hintCells.add((h.$2 + dr) * n + h.$3 + dc);
+      }
+    }
 
     return Container(
       key: _boardKey,
@@ -568,11 +599,17 @@ class _BlockGameViewState extends State<_BlockGameView> {
                   decoration: BoxDecoration(
                     color: ghost.contains(r * n + c)
                         ? ghostColor.withValues(alpha: 0.55)
+                        : hintCells.contains(r * n + c)
+                        ? Pal.gold.withValues(alpha: 0.45)
                         : hi.contains(r * n + c)
                             ? Colors.white.withValues(alpha: 0.18)
                             : Colors.black.withValues(alpha: 0.22),
                     borderRadius: BorderRadius.circular(cell * 0.22),
-                    border: ghost.contains(r * n + c) ? Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.5) : null,
+                    border: ghost.contains(r * n + c)
+                        ? Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.5)
+                        : hintCells.contains(r * n + c)
+                        ? Border.all(color: Pal.gold, width: 2)
+                        : null,
                   ),
                 ),
               ),

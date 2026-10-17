@@ -13,6 +13,7 @@ import '../../core/ui/ui.dart';
 import 'logic/game_2048_logic.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/economy/hint_ad.dart';
 
 const _tint = Color(0xFFFB923C);
 const _slideMs = 120;
@@ -137,6 +138,23 @@ class _Game2048ScreenState extends State<Game2048Screen> {
     _save();
   }
 
+  /// One ad → which way to swipe next.
+  Future<void> _hint() async {
+    if (_dialogOpen) return;
+    final d = _g.bestMove();
+    if (d == null) {
+      _snack(tr('hint.none'));
+      return;
+    }
+    if (!await HintAd.ask(context) || !mounted) return;
+    AppAudio.play(Sound.pop);
+    _snack(tr('hint.swipe', {'dir': tr('hint.dir.${d.name}')}));
+  }
+
+  void _snack(String m) => ScaffoldMessenger.maybeOf(context)
+    ?..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(m, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)), duration: const Duration(seconds: 3)));
+
   void _move(Dir d) {
     if (_dialogOpen) return;
     final res = _g.move(d);
@@ -253,6 +271,7 @@ class _Game2048ScreenState extends State<Game2048Screen> {
       title: '2048',
       tint: _tint,
       actions: [
+        BarAction(icon: Icons.lightbulb_rounded, tooltip: tr('common.hint'), onTap: _hint),
         BarAction(icon: Icons.undo_rounded, tooltip: tr('common.undo'), onTap: _g.hasHistory ? _undo : null),
         BarAction(icon: Icons.refresh_rounded, tooltip: tr('common.restart'), onTap: _restart),
       ],

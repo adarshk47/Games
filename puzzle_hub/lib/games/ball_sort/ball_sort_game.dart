@@ -13,6 +13,7 @@ import '../../core/ui/ui.dart';
 import 'logic/ball_sort_logic.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
 import '../../core/move_log.dart';
+import '../../core/economy/hint_ad.dart';
 
 const _kMarkersKey = 'ball_sort.markers';
 
@@ -223,6 +224,55 @@ class _BallSortGameState extends State<BallSortGame> {
 
   bool _offerOpen = false;
 
+  /// Hint: tube to pour into (the source is shown selected).
+  int? _hintTo;
+
+  /// A good next pour: completes a tube, or joins the same colour, without
+  /// pointless moves (a finished/single-colour tube into an empty one).
+  (int, int)? _bestPour() {
+    final st = _state;
+    (int, int)? best;
+    var bestScore = -1 << 30;
+    final n = st.tubes.length;
+    for (var a = 0; a < n; a++) {
+      final src = st.tubes[a];
+      if (src.isEmpty) continue;
+      final uniform = src.every((c) => c == src.first);
+      for (var b = 0; b < n; b++) {
+        if (a == b || !st.canPour(a, b)) continue;
+        final dst = st.tubes[b];
+        if (uniform && dst.isEmpty) continue; // pointless
+        final moved = st.pourCount(a, b);
+        var score = 0;
+        if (dst.isNotEmpty && dst.last == src.last) score += 40;
+        if (dst.isNotEmpty && dst.every((c) => c == dst.first) && dst.length + moved == st.capacity) score += 200;
+        if (moved == st.topRun(a)) score += 15; // whole run moves: reveals a new colour
+        if (dst.isEmpty) score -= 10;
+        if (score > bestScore) {
+          bestScore = score;
+          best = (a, b);
+        }
+      }
+    }
+    return best;
+  }
+
+  /// One ad → a good next pour (source lifted, target glowing).
+  Future<void> _showHint() async {
+    if (_won) return;
+    final h = _bestPour();
+    if (h == null) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(tr('hint.none'))));
+      return;
+    }
+    if (!await HintAd.ask(context) || !mounted || _won) return;
+    AppAudio.play(Sound.pop);
+    setState(() {
+      _selected = h.$1;
+      _hintTo = h.$2;
+    });
+  }
+
   Future<void> _addTube() async {
     if (_state.canAddTube) {
       AppAudio.play(Sound.tap);
@@ -252,6 +302,7 @@ class _BallSortGameState extends State<BallSortGame> {
 
   void _tap(int i) {
     if (_won) return;
+    _hintTo = null;
     setState(() {
       final sel = _selected;
       if (sel == null) {
@@ -333,7 +384,7 @@ class _BallSortGameState extends State<BallSortGame> {
         balls: _state.tubes[i],
         capacity: _state.capacity,
         ball: ball,
-        selected: _selected == i,
+        selected: _selected == i || _hintTo == i,
         lifted: _selected == i ? _state.topRun(i) : 0,
         markers: _markers,
         dropCount: _lastDest == i ? _lastCount : 0,
@@ -429,6 +480,7 @@ class _BallSortGameState extends State<BallSortGame> {
               spacing: 10,
               runSpacing: 10,
               children: [
+                _Pill(icon: Icons.lightbulb_rounded, label: tr('common.hint'), onTap: _won ? null : _showHint, big: true),
                 _Pill(icon: Icons.undo_rounded, label: tr('common.undo'), onTap: _history.isEmpty ? null : _undo, big: true),
                 _Pill(icon: Icons.refresh_rounded, label: tr('common.restart'), onTap: _restart, big: true),
                 _Pill(

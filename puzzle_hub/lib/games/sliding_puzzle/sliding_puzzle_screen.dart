@@ -12,7 +12,10 @@ import '../../core/rewards.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/sliding_logic.dart';
+
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+
+import '../../core/economy/hint_ad.dart';
 
 const _tint = Color(0xFFB794FF);
 
@@ -23,7 +26,8 @@ String _kTime(SlideTier t, int l) => 'sliding.${t.key}.bestTime.$l';
 int _stars(SlideTier t, int l) => Storage.getInt(_kStars(t, l));
 
 /// Unlocked through progress: level 1, a cleared level, or the one after it.
-bool _unlocked(SlideTier t, int l) => l == 1 || _stars(t, l) > 0 || _stars(t, l - 1) > 0;
+bool _unlocked(SlideTier t, int l) =>
+    l == 1 || _stars(t, l) > 0 || _stars(t, l - 1) > 0;
 
 /// [LevelGate] prefix, e.g. `sliding.easy`.
 String slideGatePrefix(SlideTier t) => 'sliding.${t.key}';
@@ -37,18 +41,28 @@ int slideFreeUpTo(SlideTier t) {
 }
 
 /// Plays left on a level skipped to with coins (0 for unlocked levels).
-int slidePlaysLeft(SlideTier t, int l) => _unlocked(t, l) ? 0 : LevelGate.playsLeft(slideGatePrefix(t), l);
+int slidePlaysLeft(SlideTier t, int l) =>
+    _unlocked(t, l) ? 0 : LevelGate.playsLeft(slideGatePrefix(t), l);
 
-bool slideCanPlay(SlideTier t, int l) => _unlocked(t, l) || slidePlaysLeft(t, l) > 0;
+bool slideCanPlay(SlideTier t, int l) =>
+    _unlocked(t, l) || slidePlaysLeft(t, l) > 0;
 
 /// Counts one play of a bought level (no-op for unlocked levels).
-Future<void> slideOnStart(SlideTier t, int l) =>
-    LevelGate.onStart(slideGatePrefix(t), _unlocked(t, l) ? l : slideFreeUpTo(t), l);
+Future<void> slideOnStart(SlideTier t, int l) => LevelGate.onStart(
+  slideGatePrefix(t),
+  _unlocked(t, l) ? l : slideFreeUpTo(t),
+  l,
+);
 
 /// Makes sure level [l] may be played; a locked level must be bought first.
 Future<bool> _ensurePlayable(BuildContext context, SlideTier t, int l) async {
   if (slideCanPlay(t, l)) return true;
-  return LevelGate.buy(context, prefix: slideGatePrefix(t), freeUpTo: slideFreeUpTo(t), level: l);
+  return LevelGate.buy(
+    context,
+    prefix: slideGatePrefix(t),
+    freeUpTo: slideFreeUpTo(t),
+    level: l,
+  );
 }
 
 String _tierLabel(SlideTier t) => tr('common.tier.${t.name}');
@@ -75,9 +89,9 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
   int _attempt = 0;
 
   void _open(int level) => setState(() {
-        _level = level;
-        _attempt++;
-      });
+    _level = level;
+    _attempt++;
+  });
 
   /// Tapping a level tile: free levels open; locked ones can be skipped to
   /// with coins (100 per skipped level, a limited number of plays).
@@ -98,7 +112,9 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
   Widget build(BuildContext context) {
     final playing = _level != null;
     return GameScaffold(
-      title: playing ? '${_tierLabel(_tier)} - ${tr('common.level_n', {'n': _level})}' : tr('sliding_puzzle.title'),
+      title: playing
+          ? '${_tierLabel(_tier)} - ${tr('common.level_n', {'n': _level})}'
+          : tr('sliding_puzzle.title'),
       tint: _tint,
       onBack: playing ? _toMenu : null,
       body: playing ? _gameView() : _menu(),
@@ -121,64 +137,119 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
   }
 
   Widget _menu() {
-    int total(SlideTier t) => [for (var l = 1; l <= SlideTier.levelCount; l++) _stars(t, l)].fold(0, (a, b) => a + b);
+    int total(SlideTier t) =>
+        [for (var l = 1; l <= SlideTier.levelCount; l++) _stars(t, l)]
+            .fold(0, (a, b) => a + b);
     final header = <Widget>[
-      Row(children: [
-        for (final t in SlideTier.values)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: GlassCard(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                radius: 18,
-                blur: 0,
-                glow: t == _tier ? _tint : null,
-                gradient: t == _tier
-                    ? LinearGradient(colors: [_tint.withValues(alpha: 0.5), _tint.withValues(alpha: 0.18)])
-                    : null,
-                onTap: () => setState(() => _tier = t),
-                child: Column(children: [
-                  Text('${t.size}x${t.size}',
-                      style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 18)),
-                  const SizedBox(height: 2),
-                  FittedBox(
-                    child: Text(_tierLabel(t),
-                        style: TextStyle(
-                            color: t == _tier ? Pal.text : Pal.textDim, fontWeight: FontWeight.w700, fontSize: 12)),
+      Row(
+        children: [
+          for (final t in SlideTier.values)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3),
+                child: GlassCard(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 4,
                   ),
-                  const SizedBox(height: 4),
-                  Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.star_rounded, size: 12, color: Pal.gold),
-                    Text(' ${total(t)}', style: const TextStyle(color: Pal.gold, fontSize: 11, fontWeight: FontWeight.w800)),
-                  ]),
-                ]),
+                  radius: 18,
+                  blur: 0,
+                  glow: t == _tier ? _tint : null,
+                  gradient: t == _tier
+                      ? LinearGradient(
+                          colors: [
+                            _tint.withValues(alpha: 0.5),
+                            _tint.withValues(alpha: 0.18),
+                          ],
+                        )
+                      : null,
+                  onTap: () => setState(() => _tier = t),
+                  child: Column(
+                    children: [
+                      Text(
+                        '${t.size}x${t.size}',
+                        style: const TextStyle(
+                          color: Pal.text,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      FittedBox(
+                        child: Text(
+                          _tierLabel(t),
+                          style: TextStyle(
+                            color: t == _tier ? Pal.text : Pal.textDim,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 12,
+                            color: Pal.gold,
+                          ),
+                          Text(
+                            ' ${total(t)}',
+                            style: const TextStyle(
+                              color: Pal.gold,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-      ]).animate().fadeIn(duration: 350.ms).slideY(begin: 0.1, end: 0),
+        ],
+      ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.1, end: 0),
       const SizedBox(height: 12),
       GlassCard(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         radius: 20,
         blur: 0,
-        child: Row(children: [
-          const Icon(Icons.image_rounded, color: _tint),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(tr('sliding_puzzle.picture_mode'), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w700, fontSize: 15)),
-          ),
-          Switch(
-            value: _picture,
-            activeThumbColor: _tint,
-            onChanged: (v) {
-              Storage.setBool('sliding.picture', v);
-              setState(() => _picture = v);
-            },
-          ),
-        ]),
+        child: Row(
+          children: [
+            const Icon(Icons.image_rounded, color: _tint),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                tr('sliding_puzzle.picture_mode'),
+                style: const TextStyle(
+                  color: Pal.text,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+            Switch(
+              value: _picture,
+              activeThumbColor: _tint,
+              onChanged: (v) {
+                Storage.setBool('sliding.picture', v);
+                setState(() => _picture = v);
+              },
+            ),
+          ],
+        ),
       ),
       const SizedBox(height: 16),
-      Text(tr('sliding_puzzle.choose_level'), style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700, fontSize: 14)),
+      Text(
+        tr('sliding_puzzle.choose_level'),
+        style: const TextStyle(
+          color: Pal.textDim,
+          fontWeight: FontWeight.w700,
+          fontSize: 14,
+        ),
+      ),
       const SizedBox(height: 10),
     ];
     return CustomScrollView(
@@ -191,8 +262,15 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 0.95),
-            delegate: SliverChildBuilderDelegate((_, i) => _levelTile(i + 1), childCount: SlideTier.levelCount),
+              crossAxisCount: 4,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 0.95,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (_, i) => _levelTile(i + 1),
+              childCount: SlideTier.levelCount,
+            ),
           ),
         ),
       ],
@@ -213,30 +291,55 @@ class _SlidingPuzzleScreenState extends State<SlidingPuzzleScreen> {
         blur: 0,
         glow: plays > 0 ? Pal.gold : null,
         onTap: () => _tapLevel(l),
-        child: Stack(fit: StackFit.expand, children: [
-          FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            if (plays > 0)
-              Text(tr('sliding_puzzle.bought'),
-                  style: const TextStyle(color: Pal.gold, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-            Text('$l',
-                style: TextStyle(color: open ? Pal.text : Pal.textDim, fontWeight: FontWeight.w900, fontSize: 20)),
-            const SizedBox(height: 4),
-            if (plays > 0)
-              Text(tr('common.skip.plays_left', {'n': plays}),
-                  style: const TextStyle(color: Pal.gold, fontSize: 10, fontWeight: FontWeight.w800))
-            else
-              StarRow(stars: s, size: 13),
-          ]),
-          ),
-          if (!open)
-            const Positioned(
-              top: 0,
-              right: 0,
-              child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (plays > 0)
+                    Text(
+                      tr('sliding_puzzle.bought'),
+                      style: const TextStyle(
+                        color: Pal.gold,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  Text(
+                    '$l',
+                    style: TextStyle(
+                      color: open ? Pal.text : Pal.textDim,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  if (plays > 0)
+                    Text(
+                      tr('common.skip.plays_left', {'n': plays}),
+                      style: const TextStyle(
+                        color: Pal.gold,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    )
+                  else
+                    StarRow(stars: s, size: 13),
+                ],
+              ),
             ),
-        ]),
+            if (!open)
+              const Positioned(
+                top: 0,
+                right: 0,
+                child: Icon(Icons.lock_rounded, size: 12, color: Pal.textDim),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -265,10 +368,12 @@ class _SlideGame extends StatefulWidget {
   State<_SlideGame> createState() => _SlideGameState();
 }
 
-class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMixin {
+class _SlideGameState extends State<_SlideGame>
+    with SingleTickerProviderStateMixin {
   late final int n = widget.tier.size;
   late final int depth = widget.tier.depthFor(widget.level);
-  late final Random _rng = widget.rng ?? Random(widget.tier.seedFor(widget.level));
+  late final Random _rng =
+      widget.rng ?? Random(widget.tier.seedFor(widget.level));
   late List<int> _start;
   late List<int> _board;
   final List<List<int>> _history = [];
@@ -276,7 +381,10 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
   int _seconds = 0;
   bool _won = false;
   Timer? _timer;
-  late final AnimationController _wave = AnimationController(vsync: this, duration: const Duration(milliseconds: 1600));
+  late final AnimationController _wave = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  );
 
   @override
   void initState() {
@@ -312,7 +420,15 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
     if (_won || _moves == 0) {
       Storage.remove(_saveKey);
     } else {
-      Storage.setString(_saveKey, jsonEncode({'l': widget.level, 'b': _board, 'm': _moves, 't': _seconds}));
+      Storage.setString(
+        _saveKey,
+        jsonEncode({
+          'l': widget.level,
+          'b': _board,
+          'm': _moves,
+          't': _seconds,
+        }),
+      );
     }
   }
 
@@ -338,6 +454,7 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       return;
     }
     _startTimer();
+    _hintTile = null;
     // Did any moved tile land on its goal square?
     var pop = false;
     for (final i in SlidingLogic.movers(_board, n, index)) {
@@ -359,6 +476,19 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       AppAudio.play(Sound.slide, volume: 0.5);
       AppAudio.haptic();
     }
+  }
+
+  /// Tile number suggested by the hint (glows gold until moved).
+  int? _hintTile;
+
+  /// One ad → the tile to move next.
+  Future<void> _showHint() async {
+    if (_won) return;
+    final i = SlidingLogic.hintMove(_board, n);
+    if (i == null) return;
+    if (!await HintAd.ask(context) || !mounted || _won) return;
+    AppAudio.play(Sound.pop);
+    setState(() => _hintTile = _board[i]);
   }
 
   Future<void> _undo() async {
@@ -408,7 +538,9 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
     final newMoves = prevMoves == 0 || _moves < prevMoves;
     if (newMoves) Storage.setInt(_kMoves(t, l), _moves);
     final prevTime = Storage.getInt(_kTime(t, l));
-    if (prevTime == 0 || _seconds < prevTime) Storage.setInt(_kTime(t, l), max(1, _seconds));
+    if (prevTime == 0 || _seconds < prevTime) {
+      Storage.setInt(_kTime(t, l), max(1, _seconds));
+    }
     if (stars > _stars(t, l)) Storage.setInt(_kStars(t, l), stars);
     LevelGate.onCleared(slideGatePrefix(t), l);
     Rewards.onLevelComplete('sliding_puzzle', '${t.key}-L$l', stars: stars);
@@ -423,10 +555,20 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
         emoji: '🧩',
         stars: stars,
         color: _tint,
-        message: '${tr('sliding_puzzle.result', {'n': _moves, 'time': _fmt(_seconds)})}${newMoves ? '\n${tr('sliding_puzzle.new_best')}' : ''}\n${tr('sliding_puzzle.par_n', {'n': depth})}',
+        message:
+            '${tr('sliding_puzzle.result', {'n': _moves, 'time': _fmt(_seconds)})}${newMoves ? '\n${tr('sliding_puzzle.new_best')}' : ''}\n${tr('sliding_puzzle.par_n', {'n': depth})}',
         actions: [
-          if (hasNext) DialogAction(tr('common.next_level'), () => widget.onNext(l + 1), primary: true),
-          DialogAction(tr('common.retry'), () => widget.onNext(l), primary: !hasNext),
+          if (hasNext)
+            DialogAction(
+              tr('common.next_level'),
+              () => widget.onNext(l + 1),
+              primary: true,
+            ),
+          DialogAction(
+            tr('common.retry'),
+            () => widget.onNext(l),
+            primary: !hasNext,
+          ),
           DialogAction(tr('common.menu'), widget.onMenu),
         ],
       );
@@ -434,7 +576,13 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
   }
 
   // Continuous gradient across the whole board (tile tint comes from its goal square).
-  static const _stops = [Color(0xFF7C5CFF), Color(0xFF4DA8FF), Color(0xFF2EE6A8), Color(0xFFFFC857), Color(0xFFFF6FB5)];
+  static const _stops = [
+    Color(0xFF7C5CFF),
+    Color(0xFF4DA8FF),
+    Color(0xFF2EE6A8),
+    Color(0xFFFFC857),
+    Color(0xFFFF6FB5),
+  ];
   Color _colorAt(double t) {
     final x = t.clamp(0.0, 1.0) * (_stops.length - 1);
     final i = min(x.floor(), _stops.length - 2);
@@ -445,66 +593,114 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
   Widget build(BuildContext context) {
     final bestM = Storage.getInt(_kMoves(widget.tier, widget.level));
     final bestT = Storage.getInt(_kTime(widget.tier, widget.level));
-    return Column(children: [
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-        child: Row(children: [
-          _stat(tr('common.moves').toUpperCase(), '$_moves'),
-          const SizedBox(width: 8),
-          _stat(tr('common.time').toUpperCase(), _fmt(_seconds)),
-          const SizedBox(width: 8),
-          _stat(tr('sliding_puzzle.par').toUpperCase(), '$depth'),
-          const SizedBox(width: 8),
-          _stat(tr('common.best').toUpperCase(), bestM == 0 ? '-' : '$bestM / ${_fmt(bestT)}'),
-        ]),
-      ),
-      Expanded(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: LayoutBuilder(builder: (ctx, c) {
-              final side = min(c.maxWidth, c.maxHeight);
-              return SizedBox(width: side, height: side, child: _boardView(side));
-            }),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Row(
+            children: [
+              _stat(tr('common.moves').toUpperCase(), '$_moves'),
+              const SizedBox(width: 8),
+              _stat(tr('common.time').toUpperCase(), _fmt(_seconds)),
+              const SizedBox(width: 8),
+              _stat(tr('sliding_puzzle.par').toUpperCase(), '$depth'),
+              const SizedBox(width: 8),
+              _stat(
+                tr('common.best').toUpperCase(),
+                bestM == 0 ? '-' : '$bestM / ${_fmt(bestT)}',
+              ),
+            ],
           ),
         ),
-      ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Flexible(
-            child: PremiumButton(
-              label: tr('common.undo'),
-              icon: Icons.undo_rounded,
-              compact: true,
-              color: const Color(0xFF6F63B8),
-              onTap: _history.isEmpty || _won ? null : _undo,
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: LayoutBuilder(
+                builder: (ctx, c) {
+                  final side = min(c.maxWidth, c.maxHeight);
+                  return SizedBox(
+                    width: side,
+                    height: side,
+                    child: _boardView(side),
+                  );
+                },
+              ),
             ),
           ),
-          const SizedBox(width: 14),
-          Flexible(
-            child: PremiumButton(
-                label: tr('common.restart'), icon: Icons.refresh_rounded, compact: true, color: _tint, onTap: _restart),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: PremiumButton(
+                  label: tr('common.undo'),
+                  icon: Icons.undo_rounded,
+                  compact: true,
+                  color: const Color(0xFF6F63B8),
+                  onTap: _history.isEmpty || _won ? null : _undo,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: PremiumButton(
+                  label: tr('common.hint'),
+                  icon: Icons.lightbulb_rounded,
+                  compact: true,
+                  color: const Color(0xFFE0A526),
+                  onTap: _won ? null : _showHint,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: PremiumButton(
+                  label: tr('common.restart'),
+                  icon: Icons.refresh_rounded,
+                  compact: true,
+                  color: _tint,
+                  onTap: _restart,
+                ),
+              ),
+            ],
           ),
-        ]),
-      ),
-    ]);
+        ),
+      ],
+    );
   }
 
   Widget _stat(String label, String value) => Expanded(
-        child: GlassCard(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          radius: 14,
-          blur: 0,
-          child: Column(children: [
-            Text(label, style: const TextStyle(color: Pal.textDim, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1)),
-            const SizedBox(height: 2),
-            FittedBox(
-              child: Text(value, style: const TextStyle(color: Pal.text, fontSize: 16, fontWeight: FontWeight.w900)),
+    child: GlassCard(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      radius: 14,
+      blur: 0,
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: Pal.textDim,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
             ),
-          ]),
-        ),
-      );
+          ),
+          const SizedBox(height: 2),
+          FittedBox(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Pal.text,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _boardView(double side) {
     const pad = 8.0;
@@ -520,11 +716,17 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
           colors: [Color(0x33FFFFFF), Color(0x0FFFFFFF)],
         ),
         border: Border.all(color: Pal.glassBorder),
-        boxShadow: [BoxShadow(color: _tint.withValues(alpha: 0.25), blurRadius: 30, spreadRadius: -6)],
+        boxShadow: [
+          BoxShadow(
+            color: _tint.withValues(alpha: 0.25),
+            blurRadius: 30,
+            spreadRadius: -6,
+          ),
+        ],
       ),
-      child: Stack(children: [
-        for (var v = 1; v < n * n; v++) _tile(v, cell, fontSize),
-      ]),
+      child: Stack(
+        children: [for (var v = 1; v < n * n; v++) _tile(v, cell, fontSize)],
+      ),
     );
   }
 
@@ -545,73 +747,120 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       top: r * cell,
       width: cell,
       height: cell,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => _tap(_board.indexOf(v)),
-        child: AnimatedBuilder(
-          animation: _wave,
-          builder: (_, child) {
-            var bump = 0.0;
-            if (_wave.value > 0) {
-              final t = (_wave.value * 1.7 - (r + c) / (2.0 * n)).clamp(0.0, 1.0);
-              bump = sin(pi * t);
-            }
-            return Transform.scale(
-              scale: 1 + 0.12 * bump,
-              child: Stack(fit: StackFit.expand, children: [
-                child!,
-                if (bump > 0)
-                  Padding(
-                    padding: const EdgeInsets.all(inset),
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(borderRadius: radius, color: Colors.white.withValues(alpha: 0.5 * bump)),
-                    ),
-                  ),
-              ]),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(inset),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
+      child: Container(
+        foregroundDecoration: v == _hintTile
+            ? BoxDecoration(
                 borderRadius: radius,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color.lerp(c0, Colors.white, 0.22)!, c0, Color.lerp(c1, Colors.black, 0.2)!],
-                  stops: const [0, 0.45, 1],
+                border: Border.all(color: Pal.gold, width: 3),
+              )
+            : null,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => _tap(_board.indexOf(v)),
+          child: AnimatedBuilder(
+            animation: _wave,
+            builder: (_, child) {
+              var bump = 0.0;
+              if (_wave.value > 0) {
+                final t = (_wave.value * 1.7 - (r + c) / (2.0 * n)).clamp(
+                  0.0,
+                  1.0,
+                );
+                bump = sin(pi * t);
+              }
+              return Transform.scale(
+                scale: 1 + 0.12 * bump,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    child!,
+                    if (bump > 0)
+                      Padding(
+                        padding: const EdgeInsets.all(inset),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: radius,
+                            color: Colors.white.withValues(alpha: 0.5 * bump),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-                border: Border.all(color: Colors.white.withValues(alpha: inPlace ? 0.85 : 0.35), width: inPlace ? 1.8 : 1),
-                boxShadow: [BoxShadow(color: c1.withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 3))],
-              ),
-              child: Stack(children: [
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  height: cell * 0.4,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(cell * 0.2)),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.white.withValues(alpha: 0.35), Colors.white.withValues(alpha: 0)],
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(inset),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: radius,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.lerp(c0, Colors.white, 0.22)!,
+                      c0,
+                      Color.lerp(c1, Colors.black, 0.2)!,
+                    ],
+                    stops: const [0, 0.45, 1],
+                  ),
+                  border: Border.all(
+                    color: Colors.white.withValues(
+                      alpha: inPlace ? 0.85 : 0.35,
+                    ),
+                    width: inPlace ? 1.8 : 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: c1.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 0,
+                      height: cell * 0.4,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(cell * 0.2),
+                          ),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.35),
+                              Colors.white.withValues(alpha: 0),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    if (!widget.picture)
+                      Center(
+                        child: Text(
+                          '$v',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.w900,
+                            shadows: const [
+                              Shadow(
+                                color: Color(0x66000000),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-                if (!widget.picture)
-                  Center(
-                    child: Text('$v',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.w900,
-                          shadows: const [Shadow(color: Color(0x66000000), blurRadius: 4, offset: Offset(0, 2))],
-                        )),
-                  ),
-              ]),
+              ),
             ),
           ),
         ),

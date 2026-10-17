@@ -198,6 +198,30 @@ class Game2048 {
     return MoveResult(gained, merged, removed, spawned);
   }
 
+  /// Hint: the swipe that looks best one move ahead (more empty cells, more
+  /// points, biggest tile kept in a corner). Null when nothing moves.
+  Dir? bestMove() {
+    Dir? best;
+    var bestScore = -1 << 30;
+    for (final d in Dir.values) {
+      final c = Game2048.fromJsonString(toJsonString(), rng: Random(1));
+      if (c == null) return null;
+      final r = c.move(d);
+      if (r == null) continue;
+      final empty = size * size - c.tiles.length - c.stones.length;
+      final maxV = c.tiles.fold(0, (m, t) => t.value > m ? t.value : m);
+      final inCorner = c.tiles.any(
+        (t) => t.value == maxV && (t.r == 0 || t.r == size - 1) && (t.c == 0 || t.c == size - 1),
+      );
+      final score = r.gained + empty * 24 + (inCorner ? 60 : 0) + (c.hasMoves ? 0 : -100000);
+      if (score > bestScore) {
+        bestScore = score;
+        best = d;
+      }
+    }
+    return best;
+  }
+
   bool get hasMoves {
     if (tiles.length < size * size - stones.length) return true;
     for (final t in tiles) {

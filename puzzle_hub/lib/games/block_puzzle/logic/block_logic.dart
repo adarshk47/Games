@@ -210,6 +210,46 @@ class BlockGame {
     return false;
   }
 
+  /// Hint: the best place for one of the tray blocks – most lines cleared,
+  /// then most sides touching blocks or walls. Null when nothing fits.
+  (int slot, int r, int c)? bestPlacement() {
+    (int, int, int)? best;
+    var bestScore = -1;
+    for (var s = 0; s < tray.length; s++) {
+      final p = tray[s];
+      if (p == null) continue;
+      for (var r = 0; r <= n - p.h; r++) {
+        for (var c = 0; c <= n - p.w; c++) {
+          if (!canPlace(p, r, c)) continue;
+          final cells = {for (final (dr, dc) in p.cells) (r + dr) * n + c + dc};
+          bool filled(int i, int j) => grid[i][j] != -1 || cells.contains(i * n + j);
+          var lines = 0;
+          for (var i = 0; i < n; i++) {
+            if (List.generate(n, (j) => filled(i, j)).every((v) => v)) lines++;
+            if (List.generate(n, (j) => filled(j, i)).every((v) => v)) lines++;
+          }
+          var touch = 0;
+          for (final (dr, dc) in p.cells) {
+            final rr = r + dr, cc = c + dc;
+            for (final (a, b) in [(rr - 1, cc), (rr + 1, cc), (rr, cc - 1), (rr, cc + 1)]) {
+              if (a < 0 || b < 0 || a >= n || b >= n) {
+                touch++;
+              } else if (grid[a][b] != -1) {
+                touch++;
+              }
+            }
+          }
+          final score = lines * 1000 + touch * 10 + p.size;
+          if (score > bestScore) {
+            bestScore = score;
+            best = (s, r, c);
+          }
+        }
+      }
+    }
+    return best;
+  }
+
   bool get isGameOver {
     final left = tray.whereType<Piece>();
     if (left.isEmpty) return false;
