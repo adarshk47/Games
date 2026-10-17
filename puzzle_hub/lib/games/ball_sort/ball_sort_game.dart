@@ -12,6 +12,7 @@ import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
 import 'logic/ball_sort_logic.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/move_log.dart';
 
 const _kMarkersKey = 'ball_sort.markers';
 
@@ -111,6 +112,10 @@ class _BallSortGameState extends State<BallSortGame> {
   late int _level;
   late bool _markers;
   late BallSortState _state;
+
+  /// Moves of this level ([from, to], 't' free tube, 'T' bought tube), saved
+  /// so a level left half-way can be continued.
+  late final MoveLog _log = MoveLog('ball_sort.${widget.difficulty.name}.inprogress');
   final List<BallSortState> _history = [];
   final List<GlobalKey> _keys = [];
   int? _selected;
@@ -126,7 +131,7 @@ class _BallSortGameState extends State<BallSortGame> {
   void initState() {
     super.initState();
     _markers = Storage.getBool(_kMarkersKey, _diff == BsDifficulty.hard || _diff == BsDifficulty.extreme);
-    _load(widget.level.clamp(1, kBsLevelCount));
+    _load(widget.level.clamp(1, kBsLevelCount), resume: true);
   }
 
   GlobalKey _keyFor(int i) {
@@ -143,12 +148,41 @@ class _BallSortGameState extends State<BallSortGame> {
     return box.localToGlobal(Offset.zero);
   }
 
-  void _load(int level) {
+  void _load(int level, {bool resume = false}) {
     _level = level;
-    bsOnStart(_diff, level);
     Storage.setInt(bsKey(_diff, 'level'), level);
     _state = generateLevel(_diff, level);
     _history.clear();
+    final saved = resume ? _log.savedFor(level) : null;
+    var replayed = false;
+    if (saved != null) {
+      try {
+        for (final m in saved) {
+          if (m == 'T') {
+            _state.addPaidTube();
+            for (final h in _history) {
+              h.addPaidTube();
+            }
+          } else if (m == 't') {
+            _history.add(_state.clone());
+            _state.addTube();
+          } else {
+            final ft = m as List;
+            _history.add(_state.clone());
+            _state.pour(ft[0] as int, ft[1] as int);
+          }
+        }
+        replayed = !_state.isSolved;
+      } catch (_) {}
+    }
+    if (replayed) {
+      _log.resume(level, saved!);
+    } else {
+      bsOnStart(_diff, level);
+      _state = generateLevel(_diff, level);
+      _history.clear();
+      _log.start(level);
+    }
     _selected = null;
     _lastDest = -1;
     _lastCount = 0;
@@ -182,6 +216,9 @@ class _BallSortGameState extends State<BallSortGame> {
       _lastDest = -1;
       _won = false;
     });
+    for (var k = 0; k < steps; k++) {
+      _log.popSkipping((m) => m == 'T');
+    }
   }
 
   bool _offerOpen = false;
@@ -193,6 +230,7 @@ class _BallSortGameState extends State<BallSortGame> {
         _history.add(_state.clone());
         _state.addTube();
       });
+      _log.add('t');
       return;
     }
     if (!_state.canBuyTube || _offerOpen || _won) return;
@@ -209,6 +247,7 @@ class _BallSortGameState extends State<BallSortGame> {
         h.addPaidTube();
       }
     });
+    _log.add('T');
   }
 
   void _tap(int i) {
@@ -229,6 +268,7 @@ class _BallSortGameState extends State<BallSortGame> {
         _lastFrom = (srcPos != null && dstPos != null) ? srcPos - dstPos : Offset.zero;
         _history.add(_state.clone());
         _lastCount = _state.pour(sel, i);
+        _log.add([sel, i]);
         _lastDest = i;
         _moveSerial++;
         _selected = null;
@@ -248,6 +288,7 @@ class _BallSortGameState extends State<BallSortGame> {
 
   void _onWin() {
     _won = true;
+    _log.clear();
     LevelGate.onCleared(bsGatePrefix(_diff), _level);
     // Advance the free-in-sequence level past every cleared level (skipped
     // levels that were bought and cleared count too).

@@ -15,6 +15,7 @@ import 'logic/arrow_maze_logic.dart';
 import 'progress.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/move_log.dart';
 
 class ArrowMazeTheme {
   final String name;
@@ -494,8 +495,13 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   void initState() {
     super.initState();
     _tick.addListener(_onTick);
-    _load();
+    _load(resume: true);
   }
+
+  /// Moves of this level, saved so a level left half-way can be continued:
+  /// an escaped arrow's id, ['f', id] for a blocked tap (a life lost),
+  /// '+' for the second chance and 'h' for a free hint used.
+  late final MoveLog _log = MoveLog('arrow_maze.${tier.key}.inprogress');
 
   @override
   void dispose() {
@@ -503,13 +509,43 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     super.dispose();
   }
 
-  void _load() {
-    board = ArrowMazeLevels.generate(tier, level);
+  void _load({bool resume = false}) {
+    void fresh() {
+      board = ArrowMazeLevels.generate(tier, level);
+      lives = maxLives;
+      hintsLeft = tier.hints;
+      moves = 0;
+      continuesUsed = 0;
+    }
+
+    fresh();
+    final saved = resume ? _log.savedFor(level) : null;
+    var replayed = false;
+    if (saved != null) {
+      try {
+        for (final m in saved) {
+          if (m is int) {
+            if (board.tap(m) == true) moves++;
+          } else if (m is List) {
+            board.tap(m[1] as int);
+            lives--;
+          } else if (m == '+') {
+            lives += 1;
+            continuesUsed++;
+          } else if (m == 'h') {
+            hintsLeft--;
+          }
+        }
+        replayed = !board.isCleared && lives > 0;
+      } catch (_) {}
+    }
+    if (replayed) {
+      _log.resume(level, saved!);
+    } else {
+      fresh();
+      _log.start(level);
+    }
     _fx.clear();
-    lives = maxLives;
-    hintsLeft = tier.hints;
-    moves = 0;
-    continuesUsed = 0;
     hinted = null;
     over = false;
     version++;
@@ -542,6 +578,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     final now = _clock.elapsedMilliseconds;
     setState(() {
       hinted = null;
+      _log.add(res ? id : ['f', id]);
       if (res) {
         moves++;
         final s = board.snakes[id];
@@ -561,6 +598,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     _kick();
     if (board.isCleared) {
       over = true;
+      _log.clear();
       final stars = _stars;
       unawaited(ArrowMazeProgress.complete(tier, level, stars));
       Rewards.onLevelComplete('arrow_maze', '${tier.key}-L$level',
@@ -582,6 +620,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
       final ok = await LoseRetry.offer(context);
       if (!mounted || id != loadId) return;
       if (ok) {
+        _log.add('+');
         setState(() {
           continuesUsed++;
           lives += 1;
@@ -596,7 +635,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
 
   Future<void> _hint() async {
     if (over) return;
-    if (hintsLeft <= 0) {
+    final paid = hintsLeft <= 0;
+    if (paid) {
       final ok = await showContinueOffer(context, OfferKind.hint);
       if (!ok || !mounted || over) return;
       hintsLeft++;
@@ -604,6 +644,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     final h = board.hint();
     if (h != null) {
       hintsLeft--;
+      if (!paid) _log.add('h');
       AppAudio.play(Sound.pop);
     }
     setState(() {
@@ -619,6 +660,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     if (!mounted || over) return;
     for (var k = 0; k < steps; k++) {
       final id = board.undo();
+      if (id != null) _log.popSkipping((m) => m is! int);
       if (id == null) break;
       setState(() {
         _fx.removeWhere((f) => f.id == id);
@@ -672,6 +714,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
 
   void _showLose() {
     if (!mounted) return;
+    _log.clear();
     showPremiumDialog(
       context,
       title: tr('arrow_maze.lose_title'),

@@ -72,6 +72,18 @@ class MoveLog {
     _write();
   }
 
+  /// Forgets the last move that is not [keep] (e.g. bought items that undo
+  /// does not take back).
+  void popSkipping(bool Function(Object? m) keep) {
+    for (var i = moves.length - 1; i >= 0; i--) {
+      if (!keep(moves[i])) {
+        moves.removeAt(i);
+        break;
+      }
+    }
+    _write();
+  }
+
   /// Level finished (won or lost for good): nothing to continue.
   void clear() {
     moves.clear();
