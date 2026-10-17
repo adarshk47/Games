@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -78,10 +79,92 @@ class _ChessScreenState extends State<ChessScreen> {
     _colorPref = Storage.getInt('chess.pref.color').clamp(0, 2);
     _autoRotate = Storage.getBool('chess.pref.rotate', true);
     _midStart = Storage.getInt('chess.pref.start').clamp(0, 1) == 1;
+    // A game left half-way continues straight away.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _resume();
+    });
+  }
+
+  static const _kSave = 'chess.inprogress';
+  String? _startFenSaved; // null = standard start
+
+  /// Saves the running game (start position, moves, clocks, settings).
+  void _saveGame() {
+    final g = _game;
+    if (g == null) return;
+    if (g.over || _finished || g.moves.isEmpty) {
+      Storage.remove(_kSave);
+      return;
+    }
+    Storage.setString(
+      _kSave,
+      jsonEncode({
+        'fen': _startFenSaved,
+        'moves': g.moves,
+        'mode': _mode.index,
+        'level': _level.index,
+        'tc': TimeControl.all.indexOf(_tc),
+        'white': _playerWhite,
+        'wms': _clock.whiteMs,
+        'bms': _clock.blackMs,
+        'run': _clockRunning,
+      }),
+    );
+  }
+
+  /// Continues the saved game, if there is one.
+  void _resume() {
+    final raw = Storage.getString(_kSave);
+    if (raw == null || raw.isEmpty) return;
+    try {
+      final j = jsonDecode(raw) as Map<String, dynamic>;
+      final fen = j['fen'] as String?;
+      final g = fen == null ? ChessGame() : ChessGame(fen);
+      final startWhite = g.whiteToMove;
+      final startFull = g.pos.fullmove;
+      for (final m in (j['moves'] as List).cast<int>()) {
+        if (!g.play(m)) throw StateError('bad move');
+      }
+      if (g.over) throw StateError('finished');
+      final tcIdx = j['tc'] as int;
+      setState(() {
+        _mode = ChessMode.values[j['mode'] as int];
+        _level = ChessLevel.values[j['level'] as int];
+        if (tcIdx >= 0 && tcIdx < TimeControl.all.length) _tc = TimeControl.all[tcIdx];
+        _game = g;
+        _startFenSaved = fen;
+        _midPos = null;
+        _startWhite = startWhite;
+        _startFullmove = startFull;
+        _clock = ChessClock(_tc)
+          ..whiteMs = j['wms'] as int
+          ..blackMs = j['bms'] as int;
+        _playerWhite = j['white'] as bool;
+        _thinking = false;
+        _selected = null;
+        _animMove = null;
+        _manualFlip = false;
+        _clockRunning = j['run'] as bool;
+        _finished = false;
+      });
+      _sw
+        ..reset()
+        ..start();
+      _lastTick = 0;
+      _ticker?.cancel();
+      _ticker = Timer.periodic(const Duration(milliseconds: 100), (_) => _tick());
+      if (_cpu && g.whiteToMove != _playerWhite) _aiMove();
+    } catch (_) {
+      Storage.remove(_kSave);
+    }
   }
 
   @override
   void dispose() {
+    if (_game != null) {
+      _flushClock();
+      _saveGame();
+    }
     _ticker?.cancel();
     _endTimer?.cancel();
     _searchGen++;
@@ -129,6 +212,7 @@ class _ChessScreenState extends State<ChessScreen> {
     final mid = _midStart ? randomMidgame() : null;
     setState(() {
       _midPos = mid;
+      _startFenSaved = mid?.fen;
       _game = mid == null ? ChessGame() : ChessGame(mid.fen);
       _startWhite = _game!.whiteToMove;
       _startFullmove = _game!.pos.fullmove;
@@ -261,6 +345,7 @@ class _ChessScreenState extends State<ChessScreen> {
       _animMove = animate ? m : null;
       _animSeq++;
     });
+    _saveGame();
     if (g.over) {
       _finish();
     } else if (_cpu && g.whiteToMove != _playerWhite) {
@@ -322,6 +407,7 @@ class _ChessScreenState extends State<ChessScreen> {
       _selected = null;
       _animMove = null;
     });
+    _saveGame();
     AppAudio.play(Sound.slide);
   }
 
@@ -488,6 +574,7 @@ class _ChessScreenState extends State<ChessScreen> {
     final g = _game;
     if (g == null || _finished || !g.over) return;
     _finished = true;
+    Storage.remove(_kSave);
     _ticker?.cancel();
     _searchGen++;
     _thinking = false;

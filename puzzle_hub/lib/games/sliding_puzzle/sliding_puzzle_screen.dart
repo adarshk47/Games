@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 import 'dart:math';
 
@@ -280,13 +281,44 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
   @override
   void initState() {
     super.initState();
-    slideOnStart(widget.tier, widget.level);
     _start = widget.startBoard ?? SlidingLogic.shuffle(n, depth, _rng);
     _board = List.of(_start);
+    if (!_resume()) slideOnStart(widget.tier, widget.level);
+  }
+
+  String get _saveKey => 'slide.${widget.tier.name}.inprogress';
+
+  /// Continues this level from where it was left, if it was.
+  bool _resume() {
+    if (widget.startBoard != null) return false; // tests / custom boards
+    try {
+      final raw = Storage.getString(_saveKey);
+      if (raw == null || raw.isEmpty) return false;
+      final j = jsonDecode(raw) as Map<String, dynamic>;
+      if (j['l'] != widget.level) return false;
+      final b = (j['b'] as List).cast<int>().toList();
+      if (b.length != _board.length || SlidingLogic.isSolved(b)) return false;
+      _board = b;
+      _moves = j['m'] as int;
+      _seconds = j['t'] as int;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  void _save() {
+    if (widget.startBoard != null) return;
+    if (_won || _moves == 0) {
+      Storage.remove(_saveKey);
+    } else {
+      Storage.setString(_saveKey, jsonEncode({'l': widget.level, 'b': _board, 'm': _moves, 't': _seconds}));
+    }
   }
 
   @override
   void dispose() {
+    _save();
     _timer?.cancel();
     _wave.dispose();
     super.dispose();
@@ -317,6 +349,7 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       _board = nb;
       _moves++;
     });
+    _save();
     if (SlidingLogic.isSolved(nb)) {
       _win();
     } else if (pop) {
@@ -338,6 +371,7 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
         _moves--;
       }
     });
+    _save();
     AppAudio.play(Sound.slide, volume: 0.3);
   }
 
@@ -361,10 +395,13 @@ class _SlideGameState extends State<_SlideGame> with SingleTickerProviderStateMi
       _seconds = 0;
       _won = false;
     });
+    _save();
   }
 
   void _win() {
     _timer?.cancel();
+    _won = true;
+    _save();
     final t = widget.tier, l = widget.level;
     final stars = SlidingLogic.starsFor(_moves, depth);
     final prevMoves = Storage.getInt(_kMoves(t, l));

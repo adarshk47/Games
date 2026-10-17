@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'logic/maze.dart';
 import 'maze_escape_screen.dart';
 import 'progress.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/storage.dart';
 
 /// Labyrinth mode: swipe the explorer through a perfect maze to the exit.
 class LabyrinthGame extends StatefulWidget {
@@ -53,8 +55,67 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    MazeProgress.onStart(widget.tier, widget.level);
     _setup();
+    if (!_resume()) MazeProgress.onStart(widget.tier, widget.level);
+  }
+
+  String get _saveKey => 'lab.${widget.tier.name}.inprogress';
+
+  /// Saves the walk so far, so a level left half-way can be continued.
+  void _save() {
+    if (_done || moves == 0) {
+      Storage.remove(_saveKey);
+      return;
+    }
+    Storage.setString(
+      _saveKey,
+      jsonEncode({
+        'l': widget.level,
+        'cur': _cur,
+        'm': moves,
+        'tl': torchesLeft,
+        'tu': torchesUsed,
+        'c': continuesUsed,
+        'lim': limit,
+        'seen': _seen.toList(),
+        'vis': _visited.toList(),
+        'dead': _deadEnds.toList(),
+        'trail': _trail,
+      }),
+    );
+  }
+
+  bool _resume() {
+    try {
+      final raw = Storage.getString(_saveKey);
+      if (raw == null || raw.isEmpty) return false;
+      final j = jsonDecode(raw) as Map<String, dynamic>;
+      if (j['l'] != widget.level) return false;
+      List<int> ints(String k) => (j[k] as List).cast<int>();
+      _cur = j['cur'] as int;
+      _pos.value = Offset(maze.xOf(_cur).toDouble(), maze.yOf(_cur).toDouble());
+      moves = j['m'] as int;
+      torchesLeft = j['tl'] as int;
+      torchesUsed = j['tu'] as int;
+      continuesUsed = j['c'] as int;
+      limit = j['lim'] as int;
+      _seen
+        ..clear()
+        ..addAll(ints('seen'));
+      _visited
+        ..clear()
+        ..addAll(ints('vis'));
+      _deadEnds
+        ..clear()
+        ..addAll(ints('dead'));
+      _trail
+        ..clear()
+        ..addAll(ints('trail'));
+      return true;
+    } catch (_) {
+      _setup();
+      return false;
+    }
   }
 
   void _setup() {
@@ -86,6 +147,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
 
   @override
   void dispose() {
+    _save();
     _stepCtl.dispose();
     _hintCtl.dispose();
     _pos.dispose();
@@ -212,6 +274,7 @@ class _LabyrinthGameState extends State<LabyrinthGame> with TickerProviderStateM
 
   Future<void> _lose() async {
     _done = true;
+    Storage.remove(_saveKey);
     AppAudio.play(Sound.fail);
     AppAudio.haptic(true);
     setState(() {});

@@ -370,6 +370,23 @@ class FlowGame {
   /// How many moves can be taken back.
   int get undoDepth => _undo.length;
 
+  /// Saved-game data: the drawn pipes, strokes and hints left.
+  Map<String, Object> toJson() => {'s': board.snapshot(), 'm': moves, 'h': hintsLeft};
+
+  /// Restores [toJson] data; false if it does not fit this puzzle.
+  bool restoreJson(Map<String, dynamic> j) {
+    try {
+      final snap = [for (final p in j['s'] as List) (p as List).cast<int>().toList()];
+      if (snap.length != board.snapshot().length) return false;
+      board.restore(snap);
+      moves = j['m'] as int;
+      hintsLeft = j['h'] as int;
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   int? begin(int cell) {
     if (solved) return null;
     _pre = board.snapshot();

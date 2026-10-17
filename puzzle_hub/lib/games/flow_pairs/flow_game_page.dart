@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -12,6 +13,7 @@ import 'flow_painter.dart';
 import 'logic/flow_logic.dart';
 import 'progress.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
+import '../../core/storage.dart';
 
 const flowTint = Color(0xFF5EEAD4);
 
@@ -48,8 +50,19 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
   void initState() {
     super.initState();
     final l = widget.level.clamp(1, FlowLevels.count);
-    _load(FlowProgress.canPlay(_tier, l) ? l : FlowProgress.frontier(_tier));
-    FlowProgress.start(_tier, _level);
+    final resumed = _load(FlowProgress.canPlay(_tier, l) ? l : FlowProgress.frontier(_tier), resume: true);
+    if (!resumed) FlowProgress.start(_tier, _level);
+  }
+
+  String get _saveKey => 'flow.${_tier.id}.inprogress';
+
+  /// Saves the drawn pipes so a level left half-way can be continued.
+  void _save() {
+    if (_finished || _game.solved) {
+      Storage.remove(_saveKey);
+    } else {
+      Storage.setString(_saveKey, jsonEncode({'l': _level, ..._game.toJson()}));
+    }
   }
 
   /// Counts a play of a bought level; false (and a dialog) when its plays
@@ -88,16 +101,31 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
     super.dispose();
   }
 
-  void _load(int level) {
+  /// Returns true when a saved game of [level] was continued.
+  bool _load(int level, {bool resume = false}) {
     _winTimer?.cancel();
     _level = level;
     _game = FlowGame(FlowLevels.generate(_tier, level));
+    var resumed = false;
+    if (resume) {
+      try {
+        final raw = Storage.getString(_saveKey);
+        final j = raw == null || raw.isEmpty ? null : jsonDecode(raw) as Map<String, dynamic>;
+        if (j != null && j['l'] == level) resumed = _game.restoreJson(j) && !_game.solved;
+      } catch (_) {}
+      if (!resumed) _game = FlowGame(FlowLevels.generate(_tier, level));
+    }
+    if (!resume) Storage.remove(_saveKey);
     _finished = false;
     _lastCell = null;
     _shimmer.value = 0;
+    return resumed;
   }
 
-  void _bump() => setState(() => _version++);
+  void _bump() {
+    setState(() => _version++);
+    _save();
+  }
 
   int _cellAt(Offset p, double side) {
     final n = _game.puzzle.size;
@@ -195,6 +223,7 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
     if (_finished) return;
     _finished = true;
     _game.end();
+    Storage.remove(_saveKey);
     final stars = flowStars(_game.moves, _game.puzzle.pairs.length);
     FlowProgress.complete(_tier, _level, stars);
     Rewards.onLevelComplete('flow_pairs', '${_tier.id}-L$_level', stars: stars);

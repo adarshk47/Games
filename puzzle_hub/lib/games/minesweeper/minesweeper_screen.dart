@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -66,9 +67,23 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
 
   @override
   void dispose() {
+    _save();
     _timer?.cancel();
     _endTimer?.cancel();
     super.dispose();
+  }
+
+  static String _saveKey(MineTier t) => 'mines.${t.name}.inprogress';
+
+  /// Saves the running board so the game can be continued later.
+  void _save() {
+    final g = _game, t = _tier;
+    if (g == null || t == null) return;
+    if (g.over || !g.minesPlaced) {
+      Storage.remove(_saveKey(t));
+    } else {
+      Storage.setString(_saveKey(t), jsonEncode({...g.toJson(), 'e': _elapsed, 'h': _hintsUsed}));
+    }
   }
 
   void _start(MineTier t) {
@@ -80,7 +95,23 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
       _snap = null;
       _retryUsed = false;
       _elapsed = 0;
+      // Continue the board left half-way, if any.
+      try {
+        final raw = Storage.getString(_saveKey(t));
+        final j = raw == null || raw.isEmpty ? null : jsonDecode(raw) as Map<String, dynamic>;
+        final g = j == null ? null : MineGame.fromJson(t, j);
+        if (g != null) {
+          _game = g;
+          _elapsed = j!['e'] as int;
+        }
+      } catch (_) {}
       _hintsUsed = 0;
+      if (!identical(_game, null) && _game!.status == MineStatus.playing) {
+        try {
+          final j = jsonDecode(Storage.getString(_saveKey(t))!) as Map<String, dynamic>;
+          _hintsUsed = j['h'] as int;
+        } catch (_) {}
+      }
       _flagMode = false;
       _delay.clear();
     });
@@ -113,6 +144,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
       _delay[i] = d * 28;
     }
     if (g.status == MineStatus.playing) _tickStart();
+    if (g.status == MineStatus.playing) _save();
     if (g.status == MineStatus.lost) {
       _timer?.cancel();
       AppAudio.play(Sound.fail);
@@ -157,6 +189,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
     final g = _game;
     if (g == null || g.over) return;
     if (g.toggleFlag(i)) {
+      _save();
       AppAudio.play(Sound.tap);
       AppAudio.haptic();
       setState(() {
@@ -200,6 +233,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
 
   void _finish(bool won) {
     final t = _tier!;
+    Storage.remove(_saveKey(t));
     final c = mineConfigs[t]!;
     String message;
     int? stars;

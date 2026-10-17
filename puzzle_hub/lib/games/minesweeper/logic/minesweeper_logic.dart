@@ -64,6 +64,36 @@ class MineGame {
   int get revealedCount => revealed.where((r) => r).length;
   bool get over => status == MineStatus.won || status == MineStatus.lost;
 
+  /// Saved-game data (only meaningful once the mines are placed).
+  Map<String, Object> toJson() => {
+        'mines': [for (var i = 0; i < size; i++) if (mine[i]) i],
+        'rev': [for (var i = 0; i < size; i++) if (revealed[i]) i],
+        'flag': [for (var i = 0; i < size; i++) if (flagged[i]) i],
+      };
+
+  /// A game of [t] continued from [toJson] data, or null if it does not fit.
+  static MineGame? fromJson(MineTier t, Map<String, dynamic> j) {
+    try {
+      final c = mineConfigs[t]!;
+      final mines = List<bool>.filled(c.cols * c.rows, false);
+      for (final i in (j['mines'] as List).cast<int>()) {
+        mines[i] = true;
+      }
+      if (mines.where((m) => m).length != c.mines) return null;
+      final g = MineGame(c.cols, c.rows, c.mines, mines: mines);
+      for (final i in (j['rev'] as List).cast<int>()) {
+        g.revealed[i] = true;
+      }
+      for (final i in (j['flag'] as List).cast<int>()) {
+        g.flagged[i] = true;
+      }
+      g.status = MineStatus.playing;
+      return g;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// State before a move (for "one step back" after hitting a mine).
   (List<bool>, List<bool>, MineStatus, int?) snapshot() =>
       (List<bool>.of(revealed), List<bool>.of(flagged), status, explodedAt);
