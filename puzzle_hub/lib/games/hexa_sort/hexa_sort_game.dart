@@ -14,6 +14,7 @@ import 'logic/hexa_sort_logic.dart';
 import 'progress.dart';
 import '../../core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/move_log.dart';
 
 const _kFreeRefresh = 1;
 const _gapMs = 70, _flyMs = 300, _dropMs = 280;
@@ -51,6 +52,10 @@ class _HexaSortGameState extends State<HexaSortGame> {
 
   /// Game copies before each of the last 3 moves (undo).
   final List<HsGame> _history = [];
+
+  /// Moves of this level ([offer, cell], or 'r' for new offers), saved so a
+  /// level left half-way can be continued.
+  late final MoveLog _log = MoveLog('hexa_sort.${widget.tier.name}.inprogress');
   bool _retryUsed = false;
   late List<List<int>> _display;
   final _rootKey = GlobalKey();
@@ -79,18 +84,45 @@ class _HexaSortGameState extends State<HexaSortGame> {
   @override
   void initState() {
     super.initState();
-    _load(widget.level);
+    _load(widget.level, resume: true);
   }
 
   HsLevel _levelData(int n) =>
       widget.custom != null && widget.custom!.number == n ? widget.custom! : hsGenerate(_tier, n);
 
-  void _load(int level) {
+  void _load(int level, {bool resume = false}) {
     _level = level.clamp(1, kHsLevels);
     HsProgress.setCurrent(_tier, _level);
     HsProgress.onStart(_tier, _level);
     _g = HsGame(_levelData(_level));
     _history.clear();
+    var refreshes = 0;
+    final saved = resume ? _log.savedFor(_level) : null;
+    var replayed = false;
+    if (saved != null) {
+      try {
+        for (final m in saved) {
+          if (m == 'r') {
+            _g.refreshOffers();
+            refreshes++;
+          } else {
+            final om = m as List;
+            _history.add(_g.clone());
+            if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
+            _g.place(om[0] as int, om[1] as int);
+          }
+        }
+        replayed = !_g.over;
+      } catch (_) {}
+    }
+    if (replayed) {
+      _log.resume(_level, saved!);
+    } else {
+      _g = HsGame(_levelData(_level));
+      _history.clear();
+      refreshes = 0;
+      _log.start(_level);
+    }
     _retryUsed = false;
     _display = [for (final s in _g.stacks) List<int>.of(s)];
     _epoch++;
@@ -99,7 +131,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
     _drops.clear();
     _selected = 0;
     _shownCleared = 0;
-    _refreshUsed = 0;
+    _refreshUsed = refreshes;
     _busy = false;
     _won = false;
     _toast = null;
@@ -182,6 +214,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
     final before = _g.clone();
     final m = _g.place(offer, cell);
     if (m == null) return;
+    _log.add([offer, cell]);
     _history.add(before);
     if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
     AppAudio.play(Sound.pop);
@@ -256,6 +289,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
 
   void _onWin() {
     _won = true;
+    _log.clear();
     _busy = true;
     final stars = hsStars(fill: _g.fill, continues: _g.continues);
     HsProgress.complete(_tier, _level, stars);
@@ -300,6 +334,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
         }
       }
       if (!mounted) return;
+      _log.clear();
       showPremiumDialog(
         context,
         title: tr('hexa_sort.board_full'),
@@ -327,6 +362,11 @@ class _HexaSortGameState extends State<HexaSortGame> {
   void _stepBack() {
     if (_history.isEmpty) return;
     AppAudio.play(Sound.tap);
+    // Forget the moves after that position: new offers, then one placement.
+    while (_log.moves.isNotEmpty && _log.moves.last == 'r') {
+      _log.pop();
+    }
+    _log.pop();
     setState(() {
       _g = _history.removeLast();
       _busy = false;
@@ -357,6 +397,7 @@ class _HexaSortGameState extends State<HexaSortGame> {
     AppAudio.play(Sound.coin);
     setState(() {
       _g.refreshOffers();
+      _log.add('r');
       _selected = 0;
       _offerSerial++;
     });

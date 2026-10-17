@@ -64,5 +64,8 @@ Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
 20. **Arrow Maze shapes** – boards shaped like a train, bus, plane, mountain, city skyline (city
     in the background) or letters/quotes; arrows slide out of that shape.
 21. Production access answers given in chat (closed test ends 2026-10-18).
-22. **Chess online invite** – signed-in players invite each other (code / link / friend) and play
-    a live game; moves sync through Firestore.
+22. **Online 2-player games (Chess first, then any 2-player game)** – signed-in players only:
+    - "Online / available" switch: players can show themselves as ready to play.
+    - **Quick match**: play a random available player.
+    - **Unique player name**: search a player by name and send a game request; they accept/decline.
+    - Live game; moves sync through Firestore (rules so each player only moves in their own game).
