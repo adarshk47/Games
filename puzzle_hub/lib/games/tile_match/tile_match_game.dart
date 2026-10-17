@@ -14,6 +14,7 @@ import 'progress.dart';
 import 'tile_art.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/move_log.dart';
 
 const _kFreeShuffles = 1;
 const _kFlightMs = 280;
@@ -66,10 +67,42 @@ class _TileMatchGameState extends State<TileMatchGame> {
 
   TmTier get _tier => widget.tier;
 
+  /// Moves of this level ([id], or 's' for a shuffle), saved so a level left
+  /// half-way can be continued.
+  late final MoveLog _log = MoveLog('tile_match.${widget.tier.name}.inprogress');
+
   @override
   void initState() {
     super.initState();
-    _start(widget.level.clamp(1, kTmLevels));
+    final level = widget.level.clamp(1, kTmLevels);
+    if (!_resume(level)) _start(level);
+  }
+
+  /// Rebuilds [level] from its saved moves. False when there is nothing.
+  bool _resume(int level) {
+    final saved = _log.savedFor(level);
+    if (saved == null) return false;
+    _load(level);
+    try {
+      for (final m in saved) {
+        if (m == 's') {
+          _g.shuffle(TmRng(_level * 7919 + _g.moves * 31 + _shuffles * 101 + 17));
+          _shuffles++;
+        } else {
+          _g.tap(m as int);
+        }
+      }
+    } catch (_) {
+      _load(level);
+      return false;
+    }
+    if (_g.over) {
+      _load(level);
+      return false;
+    }
+    _shown = [..._g.tray];
+    _log.resume(level, saved);
+    return true;
   }
 
   /// Starts (or restarts) [level]; a bought level uses up one play.
@@ -82,6 +115,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
     _level = level;
     TmProgress.setCurrent(_tier, level);
     _g = TmGame(tmGenerate(_tier, level));
+    _log.start(level);
     _epoch++;
     _flights.clear();
     _inFlight.clear();
@@ -157,6 +191,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
     final m = _m;
     final from = m == null ? null : _toRoot(_boardKey, m.origin(_g.level.tiles[id]));
     final mv = _g.tap(id)!;
+    _log.add(id);
     final to = _toRoot(_trayKey, _slotOrigin(mv.index));
     AppAudio.play(Sound.pop);
     AppAudio.haptic();
@@ -203,6 +238,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
 
   void _onWin() {
     _won = true;
+    _log.clear();
     final stars = tmStars(helpers: _undos + _shuffles, continues: _continues);
     TmProgress.complete(_tier, _level, stars);
     Rewards.onLevelComplete('tile_match', '${_tier.id}-L$_level', stars: stars);
@@ -240,6 +276,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
       AppAudio.play(Sound.success);
       setState(() {
         final back = _g.returnLast(1);
+        _log.pop();
         for (final t in back) {
           _popIn[t] = ++_serial;
         }
@@ -250,6 +287,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
       _flash(tr('retry.back'));
       return;
     }
+    _log.clear();
     showPremiumDialog(
       context,
       title: tr('tile_match.tray_full'),
@@ -281,6 +319,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
     setState(() {
       for (var k = 0; k < steps && _g.canUndo; k++) {
         final t = _g.undo();
+        _log.pop();
         if (t != null) _popIn[t] = ++_serial;
         _undos++;
       }
@@ -295,6 +334,7 @@ class _TileMatchGameState extends State<TileMatchGame> {
     AppAudio.haptic();
     setState(() {
       _g.shuffle(TmRng(_level * 7919 + _g.moves * 31 + _shuffles * 101 + 17));
+      _log.add('s');
       _shuffles++;
       _shuffleSerial++;
     });

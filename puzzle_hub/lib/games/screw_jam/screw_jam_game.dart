@@ -13,6 +13,7 @@ import 'progress.dart';
 import 'screw_art.dart';
 import '../../core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/move_log.dart';
 
 const _kFreeHints = 2;
 const _boxW = 92.0, _boxH = 54.0;
@@ -61,6 +62,9 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
 
   /// Game copies before each of the last 3 moves (undo).
   final List<SjGame> _history = [];
+
+  /// Moves of this level, saved so leaving mid-level can be continued.
+  late final MoveLog _log = MoveLog('screw_jam.${widget.tier.id}.inprogress');
   bool _retryUsed = false;
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
@@ -90,15 +94,35 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
   void initState() {
     super.initState();
     final l = widget.level.clamp(1, kSjLevels);
-    _load(SjProgress.canPlay(_tier, l) ? l : SjProgress.unlocked(_tier));
-    SjProgress.start(_tier, _level);
+    _load(SjProgress.canPlay(_tier, l) ? l : SjProgress.unlocked(_tier), resume: true);
+    if (_log.moves.isEmpty) SjProgress.start(_tier, _level);
   }
 
-  void _load(int level) {
+  void _load(int level, {bool resume = false}) {
     _level = level;
     SjProgress.setCurrent(_tier, level);
     _g = SjGame(sjGenerate(_tier, level));
     _history.clear();
+    // Continue a level left half-way: play the saved moves again.
+    final saved = resume ? _log.savedFor(level) : null;
+    var replayed = false;
+    if (saved != null) {
+      try {
+        for (final m in saved) {
+          _history.add(_g.clone());
+          if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
+          _g.tap(m as int);
+        }
+        replayed = !_g.over;
+      } catch (_) {}
+    }
+    if (replayed) {
+      _log.resume(level, saved!);
+    } else {
+      _g = SjGame(sjGenerate(_tier, level));
+      _history.clear();
+      _log.start(level);
+    }
     _retryUsed = false;
     _epoch++;
     _flights.clear();
@@ -128,6 +152,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
   void _stepBack() {
     if (_history.isEmpty) return;
     AppAudio.play(Sound.tap);
+    _log.pop();
     setState(() {
       _g = _history.removeLast();
       _busy = false;
@@ -253,6 +278,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
     _history.add(_g.clone());
     if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
     final m = _g.tap(id)!;
+    _log.add(id);
     AppAudio.play(Sound.pop);
     AppAudio.haptic();
     setState(() {
@@ -338,6 +364,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
 
   void _onWin() {
     _won = true;
+    _log.clear();
     final stars = sjStars(peakTray: _g.peakTray, trayCapacity: _g.level.trayCapacity, continues: _continues);
     SjProgress.complete(_tier, _level, stars);
     Rewards.onLevelComplete('screw_jam', '${_tier.id}-L$_level', stars: stars);
@@ -381,6 +408,7 @@ class _ScrewJamGameState extends State<ScrewJamGame> {
         }
       }
       if (!mounted) return;
+      _log.clear();
       showPremiumDialog(
         context,
         title: tr('screw_jam.tray_full'),

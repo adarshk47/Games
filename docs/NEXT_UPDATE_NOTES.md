@@ -64,3 +64,5 @@ Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
 20. **Arrow Maze shapes** – boards shaped like a train, bus, plane, mountain, city skyline (city
     in the background) or letters/quotes; arrows slide out of that shape.
 21. Production access answers given in chat (closed test ends 2026-10-18).
+22. **Chess online invite** – signed-in players invite each other (code / link / friend) and play
+    a live game; moves sync through Firestore.

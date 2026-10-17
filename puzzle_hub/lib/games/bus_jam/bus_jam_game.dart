@@ -13,6 +13,7 @@ import 'logic/bus_jam_logic.dart';
 import 'progress.dart';
 import '../../core/economy/undo_offer.dart';
 import '../../core/economy/lose_retry.dart';
+import '../../core/move_log.dart';
 
 const _kFreeHints = 2;
 
@@ -49,6 +50,9 @@ class _BusJamGameState extends State<BusJamGame> {
 
   /// Game copies before each of the last 3 moves (undo).
   final List<BjGame> _history = [];
+
+  /// Moves of this level, saved so leaving mid-level can be continued.
+  late final MoveLog _log = MoveLog('bus_jam.${widget.tier.id}.inprogress');
   bool _retryUsed = false;
   final _rootKey = GlobalKey();
   final _boardKey = GlobalKey();
@@ -77,15 +81,35 @@ class _BusJamGameState extends State<BusJamGame> {
   void initState() {
     super.initState();
     final l = widget.level.clamp(1, kBjLevels);
-    _load(BjProgress.canPlay(_tier, l) ? l : BjProgress.unlocked(_tier));
-    BjProgress.start(_tier, _level);
+    _load(BjProgress.canPlay(_tier, l) ? l : BjProgress.unlocked(_tier), resume: true);
+    if (_log.moves.isEmpty) BjProgress.start(_tier, _level);
   }
 
-  void _load(int level) {
+  void _load(int level, {bool resume = false}) {
     _level = level;
     BjProgress.setCurrent(_tier, level);
     _g = BjGame(bjGenerate(_tier, level));
     _history.clear();
+    // Continue a level left half-way: play the saved moves again.
+    final saved = resume ? _log.savedFor(level) : null;
+    var replayed = false;
+    if (saved != null) {
+      try {
+        for (final m in saved) {
+          _history.add(_g.clone());
+          if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
+          _g.tap(m as int);
+        }
+        replayed = !_g.over;
+      } catch (_) {}
+    }
+    if (replayed) {
+      _log.resume(level, saved!);
+    } else {
+      _g = BjGame(bjGenerate(_tier, level));
+      _history.clear();
+      _log.start(level);
+    }
     _retryUsed = false;
     _epoch++;
     _walks.clear();
@@ -114,6 +138,7 @@ class _BusJamGameState extends State<BusJamGame> {
   void _stepBack() {
     if (_history.isEmpty) return;
     AppAudio.play(Sound.tap);
+    _log.pop();
     setState(() {
       _g = _history.removeLast();
       _busy = false;
@@ -247,6 +272,7 @@ class _BusJamGameState extends State<BusJamGame> {
     _history.add(_g.clone());
     if (_history.length > UndoOffer.maxSteps) _history.removeAt(0);
     final m = _g.tap(id)!;
+    _log.add(id);
     AppAudio.play(Sound.pop);
     AppAudio.haptic();
     var end = 0;
@@ -314,6 +340,7 @@ class _BusJamGameState extends State<BusJamGame> {
 
   void _onWin(int afterMs) {
     _won = true;
+    _log.clear();
     final stars = bjStars(peakWaiting: _g.peakWaiting, capacity: _g.level.waiting, continues: _continues);
     BjProgress.complete(_tier, _level, stars);
     Rewards.onLevelComplete('bus_jam', '${_tier.id}-L$_level', stars: stars);
@@ -360,6 +387,7 @@ class _BusJamGameState extends State<BusJamGame> {
         }
       }
       if (!mounted) return;
+      _log.clear();
       showPremiumDialog(
         context,
         title: tr('bus_jam.wait_full'),
