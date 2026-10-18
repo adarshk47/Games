@@ -50,7 +50,7 @@ class CloudAuth {
     _sub ??= _auth.userChanges().listen((u) {
       final before = user.value?.uid;
       user.value = u == null ? null : _map(u);
-      if (u != null && u.uid != before) _onCloudUser();
+      if (u != null && u.uid != before) unawaited(_onCloudUser());
     });
     AccountService.I.addListener(_onLocalChanged);
     _wasLocalLoggedIn = AccountService.I.loggedIn;
@@ -77,25 +77,48 @@ class CloudAuth {
 
   void _onLocalChanged() {
     final now = AccountService.I.loggedIn;
-    if (now && !_wasLocalLoggedIn && user.value != null) _onCloudUser();
+    if (now && !_wasLocalLoggedIn && user.value != null) unawaited(_onCloudUser());
     _wasLocalLoggedIn = now;
   }
 
   /// Links the cloud uid to the local account and syncs.
-  void _onCloudUser() {
+  Future<void> _onCloudUser() async {
     final u = user.value;
     if (u == null || !AccountService.I.loggedIn) return;
-    if (AccountService.I.cloudUid != u.uid) AccountService.I.linkCloud(u.uid, email: u.email);
-    SyncService.I.syncNow();
+    await _forgetOtherAccount(u.uid, u.name, u.email);
+    if (AccountService.I.cloudUid != u.uid) await AccountService.I.linkCloud(u.uid, email: u.email);
+    await SyncService.I.syncNow();
+  }
+
+  /// The progress on this phone belongs to a different cloud account: wipe it
+  /// so it is not mixed into [uid]'s account, and start a fresh local one
+  /// (the sync then brings [uid]'s own progress down).
+  Future<void> _forgetOtherAccount(String uid, String? name, String? email) =>
+      _forgetting ??= _forget(uid, name, email).whenComplete(() => _forgetting = null);
+  Future<void>? _forgetting;
+
+  Future<void> _forget(String uid, String? name, String? email) async {
+    final a = AccountService.I;
+    final other = a.cloudUid;
+    if (other == null || other == uid) return;
+    await a.deleteAccount();
+    await a.loginWithoutPin(_nameFor(name, email));
+    Rewards.reload();
+  }
+
+  static String _nameFor(String? name, String? email) {
+    if (name != null && name.trim().isNotEmpty) return name;
+    final fallback = (email ?? '').split('@').first;
+    return fallback.isEmpty ? 'Player' : fallback;
   }
 
   /// After a successful sign-in: make sure a local account exists (guest ->
   /// cloud upgrade keeps all local progress, it is merged into the cloud).
   Future<void> _completeSignIn(User u) async {
     final a = AccountService.I;
+    await _forgetOtherAccount(u.uid, u.displayName, u.email);
     if (!a.hasAccount || !a.loggedIn) {
-      final fallback = (u.email ?? '').split('@').first;
-      await a.loginWithoutPin((u.displayName?.trim().isNotEmpty ?? false) ? u.displayName! : (fallback.isEmpty ? 'Player' : fallback));
+      await a.loginWithoutPin(_nameFor(u.displayName, u.email));
       Rewards.reload();
     }
     user.value = _map(u);
@@ -211,10 +234,19 @@ class CloudAuth {
     } catch (_) {}
   }
 
-  /// Final sync, then sign out of Firebase/Google. Local data stays.
-  Future<void> signOut() async {
-    if (!CloudService.available) return;
-    await SyncService.I.syncNow();
+  /// Final sync, then sign out of Firebase/Google and remove this account's
+  /// progress from the phone (it lives on in the cloud), so the next person to
+  /// sign in on this phone starts clean. Returns false (and stays signed in)
+  /// when the progress could not be saved to the cloud first, e.g. offline.
+  Future<bool> signOut() async {
+    if (!CloudService.available) return false;
+    SyncService.I.lastError.value = null;
+    try {
+      await SyncService.I.syncNow().timeout(const Duration(seconds: 20));
+    } on TimeoutException {
+      return false;
+    }
+    if (SyncService.I.lastError.value != null) return false;
     try {
       await _auth.signOut();
       if (_googleInit != null) await GoogleSignIn.instance.signOut();
@@ -224,7 +256,9 @@ class CloudAuth {
     user.value = null;
     // Leaderboard "already submitted" cache belongs to the old cloud user.
     if (Storage.userPrefix.isNotEmpty) await Storage.clearPrefix('${Storage.userPrefix}cloud.lb.');
-    await AccountService.I.unlinkCloud();
+    await AccountService.I.deleteAccount();
+    Rewards.coins.value = 0;
+    return true;
   }
 
   /// Google users re-pick their account; email users pass [password].

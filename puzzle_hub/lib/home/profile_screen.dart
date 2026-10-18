@@ -281,7 +281,14 @@ class _ProfileBodyState extends State<_ProfileBody> {
     )) {
       return;
     }
-    await CloudAuth.I.signOut();
+    if (!mounted) return;
+    final nav = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    if (!await CloudAuth.I.signOut()) {
+      messenger.showSnackBar(SnackBar(content: Text(tr('home.signout.not_saved'))));
+      return;
+    }
+    nav.popUntil((r) => r.isFirst);
   }
 
   static String _ago(DateTime? t) {
