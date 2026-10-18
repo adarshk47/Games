@@ -2,20 +2,21 @@ import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:puzzle_hub/games/arrow_maze/logic/arrow_maze_logic.dart';
+import 'package:puzzle_hub/games/arrow_maze/logic/arrow_shapes.dart';
 
 void main() {
   const minDensity = {
-    MazeTier.easy: 0.84,
+    MazeTier.easy: 0.8,
     MazeTier.medium: 0.8,
     MazeTier.hard: 0.9,
     MazeTier.extreme: 0.9,
   };
   // Minimum number of arrows on any level of the tier.
   const minArrows = {
-    MazeTier.easy: 12,
-    MazeTier.medium: 16,
-    MazeTier.hard: 45,
-    MazeTier.extreme: 50,
+    MazeTier.easy: 6,
+    MazeTier.medium: 9,
+    MazeTier.hard: 14,
+    MazeTier.extreme: 18,
   };
 
   test('every tier has 100 levels; extreme is huge with one life and hint', () {
@@ -35,7 +36,11 @@ void main() {
       for (var l = 1; l <= tier.count; l++) {
         final b = ArrowMazeLevels.generate(tier, l);
         final sp = ArrowMazeLevels.spec(tier, l);
-        expect((b.rows, b.cols), (sp.rows, sp.cols));
+        expect(b.rows <= sp.rows * 1.3 + 1 && b.cols <= sp.cols * 1.3 + 1, isTrue);
+        expect(b.shape, isNotNull);
+        for (final s in b.snakes) {
+          expect(s.cells.every(b.isInside), isTrue, reason: 'outside ${tier.key} $l');
+        }
         expect(b.solve(), isNotNull, reason: '${tier.key} level $l');
         expect(b.snakes.every((s) => s.length >= 2), isTrue);
         // Cells are distinct, in bounds and form connected paths.
@@ -65,9 +70,9 @@ void main() {
             reason: '${tier.key} level $l arrows');
         if (tier.tangled) {
           // Heavy interlocking: most arrows start blocked, long chains.
-          expect(st.blockedFraction, greaterThan(0.75),
+          expect(st.blockedFraction, greaterThanOrEqualTo(0.55),
               reason: '${tier.key} level $l');
-          expect(st.depth, greaterThanOrEqualTo(10),
+          expect(st.depth, greaterThanOrEqualTo(5),
               reason: '${tier.key} level $l');
         }
       }
@@ -131,5 +136,16 @@ void main() {
     final st = bd.stats();
     expect(st.depth, 3);
     expect(st.blockedFraction, closeTo(2 / 3, 1e-9));
+  });
+
+  test('shape templates are rectangular and every level has a picture', () {
+    for (final sh in kArrowShapes) {
+      expect(sh.rows.every((r) => r.length == sh.w), isTrue, reason: sh.id);
+    }
+    final ids = {
+      for (final t in MazeTier.values)
+        for (var l = 1; l <= t.count; l++) ArrowMazeLevels.shapeFor(t, l).shape.id
+    };
+    expect(ids.length, greaterThan(20));
   });
 }

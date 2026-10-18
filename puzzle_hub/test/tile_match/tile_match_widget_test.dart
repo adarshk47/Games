@@ -151,13 +151,13 @@ void main() {
     expect(find.text('Need a hint?'), findsOneWidget);
     await t.tap(find.text('Cancel'));
     await _settle(t, 2);
-    // After another move, undo again costs one more ad.
+    // One ad pays for 3 steps back: the next undo on this screen is free.
     final g = TmGame(lv);
     final free = g.freeTiles.first;
     await _tapTile(t, free);
     await t.tap(undo);
     await _settle(t, 2);
-    expect(ads, 2);
+    expect(ads, 1);
     await _finish(t);
   });
 

@@ -501,7 +501,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
   /// Moves of this level, saved so a level left half-way can be continued:
   /// an escaped arrow's id, ['f', id] for a blocked tap (a life lost),
   /// '+' for the second chance and 'h' for a free hint used.
-  late final MoveLog _log = MoveLog('arrow_maze.${tier.key}.inprogress');
+  late final MoveLog _log = MoveLog('arrow_maze.${tier.key}.inprogress2');
 
   @override
   void dispose() {
@@ -1166,8 +1166,23 @@ class _StaticPainter extends CustomPainter {
     canvas.save();
     canvas.translate(cell * 0.5, cell * 0.5);
     final dot = Paint()..color = Colors.white.withValues(alpha: 0.07);
+    // The level's picture: a soft glowing silhouette under the arrows.
+    final tile = Paint()..color = Colors.white.withValues(alpha: 0.06);
+    final edge = Paint()..color = Colors.white.withValues(alpha: 0.10);
     for (var r = 0; r < board.rows; r++) {
       for (var c = 0; c < board.cols; c++) {
+        if (!board.isInside(r * board.cols + c)) continue;
+        if (board.inside != null) {
+          final rect = Rect.fromLTWH(c * cell, r * cell, cell, cell);
+          canvas.drawRect(rect, tile);
+          bool out(int rr, int cc) =>
+              rr < 0 || cc < 0 || rr >= board.rows || cc >= board.cols || !board.isInside(rr * board.cols + cc);
+          final w = cell * 0.08;
+          if (out(r - 1, c)) canvas.drawRect(Rect.fromLTWH(rect.left, rect.top, cell, w), edge);
+          if (out(r + 1, c)) canvas.drawRect(Rect.fromLTWH(rect.left, rect.bottom - w, cell, w), edge);
+          if (out(r, c - 1)) canvas.drawRect(Rect.fromLTWH(rect.left, rect.top, w, cell), edge);
+          if (out(r, c + 1)) canvas.drawRect(Rect.fromLTWH(rect.right - w, rect.top, w, cell), edge);
+        }
         canvas.drawCircle(
             Offset((c + 0.5) * cell, (r + 0.5) * cell), cell * 0.05, dot);
       }

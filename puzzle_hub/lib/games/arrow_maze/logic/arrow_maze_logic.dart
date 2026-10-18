@@ -1,5 +1,9 @@
 import 'dart:math' as math;
 
+import 'arrow_shapes.dart';
+
+export 'arrow_shapes.dart' show ArrowShape;
+
 enum Dir {
   up(-1, 0),
   down(1, 0),
@@ -22,7 +26,7 @@ class Snake {
 }
 
 class ArrowMazeBoard {
-  ArrowMazeBoard(this.rows, this.cols, this.snakes)
+  ArrowMazeBoard(this.rows, this.cols, this.snakes, {this.inside, this.shape})
       : owner = List<int>.filled(rows * cols, -1) {
     for (final s in snakes) {
       for (final c in s.cells) {
@@ -34,13 +38,22 @@ class ArrowMazeBoard {
   final int rows, cols;
   final List<Snake> snakes;
   final List<int> owner; // snake id or -1
+
+  /// Cells that belong to the level's picture (null = the whole rectangle).
+  final List<bool>? inside;
+
+  /// The picture this level is shaped like (null = plain rectangle).
+  final ArrowShape? shape;
+
+  bool isInside(int cell) => inside == null || inside![cell];
+  int get insideCount => inside == null ? rows * cols : inside!.where((x) => x).length;
   final Set<int> removed = {};
   final List<int> history = [];
 
   int get remaining => snakes.length - removed.length;
   bool get isCleared => remaining == 0;
   int get occupiedCells => snakes.fold(0, (a, s) => a + s.length);
-  double get density => occupiedCells / (rows * cols);
+  double get density => occupiedCells / insideCount;
 
   /// Flat indices of cells ahead of the head up to the board edge.
   List<int> rayCells(Snake s) {
@@ -104,7 +117,7 @@ class ArrowMazeBoard {
 
   /// Greedy solver on a copy of the state; returns removal order or null.
   List<int>? solve() {
-    final b = ArrowMazeBoard(rows, cols, snakes);
+    final b = ArrowMazeBoard(rows, cols, snakes, inside: inside);
     for (final id in removed) {
       b._remove(id);
     }
@@ -124,7 +137,7 @@ class ArrowMazeBoard {
   }
 
   BoardStats stats() {
-    final b = ArrowMazeBoard(rows, cols, snakes);
+    final b = ArrowMazeBoard(rows, cols, snakes, inside: inside);
     var blocked = 0;
     for (final s in snakes) {
       if (!b.canEscape(s.id)) blocked++;
@@ -205,8 +218,14 @@ class ArrowMazeLevels {
 
   /// Fresh (mutable) board for a level. Deterministic and always solvable.
   static ArrowMazeBoard generate(MazeTier tier, int level) {
+    final sh = shapeFor(tier, level);
+    return ArrowMazeBoard(sh.rows, sh.cols, snakesFor(tier, level), inside: sh.inside, shape: sh.shape);
+  }
+
+  /// The picture of a level, scaled to fit its plain board size.
+  static ShapedBoard shapeFor(MazeTier tier, int level) {
     final sp = spec(tier, level);
-    return ArrowMazeBoard(sp.rows, sp.cols, snakesFor(tier, level));
+    return shapeBoard(sp.rows, sp.cols, level - 1 + tier.index * 5);
   }
 
   static int _seed(MazeTier tier, int level, int attempt) =>
@@ -214,6 +233,7 @@ class ArrowMazeLevels {
 
   static List<Snake> _build(MazeTier tier, int level) {
     final sp = spec(tier, level);
+    final sh = shapeFor(tier, level);
     // Deterministic candidates. Easy/Medium take the first one (thinned out
     // so free lanes appear); Hard/Extreme keep the most interlocked of three.
     final tries = tier.tangled ? 3 : 1;
@@ -221,12 +241,12 @@ class ArrowMazeLevels {
     var bestScore = -1.0;
     for (var attempt = 0; attempt < tries + 4; attempt++) {
       final rng = math.Random(_seed(tier, level, attempt));
-      var snakes = generateTangle(sp.rows, sp.cols, sp.minLen, sp.maxLen, rng,
-          deepBias: tier.deepBias);
+      var snakes = generateTangle(sh.rows, sh.cols, sp.minLen, sp.maxLen, rng,
+          deepBias: tier.deepBias, inside: sh.inside);
       if (tier.thinTo < 1) {
-        snakes = thinOut(sp.rows, sp.cols, snakes, tier.thinTo);
+        snakes = thinOut(sh.rows, sh.cols, snakes, tier.thinTo, inside: sh.inside);
       }
-      final b = ArrowMazeBoard(sp.rows, sp.cols, snakes);
+      final b = ArrowMazeBoard(sh.rows, sh.cols, snakes, inside: sh.inside);
       if (snakes.isEmpty || b.solve() == null) continue;
       final st = b.stats();
       final score = st.depth / 4 + st.blockedFraction * 4 + b.density * 6;
@@ -244,9 +264,9 @@ class ArrowMazeLevels {
   /// Removes the arrows that block the most others until the board density
   /// drops to about [target]. Removing arrows never makes a level unsolvable.
   static List<Snake> thinOut(
-      int rows, int cols, List<Snake> snakes, double target) {
+      int rows, int cols, List<Snake> snakes, double target, {List<bool>? inside}) {
     var list = snakes;
-    final total = rows * cols;
+    final total = inside == null ? rows * cols : inside.where((x) => x).length;
     var occ = list.fold<int>(0, (a, s) => a + s.length);
     while (occ / total > target && list.length > 2) {
       final b = ArrowMazeBoard(rows, cols, list);
@@ -288,10 +308,16 @@ class ArrowMazeLevels {
   /// close a cycle (or hit their own body) are split, or dropped when tiny.
   static List<Snake> generateTangle(
       int rows, int cols, int minLen, int maxLen, math.Random rng,
-      {double deepBias = 0.9}) {
+      {double deepBias = 0.9, List<bool>? inside}) {
     final n = rows * cols;
     const hole = -2;
+    const outside = -3; // not part of the picture: never filled, arrows fly over it
     final own = List<int>.filled(n, -1);
+    if (inside != null) {
+      for (var i = 0; i < n; i++) {
+        if (!inside[i]) own[i] = outside;
+      }
+    }
     final pieces = <List<int>>[];
 
     int freeN(int i) {

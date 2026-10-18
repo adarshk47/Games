@@ -22,8 +22,10 @@ Color bjColor(int i) => _colors[i % _colors.length];
 const _skins = <Color>[Color(0xFFFFD7B5), Color(0xFFF1B98C), Color(0xFFC98B5E), Color(0xFF8D5A3B)];
 const _hairs = <Color>[Color(0xFF2B1B12), Color(0xFF5A3A22), Color(0xFF1A1A1A), Color(0xFFB0702E), Color(0xFF3A2A1E)];
 
-/// Cute top-down person: shoulders in the passenger color, swinging arms,
-/// a round head with hair. [phase] (radians) drives the walk cycle.
+/// Cute chibi passenger seen from the front: a hoodie in the passenger
+/// color, big head with eyes and a smile, and a hat / hairstyle that changes
+/// with [seed] (cap, beanie, headphones, bun, spiky hair). [phase] (radians)
+/// drives the walk bounce; [facing] leans the body toward where it walks.
 class PersonPainter extends CustomPainter {
   PersonPainter({required this.color, this.seed = 0, this.phase = 0, this.walking = false, this.facing = 0, this.dim = false});
   final Color color;
@@ -31,7 +33,7 @@ class PersonPainter extends CustomPainter {
   final double phase;
   final bool walking;
 
-  /// Rotation in radians (0 = facing up, toward the exit).
+  /// Walking direction in radians (0 = up, toward the exit).
   final double facing;
   final bool dim;
 
@@ -39,69 +41,154 @@ class PersonPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final s = math.min(size.width, size.height);
     final c = size.center(Offset.zero);
-    final bob = walking ? math.sin(phase * 2).abs() * s * 0.04 : 0.0;
-    final swing = walking ? math.sin(phase) * s * 0.12 : 0.0;
+    final bob = walking ? math.sin(phase * 2).abs() * s * 0.05 : 0.0;
+    final step = walking ? math.sin(phase) : 0.0;
     final body = dim ? Color.lerp(color, const Color(0xFF555566), 0.55)! : color;
+    final dark = Color.lerp(body, Colors.black, 0.4)!;
+    final skin = _skins[seed % _skins.length];
+    final hairC = _hairs[seed % _hairs.length];
+    final style = seed % 5;
 
     // Ground shadow.
     canvas.drawOval(
-      Rect.fromCenter(center: c + Offset(0, s * 0.06), width: s * 0.78, height: s * 0.5),
+      Rect.fromCenter(center: c + Offset(0, s * 0.4), width: s * 0.62, height: s * 0.16),
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.28)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, s * 0.04),
+        ..color = Colors.black.withValues(alpha: 0.3)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, s * 0.03),
     );
 
     canvas.save();
     canvas.translate(c.dx, c.dy - bob);
-    canvas.rotate(facing);
+    canvas.rotate(math.sin(facing) * 0.18);
 
-    // Arms (hands) swinging opposite each other.
-    final arm = Paint()..color = Color.lerp(body, Colors.black, 0.18)!;
-    final hand = Paint()..color = _skins[seed % _skins.length];
+    // Legs (little feet stepping).
+    final shoe = Paint()..color = const Color(0xFF2A2433);
     for (final side in [-1.0, 1.0]) {
-      final o = Offset(side * s * 0.33, -side * swing);
-      canvas.drawCircle(o, s * 0.11, arm);
-      canvas.drawCircle(o + Offset(0, -s * 0.05 - side * swing * 0.2), s * 0.065, hand);
+      final lift = side * step * s * 0.04;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(side * s * 0.1, s * 0.34 - lift), width: s * 0.15, height: s * 0.1), Radius.circular(s * 0.05)),
+        shoe,
+      );
     }
 
-    // Shoulders / torso.
-    final torso = Rect.fromCenter(center: Offset(0, s * 0.03), width: s * 0.66, height: s * 0.42);
-    canvas.drawOval(
-      torso,
+    // Hoodie body.
+    final torso = Rect.fromCenter(center: Offset(0, s * 0.17), width: s * 0.5, height: s * 0.34);
+    final rr = RRect.fromRectAndCorners(torso,
+        topLeft: Radius.circular(s * 0.2), topRight: Radius.circular(s * 0.2), bottomLeft: Radius.circular(s * 0.08), bottomRight: Radius.circular(s * 0.08));
+    canvas.drawRRect(
+      rr,
       Paint()
-        ..shader = RadialGradient(
-          center: const Alignment(-0.35, -0.5),
-          radius: 0.9,
-          colors: [Color.lerp(body, Colors.white, 0.45)!, body, Color.lerp(body, Colors.black, 0.35)!],
-          stops: const [0, 0.55, 1],
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color.lerp(body, Colors.white, 0.35)!, body, Color.lerp(body, Colors.black, 0.25)!],
         ).createShader(torso),
     );
-    canvas.drawOval(
-      torso,
+    canvas.drawRRect(
+      rr,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = s * 0.025
-        ..color = Color.lerp(body, Colors.black, 0.45)!,
+        ..strokeWidth = s * 0.022
+        ..color = dark,
     );
+    // Hoodie pocket + strings.
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(0, s * 0.24), width: s * 0.26, height: s * 0.08), Radius.circular(s * 0.04)),
+      Paint()..color = Color.lerp(body, Colors.black, 0.18)!,
+    );
+    final string = Paint()
+      ..color = Colors.white.withValues(alpha: 0.85)
+      ..strokeWidth = s * 0.018
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(-s * 0.05, s * 0.04), Offset(-s * 0.05, s * 0.12), string);
+    canvas.drawLine(Offset(s * 0.05, s * 0.04), Offset(s * 0.05, s * 0.12), string);
 
-    // Head with hair.
-    final hr = s * 0.19;
-    final head = Offset(0, -s * 0.02);
-    final skin = _skins[seed % _skins.length];
-    canvas.drawCircle(head, hr, Paint()..color = Color.lerp(skin, Colors.black, 0.2)!);
-    canvas.drawCircle(head, hr * 0.92, Paint()..color = skin);
-    final hair = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.3, -0.4),
-        colors: [Color.lerp(_hairs[seed % _hairs.length], Colors.white, 0.25)!, _hairs[seed % _hairs.length]],
-      ).createShader(Rect.fromCircle(center: head, radius: hr));
-    // Hair covers the back of the head (we look from above, facing up).
-    canvas.drawCircle(head + Offset(0, hr * 0.2), hr * 0.86, hair);
-    if (seed % 3 == 0) {
-      // Little bun / cap.
-      canvas.drawCircle(head + Offset(0, hr * 0.75), hr * 0.38, hair);
+    // Arms swinging.
+    final sleeve = Paint()..color = Color.lerp(body, Colors.black, 0.12)!;
+    for (final side in [-1.0, 1.0]) {
+      final sw = side * step * s * 0.05;
+      final hand = Offset(side * s * 0.28, s * 0.2 + sw);
+      canvas.drawLine(
+        Offset(side * s * 0.2, s * 0.06),
+        hand,
+        sleeve
+          ..strokeWidth = s * 0.11
+          ..strokeCap = StrokeCap.round,
+      );
+      canvas.drawCircle(hand + Offset(0, s * 0.03), s * 0.045, Paint()..color = skin);
     }
-    canvas.drawCircle(head + Offset(-hr * 0.35, -hr * 0.1), hr * 0.18, Paint()..color = Colors.white.withValues(alpha: 0.35));
+
+    // Big head.
+    final hr = s * 0.24;
+    final head = Offset(0, -s * 0.16);
+    canvas.drawCircle(head, hr, Paint()..color = Color.lerp(skin, Colors.black, 0.25)!);
+    canvas.drawCircle(head, hr * 0.94, Paint()..color = skin);
+
+    final hairPaint = Paint()..color = hairC;
+    final hatPaint = Paint()
+      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color.lerp(body, Colors.white, 0.3)!, body])
+          .createShader(Rect.fromCircle(center: head, radius: hr));
+    final top = Rect.fromCircle(center: head, radius: hr);
+    switch (style) {
+      case 0: // Cap with a brim in the passenger color.
+        canvas.drawArc(top.inflate(s * 0.01), math.pi, math.pi, true, hatPaint);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromLTWH(head.dx - hr * 0.2, head.dy - hr * 0.12, hr * 1.35, hr * 0.24), Radius.circular(hr * 0.12)),
+          Paint()..color = dark,
+        );
+      case 1: // Beanie with a pom-pom.
+        canvas.drawArc(top.inflate(s * 0.015), math.pi, math.pi, true, hatPaint);
+        canvas.drawRect(Rect.fromLTWH(head.dx - hr * 1.02, head.dy - hr * 0.2, hr * 2.04, hr * 0.24), Paint()..color = dark);
+        canvas.drawCircle(head + Offset(0, -hr * 1.05), hr * 0.22, Paint()..color = Colors.white);
+      case 2: // Hair + headphones.
+        canvas.drawArc(top, math.pi * 1.02, math.pi * 0.96, true, hairPaint);
+        canvas.drawArc(top.inflate(s * 0.03), math.pi * 1.05, math.pi * 0.9, false,
+            Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = s * 0.035
+              ..color = dark);
+        for (final side in [-1.0, 1.0]) {
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(Rect.fromCenter(center: head + Offset(side * hr * 1.0, hr * 0.05), width: hr * 0.36, height: hr * 0.6), Radius.circular(hr * 0.15)),
+            Paint()..color = body,
+          );
+        }
+      case 3: // Bun.
+        canvas.drawCircle(head + Offset(0, -hr * 1.0), hr * 0.38, hairPaint);
+        canvas.drawArc(top, math.pi * 1.02, math.pi * 0.96, true, hairPaint);
+      default: // Spiky hair.
+        canvas.drawArc(top, math.pi * 1.02, math.pi * 0.96, true, hairPaint);
+        final spikes = Path();
+        for (var i = 0; i < 5; i++) {
+          final x = head.dx - hr * 0.8 + i * hr * 0.4;
+          spikes
+            ..moveTo(x - hr * 0.2, head.dy - hr * 0.6)
+            ..lineTo(x, head.dy - hr * 1.2)
+            ..lineTo(x + hr * 0.2, head.dy - hr * 0.6)
+            ..close();
+        }
+        canvas.drawPath(spikes, hairPaint);
+    }
+
+    // Face: eyes with sparkle, blush, smile.
+    final eyeY = head.dy + hr * 0.18;
+    for (final side in [-1.0, 1.0]) {
+      final e = Offset(head.dx + side * hr * 0.36, eyeY);
+      canvas.drawOval(Rect.fromCenter(center: e, width: hr * 0.24, height: hr * 0.32), Paint()..color = const Color(0xFF1E1A26));
+      canvas.drawCircle(e + Offset(-hr * 0.04, -hr * 0.07), hr * 0.06, Paint()..color = Colors.white);
+      canvas.drawCircle(Offset(head.dx + side * hr * 0.6, eyeY + hr * 0.3), hr * 0.12, Paint()..color = const Color(0x66FF6F91));
+    }
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(head.dx, eyeY + hr * 0.3), width: hr * 0.36, height: hr * 0.26),
+      0.15,
+      math.pi - 0.3,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = s * 0.02
+        ..strokeCap = StrokeCap.round
+        ..color = const Color(0xFF6B2E2E),
+    );
     canvas.restore();
   }
 

@@ -173,11 +173,11 @@ void main() {
     await t.pump(const Duration(seconds: 3));
   });
 
-  testWidgets('largest extreme board (30x20) renders, taps and zooms', (t) async {
+  testWidgets('largest extreme board renders, taps and zooms', (t) async {
     await _setup(t,
         const ArrowMazeGamePage(tier: MazeTier.extreme, level: 100));
     final board = ArrowMazeLevels.generate(MazeTier.extreme, 100);
-    expect((board.rows, board.cols), (30, 20));
+    expect(board.insideCount, greaterThanOrEqualTo(250));
     expect(t.takeException(), isNull);
     expect(find.byType(InteractiveViewer), findsOneWidget);
     final free = board.snakes.firstWhere((s) => board.canEscape(s.id));
