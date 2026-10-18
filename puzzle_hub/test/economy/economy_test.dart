@@ -152,14 +152,25 @@ void main() {
   });
 
   group('interstitial rules', () {
-    test('after every game end, not in first 30s, 45s gap', () {
+    test('after every 3rd game end, not in first 30s, 45s gap', () {
       now = now.add(const Duration(seconds: 10));
-      AdsService.onLevelCompleted();
+      for (var i = 0; i < 3; i++) {
+        AdsService.onLevelCompleted();
+      }
       expect(AdsService.interstitialAllowed(), isFalse); // session grace
       now = now.add(const Duration(seconds: 30));
       expect(AdsService.interstitialAllowed(), isTrue);
       AdsService.debugMarkInterstitialShown();
       AdsService.onLevelCompleted();
+      AdsService.onLevelCompleted();
+      now = now.add(const Duration(minutes: 5));
+      expect(AdsService.interstitialAllowed(), isFalse); // only 2 games
+      AdsService.onLevelCompleted();
+      now = now.subtract(const Duration(minutes: 5));
+      AdsService.debugMarkInterstitialShown();
+      for (var i = 0; i < 3; i++) {
+        AdsService.onLevelCompleted();
+      }
       expect(AdsService.interstitialAllowed(), isFalse); // gap
       now = now.add(const Duration(seconds: 45));
       expect(AdsService.interstitialAllowed(), isTrue);

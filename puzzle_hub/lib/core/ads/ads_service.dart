@@ -53,7 +53,7 @@ class AdsService {
   /// Minimum wait between two coin-reward ads.
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
-  static const levelsPerInterstitial = 1; // after every game end
+  static const levelsPerInterstitial = 3; // one after every 3 games
   static const minInterstitialGap = Duration(seconds: 45); // never back-to-back
   static const sessionGrace = Duration(seconds: 30);
   static const interstitialDelay = Duration(milliseconds: 1200);
