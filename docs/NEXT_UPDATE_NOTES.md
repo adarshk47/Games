@@ -69,3 +69,8 @@ Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
     - **Quick match**: play a random available player.
     - **Unique player name**: search a player by name and send a game request; they accept/decline.
     - Live game; moves sync through Firestore (rules so each player only moves in their own game).
+23. **Edge-to-edge (Play warning on 1.0.11)** – "Edge-to-edge may not display for all users" (Android 15 /
+    SDK 35). Fix later: in `android/app/.../MainActivity.kt` override `onCreate` and call
+    `enableEdgeToEdge()` before `super.onCreate` (add `androidx.activity:activity-ktx` to
+    `android/app/build.gradle.kts`), then check every screen on the phone that nothing hides under the
+    status / navigation bar (SafeArea). User said: not now, do it in a later update.
