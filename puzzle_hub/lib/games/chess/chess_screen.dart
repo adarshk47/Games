@@ -16,6 +16,7 @@ import 'logic/chess_engine.dart';
 import 'logic/chess_game.dart';
 import 'logic/chess_positions.dart';
 import 'widgets/chess_board.dart';
+import 'online/online_lobby_screen.dart';
 import 'package:puzzle_hub/core/economy/undo_offer.dart';
 import '../../core/economy/hint_ad.dart';
 
@@ -696,6 +697,8 @@ class _ChessScreenState extends State<ChessScreen> {
           Expanded(child: _modeCard(ChessMode.cpu, Icons.smart_toy_rounded, tr('chess.vs_cpu'))),
           const SizedBox(width: 10),
           Expanded(child: _modeCard(ChessMode.pvp, Icons.people_alt_rounded, tr('chess.two_players'))),
+          const SizedBox(width: 10),
+          Expanded(child: _onlineCard()),
         ]),
         if (_cpu) ...[
           _section(tr('chess.difficulty')),
@@ -795,6 +798,29 @@ class _ChessScreenState extends State<ChessScreen> {
       ],
     );
   }
+
+  /// Opens the online lobby (live games with other players).
+  Widget _onlineCard() => Pressable(
+        key: const ValueKey('mode_online'),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OnlineLobbyScreen())),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: Pal.accent(Pal.gold),
+            border: Border.all(color: Pal.gold, width: 1.5),
+            boxShadow: [BoxShadow(color: Pal.gold.withValues(alpha: 0.35), blurRadius: 16)],
+          ),
+          child: Column(children: [
+            const Icon(Icons.public_rounded, color: Colors.white, size: 30),
+            const SizedBox(height: 6),
+            Text(tr('online.title'),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14)),
+          ]),
+        ),
+      );
 
   Widget _modeCard(ChessMode m, IconData icon, String label) {
     final sel = _mode == m;

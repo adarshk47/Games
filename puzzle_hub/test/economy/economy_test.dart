@@ -152,26 +152,23 @@ void main() {
   });
 
   group('interstitial rules', () {
-    test('after every 3rd game end, not in first 30s, 45s gap', () {
+    test('after every 2nd game end or 1 minute, not in first 30s, 45s gap', () {
       now = now.add(const Duration(seconds: 10));
-      for (var i = 0; i < 3; i++) {
-        AdsService.onLevelCompleted();
-      }
+      AdsService.onLevelCompleted();
+      AdsService.onLevelCompleted();
       expect(AdsService.interstitialAllowed(), isFalse); // session grace
       now = now.add(const Duration(seconds: 30));
-      expect(AdsService.interstitialAllowed(), isTrue);
+      expect(AdsService.interstitialAllowed(), isTrue); // 2 games
+      AdsService.debugMarkInterstitialShown();
+      AdsService.onLevelCompleted();
+      now = now.add(const Duration(seconds: 50));
+      expect(AdsService.interstitialAllowed(), isFalse); // 1 game, < 1 min
+      now = now.add(const Duration(seconds: 10));
+      expect(AdsService.interstitialAllowed(), isTrue); // 1 minute passed
       AdsService.debugMarkInterstitialShown();
       AdsService.onLevelCompleted();
       AdsService.onLevelCompleted();
-      now = now.add(const Duration(minutes: 5));
-      expect(AdsService.interstitialAllowed(), isFalse); // only 2 games
-      AdsService.onLevelCompleted();
-      now = now.subtract(const Duration(minutes: 5));
-      AdsService.debugMarkInterstitialShown();
-      for (var i = 0; i < 3; i++) {
-        AdsService.onLevelCompleted();
-      }
-      expect(AdsService.interstitialAllowed(), isFalse); // gap
+      expect(AdsService.interstitialAllowed(), isFalse); // 45 s gap
       now = now.add(const Duration(seconds: 45));
       expect(AdsService.interstitialAllowed(), isTrue);
     });

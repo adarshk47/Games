@@ -53,7 +53,9 @@ class AdsService {
   /// Minimum wait between two coin-reward ads.
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
-  static const levelsPerInterstitial = 3; // one after every 3 games
+  static const levelsPerInterstitial = 2; // one after every 2 games...
+  /// ...or at the next game end once this long has passed since the last one.
+  static const interstitialEvery = Duration(minutes: 1);
   static const minInterstitialGap = Duration(seconds: 45); // never back-to-back
   static const sessionGrace = Duration(seconds: 30);
   static const interstitialDelay = Duration(milliseconds: 1200);
@@ -370,8 +372,10 @@ class AdsService {
   static bool interstitialAllowed({String? gameId}) {
     if (adFree || suppressed > 0) return false;
     if (gameId != null && _neverInterstitial.contains(gameId)) return false;
-    if (_levelsSinceInterstitial < levelsPerInterstitial) return false;
     final now = clock();
+    final since = _lastInterstitial ?? _sessionStart;
+    final timeUp = _levelsSinceInterstitial >= 1 && now.difference(since) >= interstitialEvery;
+    if (_levelsSinceInterstitial < levelsPerInterstitial && !timeUp) return false;
     if (now.difference(_sessionStart) < sessionGrace) return false;
     final last = _lastInterstitial;
     if (last != null && now.difference(last) < minInterstitialGap) return false;

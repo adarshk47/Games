@@ -8,6 +8,7 @@ import '../i18n/i18n.dart';
 import 'cloud_auth.dart';
 import 'web_firebase_options.dart';
 import 'leaderboard_service.dart';
+import 'online_service.dart';
 import 'referral_service.dart';
 import 'sync_service.dart';
 
@@ -47,6 +48,7 @@ class CloudService {
       SyncService.I.start();
       LeaderboardService.I.start();
       ReferralService.I.start();
+      OnlineService.I.start();
     } catch (e) {
       debugPrint('cloud start failed: $e');
     }

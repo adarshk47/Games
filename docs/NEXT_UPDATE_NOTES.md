@@ -74,3 +74,28 @@ Done: 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14.
     `enableEdgeToEdge()` before `super.onCreate` (add `androidx.activity:activity-ktx` to
     `android/app/build.gradle.kts`), then check every screen on the phone that nothing hides under the
     status / navigation bar (SafeArea). User said: not now, do it in a later update.
+
+## Status 2026-10-19 – v2.0.0 (build 17), first production release
+Production access approved. Shipped since 1.0.10:
+- 1.0.11: save & continue in 14 games; hints (one ad each) in every game.
+- 1.0.12: Arrow Maze picture boards (pictures, mini pictures on small boards, big letters every
+  3rd level); Bus Jam chibi passengers; ivory / ebony chess pieces; sign-out wipes the phone's
+  copy (cloud keeps it) and a different account never inherits the old data.
+- 2.0.0:
+  - **Online Chess (item 22, first part done):** unique player name (`handles/`), "Available"
+    switch + lastSeen heartbeat, Quick match queue, search by name + challenge, incoming
+    challenge pop-up anywhere in the app, live game synced through Firestore (`games/`),
+    resign, claim win when the opponent is silent 5 min, wins / losses on the profile.
+    Entry: Chess menu → "Play online". Code: `lib/core/cloud/online_service.dart`,
+    `lib/games/chess/online/`.
+  - **Ads:** interstitial after every 2 games, or at the next game end once 1 minute has passed
+    since the last one (never in the middle of a game – AdMob policy). One rewarded ad = 3 undo
+    steps.
+- **User must publish the new `firestore.rules`** (players, handles, challenges, queue, games),
+  otherwise online play gets "permission denied". Copy: `D:\gita\Games\firestore_rules.txt`.
+
+Still open:
+- 23 edge-to-edge (Android 15) – later, user said not now.
+- 22 rest: other 2-player games online (Hexa / 2048 races etc., see list in chat), draw offers,
+  online clocks, friends list.
+- New app icon (Gemini sign-in needed).

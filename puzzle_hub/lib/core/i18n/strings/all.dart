@@ -18,6 +18,7 @@ import 'maze_escape.dart';
 import 'memory_boost.dart';
 import 'minesweeper.dart';
 import 'mom_memory.dart';
+import 'online.dart';
 import 'screw_jam.dart';
 import 'shop.dart';
 import 'sliding_puzzle.dart';
@@ -41,6 +42,7 @@ final Map<String, Map<String, String>> allStrings = {
   ...game2048Strings,
   ...howtoStrings,
   ...homeStrings,
+  ...onlineStrings,
   ...mazeEscapeStrings,
   ...memoryBoostStrings,
   ...minesweeperStrings,
