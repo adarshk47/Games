@@ -32,7 +32,7 @@
 - **App category:** Game → Puzzle
 - **Tags (up to 5):** Puzzle, Brain games, Logic, Board, Casual
 - **Contact email:** aiforsmart@gmail.com
-- **Website:** https://masterg-games.web.app (must be this domain: AdMob reads https://masterg-games.web.app/app-ads.txt)
+- **Website:** https://adarshk47.github.io/Idealworld/master-g/ (AdMob reads https://adarshk47.github.io/app-ads.txt = repo `adarshk47.github.io`, file `app-ads.txt` at its root)
 - **Privacy policy:** https://adarshk47.github.io/Idealworld/master-g/privacy.html
 - **Account deletion URL:** https://adarshk47.github.io/Idealworld/master-g/delete-account.html
 - **App icon (512×512):** `store_assets/play_icon_512.png`
