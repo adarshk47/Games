@@ -8,6 +8,7 @@ rules_version = '2';
 //   referrals/{inviteeUid}               one document per invited player (one credit per invitee)
 //   leaderboards/{board}/entries/{uid}   {name, score, country, updatedAt}
 //   players, handles, challenges, queue, games   online 2-player chess
+//   ludo_games, ludo_rooms, ludo_queue           online Ludo (2-4 players)
 //
 // Country = 2-letter ISO code ('IN', 'US', ...). Country boards query
 // where('country', ==) + orderBy('score'): deploy firestore.indexes.json.
@@ -276,6 +277,73 @@ service cloud.firestore {
         && (request.resource.data.status == 'active'
           || (request.resource.data.status == 'over' && request.resource.data.result in ['white', 'black', 'draw']));
       allow delete: if false;
+    }
+
+    // ------------------------------------------------------------ online ludo
+    // ludo_games/{id}: {game, players (uids by seat), names, seed, quick,
+    // log (ints: roll = 100 + seat, move = seat * 10 + token), status,
+    // winner, createdAt, updatedAt}. The dice come from seed + roll number,
+    // so nobody can choose a roll. A seat may only add its own action, or
+    // any player may act for a seat that has been silent for 30 s.
+    match /ludo_games/{id} {
+      function isPlayer() {
+        return signedIn() && request.auth.uid in resource.data.players;
+      }
+      function seatOf(v) {
+        return v >= 100 ? v - 100 : math.floor(v / 10);
+      }
+      allow read: if isPlayer();
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.players
+        && request.resource.data.players.size() >= 2
+        && request.resource.data.players.size() <= 4
+        && request.resource.data.names.size() == request.resource.data.players.size()
+        && request.resource.data.log.size() == 0
+        && request.resource.data.status == 'active';
+      allow update: if isPlayer()
+        && resource.data.status == 'active'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['log', 'status', 'winner', 'updatedAt'])
+        && request.resource.data.log.size() == resource.data.log.size() + 1
+        && request.resource.data.log[resource.data.log.size()] is int
+        && seatOf(request.resource.data.log[resource.data.log.size()]) < resource.data.players.size()
+        && (resource.data.players[seatOf(request.resource.data.log[resource.data.log.size()])] == request.auth.uid
+          || request.time > resource.data.updatedAt + duration.value(30, 's'))
+        && (request.resource.data.status == 'active' || request.resource.data.status == 'over');
+      allow delete: if false;
+    }
+
+    // ludo_rooms/{CODE}: {host, players, names, max, quick, status, gameId}
+    match /ludo_rooms/{code} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.host == request.auth.uid
+        && request.resource.data.players == [request.auth.uid]
+        && request.resource.data.max >= 2 && request.resource.data.max <= 4
+        && request.resource.data.status == 'open';
+      allow delete: if signedIn() && resource.data.host == request.auth.uid;
+      // Join / leave (players + names only) while open; the host starts it.
+      allow update: if signedIn()
+        && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['players', 'names'])
+            && resource.data.status == 'open'
+            && request.resource.data.players.size() <= resource.data.max
+            && request.resource.data.players.size() >= 1
+            && request.resource.data.players[0] == resource.data.host)
+          || (request.auth.uid == resource.data.host
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'gameId'])
+            && request.resource.data.status == 'started'));
+    }
+
+    match /ludo_queue/{uid} {
+      allow read: if signedIn();
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isOwner(uid);
+      allow update: if signedIn() && request.auth.uid != uid
+        && !('gameId' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['gameId'])
+        && !exists(/databases/$(database)/documents/ludo_games/$(request.resource.data.gameId))
+        && getAfter(/databases/$(database)/documents/ludo_games/$(request.resource.data.gameId)).data.players.hasAll([uid, request.auth.uid]);
     }
 
     match /{document=**} {

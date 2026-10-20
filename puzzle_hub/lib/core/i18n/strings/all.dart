@@ -2,6 +2,7 @@
 import 'account.dart';
 import 'arrow_maze.dart';
 import 'ball_sort.dart';
+import 'brain_age.dart';
 import 'block_puzzle.dart';
 import 'bus_jam.dart';
 import 'chess.dart';
@@ -10,6 +11,7 @@ import 'common.dart';
 import 'daily.dart';
 import 'flow_pairs.dart';
 import 'hexa_sort.dart';
+import 'ludo.dart';
 import 'focus_color.dart';
 import 'game_2048.dart';
 import 'home.dart';
@@ -30,6 +32,7 @@ final Map<String, Map<String, String>> allStrings = {
   ...accountStrings,
   ...arrowMazeStrings,
   ...ballSortStrings,
+  ...brainAgeStrings,
   ...blockPuzzleStrings,
   ...busJamStrings,
   ...chessStrings,
@@ -38,6 +41,7 @@ final Map<String, Map<String, String>> allStrings = {
   ...dailyStrings,
   ...flowPairsStrings,
   ...hexaSortStrings,
+  ...ludoStrings,
   ...focusColorStrings,
   ...game2048Strings,
   ...howtoStrings,

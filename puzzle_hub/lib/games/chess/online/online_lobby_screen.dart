@@ -10,10 +10,23 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/rewards.dart';
 import '../../../core/ui/ui.dart';
 import 'online_chess_screen.dart';
+import '../../ludo/online/ludo_online_game.dart';
+import '../../ludo/online/ludo_online_service.dart';
 
 /// Opens an online game (used by the lobby and the incoming-challenge popup).
 void openOnlineGame(BuildContext context, String gameId) {
   Navigator.of(context).push(MaterialPageRoute(builder: (_) => OnlineChessScreen(gameId: gameId)));
+}
+
+/// Accepts [c] (Chess or Ludo) and opens the new game.
+Future<void> acceptChallenge(Challenge c, NavigatorState? nav) async {
+  if (c.game == 'ludo') {
+    final id = await LudoOnline.I.acceptChallenge(c);
+    nav?.push(MaterialPageRoute(builder: (_) => LudoOnlineGameScreen(gameId: id)));
+  } else {
+    final id = await OnlineService.I.accept(c);
+    nav?.push(MaterialPageRoute(builder: (_) => OnlineChessScreen(gameId: id)));
+  }
 }
 
 /// App-wide popup for challenges sent to me (wired up once at start).
@@ -24,14 +37,12 @@ void installChallengePopup() {
     showPremiumDialog(
       ctx,
       title: tr('online.challenged', {'name': '@${c.fromName}'}),
-      message: tr('online.challenged_text'),
-      emoji: '♟️',
+      message: tr(c.game == 'ludo' ? 'online.challenged_text_ludo' : 'online.challenged_text'),
+      emoji: c.game == 'ludo' ? '🎲' : '♟️',
       actions: [
         DialogAction(tr('online.accept'), () async {
           try {
-            final id = await OnlineService.I.accept(c);
-            final nav = Rewards.navKey.currentState;
-            nav?.push(MaterialPageRoute(builder: (_) => OnlineChessScreen(gameId: id)));
+            await acceptChallenge(c, Rewards.navKey.currentState);
           } catch (e) {
             debugPrint('accept: $e');
           }
@@ -311,8 +322,7 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
                             compact: true,
                             onTap: () async {
                               try {
-                                final id = await OnlineService.I.accept(c);
-                                if (mounted) openOnlineGame(this.context, id);
+                                await acceptChallenge(c, mounted ? Navigator.of(this.context) : null);
                               } catch (_) {
                                 _snack(tr('online.err.network'));
                               }

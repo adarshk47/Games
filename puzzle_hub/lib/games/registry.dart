@@ -4,12 +4,14 @@ import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
 import 'block_puzzle/block_puzzle_screen.dart';
+import 'brain_age/brain_age_screen.dart';
 import 'bus_jam/bus_jam_screen.dart';
 import 'chess/chess_screen.dart';
 import 'flow_pairs/flow_pairs_screen.dart';
 import 'focus_color/focus_color_screen.dart';
 import 'game_2048/game_2048_screen.dart';
 import 'hexa_sort/hexa_sort_screen.dart';
+import 'ludo/ludo_screen.dart';
 import 'maze_escape/maze_escape_screen.dart';
 import 'memory_boost/memory_boost_screen.dart';
 import 'minesweeper/minesweeper_screen.dart';
@@ -30,18 +32,6 @@ final List<GameInfo> games = [for (final g in allGames) if (g.enabled || kShowAl
 /// Every game that exists in the codebase. To release a hidden game, flip its
 /// `enabled` flag to true (and bump the version).
 final List<GameInfo> allGames = [
-  // Hidden for now (preserved for a future release).
-  GameInfo(
-    id: 'mom_memory',
-    title: 'Mom Memory',
-    subtitle: 'Garbhavastha ke liye shaant memory games',
-    icon: Icons.favorite_rounded,
-    emoji: '🤰',
-    color: const Color(0xFFFF8FB8),
-    featured: true,
-    enabled: false,
-    builder: (_) => const MomMemoryScreen(),
-  ),
   GameInfo(
     id: 'block_puzzle',
     title: 'Block Puzzle',
@@ -178,6 +168,24 @@ final List<GameInfo> allGames = [
     builder: (_) => const SudokuScreen(),
   ),
   GameInfo(
+    id: 'ludo',
+    title: 'Ludo',
+    subtitle: 'Classic Ludo – dosto, online ya computer ke saath',
+    icon: Icons.casino_rounded,
+    emoji: '🎲',
+    color: const Color(0xFFE53935),
+    builder: (_) => const LudoScreen(),
+  ),
+  GameInfo(
+    id: 'brain_age',
+    title: 'Brain Age',
+    subtitle: 'Aapka dimaag kitna jawaan hai? 5 chhote test',
+    icon: Icons.psychology_rounded,
+    emoji: '🧠',
+    color: const Color(0xFFB794FF),
+    builder: (_) => const BrainAgeScreen(),
+  ),
+  GameInfo(
     id: 'focus_color',
     title: 'Focus Colors',
     subtitle: 'Dimag ko tez aur focused rakho',
@@ -185,5 +193,15 @@ final List<GameInfo> allGames = [
     emoji: '🎨',
     color: const Color(0xFF5EEAD4),
     builder: (_) => const FocusColorScreen(),
+  ),
+  // Last in the list (calm games for mothers-to-be).
+  GameInfo(
+    id: 'mom_memory',
+    title: 'Mom Memory',
+    subtitle: 'Garbhavastha ke liye shaant memory games',
+    icon: Icons.favorite_rounded,
+    emoji: '🤰',
+    color: const Color(0xFFFF8FB8),
+    builder: (_) => const MomMemoryScreen(),
   ),
 ];

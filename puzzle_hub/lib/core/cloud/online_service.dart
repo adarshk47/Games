@@ -35,9 +35,12 @@ class OnlinePlayer {
 /// A game request from one player to another.
 @immutable
 class Challenge {
-  const Challenge({required this.id, required this.from, required this.fromName, required this.to, required this.toName, required this.status, this.gameId});
+  const Challenge({required this.id, required this.from, required this.fromName, required this.to, required this.toName, required this.status, this.gameId, this.game = 'chess'});
   final String id, from, fromName, to, toName, status;
   final String? gameId;
+
+  /// 'chess' or 'ludo'.
+  final String game;
 
   static Challenge fromDoc(String id, Map<String, dynamic> d) => Challenge(
         id: id,
@@ -47,6 +50,7 @@ class Challenge {
         toName: d['toName'] as String? ?? '',
         status: d['status'] as String? ?? 'pending',
         gameId: d['gameId'] as String?,
+        game: d['game'] as String? ?? 'chess',
       );
 }
 
@@ -273,9 +277,9 @@ class OnlineService {
   // ---------------------------------------------------------------- challenges
 
   /// Sends a challenge; returns its id.
-  Future<String> challenge(OnlinePlayer to) async {
+  Future<String> challenge(OnlinePlayer to, {String game = 'chess'}) async {
     final ref = await _db.collection('challenges').add({
-      'game': 'chess',
+      'game': game,
       'from': uid,
       'fromName': me.value?.handle ?? _name,
       'to': to.uid,
