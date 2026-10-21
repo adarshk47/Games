@@ -290,7 +290,7 @@ service cloud.firestore {
         return signedIn() && request.auth.uid in resource.data.players;
       }
       function seatOf(v) {
-        return v >= 100 ? v - 100 : math.floor(v / 10);
+        return v >= 100 ? v - 100 : int(v / 10);
       }
       allow read: if isPlayer();
       allow create: if signedIn()
