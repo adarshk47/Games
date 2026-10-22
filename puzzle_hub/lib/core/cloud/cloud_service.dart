@@ -4,6 +4,8 @@ import 'dart:io' show Platform;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
+import '../ads/adfree_grant.dart';
+import '../ads/coupon_service.dart';
 import '../i18n/i18n.dart';
 import 'cloud_auth.dart';
 import 'web_firebase_options.dart';
@@ -49,6 +51,18 @@ class CloudService {
       LeaderboardService.I.start();
       ReferralService.I.start();
       OnlineService.I.start();
+      // Ad-free grants and coupons are per account: re-check them as soon as
+      // the signed-in user is known (at start the user arrives a moment after
+      // init, so a revoked grant would otherwise stay cached until the Shop
+      // is opened).
+      String? lastUid;
+      CloudAuth.I.user.addListener(() {
+        final uid = CloudAuth.I.user.value?.uid;
+        if (uid == lastUid) return;
+        lastUid = uid;
+        unawaited(AdFreeGrant.refresh());
+        unawaited(CouponService.refresh());
+      });
     } catch (e) {
       debugPrint('cloud start failed: $e');
     }
