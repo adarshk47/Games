@@ -1,34 +1,34 @@
-# Master G – Play Store listing (v2.0.0, build 17)
+# Master G – Play Store listing (v2.1.0, build 18)
 
 ## Release
-- **Release name:** `2.0.0 (17) – Online Chess`
+- **Release name:** `2.1.0 (18) – Ludo, Saanp-Seedhi & Brain Age`
 - **Release notes – English (en-IN)** (max 500):
   ```
-  ♟️ Master G 2.0 – play online!
-  • Online Chess: challenge friends by player name, or tap Quick match to play anyone
-  • Save & continue: leave any game mid-way and pick up where you stopped
-  • Hints in every game
-  • Arrow Maze: every level is a picture – hearts, planes, trains, city skylines, big letters
-  • New cute Bus Jam passengers and better looking chess pieces
-  • Undo: one ad now takes you 3 steps back
-  • Fixes and speed improvements
+  🎲 New games!
+  • Ludo – vs computer, friends on one phone, or online rooms for 4
+  • Saanp-Seedhi (Snakes & Ladders) – offline and online
+  • Brain Age – 5 quick tests show your brain's age range, with learning tips
+  • Mom Memory – calm memory games for mothers-to-be
+  • New home screen with Top games
+  • Arrow Maze: twice the arrows + black & white style
+  • Fresh Bus Jam look, clearer chess pieces, fixes
   ```
 - **Release notes – Hindi (hi-IN):**
   ```
-  ♟️ Master G 2.0 – अब ऑनलाइन खेलें!
-  • ऑनलाइन शतरंज: दोस्त को उसके नाम से चुनौती दें या तुरंत मैच में किसी से भी खेलें
-  • सेव और जारी: बीच में छोड़ा गेम वहीं से आगे खेलें
-  • हर गेम में हिंट
-  • एरो मेज़: हर लेवल एक आकृति – दिल, हवाई जहाज़, ट्रेन, शहर, बड़े अक्षर
-  • बस जैम में नए प्यारे यात्री, शतरंज के सुंदर मोहरे
-  • अंडू: एक विज्ञापन से 3 चाल पीछे
-  • सुधार और तेज़ रफ़्तार
+  🎲 नए गेम्स!
+  • लूडो – कंप्यूटर, एक फ़ोन पर दोस्त या 4 दोस्तों का ऑनलाइन रूम
+  • साँप-सीढ़ी – ऑफ़लाइन और ऑनलाइन
+  • दिमाग़ की उम्र – 5 छोटे टेस्ट, उम्र की रेंज और सीखने के टिप्स
+  • मॉम मेमोरी – होने वाली माँओं के लिए शांत खेल
+  • नया होम स्क्रीन, टॉप गेम्स के साथ
+  • एरो मेज़: दोगुने तीर + काला-सफ़ेद स्टाइल
+  • बस जैम का नया लुक, साफ़ शतरंज मोहरे, सुधार
   ```
 
 ## Main store listing
 - **App name (max 30):** `Master G: Brain Puzzle Games` (28)
-- **Short description – English (max 80):** `16 brain games + online Chess with friends. Block Puzzle, 2048, Sudoku & more!` (79)
-- **Short description – Hindi (max 80):** `16 ब्रेन गेम्स + दोस्तों से ऑनलाइन शतरंज। ब्लॉक पज़ल, 2048, सुडोकू और भी!`
+- **Short description – English (max 80):** `Ludo, Saanp-Seedhi, Chess online + 17 brain games. Play with friends!`
+- **Short description – Hindi (max 80):** `लूडो, साँप-सीढ़ी, ऑनलाइन शतरंज + 17 ब्रेन गेम्स। दोस्तों के साथ खेलें!`
 - **App category:** Game → Puzzle
 - **Tags (up to 5):** Puzzle, Brain games, Logic, Board, Casual
 - **Contact email:** aiforsmart@gmail.com
@@ -37,33 +37,45 @@
 - **Account deletion URL:** https://adarshk47.github.io/Idealworld/master-g/delete-account.html
 - **App icon (512×512):** `store_assets/play_icon_512.png`
 - **Feature graphic (1024×500):** `store_assets/feature_graphic_1024x500.png`
-- **Phone screenshots (2–8, 9:16):** home (Diya Chakra), Online Chess lobby, Block Puzzle, Arrow Maze (picture level), 2048, Leaderboard (Ranks tab), Shop, Profile. Current ones: `store_assets/screens/`.
+- **Phone screenshots (2–8, 9:16):** Arcade home (Top games), Ludo, Saanp-Seedhi, Brain Age result, Online Chess, Arrow Maze (picture level), Block Puzzle, Bus Jam. Current ones: `store_assets/screens/`.
 - **Promo video (optional, YouTube link):** upload `D:\gita\Games\Promo video\MasterG_Promo_English.mp4` to YouTube (unlisted or public) and paste the link.
 
 ### Full description – English (max 4000)
 ```
-Master G is your daily brain gym – 16 beautiful puzzle and logic games in one premium app, now with online Chess against your friends. Train your memory, focus and logic with relaxing and challenging levels, in your own language.
+Master G is your daily brain gym – 20 games in one premium app: Ludo, Saanp-Seedhi and Chess to play online with friends, plus brain, puzzle and memory games. Train your memory, focus and logic with relaxing and challenging levels, in your own language.
 
-♟️ NEW: PLAY ONLINE
+🎲 NEW: LUDO & SAANP-SEEDHI
+• Ludo – play the computer, friends on one phone, or online: quick match, a room code for up to 4 friends, or challenge by name
+• Saanp-Seedhi (Snakes & Ladders) – the family classic, offline and online
+• Classic and Quick Ludo modes; games are saved if you leave half-way
+
+🧠 NEW: BRAIN AGE
+• Pick your age group (15+) and take 5 quick tests: reaction, number memory, mental math, colour focus and patterns
+• See your brain's age range and how you compare with your age group
+• Learn a trick after every test and practise to improve
+
+♟️ PLAY ONLINE
 • Online Chess with real players – live, move by move
 • Pick a unique player name and let friends find you
 • Challenge a friend by name, or tap Quick match to play anyone who is online
 • Turn "Available" on so others can invite you, and get a pop-up when someone challenges you
 
-🪔 FESTIVE NEW LOOK
-• Diya Chakra home: every game on a glowing wheel around a lit diya – spin it with your finger
+🏠 NEW HOME
+• Big cards for new games, Top games ranked by players, and neat shelves by category
+• Prefer the Diya Chakra wheel? Pick it any time in Settings
 • Utsav and Diwali Night themes with rangoli, diyas and falling marigold petals
 • Prefer it simple? Switch to Classic or Festive layout and 8 themes in Settings
 
-🧠 16 GAMES IN ONE APP
+🧠 20 GAMES IN ONE APP
 • Block Puzzle – drop blocks, clear lines, chase your best score
-• Arrow Maze – every level is a picture: hearts, planes, trains, city skylines and big letters
+• Arrow Maze – every level is a picture: hearts, planes, trains, city skylines and big letters; colourful or black & white arrows
 • Maze Escape – find the way out
 • Ball Sort – up to 20 colours in Extreme
 • 2048 – Easy to Extreme boards plus Classic
 • Chess – play online, against the computer or a friend on the same phone, blitz clocks of 2, 3, 5 and 10 minutes
 • Memory Boost – Card Match, Simon and Number Memory
 • Flow, Sliding Puzzle, Minesweeper, Screw Jam, Bus Jam, Tile Match, Hexa Sort, Sudoku and Focus Colors
+• Mom Memory – calm, no-pressure memory games for mothers-to-be
 
 ⭐ FOR EVERY PLAYER
 • Easy, Medium, Hard and Extreme in every game
@@ -94,25 +106,36 @@ Download Master G and make your mind sharper every day!
 
 ### Full description – Hindi (hi-IN)
 ```
-Master G आपका रोज़ का ब्रेन जिम है – एक ही ऐप में 16 शानदार पज़ल और लॉजिक गेम्स, और अब दोस्तों के साथ ऑनलाइन शतरंज भी। अपनी याददाश्त, ध्यान और सोचने की शक्ति बढ़ाइए, अपनी भाषा में।
+Master G आपका रोज़ का ब्रेन जिम है – एक ही ऐप में 20 गेम्स: दोस्तों के साथ ऑनलाइन लूडो, साँप-सीढ़ी और शतरंज, साथ में दिमाग़, पज़ल और याददाश्त के खेल। अपनी याददाश्त, ध्यान और सोचने की शक्ति बढ़ाइए, अपनी भाषा में।
 
-♟️ नया: ऑनलाइन खेलें
+🎲 नया: लूडो और साँप-सीढ़ी
+• लूडो – कंप्यूटर, एक फ़ोन पर दोस्त, या ऑनलाइन: तुरंत मैच, 4 दोस्तों का रूम कोड, या नाम से चुनौती
+• साँप-सीढ़ी – हर घर का खेल, ऑफ़लाइन और ऑनलाइन
+
+🧠 नया: दिमाग़ की उम्र
+• अपना उम्र-समूह (15+) चुनें और 5 छोटे टेस्ट दें: रिएक्शन, नंबर याद, मन में गणित, रंग पर ध्यान और पैटर्न
+• दिमाग़ की उम्र की रेंज देखें और अपने उम्र-समूह से तुलना करें
+• हर टेस्ट के बाद नई ट्रिक सीखें और प्रैक्टिस से सुधारें
+
+♟️ ऑनलाइन खेलें
 • असली खिलाड़ियों के साथ लाइव ऑनलाइन शतरंज
 • अपना अनोखा खिलाड़ी नाम चुनें, दोस्त आपको ढूंढ लेंगे
 • दोस्त को नाम से चुनौती दें या तुरंत मैच में किसी से भी खेलें
 • "उपलब्ध" चालू रखें, कोई चुनौती दे तो तुरंत पॉप-अप
 
-🪔 त्योहार वाला नया लुक
-• दीया चक्र होम: सारे गेम जलते दीये के चारों ओर चक्र में – उंगली से घुमाइए
+🏠 नया होम
+• नए गेम्स के बड़े कार्ड, खिलाड़ियों की पसंद के टॉप गेम्स और श्रेणियों की साफ़ पंक्तियाँ
+• दीया चक्र पसंद है? सेटिंग्स में कभी भी चुनें
 • उत्सव और दिवाली नाइट थीम – रंगोली, दीये और गेंदे की पंखुड़ियाँ
 • सादा पसंद है? सेटिंग्स में क्लासिक या फ़ेस्टिव लेआउट और 8 थीम
 
-🧠 एक ऐप में 16 गेम्स
+🧠 एक ऐप में 20 गेम्स
 • ब्लॉक पज़ल, मेज़ एस्केप, बॉल सॉर्ट, 2048
 • एरो मेज़ – हर लेवल एक आकृति: दिल, हवाई जहाज़, ट्रेन, शहर, बड़े अक्षर
 • शतरंज – ऑनलाइन, कंप्यूटर या उसी फ़ोन पर दोस्त के साथ; 2, 3, 5 और 10 मिनट की घड़ी
 • मेमोरी बूस्ट – कार्ड मैच, साइमन, नंबर मेमोरी
 • फ़्लो, स्लाइडिंग पज़ल, माइनस्वीपर, स्क्रू जैम, बस जैम, टाइल मैच, हेक्सा सॉर्ट, सुडोकू, फ़ोकस कलर्स
+• मॉम मेमोरी – होने वाली माँओं के लिए शांत याददाश्त खेल
 
 ⭐ हर खिलाड़ी के लिए
 • हर गेम में आसान, मध्यम, कठिन और बहुत कठिन

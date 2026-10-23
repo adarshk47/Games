@@ -99,3 +99,12 @@ Still open:
 - 22 rest: other 2-player games online (Hexa / 2048 races etc., see list in chat), draw offers,
   online clocks, friends list.
 - New app icon (Gemini sign-in needed).
+
+## Status 2026-10-23 – v2.1.0 (build 18) AAB built
+Since 2.0.0: Ludo (cpu / pass & play / online rooms, quick match, challenges), Saanp-Seedhi
+(same three modes; online uses the ludo_games docs with game = 'snakes'), Brain Age (15+, small
+age bands, range result, tips, practice), Mom Memory enabled (last), new default "Arcade" home
+(hero cards, game of the day, Top games from game_stats plays, category shelves; chakra still in
+Settings), pure white / black chess pieces, Arrow Maze ~2x arrows + black-on-white / white-on-black
+styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the user signs in.
+**Publish firestore_rules.txt before releasing** (ludo_* rules, queue 'game' field).
