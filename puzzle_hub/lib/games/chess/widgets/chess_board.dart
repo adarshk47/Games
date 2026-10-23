@@ -27,22 +27,10 @@ class PieceGlyph extends StatelessWidget {
     final white = piece > 0;
     final g = _glyphs[piece.abs()]!;
     final style = TextStyle(fontSize: size * 0.84, height: 1.0, fontFamilyFallback: const ['Noto Sans Symbols 2', 'Segoe UI Symbol', 'DejaVu Sans']);
-    final rect = Rect.fromLTWH(0, 0, size, size);
-    final fill = white
-        // Pearl ivory.
-        ? const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFFFFFFF), Color(0xFFFFF7E6), Color(0xFFF0DDB4), Color(0xFFD6B57A)],
-            stops: [0, 0.35, 0.7, 1],
-          )
-        // Glossy ebony.
-        : const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF6A6478), Color(0xFF2B2833), Color(0xFF121116), Color(0xFF000000)],
-            stops: [0, 0.3, 0.7, 1],
-          );
+    // Plain, high-contrast colours: pure white pieces with a black outline and
+    // pure black pieces with a white outline, readable on both board squares.
+    final fill = white ? const Color(0xFFFFFFFF) : const Color(0xFF0A0A0A);
+    final rim = white ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
     return SizedBox(
       width: size,
       height: size,
@@ -52,13 +40,12 @@ class PieceGlyph extends StatelessWidget {
             style: style.copyWith(
               foreground: Paint()
                 ..style = PaintingStyle.stroke
-                ..strokeWidth = size * 0.075
+                ..strokeWidth = size * 0.07
                 ..strokeJoin = StrokeJoin.round
-                // Warm brown rim on ivory, gold rim on ebony.
-                ..color = white ? const Color(0xFF5A3A14) : const Color(0xFFE2B85A),
+                ..color = rim,
               shadows: [Shadow(color: Colors.black.withValues(alpha: 0.55), blurRadius: size * 0.08, offset: Offset(0, size * 0.05))],
             )),
-        Text(g, textAlign: TextAlign.center, style: style.copyWith(foreground: Paint()..shader = fill.createShader(rect))),
+        Text(g, textAlign: TextAlign.center, style: style.copyWith(color: fill)),
       ]),
     );
   }

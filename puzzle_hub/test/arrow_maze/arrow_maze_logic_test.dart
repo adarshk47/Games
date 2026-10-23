@@ -13,10 +13,10 @@ void main() {
   };
   // Minimum number of arrows on any level of the tier.
   const minArrows = {
-    MazeTier.easy: 6,
-    MazeTier.medium: 9,
-    MazeTier.hard: 14,
-    MazeTier.extreme: 18,
+    MazeTier.easy: 7,
+    MazeTier.medium: 11,
+    MazeTier.hard: 28,
+    MazeTier.extreme: 32,
   };
 
   test('every tier has 100 levels; extreme is huge with one life and hint', () {
@@ -36,7 +36,7 @@ void main() {
       for (var l = 1; l <= tier.count; l++) {
         final b = ArrowMazeLevels.generate(tier, l);
         final sp = ArrowMazeLevels.spec(tier, l);
-        expect(b.rows <= sp.rows * 1.3 + 1 && b.cols <= sp.cols * 1.3 + 1, isTrue);
+        expect(b.rows <= sp.rows * 1.5 + 1 && b.cols <= sp.cols * 1.5 + 1, isTrue);
         expect(b.shape, isNotNull);
         for (final s in b.snakes) {
           expect(s.cells.every(b.isInside), isTrue, reason: 'outside ${tier.key} $l');

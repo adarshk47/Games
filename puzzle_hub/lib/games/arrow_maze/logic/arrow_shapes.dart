@@ -304,9 +304,10 @@ List<ArrowShape> get kArrowShapes => [...kArrowPictures, ...kArrowMiniPictures, 
 /// tappable), then fitted to the picture's proportions.
 (int, int) _dims(ArrowShape shape, int maxRows, int maxCols) {
   final fill = shape.rows.join().split('').where((x) => x == '#').length / (shape.h * shape.w);
-  final grow = math.min(1.3, math.sqrt(1 / fill));
-  final mr = math.min((maxRows * grow).round(), math.max(maxRows, 34));
-  final mc = math.min((maxCols * grow).round(), math.max(maxCols, 22));
+  // Bigger boards hold more arrows; players zoom in on the big ones.
+  final grow = math.min(1.45, math.sqrt(1.25 / fill));
+  final mr = math.min((maxRows * grow).round(), math.max(maxRows, 40));
+  final mc = math.min((maxCols * grow).round(), math.max(maxCols, 26));
   final k = math.min(mr / shape.h, mc / shape.w);
   // Allow a little stretch so the board is filled better, but keep the look.
   final ky = math.min(mr / shape.h, k * 1.2);

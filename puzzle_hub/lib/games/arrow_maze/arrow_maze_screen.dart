@@ -36,7 +36,16 @@ const List<ArrowMazeTheme> kMazeThemes = [
   ArrowMazeTheme('Emerald Dark', [Color(0xFF062C22), Color(0xFF021712)]),
   ArrowMazeTheme('Deep Velvet', [Color(0xFF2C0B1E), Color(0xFF14030C)]),
   ArrowMazeTheme('Pure AMOLED', [Color(0xFF121212), Color(0xFF000000)]),
+  ArrowMazeTheme('Paper White', [Color(0xFFFFFFFF), Color(0xFFF1F1F1)]),
 ];
+
+/// Plain black arrows / plain white arrows (last two palettes).
+final kInkPalette = kMazePalettes.length - 2;
+final kChalkPalette = kMazePalettes.length - 1;
+
+/// Index of the plain white board (black arrows) and the pure black board.
+const kPaperTheme = 6;
+const kAmoledTheme = 5;
 
 const List<ArrowMazePalette> kMazePalettes = [
   ArrowMazePalette('Neon Spectrum', Pal.accents),
@@ -72,6 +81,8 @@ const List<ArrowMazePalette> kMazePalettes = [
     Color(0xFF38EF7D),
     Color(0xFF11998E)
   ]),
+  ArrowMazePalette('Ink Black', [Color(0xFF111111)]),
+  ArrowMazePalette('Chalk White', [Color(0xFFFFFFFF)]),
 ];
 
 const _tint = Color(0xFF7C9CFF);
@@ -728,6 +739,36 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
     );
   }
 
+  /// 0 = colourful, 1 = black arrows on white, 2 = white arrows on black.
+  int get _contrast => themeIdx == kPaperTheme && paletteIdx == kInkPalette
+      ? 1
+      : (themeIdx == kAmoledTheme && paletteIdx == kChalkPalette ? 2 : 0);
+
+  void _setContrast(int mode) {
+    setState(() {
+      if (_contrast == 0) {
+        Storage.setInt('arrow_maze.colorTheme', themeIdx);
+        Storage.setInt('arrow_maze.colorPalette', paletteIdx);
+      }
+      switch (mode) {
+        case 1:
+          themeIdx = kPaperTheme;
+          paletteIdx = kInkPalette;
+        case 2:
+          themeIdx = kAmoledTheme;
+          paletteIdx = kChalkPalette;
+        default:
+          themeIdx = Storage.getInt('arrow_maze.colorTheme', 0);
+          paletteIdx = Storage.getInt('arrow_maze.colorPalette', 0);
+          if (themeIdx == kPaperTheme) themeIdx = 0;
+          if (paletteIdx >= kInkPalette) paletteIdx = 0;
+      }
+      version++;
+    });
+    Storage.setInt('arrow_maze.theme', themeIdx);
+    Storage.setInt('arrow_maze.palette', paletteIdx);
+  }
+
   int? _hit(Offset p, double cell) {
     // p is in board coordinates (pixels); grid is offset by half a cell.
     final gx = p.dx / cell - 0.5, gy = p.dy / cell - 0.5;
@@ -784,6 +825,45 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                         ),
                       ],
                     ),
+                    const SizedBox(height: 10),
+                    Text(tr('arrow_maze.contrast'),
+                        style: const TextStyle(
+                            color: Pal.textDim,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 8),
+                    Row(children: [
+                      for (final (m, bg, fg) in [
+                        (0, const Color(0xFF1B1840), Colors.white),
+                        (1, Colors.white, Colors.black),
+                        (2, Colors.black, Colors.white),
+                      ])
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: GestureDetector(
+                              key: ValueKey('maze_contrast_$m'),
+                              onTap: () {
+                                _setContrast(m);
+                                setSheetState(() {});
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                decoration: BoxDecoration(
+                                  color: bg,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: _contrast == m ? Pal.gold : Pal.glassBorder, width: _contrast == m ? 2.5 : 1),
+                                ),
+                                child: Column(children: [
+                                  Icon(Icons.north_east_rounded, color: m == 0 ? Pal.gold : fg, size: 22),
+                                  const SizedBox(height: 4),
+                                  Text(tr('arrow_maze.contrast.$m'), textAlign: TextAlign.center, style: TextStyle(color: fg, fontSize: 11, fontWeight: FontWeight.w800)),
+                                ]),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ]),
                     const SizedBox(height: 14),
                     Text(tr('arrow_maze.bg_theme'),
                         style: const TextStyle(
@@ -818,7 +898,7 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                               child: Text(tr('arrow_maze.theme.$i', const {}, kMazeThemes[i].name),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: kMazeThemes[i].bgColors.first.computeLuminance() > 0.5 ? Colors.black : Colors.white,
                                       fontSize: 11,
                                       fontWeight: themeIdx == i
                                           ? FontWeight.bold
@@ -995,7 +1075,8 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
                                         board: board,
                                         hidden: hidden,
                                         version: version,
-                                        paletteIdx: paletteIdx),
+                                        paletteIdx: paletteIdx,
+                                        ink: activeTheme.bgColors.first.computeLuminance() > 0.5 ? Colors.black : Colors.white),
                                   ),
                                 ),
                               ),
@@ -1154,21 +1235,25 @@ class _StaticPainter extends CustomPainter {
       {required this.board,
       required this.hidden,
       required this.version,
-      this.paletteIdx = 0});
+      this.paletteIdx = 0,
+      this.ink = Colors.white});
   final ArrowMazeBoard board;
   final Set<int> hidden;
   final int version;
   final int paletteIdx;
+
+  /// Colour of grid dots / picture outline (black on a light board).
+  final Color ink;
 
   @override
   void paint(Canvas canvas, Size size) {
     final cell = size.width / (board.cols + 1);
     canvas.save();
     canvas.translate(cell * 0.5, cell * 0.5);
-    final dot = Paint()..color = Colors.white.withValues(alpha: 0.07);
-    // The level's picture: a soft glowing silhouette under the arrows.
-    final tile = Paint()..color = Colors.white.withValues(alpha: 0.06);
-    final edge = Paint()..color = Colors.white.withValues(alpha: 0.10);
+    final dot = Paint()..color = ink.withValues(alpha: 0.10);
+    // The level's picture: a soft silhouette under the arrows.
+    final tile = Paint()..color = ink.withValues(alpha: 0.06);
+    final edge = Paint()..color = ink.withValues(alpha: 0.14);
     for (var r = 0; r < board.rows; r++) {
       for (var c = 0; c < board.cols; c++) {
         if (!board.isInside(r * board.cols + c)) continue;
@@ -1198,7 +1283,7 @@ class _StaticPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_StaticPainter old) =>
-      old.version != version || old.board != board || old.paletteIdx != paletteIdx;
+      old.version != version || old.board != board || old.paletteIdx != paletteIdx || old.ink != ink;
 }
 
 class _FxPainter extends CustomPainter {

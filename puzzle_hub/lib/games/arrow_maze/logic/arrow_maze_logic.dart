@@ -241,7 +241,8 @@ class ArrowMazeLevels {
     var bestScore = -1.0;
     for (var attempt = 0; attempt < tries + 4; attempt++) {
       final rng = math.Random(_seed(tier, level, attempt));
-      var snakes = generateTangle(sh.rows, sh.cols, sp.minLen, sp.maxLen, rng,
+      // Shorter arrows = many more arrows on the same picture.
+      var snakes = generateTangle(sh.rows, sh.cols, sp.minLen, math.max(sp.minLen + 1, (sp.maxLen * 0.6).round()), rng,
           deepBias: tier.deepBias, inside: sh.inside);
       if (tier.thinTo < 1) {
         snakes = thinOut(sh.rows, sh.cols, snakes, tier.thinTo, inside: sh.inside);
