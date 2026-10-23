@@ -80,6 +80,7 @@ class _GamesTabState extends State<GamesTab> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _intro = false);
+    unawaited(GameStats.refreshTop());
   }
 
   Future<void> _open(GameInfo g) async {
@@ -99,6 +100,7 @@ class _GamesTabState extends State<GamesTab> {
     return ValueListenableBuilder<AppLayout>(
       valueListenable: AppLayoutController.current,
       builder: (context, layout, _) => switch (layout) {
+        AppLayout.arcade => _buildArcade(context),
         AppLayout.classic => _buildClassic(context),
         AppLayout.festive => _buildFestive(context),
         AppLayout.chakra => _buildChakra(context),
@@ -128,7 +130,8 @@ class _GamesTabState extends State<GamesTab> {
               child: _enter(
                 featured.isNotEmpty
                     ? _FeaturedCarousel(
-                        list: featured,
+                        list: [gameOfTheDay(games), ...featured.where((g) => g != gameOfTheDay(games))],
+                        firstIsDaily: true,
                         onOpen: _open,
                         banner: _classicBanner,
                       )
@@ -206,6 +209,123 @@ class _GamesTabState extends State<GamesTab> {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  /// Game shelves of the Arcade layout (any game not listed goes to "More").
+  static const _shelves = [
+    ('home.shelf.board', '🎲', ['ludo', 'snakes', 'chess']),
+    ('home.shelf.brain', '🧠', ['brain_age', 'memory_boost', 'focus_color', 'sudoku', 'game_2048']),
+    ('home.shelf.puzzle', '🧩', ['block_puzzle', 'arrow_maze', 'maze_escape', 'flow_pairs', 'sliding_puzzle', 'minesweeper']),
+    ('home.shelf.sort', '🎯', ['ball_sort', 'screw_jam', 'bus_jam', 'tile_match', 'hexa_sort']),
+    ('home.shelf.calm', '🤰', ['mom_memory']),
+  ];
+
+  /// Arcade layout (default): header, big cards for the new / popular
+  /// games, then a horizontal shelf per category.
+  Widget _buildArcade(BuildContext context) => ValueListenableBuilder<List<String>>(
+        valueListenable: GameStats.top,
+        builder: (context, _, _) => _arcade(context),
+      );
+
+  Widget _arcade(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final hPad = width < 360 ? 14.0 : 18.0;
+    final featured = games.where((g) => g.featured).toList();
+    final byId = {for (final g in games) g.id: g};
+    final listed = <String>{for (final s in _shelves) ...s.$3};
+    final top = [for (final id in GameStats.top.value) ?byId[id]].take(8).toList();
+    final shelves = <(String, String, List<GameInfo>)>[
+      if (top.length >= 3) (tr('home.shelf.top'), '🔥', top),
+      for (final (key, emoji, ids) in _shelves)
+        if (ids.any(byId.containsKey)) (tr(key), emoji, [for (final id in ids) ?byId[id]]),
+      if (games.any((g) => !listed.contains(g.id))) (tr('home.shelf.more'), '✨', [for (final g in games) if (!listed.contains(g.id)) g]),
+    ];
+    return CustomScrollView(
+      key: const ValueKey('arcade_layout'),
+      slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(hPad, 14, hPad, 4),
+            child: _Header(onOpenShop: widget.onOpenShop),
+          ),
+        ),
+        if (featured.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: _enter(
+                SizedBox(
+                  height: 180,
+                  child: ListView.separated(
+                    key: const ValueKey('arcade_featured'),
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: hPad),
+                    itemCount: featured.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 12),
+                    itemBuilder: (context, i) => _HeroCard(
+                      key: ValueKey('game_${featured[i].id}'),
+                      g: featured[i],
+                      width: math.min(width * 0.78, 340),
+                      onTap: () => _open(featured[i]),
+                    ),
+                  ),
+                ),
+                150,
+              ),
+            ),
+          ),
+        if (games.isNotEmpty)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(hPad, 18, hPad, 0),
+              child: _enter(
+                _Banner(
+                  g: gameOfTheDay(games),
+                  label: tr('home.game_of_the_day'),
+                  onTap: () => _open(gameOfTheDay(games)),
+                ),
+                200,
+              ),
+            ),
+          ),
+        for (final (i, (title, emoji, list)) in shelves.indexed) ...[
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(hPad + 2, 22, hPad, 10),
+              child: Row(children: [
+                Text(emoji, style: const TextStyle(fontSize: 18)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Pal.text, fontSize: 17, fontWeight: FontWeight.w900)),
+                ),
+                Text('${list.length}', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w800)),
+              ]),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _enter(
+              SizedBox(
+                height: 150,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: hPad),
+                  itemCount: list.length,
+                  separatorBuilder: (_, _) => const SizedBox(width: 12),
+                  itemBuilder: (context, j) => _ShelfTile(
+                    key: featured.contains(list[j]) || (i == 0 && top.length >= 3) ? null : ValueKey('game_${list[j].id}'),
+                    g: list[j],
+                    rank: i == 0 && top.length >= 3 ? j + 1 : null,
+                    onTap: () => _open(list[j]),
+                  ),
+                ),
+              ),
+              250 + i * 80,
+            ),
+          ),
+        ],
+        SliverToBoxAdapter(child: SizedBox(height: widget.bottomInset + 20)),
       ],
     );
   }
@@ -368,7 +488,8 @@ class _GamesTabState extends State<GamesTab> {
               child: _enter(
                 featured.isNotEmpty
                     ? _FeaturedCarousel(
-                        list: featured,
+                        list: [gameOfTheDay(games), ...featured.where((g) => g != gameOfTheDay(games))],
+                        firstIsDaily: true,
                         onOpen: _open,
                         banner: _thaliBanner,
                       )
@@ -591,12 +712,16 @@ class _FeaturedCarousel extends StatefulWidget {
     required this.list,
     required this.onOpen,
     required this.banner,
+    this.firstIsDaily = false,
   });
   final List<GameInfo> list;
   final ValueChanged<GameInfo> onOpen;
 
   /// Builds one page (classic glass banner or festive thali card).
   final Widget Function(GameInfo g, String label, VoidCallback onTap) banner;
+
+  /// The first page is the game of the day (labelled so).
+  final bool firstIsDaily;
 
   @override
   State<_FeaturedCarousel> createState() => _FeaturedCarouselState();
@@ -618,7 +743,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
     if (l.length == 1) {
       return widget.banner(
         l.first,
-        tr('home.featured'),
+        tr(widget.firstIsDaily ? 'home.game_of_the_day' : 'home.featured'),
         () => widget.onOpen(l.first),
       );
     }
@@ -634,7 +759,7 @@ class _FeaturedCarouselState extends State<_FeaturedCarousel> {
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: widget.banner(
                 l[i],
-                tr('home.featured'),
+                tr(i == 0 && widget.firstIsDaily ? 'home.game_of_the_day' : 'home.featured'),
                 () => widget.onOpen(l[i]),
               ),
             ),
@@ -1256,6 +1381,124 @@ class _ThaliBanner extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+/// Big card for a featured (new / popular) game in the Arcade layout.
+class _HeroCard extends StatelessWidget {
+  const _HeroCard({super.key, required this.g, required this.width, required this.onTap});
+  final GameInfo g;
+  final double width;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = g.color;
+    return Pressable(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(26),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color.lerp(c, Colors.white, 0.12)!, c, Color.lerp(c, Colors.black, 0.45)!],
+          ),
+          boxShadow: [BoxShadow(color: c.withValues(alpha: 0.45), blurRadius: 18, offset: const Offset(0, 8))],
+        ),
+        child: Stack(children: [
+          Positioned(
+            right: -10,
+            bottom: -18,
+            child: Text(g.emoji ?? '🎮', style: const TextStyle(fontSize: 110)),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 110, 16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.25), borderRadius: BorderRadius.circular(10)),
+                child: Text(tr('home.new_badge'), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 0.8)),
+              ),
+              const Spacer(),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(g.title, maxLines: 1, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, shadows: [Shadow(color: Colors.black38, blurRadius: 6)])),
+              ),
+              const SizedBox(height: 2),
+              Flexible(
+                child: Text(g.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 12.5, height: 1.25)),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                child: Text(tr('home.play_now'), style: TextStyle(color: Color.lerp(c, Colors.black, 0.4), fontWeight: FontWeight.w900, fontSize: 13)),
+              ),
+            ]),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Compact square tile on a category shelf.
+class _ShelfTile extends StatelessWidget {
+  const _ShelfTile({super.key, required this.g, required this.onTap, this.rank});
+  final GameInfo g;
+  final VoidCallback onTap;
+
+  /// Position on the "Top games" shelf (1 = most played).
+  final int? rank;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = g.color;
+    return Pressable(
+      onTap: onTap,
+      child: SizedBox(
+        width: 116,
+        child: Column(children: [
+          Container(
+            width: 116,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color.lerp(c, Colors.white, 0.2)!, Color.lerp(c, Colors.black, 0.35)!],
+              ),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+              boxShadow: [BoxShadow(color: c.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 5))],
+            ),
+            alignment: Alignment.center,
+            child: Stack(clipBehavior: Clip.none, children: [
+              Center(child: g.emoji != null ? Text(g.emoji!, style: const TextStyle(fontSize: 46)) : Icon(g.icon, color: Colors.white, size: 44)),
+              if (rank != null)
+                Positioned(
+                  left: 8,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: rank! <= 3 ? Pal.gold : Colors.black.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text('#$rank', style: TextStyle(color: rank! <= 3 ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900)),
+                  ),
+                ),
+            ]),
+          ),
+          const SizedBox(height: 8),
+          Text(g.title, maxLines: 2, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Pal.text, fontSize: 13, fontWeight: FontWeight.w800, height: 1.15)),
+        ]),
       ),
     );
   }

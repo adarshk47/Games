@@ -101,7 +101,7 @@ class LudoTable extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
-                game.over ? tr('ludo.game_over') : tr('ludo.turn_of', {'name': _name(seat)}),
+                game.over ? tr('ludo.game_over') : (_name(seat) == tr('ludo.you') ? tr('online.your_turn') : tr('ludo.turn_of', {'name': _name(seat)})),
                 style: TextStyle(color: colour, fontWeight: FontWeight.w900, fontSize: 16),
               ),
               Text(

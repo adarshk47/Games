@@ -48,6 +48,36 @@ class GameStats {
         .timeout(const Duration(seconds: 10));
   }
 
+  static const _kTop = 'home.top_games';
+
+  /// Shown when no play counts are known yet (e.g. offline first start).
+  static const defaultTop = ['block_puzzle', 'ludo', 'game_2048', 'chess', 'snakes', 'sudoku', 'ball_sort', 'brain_age'];
+
+  /// Most played games (ids, best first), cached on the phone for offline.
+  static final ValueNotifier<List<String>> top = ValueNotifier(defaultTop);
+
+  /// Loads the cached list, then refreshes it from `game_stats` (by plays).
+  static Future<void> refreshTop() async {
+    final cached = Storage.globalString(_kTop);
+    if (cached != null && cached.isNotEmpty) top.value = cached.split(',');
+    if (!CloudService.available) return;
+    try {
+      final q = await FirebaseFirestore.instance
+          .collection('game_stats')
+          .orderBy('plays', descending: true)
+          .limit(10)
+          .get()
+          .timeout(const Duration(seconds: 10));
+      final ids = [for (final d in q.docs) d.id];
+      if (ids.length >= 4) {
+        top.value = ids;
+        await Storage.setGlobalString(_kTop, ids.join(','));
+      }
+    } catch (e) {
+      debugPrint('top games: $e');
+    }
+  }
+
   /// Counts one play of [gameId]. Never throws, never blocks.
   static void played(String gameId) {
     unawaited(

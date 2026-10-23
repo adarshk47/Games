@@ -8,7 +8,7 @@ rules_version = '2';
 //   referrals/{inviteeUid}               one document per invited player (one credit per invitee)
 //   leaderboards/{board}/entries/{uid}   {name, score, country, updatedAt}
 //   players, handles, challenges, queue, games   online 2-player chess
-//   ludo_games, ludo_rooms, ludo_queue           online Ludo (2-4 players)
+//   ludo_games, ludo_rooms, ludo_queue           online Ludo + Saanp-Seedhi (2-4 players)
 //
 // Country = 2-letter ISO code ('IN', 'US', ...). Country boards query
 // where('country', ==) + orderBy('score'): deploy firestore.indexes.json.
@@ -336,7 +336,7 @@ service cloud.firestore {
     match /ludo_queue/{uid} {
       allow read: if signedIn();
       allow create: if isOwner(uid)
-        && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['name', 'game', 'createdAt'])
         && request.resource.data.createdAt == request.time;
       allow delete: if isOwner(uid);
       allow update: if signedIn() && request.auth.uid != uid

@@ -53,7 +53,9 @@ void main() {
       addTearDown(t.view.resetPhysicalSize);
       await t.pumpWidget(const MaterialApp(home: GameRecordsScreen()));
       await t.pump(const Duration(milliseconds: 500));
+      await t.scrollUntilVisible(find.byKey(const ValueKey('records_reset_chess')), 200, scrollable: find.byType(Scrollable).first);
       await t.ensureVisible(find.byKey(const ValueKey('records_reset_chess')));
+      await t.pump(const Duration(milliseconds: 300));
       await t.tap(find.byKey(const ValueKey('records_reset_chess')));
       await t.pump(const Duration(milliseconds: 400));
       await t.tap(find.byKey(const ValueKey('records_reset_confirm')));

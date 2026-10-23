@@ -11,13 +11,22 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/ui/ui.dart';
 import '../../chess/online/online_lobby_screen.dart';
 import '../ludo_board.dart';
+import '../../snakes/online/snakes_online_game.dart';
 import 'ludo_online_game.dart';
 import 'ludo_online_service.dart';
 
-/// Online Ludo: quick match, rooms with a code for 2–4 friends, and
-/// challenges by player name.
+/// Opens an online Ludo or Saanp-Seedhi game.
+void openBoardGame(NavigatorState nav, String id, String game) => nav.push(MaterialPageRoute<void>(
+      builder: (_) => game == 'snakes' ? SnakesOnlineGameScreen(gameId: id) : LudoOnlineGameScreen(gameId: id),
+    ));
+
+/// Online Ludo / Saanp-Seedhi: quick match, rooms with a code for 2–4
+/// friends, and challenges by player name.
 class LudoOnlineLobby extends StatefulWidget {
-  const LudoOnlineLobby({super.key});
+  const LudoOnlineLobby({super.key, this.game = 'ludo'});
+
+  /// 'ludo' or 'snakes'.
+  final String game;
 
   @override
   State<LudoOnlineLobby> createState() => _LudoOnlineLobbyState();
@@ -56,14 +65,14 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
   }
 
   void _load() {
-    if (OnlineService.I.ready) _games = LudoOnline.I.myGames();
+    if (OnlineService.I.ready) _games = LudoOnline.I.myGames(widget.game);
   }
 
   void _snack(String m) => ScaffoldMessenger.maybeOf(context)
     ?..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(m)));
 
-  void _open(NavigatorState nav, String id) => nav.push(MaterialPageRoute<void>(builder: (_) => LudoOnlineGameScreen(gameId: id)));
+  void _open(NavigatorState nav, String id, [String? game]) => openBoardGame(nav, id, game ?? widget.game);
 
   Future<void> _waitDialog(String text, Stream<String?> ids, Future<void> Function() cancel, {Stream<String>? failures}) async {
     final nav = Navigator.of(context);
@@ -114,7 +123,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
 
   Future<void> _quick() async {
     try {
-      final ids = await LudoOnline.I.quickMatch();
+      final ids = await LudoOnline.I.quickMatch(widget.game);
       if (!mounted) return;
       await _waitDialog(tr('online.searching'), ids, LudoOnline.I.leaveQueue);
       unawaited(LudoOnline.I.leaveQueue());
@@ -125,7 +134,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
 
   Future<void> _createRoom() async {
     try {
-      final code = await LudoOnline.I.createRoom(_roomSize, false);
+      final code = await LudoOnline.I.createRoom(_roomSize, false, widget.game);
       if (mounted) _roomDialog(code);
     } catch (_) {
       _snack(tr('online.err.network'));
@@ -163,7 +172,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
             opened = true;
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.of(ctx).pop();
-              _open(nav, r.gameId!);
+              _open(nav, r.gameId!, r.game);
             });
           }
           final host = r?.host == me;
@@ -227,7 +236,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
 
   Future<void> _challenge(OnlinePlayer p) async {
     try {
-      final id = await OnlineService.I.challenge(p, game: 'ludo');
+      final id = await OnlineService.I.challenge(p, game: widget.game);
       if (!mounted) return;
       final s = OnlineService.I.watchChallenge(id).asBroadcastStream();
       await _waitDialog(
@@ -315,7 +324,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
                       glow: Pal.gold,
                       padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
                       child: Row(children: [
-                        Text(c.game == 'ludo' ? '🎲 ' : '♟️ '),
+                        Text(switch (c.game) { 'ludo' => '🎲 ', 'snakes' => '🐍 ', _ => '♟️ ' }),
                         Expanded(child: Text('@${c.fromName}', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800))),
                         TextButton(onPressed: () => OnlineService.I.decline(c), child: Text(tr('online.decline'), style: const TextStyle(color: Pal.textDim))),
                         PremiumButton(
@@ -350,7 +359,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
                     blur: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     child: Row(children: [
-                      const Text('🎲', style: TextStyle(fontSize: 20)),
+                      Text(widget.game == 'snakes' ? '🐍' : '🎲', style: const TextStyle(fontSize: 20)),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text([for (final (i, n) in g.names.indexed) if (g.players[i] != me) '@$n'].join(', '),
@@ -418,6 +427,6 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
     } else {
       body = _lobby();
     }
-    return GameScaffold(title: '${tr('game.ludo.title')} · ${tr('online.title')}', tint: const Color(0xFFE53935), body: body);
+    return GameScaffold(title: '${tr('game.${widget.game}.title')} · ${tr('online.title')}', tint: const Color(0xFFE53935), body: body);
   }
 }

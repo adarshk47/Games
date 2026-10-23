@@ -18,6 +18,7 @@ import 'minesweeper/minesweeper_screen.dart';
 import 'mom_memory/mom_memory_screen.dart';
 import 'screw_jam/screw_jam_screen.dart';
 import 'sliding_puzzle/sliding_puzzle_screen.dart';
+import 'snakes/snakes_screen.dart';
 import 'sudoku/sudoku_screen.dart';
 import 'tile_match/tile_match_screen.dart';
 
@@ -32,6 +33,37 @@ final List<GameInfo> games = [for (final g in allGames) if (g.enabled || kShowAl
 /// Every game that exists in the codebase. To release a hidden game, flip its
 /// `enabled` flag to true (and bump the version).
 final List<GameInfo> allGames = [
+  // New and popular first.
+  GameInfo(
+    id: 'ludo',
+    title: 'Ludo',
+    subtitle: 'Classic Ludo – dosto, online ya computer ke saath',
+    icon: Icons.casino_rounded,
+    emoji: '🎲',
+    color: const Color(0xFFE53935),
+    featured: true,
+    builder: (_) => const LudoScreen(),
+  ),
+  GameInfo(
+    id: 'snakes',
+    title: 'Saanp-Seedhi',
+    subtitle: 'Saanp-Seedhi – dosto, online ya computer ke saath',
+    icon: Icons.stairs_rounded,
+    emoji: '🐍',
+    color: const Color(0xFF43A047),
+    featured: true,
+    builder: (_) => const SnakesScreen(),
+  ),
+  GameInfo(
+    id: 'brain_age',
+    title: 'Brain Age',
+    subtitle: 'Aapka dimaag kitna jawaan hai? 5 chhote test',
+    icon: Icons.psychology_rounded,
+    emoji: '🧠',
+    color: const Color(0xFFB794FF),
+    featured: true,
+    builder: (_) => const BrainAgeScreen(),
+  ),
   GameInfo(
     id: 'block_puzzle',
     title: 'Block Puzzle',
@@ -166,24 +198,6 @@ final List<GameInfo> allGames = [
     emoji: '🔢',
     color: const Color(0xFF4DA8FF),
     builder: (_) => const SudokuScreen(),
-  ),
-  GameInfo(
-    id: 'ludo',
-    title: 'Ludo',
-    subtitle: 'Classic Ludo – dosto, online ya computer ke saath',
-    icon: Icons.casino_rounded,
-    emoji: '🎲',
-    color: const Color(0xFFE53935),
-    builder: (_) => const LudoScreen(),
-  ),
-  GameInfo(
-    id: 'brain_age',
-    title: 'Brain Age',
-    subtitle: 'Aapka dimaag kitna jawaan hai? 5 chhote test',
-    icon: Icons.psychology_rounded,
-    emoji: '🧠',
-    color: const Color(0xFFB794FF),
-    builder: (_) => const BrainAgeScreen(),
   ),
   GameInfo(
     id: 'focus_color',

@@ -24,8 +24,12 @@ class LudoOnlineGame {
     required this.log,
     required this.status,
     this.updatedAt,
+    this.game = 'ludo',
   });
   final String id;
+
+  /// 'ludo' or 'snakes'.
+  final String game;
   final List<String> players, names;
   final int seed;
   final bool quick;
@@ -57,14 +61,15 @@ class LudoOnlineGame {
         log: [for (final v in d['log'] as List? ?? const []) (v as num).toInt()],
         status: d['status'] as String? ?? 'active',
         updatedAt: (d['updatedAt'] as Timestamp?)?.toDate(),
+        game: d['game'] as String? ?? 'ludo',
       );
 }
 
 /// A room friends join with a short code (2–4 players).
 @immutable
 class LudoRoom {
-  const LudoRoom({required this.code, required this.host, required this.players, required this.names, required this.max, required this.quick, required this.status, this.gameId});
-  final String code, host, status;
+  const LudoRoom({required this.code, required this.host, required this.players, required this.names, required this.max, required this.quick, required this.status, this.gameId, this.game = 'ludo'});
+  final String code, host, status, game;
   final List<String> players, names;
   final int max;
   final bool quick;
@@ -79,6 +84,7 @@ class LudoRoom {
         quick: d['quick'] as bool? ?? false,
         status: d['status'] as String? ?? 'open',
         gameId: d['gameId'] as String?,
+        game: d['game'] as String? ?? 'ludo',
       );
 }
 
@@ -96,8 +102,8 @@ class LudoOnline {
   OnlineService get _o => OnlineService.I;
   String get _myName => _o.me.value?.handle ?? 'Player';
 
-  Map<String, Object?> _newGame(List<String> players, List<String> names, bool quick) => {
-        'game': 'ludo',
+  Map<String, Object?> _newGame(List<String> players, List<String> names, bool quick, [String game = 'ludo']) => {
+        'game': game,
         'players': players,
         'names': names,
         'seed': math.Random().nextInt(1 << 30) + 1,
@@ -132,30 +138,30 @@ class LudoOnline {
     }
   }
 
-  Future<List<LudoOnlineGame>> myGames() async {
+  Future<List<LudoOnlineGame>> myGames([String game = 'ludo']) async {
     final u = _o.uid;
     if (u == null) return const [];
     final q = await _db.collection('ludo_games').where('players', arrayContains: u).limit(30).get();
-    return [for (final d in q.docs) LudoOnlineGame.fromDoc(d.id, d.data())].where((g) => !g.over).toList()
+    return [for (final d in q.docs) LudoOnlineGame.fromDoc(d.id, d.data())].where((g) => !g.over && g.game == game).toList()
       ..sort((a, b) => (b.updatedAt ?? DateTime(0)).compareTo(a.updatedAt ?? DateTime(0)));
   }
 
   // ---------------------------------------------------------------- quick match
 
-  Future<Stream<String?>> quickMatch() async {
+  Future<Stream<String?>> quickMatch([String game = 'ludo']) async {
     final me = _o.uid!;
     final cutoff = Timestamp.fromDate(DateTime.now().subtract(OnlineService.queueWindow));
     final q = await _db.collection('ludo_queue').where('createdAt', isGreaterThan: cutoff).orderBy('createdAt').limit(10).get();
     for (final d in q.docs) {
-      if (d.id == me || d.data()['gameId'] != null) continue;
+      if (d.id == me || d.data()['gameId'] != null || (d.data()['game'] ?? 'ludo') != game) continue;
       try {
         final id = await _db.runTransaction<String?>((tx) async {
           final snap = await tx.get(d.reference);
           if (!snap.exists || snap.data()?['gameId'] != null) return null;
-          final game = _db.collection('ludo_games').doc();
-          tx.set(game, _newGame([d.id, me], [snap.data()?['name'] as String? ?? 'Player', _myName], false));
-          tx.update(d.reference, {'gameId': game.id});
-          return game.id;
+          final doc = _db.collection('ludo_games').doc();
+          tx.set(doc, _newGame([d.id, me], [snap.data()?['name'] as String? ?? 'Player', _myName], false, game));
+          tx.update(d.reference, {'gameId': doc.id});
+          return doc.id;
         });
         if (id != null) return Stream.value(id);
       } catch (e) {
@@ -163,7 +169,7 @@ class LudoOnline {
       }
     }
     final ref = _db.collection('ludo_queue').doc(me);
-    await ref.set({'name': _myName, 'createdAt': FieldValue.serverTimestamp()});
+    await ref.set({'name': _myName, 'game': game, 'createdAt': FieldValue.serverTimestamp()});
     return ref.snapshots().map((s) => s.data()?['gameId'] as String?);
   }
 
@@ -181,7 +187,7 @@ class LudoOnline {
   Future<String> acceptChallenge(Challenge c) async {
     final game = _db.collection('ludo_games').doc();
     final batch = _db.batch()
-      ..set(game, _newGame([c.from, _o.uid!], [c.fromName, _myName], false))
+      ..set(game, _newGame([c.from, _o.uid!], [c.fromName, _myName], false, c.game))
       ..update(_db.collection('challenges').doc(c.id), {'status': 'accepted', 'gameId': game.id});
     await batch.commit();
     return game.id;
@@ -191,7 +197,7 @@ class LudoOnline {
 
   static const _codeChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
-  Future<String> createRoom(int max, bool quick) async {
+  Future<String> createRoom(int max, bool quick, [String game = 'ludo']) async {
     final r = math.Random();
     for (var attempt = 0; attempt < 5; attempt++) {
       final code = List.generate(5, (_) => _codeChars[r.nextInt(_codeChars.length)]).join();
@@ -205,6 +211,7 @@ class LudoOnline {
           'names': [_myName],
           'max': max,
           'quick': quick,
+          'game': game,
           'status': 'open',
           'createdAt': FieldValue.serverTimestamp(),
         });
@@ -245,7 +252,7 @@ class LudoOnline {
   Future<void> startRoom(LudoRoom r) async {
     final game = _db.collection('ludo_games').doc();
     final batch = _db.batch()
-      ..set(game, _newGame(r.players, r.names, r.quick))
+      ..set(game, _newGame(r.players, r.names, r.quick, r.game))
       ..update(_db.collection('ludo_rooms').doc(r.code), {'status': 'started', 'gameId': game.id});
     await batch.commit();
   }

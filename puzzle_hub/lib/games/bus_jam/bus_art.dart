@@ -328,42 +328,76 @@ class PlazaPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final rr = RRect.fromRectAndRadius(rect, Radius.circular(cell * 0.3));
+    final rr = RRect.fromRectAndRadius(rect, Radius.circular(cell * 0.35));
     canvas.drawRRect(
-      rr.shift(const Offset(0, 4)),
+      rr.shift(const Offset(0, 6)),
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.4)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        ..color = Colors.black.withValues(alpha: 0.45)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
+    // Green park edge around the square.
     canvas.drawRRect(
       rr,
       Paint()
         ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF5B6478), Color(0xFF3A4054)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF5CC46A), Color(0xFF2E8B45)],
         ).createShader(rect),
     );
     final pad = (size.width - cols * cell) / 2;
-    final tile = Paint()..color = Colors.white.withValues(alpha: 0.06);
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c < cols; c++) {
-        if ((r + c).isEven) {
-          canvas.drawRRect(
-            RRect.fromRectAndRadius(
-                Rect.fromLTWH(pad + c * cell + 1.5, pad + r * cell + 1.5, cell - 3, cell - 3), Radius.circular(cell * 0.18)),
-            tile,
-          );
-        }
+    final inner = Rect.fromLTWH(pad - 3, pad - 3, cols * cell + 6, rows * cell + 6);
+    // Sandstone paving with a brick pattern.
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(inner, Radius.circular(cell * 0.22)),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFF3E0BF), Color(0xFFE2C79A)],
+        ).createShader(inner),
+    );
+    final joint = Paint()
+      ..color = const Color(0xFFC9A774).withValues(alpha: 0.7)
+      ..strokeWidth = 1;
+    for (var r = 0; r <= rows * 2; r++) {
+      final y = pad + r * cell / 2;
+      canvas.drawLine(Offset(pad, y), Offset(pad + cols * cell, y), joint);
+      for (var c = 0; c <= cols; c++) {
+        final x = pad + c * cell + (r.isOdd ? cell / 2 : 0);
+        if (x > pad + cols * cell || r == rows * 2) continue;
+        canvas.drawLine(Offset(x, y), Offset(x, y + cell / 2), joint);
       }
     }
-    // Exit edge: yellow dashes along the top.
+    // Little flowers on the grass edge.
+    final petals = [const Color(0xFFFFE066), const Color(0xFFFF8FB8), Colors.white];
+    var k = 0;
+    for (var x = cell * 0.5; x < size.width - cell * 0.3; x += cell * 0.9) {
+      for (final y in [size.height - pad * 0.45, pad * 0.45]) {
+        if (y < pad && y > 0 && k % 2 == 0) {
+          k++;
+          continue;
+        }
+        canvas.drawCircle(Offset(x, y), math.max(1.5, pad * 0.16), Paint()..color = petals[k++ % petals.length]);
+      }
+    }
+    // Boarding zone at the top: yellow line and arrows towards the road.
     final dash = Paint()
-      ..color = const Color(0xFFFFD23F)
-      ..strokeWidth = 3
+      ..color = const Color(0xFFFFC107)
+      ..strokeWidth = 3.5
       ..strokeCap = StrokeCap.round;
     for (var x = pad + 4; x < size.width - pad - 4; x += 14) {
-      canvas.drawLine(Offset(x, 2.5), Offset(math.min(x + 7, size.width - pad - 4), 2.5), dash);
+      canvas.drawLine(Offset(x, pad - 1), Offset(math.min(x + 7, size.width - pad - 4), pad - 1), dash);
+    }
+    final arrow = Paint()..color = const Color(0xFFFFC107);
+    for (var c = 0; c < cols; c += math.max(1, cols ~/ 4)) {
+      final cx = pad + (c + 0.5) * cell;
+      final p = Path()
+        ..moveTo(cx, 1)
+        ..lineTo(cx - pad * 0.45, pad * 0.75)
+        ..lineTo(cx + pad * 0.45, pad * 0.75)
+        ..close();
+      canvas.drawPath(p, arrow);
     }
   }
 

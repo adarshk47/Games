@@ -5,13 +5,16 @@ import '../storage.dart';
 
 /// Home screen layouts the player can pick in Settings.
 enum AppLayout {
+  /// Big cards for new games, then a shelf per category (default).
+  arcade,
+
   /// The original dark premium glass layout.
   classic,
 
   /// Indian-festival look: toran header, saree-border cards, thali banner.
   festive,
 
-  /// Festive look with every game on rings around a lit diya (default).
+  /// Festive look with every game on rings around a lit diya.
   chakra;
 
   /// Localised label (keys `home.layout.<name>`).
@@ -26,18 +29,31 @@ class AppLayoutController {
   static const kLayout = 'set.layout';
 
   static final ValueNotifier<AppLayout> current = ValueNotifier<AppLayout>(
-    AppLayout.chakra,
+    AppLayout.arcade,
   );
 
+  /// Set once the new Arcade layout has been made the default (2.1).
+  static const _kArcadeMigrated = 'set.layout.arcade';
+
   static AppLayout get layout => current.value;
-  static bool get festive => current.value != AppLayout.classic;
+  static bool get festive => current.value == AppLayout.festive || current.value == AppLayout.chakra;
 
   /// Loads the saved layout (called from [AppThemeController.init]).
   static Future<void> init() async {
+    // Move to the new Arcade home once; Settings can switch back.
+    // (Only players still on the old default chakra; a layout picked on
+    // purpose in Settings is kept.)
+    if (!Storage.globalBool(_kArcadeMigrated)) {
+      await Storage.setGlobalBool(_kArcadeMigrated, true);
+      final old = Storage.globalString(kLayout);
+      if (old == null || old == AppLayout.chakra.name) {
+        await Storage.setGlobalString(kLayout, AppLayout.arcade.name);
+      }
+    }
     final s = Storage.globalString(kLayout);
     current.value = AppLayout.values.firstWhere(
       (l) => l.name == s,
-      orElse: () => AppLayout.chakra,
+      orElse: () => AppLayout.arcade,
     );
   }
 

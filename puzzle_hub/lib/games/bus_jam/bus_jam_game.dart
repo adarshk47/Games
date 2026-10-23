@@ -665,15 +665,18 @@ class _BusJamGameState extends State<BusJamGame> {
     final danger = _g.waiting.length >= cap - 1;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
-      child: AnimatedContainer(
+      // A bus stop: striped canopy on top, wooden bench below.
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        SizedBox(height: 12, width: double.infinity, child: CustomPaint(painter: _CanopyPainter(danger: danger))),
+        AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF4A5068), Color(0xFF2B2F3F)],
+            colors: [Color(0xFF8D6E63), Color(0xFF5D4037)],
           ),
           border: Border.all(color: danger ? Pal.danger : Colors.white.withValues(alpha: 0.22), width: danger ? 2 : 1),
           boxShadow: [
@@ -682,7 +685,7 @@ class _BusJamGameState extends State<BusJamGame> {
           ],
         ),
         child: Row(children: [
-          const Icon(Icons.event_seat_rounded, color: Pal.textDim, size: 16),
+          const Text('🚏', style: TextStyle(fontSize: 16)),
           const SizedBox(width: 4),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 60),
@@ -711,7 +714,7 @@ class _BusJamGameState extends State<BusJamGame> {
                           height: s * 0.88,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(s * 0.25),
-                            color: Colors.black.withValues(alpha: 0.28),
+                            color: const Color(0xFFD7B98E).withValues(alpha: 0.55),
                             border: Border.all(
                                 color: i >= _g.level.waiting
                                     ? Pal.gold.withValues(alpha: 0.7)
@@ -729,6 +732,7 @@ class _BusJamGameState extends State<BusJamGame> {
           ),
         ]),
       ),
+      ]),
     );
   }
 
@@ -841,6 +845,32 @@ class _BusJamGameState extends State<BusJamGame> {
       ),
     );
   }
+}
+
+/// Red-and-white striped bus-stop canopy (turns red when the stop is full).
+class _CanopyPainter extends CustomPainter {
+  _CanopyPainter({required this.danger});
+  final bool danger;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width / 12;
+    for (var i = 0; i < 12; i++) {
+      final p = Path()
+        ..moveTo(i * w, size.height)
+        ..lineTo(i * w + w * 0.15, 0)
+        ..lineTo((i + 1) * w - w * 0.15, 0)
+        ..lineTo((i + 1) * w, size.height)
+        ..close();
+      canvas.drawPath(p, Paint()..color = i.isEven ? (danger ? const Color(0xFFFF4D5E) : const Color(0xFFE53935)) : Colors.white);
+    }
+    canvas.drawLine(Offset(0, size.height), Offset(size.width, size.height), Paint()
+      ..color = Colors.black26
+      ..strokeWidth = 2);
+  }
+
+  @override
+  bool shouldRepaint(_CanopyPainter o) => o.danger != danger;
 }
 
 class _LanePainter extends CustomPainter {

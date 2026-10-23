@@ -63,8 +63,8 @@ void main() {
 
   test('layout choice persists globally under set.layout', () async {
     await _setup();
-    // New installs default to the diya chakra and the Utsav theme.
-    expect(AppLayoutController.layout, AppLayout.chakra);
+    // New installs default to the Arcade home and the Utsav theme.
+    expect(AppLayoutController.layout, AppLayout.arcade);
     expect(AppThemeController.theme.id, 'utsav');
     await AppLayoutController.select(AppLayout.festive);
     expect(Storage.globalString('set.layout'), 'festive');
@@ -73,6 +73,12 @@ void main() {
     expect(AppLayoutController.festive, isTrue);
 
     await _setup({'set.layout': 'bogus'});
+    expect(AppLayoutController.layout, AppLayout.arcade);
+    // Players still on the old default chakra move to Arcade once...
+    await _setup({'set.layout': 'chakra'});
+    expect(AppLayoutController.layout, AppLayout.arcade);
+    // ...but after that a chakra picked in Settings stays.
+    await _setup({'set.layout': 'chakra', 'set.layout.arcade': true});
     expect(AppLayoutController.layout, AppLayout.chakra);
     await _setup({'set.layout': 'classic', 'set.theme': '0'});
     expect(AppLayoutController.layout, AppLayout.classic);
@@ -158,8 +164,27 @@ void main() {
   }
 
   for (final lang in AppLang.values) {
-    testWidgets('chakra home (default) renders in ${lang.code} without overflow', (t) async {
+    testWidgets('arcade home (default) renders in ${lang.code} without overflow', (t) async {
       await _setup();
+      I18n.lang.value = lang;
+      for (final size in const [Size(320, 480), Size(390, 844), Size(360, 3200)]) {
+        await _pumpHome(t, size);
+        expect(t.takeException(), isNull, reason: '$size');
+        expect(find.byKey(const ValueKey('arcade_layout')), findsOneWidget);
+        expect(find.text(tr('home.game_of_the_day')), findsOneWidget);
+        if (size.height > 3000) {
+          expect(find.byKey(const ValueKey('arcade_featured')), findsOneWidget);
+          expect(find.text(tr('home.shelf.top')), findsOneWidget);
+        }
+      }
+      await _openSettings(t);
+      expect(find.text(tr('home.layout.arcade')), findsOneWidget);
+      expect(t.takeException(), isNull);
+      await t.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('chakra home renders in ${lang.code} without overflow', (t) async {
+      await _setup({'set.layout': 'chakra', 'set.layout.arcade': true});
       I18n.lang.value = lang;
       for (final size in const [Size(320, 480), Size(390, 844), Size(360, 3200)]) {
         await _pumpHome(t, size);

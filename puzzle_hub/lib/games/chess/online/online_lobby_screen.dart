@@ -10,7 +10,7 @@ import '../../../core/i18n/i18n.dart';
 import '../../../core/rewards.dart';
 import '../../../core/ui/ui.dart';
 import 'online_chess_screen.dart';
-import '../../ludo/online/ludo_online_game.dart';
+import '../../ludo/online/ludo_online_lobby.dart';
 import '../../ludo/online/ludo_online_service.dart';
 
 /// Opens an online game (used by the lobby and the incoming-challenge popup).
@@ -20,9 +20,9 @@ void openOnlineGame(BuildContext context, String gameId) {
 
 /// Accepts [c] (Chess or Ludo) and opens the new game.
 Future<void> acceptChallenge(Challenge c, NavigatorState? nav) async {
-  if (c.game == 'ludo') {
+  if (c.game == 'ludo' || c.game == 'snakes') {
     final id = await LudoOnline.I.acceptChallenge(c);
-    nav?.push(MaterialPageRoute(builder: (_) => LudoOnlineGameScreen(gameId: id)));
+    if (nav != null) openBoardGame(nav, id, c.game);
   } else {
     final id = await OnlineService.I.accept(c);
     nav?.push(MaterialPageRoute(builder: (_) => OnlineChessScreen(gameId: id)));
@@ -37,8 +37,8 @@ void installChallengePopup() {
     showPremiumDialog(
       ctx,
       title: tr('online.challenged', {'name': '@${c.fromName}'}),
-      message: tr(c.game == 'ludo' ? 'online.challenged_text_ludo' : 'online.challenged_text'),
-      emoji: c.game == 'ludo' ? '🎲' : '♟️',
+      message: tr(switch (c.game) { 'ludo' => 'online.challenged_text_ludo', 'snakes' => 'online.challenged_text_snakes', _ => 'online.challenged_text' }),
+      emoji: switch (c.game) { 'ludo' => '🎲', 'snakes' => '🐍', _ => '♟️' },
       actions: [
         DialogAction(tr('online.accept'), () async {
           try {
