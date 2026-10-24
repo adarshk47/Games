@@ -126,3 +126,11 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   Billing): ad-free 1 month ₹49 sub / 1 year ₹399 sub / lifetime ₹499, coins 500 ₹29 / 1500 ₹79 /
   5000 ₹199 (prices to confirm), restore via cloud account. User must create the Play payments
   profile first. Waiting for the user's go and answers (prices, coin packs, banner).
+- 2026-10-24 (noted only, wait for the user's go):
+  - **Remove AdMob ads completely for now.** Easiest: `kAdsEnabled` default false in
+    lib/core/features.dart (featuresOn also gates offline_guard, continue_offer, level_gate, shop
+    ad card and profile record-delete ad – check each still works with ads off: hints/undo become
+    free because no ad is available).
+  - **Unity Ads Game ID (Android): 800409679.** Ad units still to be created by the user in the
+    Unity dashboard (Monetization → Ad Units; default Rewarded_Android / Interstitial_Android /
+    Banner_Android). Unity audience question answered "No" (not for children, 13+).
