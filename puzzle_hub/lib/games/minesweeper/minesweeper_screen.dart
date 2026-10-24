@@ -53,6 +53,28 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
   MineTier? _tier;
   MineGame? _game;
   int _elapsed = 0;
+
+  /// Think time: how long the player paused before each move.
+  DateTime? _lastMoveAt;
+  int _moves = 0, _thinkTotalMs = 0, _thinkMaxMs = 0;
+
+  void _countMove() {
+    final now = DateTime.now();
+    final gap = _lastMoveAt == null ? 0 : now.difference(_lastMoveAt!).inMilliseconds;
+    _lastMoveAt = now;
+    if (_moves > 0) {
+      _thinkTotalMs += gap;
+      if (gap > _thinkMaxMs) _thinkMaxMs = gap;
+    }
+    _moves++;
+  }
+
+  /// "Avg think 2.4 s · longest 9 s · 31 moves".
+  String _thinkSummary() {
+    if (_moves < 2) return '';
+    final avg = _thinkTotalMs / (_moves - 1) / 1000;
+    return tr('minesweeper.think_summary', {'avg': avg.toStringAsFixed(1), 'max': (_thinkMaxMs / 1000).round(), 'n': _moves});
+  }
   int _hintsUsed = 0;
   bool _flagMode = false;
   Timer? _timer;
@@ -95,6 +117,10 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
       _snap = null;
       _retryUsed = false;
       _elapsed = 0;
+      _lastMoveAt = null;
+      _moves = 0;
+      _thinkTotalMs = 0;
+      _thinkMaxMs = 0;
       // Continue the board left half-way, if any.
       try {
         final raw = Storage.getString(_saveKey(t));
@@ -171,6 +197,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
   void _tap(int i) {
     final g = _game;
     if (g == null || g.over) return;
+    _countMove();
     _snap = g.snapshot();
     if (g.revealed[i]) {
       final r = g.chord(i);
@@ -189,6 +216,7 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
     final g = _game;
     if (g == null || g.over) return;
     if (g.toggleFlag(i)) {
+      _countMove();
       _save();
       AppAudio.play(Sound.tap);
       AppAudio.haptic();
@@ -249,6 +277,8 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
       Rewards.onGameEnd('minesweeper', won: false);
       message = tr('minesweeper.hit_mine', {'time': _fmt(_elapsed)});
     }
+    final think = _thinkSummary();
+    if (think.isNotEmpty) message = '$message\n$think';
     _endTimer?.cancel();
     _endTimer = Timer(Duration(milliseconds: won ? 500 : 1300), () {
       if (!mounted) return;
@@ -353,6 +383,15 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
           Expanded(child: _stat(Icons.emoji_events_rounded, best > 0 ? _fmt(best) : '--:--', tr('common.best'), Pal.gold)),
         ]),
       ),
+      if (_lastMoveAt != null && !g.over)
+        Text(
+          tr('minesweeper.thinking', {
+            'now': DateTime.now().difference(_lastMoveAt!).inSeconds,
+            'max': (_thinkMaxMs / 1000).round(),
+          }),
+          key: const ValueKey('think_time'),
+          style: const TextStyle(color: Pal.textDim, fontSize: 12, fontWeight: FontWeight.w700),
+        ),
       Expanded(
         child: LayoutBuilder(builder: (ctx, box) {
           const pad = 10.0;
