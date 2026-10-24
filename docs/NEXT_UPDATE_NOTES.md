@@ -119,3 +119,10 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   already a registered AdMob test device.
 - Do NOT build any APK until the user asks. The 2.1.0+18 AAB was built before this note; rebuild it
   after the coin-ad removal.
+- **Next build: turn AdMob off temporarily** (user, 2026-10-24). Planned: ad provider switch
+  (AdMob / Unity / Off, read from Firestore so it can change without an update), Unity Ads as
+  default (user creates Unity account: Game ID + Rewarded/Interstitial/Banner units), test mode on
+  own/tester phones, app-ads.txt Unity line, Data safety update. Then In-App Purchase (Play
+  Billing): ad-free 1 month ₹49 sub / 1 year ₹399 sub / lifetime ₹499, coins 500 ₹29 / 1500 ₹79 /
+  5000 ₹199 (prices to confirm), restore via cloud account. User must create the Play payments
+  profile first. Waiting for the user's go and answers (prices, coin packs, banner).
