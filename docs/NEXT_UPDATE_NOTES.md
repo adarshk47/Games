@@ -146,3 +146,11 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   adfree_lifetime (₹99, non-consumable), Diwali sale strike prices ₹49/₹399/₹499 until 17 Nov 2026
   (then raise Play prices). Needs: version bump 2.2.0+19, AAB, internal-testing upload, products in
   Play Console, Data safety update (Unity Ads + purchases), app-ads.txt Unity line, publish rules.
+- 2026-10-24: 2.2.0 (19) AAB on internal testing, purchases + restore tested OK by the user.
+  **Held for the next update (user's call):** Firestore purchase log `purchases/{orderId}` (code
+  committed after the 2.2.0 build, AppInfo.version 2.2.0) – ship with the next feature update
+  (bump to 2.2.1+20 or higher). User still has to publish firestore_rules.txt (purchases, config,
+  ludo_*) and create Firestore config/app {ads: 'unity'}. Privacy policy updated + live (Unity,
+  purchases, online play). Play Console App content: Data safety (purchase history, device IDs),
+  content rating (digital purchases = Yes), Ad ID declaration. After 17 Nov: raise prices to
+  ₹49 / ₹399 / ₹499. Waiting for the user's next feature ideas.
