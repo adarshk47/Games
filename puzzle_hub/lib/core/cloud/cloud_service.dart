@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../ads/adfree_grant.dart';
 import '../ads/coupon_service.dart';
+import '../store/iap_service.dart';
 import '../i18n/i18n.dart';
 import 'cloud_auth.dart';
 import 'web_firebase_options.dart';
@@ -62,6 +63,7 @@ class CloudService {
         lastUid = uid;
         unawaited(AdFreeGrant.refresh());
         unawaited(CouponService.refresh());
+        unawaited(IapService.I.checkRevoked());
       });
     } catch (e) {
       debugPrint('cloud start failed: $e');

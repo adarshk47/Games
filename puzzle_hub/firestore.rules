@@ -359,6 +359,13 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // iap_revoked/{uid} = {at: timestamp}: created by the developer after a
+    // refund; the player's app reads it and switches ads back on.
+    match /iap_revoked/{uid} {
+      allow get: if isOwner(uid);
+      allow list, write: if false;
+    }
+
     // ---------------------------------------------------------------- config
     // config/app = {ads: 'unity' | 'off'} – set by the developer in the console.
     match /config/{doc} {

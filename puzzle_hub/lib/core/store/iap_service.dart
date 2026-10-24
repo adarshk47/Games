@@ -82,7 +82,31 @@ class IapService {
     return ms <= 0 ? null : DateTime.fromMillisecondsSinceEpoch(ms);
   }
 
+  /// Refunds: after refunding an order in Play Console the developer creates
+  /// Firestore `iap_revoked/{uid}` (uid from the purchases log). The app then
+  /// removes this player's paid ad-free time, and ads come back.
+  static const _kRevokedAt = 'iap.revoked.at';
+
+  Future<void> checkRevoked() async {
+    final u = CloudAuth.I.user.value;
+    if (!CloudService.available || u == null) return;
+    try {
+      final d = await FirebaseFirestore.instance.collection('iap_revoked').doc(u.uid).get().timeout(const Duration(seconds: 10));
+      if (!d.exists) return;
+      final at = d.data()?['at'];
+      final ms = at is Timestamp ? at.millisecondsSinceEpoch : 1;
+      // Handle each revoke once, so the player can buy again afterwards.
+      if (Storage.getInt(_kRevokedAt) >= ms) return;
+      await Storage.setInt(_kRevokedAt, ms);
+      await Storage.setInt(_kUntil, 0);
+      await Storage.setBool(_kLifetime, false);
+    } catch (e) {
+      debugPrint('iap revoke check: $e');
+    }
+  }
+
   Future<void> start() async {
+    unawaited(checkRevoked());
     if (kIsWeb) return;
     try {
       _available = await InAppPurchase.instance.isAvailable();
