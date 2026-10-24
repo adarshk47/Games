@@ -4,30 +4,22 @@ import 'package:puzzle_hub/core/ads/ads_service.dart';
 import 'package:puzzle_hub/core/i18n/i18n.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
-import 'package:puzzle_hub/games/mom_memory/baby_match_game.dart';
+import 'package:puzzle_hub/games/mom_memory/balloon_colors_game.dart';
 import 'package:puzzle_hub/games/mom_memory/breathe_game.dart';
-import 'package:puzzle_hub/games/mom_memory/hospital_bag_game.dart';
 import 'package:puzzle_hub/games/mom_memory/lullaby_game.dart';
-import 'package:puzzle_hub/games/mom_memory/missing_item_game.dart';
 import 'package:puzzle_hub/games/mom_memory/mom_memory_screen.dart';
 import 'package:puzzle_hub/games/mom_memory/story_recall_game.dart';
-import 'package:puzzle_hub/games/mom_memory/where_was_it_game.dart';
-import 'package:puzzle_hub/games/mom_memory/word_pairs_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Screen + label of the button that moves it past its intro (if any).
 final screens = <String, (Widget Function(), String Function()?)>{
   'menu': (() => const MomMemoryScreen(), null),
-  'match': (() => const BabyMatchGame(), null),
-  'bag': (() => const HospitalBagGame(), () => tr('mom_memory.start')),
+  'balloon': (() => const BalloonColorsGame(), () => tr('mom_memory.start')),
   'lullaby': (() => const LullabyGame(), () => tr('mom_memory.start')),
   'breathe': (
     () => const BreatheGame(),
     () => tr('mom_memory.minutes', {'n': 1}),
   ),
-  'missing': (() => const MissingItemGame(), () => tr('mom_memory.start')),
-  'pairs': (() => const WordPairsGame(), () => tr('mom_memory.start')),
-  'where': (() => const WhereWasItGame(), () => tr('mom_memory.start')),
   'story': (() => const StoryRecallGame(), () => tr('mom_memory.start')),
 };
 
@@ -54,7 +46,7 @@ void main() {
     await t.pumpWidget(const MaterialApp(home: MomMemoryScreen()));
     await t.pump(const Duration(seconds: 2));
     expect(find.text('Mom Memory'), findsOneWidget);
-    expect(find.text('Baby Items Match'), findsOneWidget);
+    expect(find.text('Balloon Colours'), findsOneWidget);
     expect(find.text('Story Recall'), findsOneWidget);
     expect(find.text('Hello! Take it easy, no hurry'), findsOneWidget);
     expect(

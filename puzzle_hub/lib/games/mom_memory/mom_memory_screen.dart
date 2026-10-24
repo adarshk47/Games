@@ -6,16 +6,11 @@ import '../../core/audio.dart';
 import '../../core/i18n/i18n.dart';
 import '../../core/storage.dart';
 import '../../core/ui/ui.dart';
-import 'baby_match_game.dart';
+import 'balloon_colors_game.dart';
 import 'breathe_game.dart';
-import 'hospital_bag_game.dart';
-import 'logic/mom_logic.dart';
 import 'lullaby_game.dart';
-import 'missing_item_game.dart';
 import 'mm_common.dart';
 import 'story_recall_game.dart';
-import 'where_was_it_game.dart';
-import 'word_pairs_game.dart';
 
 class MomMemoryScreen extends StatefulWidget {
   const MomMemoryScreen({super.key});
@@ -50,19 +45,6 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
     if (mounted) setState(() {});
   }
 
-  String _matchBest() {
-    var s = 0;
-    for (var i = 0; i < matchLevels.length; i++) {
-      s += Storage.getInt('mom.match.stars.$i');
-    }
-    return s == 0
-        ? tr('mom_memory.start_now')
-        : tr('mom_memory.stars_total', {
-            'n': s,
-            'total': matchLevels.length * 3,
-          });
-  }
-
   String _lvl(String k) {
     final l = Storage.getInt('mom.$k.level');
     return l == 0 && Storage.getInt('mom.$k.stars.0') == 0
@@ -73,30 +55,16 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
   @override
   Widget build(BuildContext context) {
     final streak = currentStreak();
-    final bag = Storage.getInt('mom.bag.best');
     final lul = Storage.getInt('mom.lullaby.best');
     final br = Storage.getInt('mom.breath.sessions');
     final cards = [
       _Hero(
-        '🧸',
-        tr('mom_memory.match_title'),
-        tr('mom_memory.match_sub'),
-        _matchBest(),
-        Mm.rose,
-        () => _open(const BabyMatchGame()),
-      ),
-      _Hero(
-        '🧳',
-        tr('mom_memory.bag_title'),
-        tr('mom_memory.bag_sub'),
-        bag == 0
-            ? tr('mom_memory.start_now')
-            : tr('mom_memory.bag_best', {
-                'n': bag,
-                'level': Storage.getInt('mom.bag.level') + 1,
-              }),
-        Mm.lavender,
-        () => _open(const HospitalBagGame()),
+        '🎈',
+        tr('mom_memory.balloon_title'),
+        tr('mom_memory.balloon_sub'),
+        _lvl('balloon'),
+        Mm.sky,
+        () => _open(const BalloonColorsGame()),
       ),
       _Hero(
         '🌙',
@@ -120,30 +88,6 @@ class _MomMemoryScreenState extends State<MomMemoryScreen> {
               }),
         Mm.mint,
         () => _open(const BreatheGame()),
-      ),
-      _Hero(
-        '🪄',
-        tr('mom_memory.missing_title'),
-        tr('mom_memory.missing_sub'),
-        _lvl('missing'),
-        Mm.sky,
-        () => _open(const MissingItemGame()),
-      ),
-      _Hero(
-        '💞',
-        tr('mom_memory.pairs_title'),
-        tr('mom_memory.pairs_sub'),
-        _lvl('pairs'),
-        Mm.butter,
-        () => _open(const WordPairsGame()),
-      ),
-      _Hero(
-        '🔍',
-        tr('mom_memory.where_title'),
-        tr('mom_memory.where_sub'),
-        _lvl('where'),
-        Mm.rose,
-        () => _open(const WhereWasItGame()),
       ),
       _Hero(
         '📖',

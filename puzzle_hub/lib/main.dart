@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'core/store/update_gate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -80,7 +81,7 @@ class PuzzleHubApp extends StatelessWidget {
         darkTheme: buildTheme(Brightness.dark),
         themeMode: ThemeMode.dark,
         home: const AuthGate(home: HomeScreen()),
-        builder: (_, child) => OfflineGate(child: child ?? const SizedBox()),
+        builder: (_, child) => UpdateGate(child: OfflineGate(child: child ?? const SizedBox())),
       ),
     );
   }

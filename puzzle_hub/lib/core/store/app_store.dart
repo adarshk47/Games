@@ -43,21 +43,37 @@ class AppStore {
     }
   }
 
-  /// On start: if Play has a newer version, Play shows its update dialog; the
-  /// download runs in the background and the app restarts into the update.
+  /// True while a newer Play version exists and has not been installed:
+  /// the app shows a blocking "Update required" screen (no playing).
+  static final ValueNotifier<bool> updateRequired = ValueNotifier(false);
+
+  /// On start: if Play has a newer version, updating is mandatory. Play's
+  /// full-screen update runs first; if the player backs out of it, the app
+  /// stays on the "Update required" screen.
   static Future<void> checkForUpdate() async {
     if (!_onAndroid) return;
     try {
       final info = await InAppUpdate.checkForUpdate();
-      if (info.updateAvailability != UpdateAvailability.updateAvailable) return;
-      if (info.flexibleUpdateAllowed) {
-        final r = await InAppUpdate.startFlexibleUpdate();
-        if (r == AppUpdateResult.success) await InAppUpdate.completeFlexibleUpdate();
-      } else if (info.immediateUpdateAllowed) {
-        await InAppUpdate.performImmediateUpdate();
+      if (info.updateAvailability != UpdateAvailability.updateAvailable &&
+          info.updateAvailability != UpdateAvailability.developerTriggeredUpdateInProgress) {
+        updateRequired.value = false;
+        return;
       }
+      updateRequired.value = true;
+      await updateNow();
     } catch (e) {
       debugPrint('update check failed: $e'); // e.g. not installed from Play
+    }
+  }
+
+  /// Starts Play's full-screen update (or opens the Play Store page).
+  static Future<void> updateNow() async {
+    try {
+      final r = await InAppUpdate.performImmediateUpdate();
+      if (r == AppUpdateResult.success) updateRequired.value = false;
+    } catch (e) {
+      debugPrint('immediate update failed: $e');
+      await launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.memorypuzzle.app'), mode: LaunchMode.externalApplication);
     }
   }
 
