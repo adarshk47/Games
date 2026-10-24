@@ -159,3 +159,9 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   and clears iap.adfree.until / iap.adfree.lifetime. Option 2 later: Cloud Function + Play Voided
   Purchases API (Blaze plan). Today a refunded 1m/1y keeps running till it ends; lifetime stays on
   the phone that has it (Revoke stops restore elsewhere).
+- 2026-10-24 built (code only, NO build/AAB until the user says): chess vector pieces (creamy
+  white + light red / pure black); compact ad-free request (send only); refund revoke via
+  iap_revoked/{uid}; leaderboards for every game (+ rules maxScores), top-10 podium; score share
+  card + WhatsApp invites (room code / player name); Brain Age share + 2 new tests (Number Order,
+  Grid Memory); back → Home, double back exits; Minesweeper think time; Ludo / Saanp-Seedhi home
+  dice + riddle dice; purchase log. Publish firestore_rules.txt again (boards, iap_revoked).
