@@ -165,3 +165,10 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   card + WhatsApp invites (room code / player name); Brain Age share + 2 new tests (Number Order,
   Grid Memory); back → Home, double back exits; Minesweeper think time; Ludo / Saanp-Seedhi home
   dice + riddle dice; purchase log. Publish firestore_rules.txt again (boards, iap_revoked).
+- 2026-10-24 NOTED ONLY (do when the user says): **AdMob ⇄ Unity switch.** Firestore
+  `config/app.ads` = 'unity' | 'admob' | 'off'. Re-add google_mobile_ads + manifest
+  APPLICATION_ID (ca-app-pub-4083049312549641~9106028856) + UMP consent; restore the AdMob
+  rewarded / interstitial / banner code from git (before commit 2267f42) behind a provider
+  interface next to Unity (lib/core/ads/ads_service.dart, banner_strip.dart). TEST_ADS / debug →
+  test units for both. AdMob account suspended until 22 Nov 2026 – switch to 'admob' only after.
+  app-ads.txt already has both.
