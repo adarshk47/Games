@@ -172,3 +172,12 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   interface next to Unity (lib/core/ads/ads_service.dart, banner_strip.dart). TEST_ADS / debug →
   test units for both. AdMob account suspended until 22 Nov 2026 – switch to 'admob' only after.
   app-ads.txt already has both.
+- 2026-10-24 new requests (noted):
+  1. **Forced update:** if a newer Play version exists, block play until updated (in_app_update
+     IMMEDIATE flow; app already uses in_app_update for a flexible prompt – make it mandatory).
+  2. **Mom Memory:** remove Baby Items Match, Hospital Bag, What's Missing, Match the Pairs (word
+     pairs), Where Was It; keep the rest (lullaby, breathe, story recall) and add a new calm memory
+     game.
+  3. **Leaderboard for players not signed in:** show their local (offline) score at the END of the
+     list (even if it would rank higher) with "Sign in to join the leaderboard".
+  4. (message cut off – ask the user)
