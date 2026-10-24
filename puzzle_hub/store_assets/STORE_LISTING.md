@@ -1,28 +1,26 @@
-# Master G – Play Store listing (v2.1.0, build 18)
+# Master G – Play Store listing (v2.2.0, build 19)
 
 ## Release
-- **Release name:** `2.1.0 (18) – Ludo, Saanp-Seedhi & Brain Age`
+- **Release name:** `2.2.0 (19) – Remove ads + Diwali sale`
 - **Release notes – English (en-IN)** (max 500):
   ```
-  🎲 New games!
-  • Ludo – vs computer, friends on one phone, or online rooms for 4
-  • Saanp-Seedhi (Snakes & Ladders) – offline and online
-  • Brain Age – 5 quick tests show your brain's age range, with learning tips
-  • Mom Memory – calm memory games for mothers-to-be
-  • New home screen with Top games
-  • Arrow Maze: twice the arrows + black & white style
-  • Fresh Bus Jam look, clearer chess pieces, fixes
+  🪔 Diwali update
+  • Remove ads: 1 month, 1 year or forever – Diwali sale prices till 17 Nov
+  • Restore your ad-free purchase on any phone
+  • Ludo, Saanp-Seedhi and Brain Age from the last update
+  • Fewer, calmer ads: one after every 2 games
+  • Coin videos: up to 10 a day
+  • Fixes and speed improvements
   ```
 - **Release notes – Hindi (hi-IN):**
   ```
-  🎲 नए गेम्स!
-  • लूडो – कंप्यूटर, एक फ़ोन पर दोस्त या 4 दोस्तों का ऑनलाइन रूम
-  • साँप-सीढ़ी – ऑफ़लाइन और ऑनलाइन
-  • दिमाग़ की उम्र – 5 छोटे टेस्ट, उम्र की रेंज और सीखने के टिप्स
-  • मॉम मेमोरी – होने वाली माँओं के लिए शांत खेल
-  • नया होम स्क्रीन, टॉप गेम्स के साथ
-  • एरो मेज़: दोगुने तीर + काला-सफ़ेद स्टाइल
-  • बस जैम का नया लुक, साफ़ शतरंज मोहरे, सुधार
+  🪔 दिवाली अपडेट
+  • विज्ञापन हटाएँ: 1 महीना, 1 साल या हमेशा के लिए – 17 नवंबर तक दिवाली सेल
+  • किसी भी फ़ोन पर बिना-विज्ञापन खरीदारी वापस पाएँ
+  • पिछले अपडेट के लूडो, साँप-सीढ़ी और दिमाग़ की उम्र
+  • कम विज्ञापन: हर 2 गेम के बाद एक
+  • सिक्कों वाले वीडियो: दिन में 10 तक
+  • सुधार और तेज़ रफ़्तार
   ```
 
 ## Main store listing
@@ -91,7 +89,8 @@ Master G is your daily brain gym – 20 games in one premium app: Ludo, Saanp-Se
 🎁 REWARDS
 • Coins for every finished game, daily reward and daily quests
 • Coin history: see what you earned in each game and what you spent
-• Ad-free passes for 24 hours, a week or a month – or request a longer ad-free period
+• Remove ads with Google Play: 1 month, 1 year or forever
+• Or use coins for a 24-hour, 1-week or 1-month ad-free pass
 
 🌍 YOUR LANGUAGE
 English, हिन्दी, Hinglish, తెలుగు, தமிழ், ਪੰਜਾਬੀ, भोजपुरी, मराठी, संस्कृतम्
@@ -150,7 +149,8 @@ Master G आपका रोज़ का ब्रेन जिम है – �
 
 🎁 इनाम
 • हर गेम पर सिक्के, रोज़ का इनाम और डेली क्वेस्ट
-• 24 घंटे, हफ़्ते या महीने का बिना विज्ञापन पास
+• Google Play से विज्ञापन हटाएँ: 1 महीना, 1 साल या हमेशा के लिए
+• या सिक्कों से 24 घंटे, हफ़्ते या महीने का बिना विज्ञापन पास
 
 🌍 9 भाषाएँ • 🔥 हर गेम के बाद GenZ चीयर्स
 
@@ -158,12 +158,14 @@ Master G आपका रोज़ का ब्रेन जिम है – �
 ```
 
 ## Play Console forms (answers)
-- **Ads:** Yes, the app contains ads (Google AdMob).
+- **Ads:** Yes, the app contains ads (Unity Ads; Google AdMob removed in 2.2.0).
+- **In-app products:** adfree_1m (₹9, consumable), adfree_1y (₹39, consumable), adfree_lifetime (₹99, one-time). Diwali sale until 17 Nov 2026, then ₹49 / ₹399 / ₹499.
 - **Target audience:** 13+ (not designed for children).
 - **Data safety:**
   - Collected: Name, Email address, User IDs (account); App interactions / game progress (app functionality); Device or other IDs (advertising, via AdMob).
   - From 2.0: the chosen player name, online status (available / last seen), online game moves and win/loss counts are visible to other signed-in players (app functionality).
-  - Shared: Device IDs with Google AdMob for advertising.
+  - Shared: Device or other IDs (advertising ID) with Unity Ads for advertising and analytics; app interactions (ad views) with Unity Ads.
+  - Collected (2.2.0): Purchase history (Google Play purchases, for ad-free; app functionality).
   - Encrypted in transit: Yes. Users can request deletion: Yes (in-app + web link above).
 - **Content rating:** answer the questionnaire – no violence, no real-money gambling. From 2.0: **Users can interact = Yes** (online Chess with other players; only player names and moves are shared, no chat, no photos).
 - **App access:** all features available without special access (login is optional; online Chess needs a Google / email sign-in, which any reviewer can create).
