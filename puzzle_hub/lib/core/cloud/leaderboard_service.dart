@@ -21,6 +21,10 @@ enum BoardMetric {
 
   /// Sum of all stars over every game.
   totalStars,
+
+  /// Progress in a level game: levels completed (or wins, whichever is
+  /// higher), so every game has a number on the leaderboard.
+  progress,
 }
 
 /// A leaderboard. [gameId] null = the "Total stars" board.
@@ -119,6 +123,21 @@ const List<Board> leaderboards = [
     maxScore: 1000000,
     tiers: kTiers,
   ),
+  // Every other game gets a board too (levels completed / wins / best).
+  Board('ludo', 'Ludo', '🎲', gameId: 'ludo', maxScore: 1000000, metric: BoardMetric.wins),
+  Board('snakes', 'Saanp-Seedhi', '🐍', gameId: 'snakes', maxScore: 1000000, metric: BoardMetric.wins),
+  Board('brain_age', 'Brain Age', '🧠', gameId: 'brain_age', maxScore: 1000, metric: BoardMetric.best),
+  Board('sudoku', 'Sudoku', '🔢', gameId: 'sudoku', maxScore: 100000, metric: BoardMetric.progress),
+  Board('arrow_maze', 'Arrow Maze', '➰', gameId: 'arrow_maze', maxScore: 100000, metric: BoardMetric.progress),
+  Board('maze_escape', 'Maze Escape', '🧭', gameId: 'maze_escape', maxScore: 100000, metric: BoardMetric.progress),
+  Board('ball_sort', 'Ball Sort', '🧪', gameId: 'ball_sort', maxScore: 100000, metric: BoardMetric.progress),
+  Board('flow_pairs', 'Flow', '🔗', gameId: 'flow_pairs', maxScore: 100000, metric: BoardMetric.progress),
+  Board('sliding_puzzle', 'Sliding Puzzle', '🧩', gameId: 'sliding_puzzle', maxScore: 100000, metric: BoardMetric.progress),
+  Board('minesweeper', 'Minesweeper', '💣', gameId: 'minesweeper', maxScore: 100000, metric: BoardMetric.progress),
+  Board('screw_jam', 'Screw Jam', '🔩', gameId: 'screw_jam', maxScore: 100000, metric: BoardMetric.progress),
+  Board('bus_jam', 'Bus Jam', '🚌', gameId: 'bus_jam', maxScore: 100000, metric: BoardMetric.progress),
+  Board('tile_match', 'Tile Match', '🀄', gameId: 'tile_match', maxScore: 100000, metric: BoardMetric.progress),
+  Board('hexa_sort', 'Hexa Sort', '⬡', gameId: 'hexa_sort', maxScore: 100000, metric: BoardMetric.progress),
   totalStarsBoard,
 ];
 
@@ -364,6 +383,8 @@ class LeaderboardService {
         } else if (b.metric == BoardMetric.best && e.score != null) {
           final best = Rewards.best(e.gameId);
           submit(b, e.score! > best ? e.score! : best);
+        } else if (b.metric == BoardMetric.progress) {
+          submit(b, localScore(b));
         }
       }
       if (e.stars > 0) {
@@ -387,6 +408,7 @@ class LeaderboardService {
       b.tier == null
           ? Rewards.wins(b.gameId!)
           : Rewards.winsIn(b.gameId!, b.tier!),
+    BoardMetric.progress => Rewards.levels(b.gameId!) > Rewards.wins(b.gameId!) ? Rewards.levels(b.gameId!) : Rewards.wins(b.gameId!),
     BoardMetric.totalStars => 0,
   };
 

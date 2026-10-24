@@ -31,6 +31,20 @@ service cloud.firestore {
         'memory_boost': 1000000,
         'block_puzzle': 10000000,
         'chess': 1000000,
+        'ludo': 1000000,
+        'snakes': 1000000,
+        'brain_age': 1000,
+        'sudoku': 100000,
+        'arrow_maze': 100000,
+        'maze_escape': 100000,
+        'ball_sort': 100000,
+        'flow_pairs': 100000,
+        'sliding_puzzle': 100000,
+        'minesweeper': 100000,
+        'screw_jam': 100000,
+        'bus_jam': 100000,
+        'tile_match': 100000,
+        'hexa_sort': 100000,
         'total_stars': 100000
       };
     }

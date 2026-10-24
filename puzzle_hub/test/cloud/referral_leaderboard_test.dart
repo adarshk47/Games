@@ -35,7 +35,9 @@ void main() {
       expect(leaderboards.map((b) => b.id).toSet().length, leaderboards.length);
       expect(leaderboards.map((b) => b.id), containsAll(['game_2048', 'focus_color', 'memory_boost', 'block_puzzle', 'chess', 'total_stars']));
       expect(boardForGame('game_2048')!.id, 'game_2048');
-      expect(boardForGame('sudoku'), isNull);
+      expect(boardForGame('sudoku')!.metric, BoardMetric.progress);
+      expect(boardForGame('ludo')!.metric, BoardMetric.wins);
+      expect(boardForGame('mom_memory'), isNull, reason: 'calm games have no board');
       expect(totalStarsBoard.gameId, isNull);
       expect(boardForGame('chess')!.metric, BoardMetric.wins);
     });

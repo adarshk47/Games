@@ -7,6 +7,7 @@ import '../account/auth_screens.dart';
 import '../account/countries.dart';
 import '../i18n/i18n.dart';
 import '../ui/ui.dart';
+import '../share/score_share.dart';
 import 'cloud_auth.dart';
 import 'cloud_service.dart';
 import 'leaderboard_service.dart';
@@ -16,7 +17,7 @@ import 'leaderboard_service.dart';
 String boardTitle(Board b) => switch (b.metric) {
   BoardMetric.totalStars => tr('cloud.lb.total_stars'),
   BoardMetric.wins when b.gameId == 'chess' => tr('cloud.lb.chess_wins'),
-  _ => b.title,
+  _ => b.gameId == null ? b.title : tr('game.${b.gameId}.title', const {}, b.title),
 };
 
 /// "🌍 Global" or "🇮🇳 India".
@@ -351,6 +352,18 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           fontSize: 18,
                         ),
                       ),
+                      IconButton(
+                        key: const ValueKey('lb_challenge'),
+                        tooltip: tr('share.challenge'),
+                        icon: const Icon(Icons.share_rounded, color: Pal.gold),
+                        onPressed: () => ScoreShare.show(
+                          context,
+                          game: boardTitle(_board),
+                          emoji: _board.emoji,
+                          value: '${p.mine!.score}',
+                          label: tr('share.rank_label', {'rank': p.myRank ?? '-', 'place': _placeName(_scope, _country)}),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -362,14 +375,18 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       tr('cloud.lb.no_scores'),
                       tr('cloud.lb.be_first', {'board': boardTitle(_board)}),
                     )
-                  : ListView.builder(
+                  : ListView(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
-                      itemCount: p.top.length,
-                      itemBuilder: (_, i) => _Row(
-                        rank: i + 1,
-                        entry: p.top[i],
-                        isMe: p.top[i].uid == me,
-                      ),
+                      children: [
+                        _Podium(top: p.top.take(3).toList(), me: me),
+                        if (p.top.length > 3)
+                          _SectionLabel(tr('cloud.lb.top10')),
+                        for (var i = 3; i < p.top.length && i < 10; i++)
+                          _Row(rank: i + 1, entry: p.top[i], isMe: p.top[i].uid == me),
+                        if (p.top.length > 10) _SectionLabel(tr('cloud.lb.others')),
+                        for (var i = 10; i < p.top.length; i++)
+                          _Row(rank: i + 1, entry: p.top[i], isMe: p.top[i].uid == me),
+                      ],
                     ),
             ),
           ],
@@ -485,5 +502,72 @@ LeaderTier? leaderTier(int rank) => switch (rank) {
   3 => const LeaderTier('silver', '🥈', Color(0xFFD1D5DB)),
   4 => const LeaderTier('bronze', '🥉', Color(0xFFD97706)),
   5 => const LeaderTier('steel', '⚙️', Color(0xFF94A3B8)),
+  >= 6 && <= 10 => const LeaderTier('top10', '⭐', Color(0xFFB794FF)),
   _ => null,
 };
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
+        child: Text(text, style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.6)),
+      );
+}
+
+/// Ranks 1–3 on a podium (2nd left, 1st in the middle and tallest, 3rd right).
+class _Podium extends StatelessWidget {
+  const _Podium({required this.top, required this.me});
+  final List<LeaderEntry> top;
+  final String? me;
+
+  Widget _step(int rank) {
+    if (rank > top.length) return const Expanded(child: SizedBox());
+    final e = top[rank - 1];
+    final tier = leaderTier(rank)!;
+    final h = switch (rank) { 1 => 92.0, 2 => 70.0, _ => 56.0 };
+    final isMe = e.uid == me;
+    return Expanded(
+      child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        Text(tier.emoji, style: TextStyle(fontSize: rank == 1 ? 34 : 26)),
+        const SizedBox(height: 4),
+        Text(
+          isMe ? tr('cloud.lb.you', {'name': e.name}) : e.name,
+          key: ValueKey('lb_rank_$rank'),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: isMe ? Pal.gold : Pal.text, fontWeight: FontWeight.w800, fontSize: 13),
+        ),
+        Text('${e.score}', style: TextStyle(color: tier.color, fontWeight: FontWeight.w900, fontSize: 15)),
+        const SizedBox(height: 4),
+        Container(
+          height: h,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [tier.color.withValues(alpha: 0.85), tier.color.withValues(alpha: 0.25)],
+            ),
+            boxShadow: [BoxShadow(color: tier.color.withValues(alpha: 0.5), blurRadius: 14)],
+          ),
+          alignment: Alignment.center,
+          child: Text('$rank', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
+        ),
+      ]),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(top: 6, bottom: 4),
+        child: SizedBox(
+          height: 190,
+          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [_step(2), _step(1), _step(3)]),
+        ),
+      );
+}
