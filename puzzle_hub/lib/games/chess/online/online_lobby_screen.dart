@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../../core/share/score_share.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/account/auth_screens.dart';
@@ -301,6 +302,14 @@ class _OnlineLobbyScreenState extends State<OnlineLobbyScreen> {
         ),
         const SizedBox(height: 14),
         PremiumButton(key: const ValueKey('online_quick'), label: tr('online.quick'), icon: Icons.bolt_rounded, onTap: _quick),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          key: const ValueKey('online_invite_friend'),
+          style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFF25D366)), padding: const EdgeInsets.symmetric(vertical: 12)),
+          onPressed: () => ScoreShare.invite(tr('invite.play', {'game': tr('game.chess.title'), 'name': '@${me.handle}'})),
+          icon: const Icon(Icons.share_rounded, color: Color(0xFF25D366)),
+          label: Text(tr('invite.friend'), style: const TextStyle(color: Color(0xFF25D366), fontWeight: FontWeight.w800)),
+        ),
         ValueListenableBuilder<List<Challenge>>(
           valueListenable: OnlineService.I.incoming,
           builder: (context, list, _) => list.isEmpty

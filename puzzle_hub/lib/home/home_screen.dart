@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../core/ads/banner_strip.dart';
 import '../core/audio.dart';
@@ -39,6 +40,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   int _tab = 0;
+  DateTime? _lastBack;
   late final AnimationController _fade = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 260),
@@ -168,7 +170,27 @@ class _HomeScreenState extends State<HomeScreen>
       child: w,
     );
 
-    return Scaffold(
+    // Back: other tabs go to Home; on Home, back twice (within 2 s) exits.
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        if (_tab != 0) {
+          _select(0);
+          return;
+        }
+        final now = DateTime.now();
+        final last = _lastBack;
+        _lastBack = now;
+        if (last != null && now.difference(last) < const Duration(seconds: 2)) {
+          SystemNavigator.pop();
+          return;
+        }
+        ScaffoldMessenger.maybeOf(context)
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(tr('home.back_exit')), duration: const Duration(seconds: 2)));
+      },
+      child: Scaffold(
       backgroundColor: AppThemeController.theme.bg0,
       body: AnimatedBackground(
         child: Stack(
@@ -212,6 +234,7 @@ class _HomeScreenState extends State<HomeScreen>
           ],
         ),
       ),
+    ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../../core/share/score_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -189,6 +190,12 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
                   onPressed: () => Clipboard.setData(ClipboardData(text: code)),
                 ),
               ]),
+              TextButton.icon(
+                key: const ValueKey('ludo_room_invite'),
+                onPressed: () => ScoreShare.invite(tr('invite.room', {'game': tr('game.${widget.game}.title'), 'code': code})),
+                icon: const Icon(Icons.share_rounded, color: Color(0xFF25D366)),
+                label: Text(tr('invite.whatsapp'), style: const TextStyle(color: Color(0xFF25D366), fontWeight: FontWeight.w800)),
+              ),
               const SizedBox(height: 8),
               if (r != null)
                 for (final (i, n) in r.names.indexed)
@@ -250,6 +257,17 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
     }
   }
 
+  Widget _inviteButton() => OutlinedButton.icon(
+        key: const ValueKey('online_invite_friend'),
+        style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFF25D366)), padding: const EdgeInsets.symmetric(vertical: 12)),
+        onPressed: () => ScoreShare.invite(tr('invite.play', {
+          'game': tr('game.${widget.game}.title'),
+          'name': '@${OnlineService.I.me.value?.handle ?? ''}',
+        })),
+        icon: const Icon(Icons.share_rounded, color: Color(0xFF25D366)),
+        label: Text(tr('invite.friend'), style: const TextStyle(color: Color(0xFF25D366), fontWeight: FontWeight.w800)),
+      );
+
   Widget _section(String t) => Padding(
         padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
         child: Text(t, style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.6)),
@@ -273,6 +291,8 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
     final me = OnlineService.I.uid;
     return ListView(padding: const EdgeInsets.fromLTRB(16, 6, 16, 24), children: [
       PremiumButton(key: const ValueKey('ludo_online_quick'), label: tr('ludo.quick_match'), icon: Icons.bolt_rounded, onTap: _quick),
+      const SizedBox(height: 8),
+      _inviteButton(),
       _section(tr('ludo.play_friends')),
       GlassCard(
         blur: 0,

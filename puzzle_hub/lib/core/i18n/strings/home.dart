@@ -1792,4 +1792,15 @@ const Map<String, Map<String, String>> homeStrings = {
     'mr': "टॉप खेळ",
     'sa': "श्रेष्ठक्रीडाः",
   },
+  'home.back_exit': {
+    'en': "Press back again to exit",
+    'hi': "बाहर निकलने के लिए फिर से back दबाएँ",
+    'hinglish': "Bahar nikalne ke liye phir se back dabao",
+    'te': "బయటకు వెళ్లడానికి మళ్లీ back నొక్కండి",
+    'ta': "வெளியேற மீண்டும் back அழுத்தவும்",
+    'pa': "ਬਾਹਰ ਨਿਕਲਣ ਲਈ ਫਿਰ back ਦਬਾਓ",
+    'bho': "बाहर निकले खातिर फेर back दबाईं",
+    'mr': "बाहेर पडण्यासाठी पुन्हा back दाबा",
+    'sa': "निर्गन्तुं पुनः back नुदतु",
+  },
 };

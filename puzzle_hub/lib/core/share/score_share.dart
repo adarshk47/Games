@@ -71,6 +71,15 @@ class ScoreShare {
     );
   }
 
+  /// Shares a plain invite text (WhatsApp etc.) with the Play Store link.
+  static Future<void> invite(String text) async {
+    try {
+      await SharePlus.instance.share(ShareParams(text: '$text\n${_link()}'));
+    } catch (e) {
+      debugPrint('invite share: $e');
+    }
+  }
+
   static String _link() {
     final uid = CloudAuth.I.user.value?.uid;
     return uid == null ? 'https://play.google.com/store/apps/details?id=${ReferralService.packageId}' : ReferralService.inviteLink(uid);

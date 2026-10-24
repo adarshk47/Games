@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import '../../core/share/score_share.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/i18n.dart';
@@ -392,6 +393,24 @@ class _BrainRunScreenState extends State<BrainRunScreen> {
                 MaterialPageRoute<void>(builder: (_) => BrainRunScreen(tests: widget.tests, group: widget.group))),
           ),
         ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: PremiumButton(
+          key: const ValueKey('brain_share'),
+          label: tr('share.challenge'),
+          icon: Icons.share_rounded,
+          compact: true,
+          onTap: () => ScoreShare.show(
+            context,
+            game: tr('game.brain_age.title'),
+            emoji: '🧠',
+            value: tr('brain.age_value', {'n': (_full ? r.brainGroup : r.groupOf(widget.tests.first)).label}),
+            label: tr(_full ? 'brain.result_title' : 'brain.result_title_one'),
+            color: _accent,
+            extra: tr('brain.beats', {'p': r.percentile, 'g': widget.group.label}),
+          ),
+        ),
+      ),
       PremiumButton(key: const ValueKey('brain_done'), label: tr('brain.done'), color: _accent, icon: Icons.check_rounded, onTap: () => Navigator.of(context).pop()),
       const SizedBox(height: 10),
       Text(tr('brain.disclaimer'), textAlign: TextAlign.center, style: const TextStyle(color: Pal.textDim, fontSize: 11, height: 1.4)),
