@@ -17,10 +17,14 @@ const _testIcons = {
   BrainTest.math: '➕',
   BrainTest.stroop: '🎨',
   BrainTest.pattern: '🧩',
+  BrainTest.order: '🔟',
+  BrainTest.grid: '🟦',
 };
 
 String _unit(BrainTest t, double v) => switch (t) {
       BrainTest.reaction => '${v.round()} ms',
+      BrainTest.order => '${v.toStringAsFixed(1)} s',
+      BrainTest.grid => tr('brain.unit.squares', {'n': v.round()}),
       BrainTest.memory => tr('brain.unit.digits', {'n': v.round()}),
       _ => tr('brain.unit.correct', {'n': v % 1 == 0 ? v.round() : v.toStringAsFixed(1)}),
     };
@@ -85,7 +89,7 @@ class _BrainAgeScreenState extends State<BrainAgeScreen> {
   }
 
   Widget _history(List<BrainResult> h) {
-    final full = h.where((r) => r.scores.length == BrainTest.values.length).toList();
+    final full = h.where((r) => r.isFull).toList();
     if (full.isEmpty) return const SizedBox();
     final last = full.sublist(math.max(0, full.length - 10));
     return GlassCard(
@@ -121,7 +125,7 @@ class _BrainAgeScreenState extends State<BrainAgeScreen> {
   Widget _home(AgeGroup g) {
     final h = BrainStore.history();
     final best = BrainStore.best();
-    final lastFull = h.lastWhere((r) => r.scores.length == BrainTest.values.length, orElse: () => BrainResult(group: g, scores: const {}, at: DateTime(0)));
+    final lastFull = h.lastWhere((r) => r.isFull, orElse: () => BrainResult(group: g, scores: const {}, at: DateTime(0)));
     return ListView(padding: const EdgeInsets.fromLTRB(16, 6, 16, 24), children: [
       Text(tr('brain.intro'), style: const TextStyle(color: Pal.textDim, height: 1.4)),
       const SizedBox(height: 12),
@@ -285,6 +289,8 @@ class _BrainRunScreenState extends State<BrainRunScreen> {
         BrainTest.math => MathTest(onDone: _done),
         BrainTest.stroop => StroopTest(onDone: _done),
         BrainTest.pattern => PatternTest(onDone: _done),
+        BrainTest.order => OrderTest(onDone: _done),
+        BrainTest.grid => GridTest(onDone: _done),
       };
 
   Widget _card({required String emoji, required String title, required List<Widget> children, required String button, required VoidCallback onTap, Key? key}) =>

@@ -43,7 +43,7 @@ enum AgeGroup {
 }
 
 /// The five quick tests of one Brain Age check.
-enum BrainTest { reaction, memory, math, stroop, pattern }
+enum BrainTest { reaction, memory, math, stroop, pattern, order, grid }
 
 /// Rough norms for each test per age group (mean, sd), from typical results
 /// of these classic tasks on a phone. Reaction is milliseconds (lower is
@@ -57,6 +57,10 @@ class BrainNorms {
     BrainTest.math: [16.0, 18.0, 17.0, 16.0, 14.5, 13.0],
     BrainTest.stroop: [22.0, 23.0, 21.0, 19.0, 17.0, 15.0],
     BrainTest.pattern: [6.0, 6.5, 6.0, 5.5, 5.0, 4.5],
+    // Seconds to tap 1..16 in order (lower is better).
+    BrainTest.order: [14.0, 14.5, 15.5, 17.0, 19.0, 22.0],
+    // Squares remembered on a 4×4 / 5×5 grid.
+    BrainTest.grid: [7.0, 7.0, 6.5, 6.0, 5.5, 5.0],
   };
   static const _sd = {
     BrainTest.reaction: 55.0,
@@ -64,9 +68,11 @@ class BrainNorms {
     BrainTest.math: 5.0,
     BrainTest.stroop: 5.0,
     BrainTest.pattern: 2.0,
+    BrainTest.order: 4.0,
+    BrainTest.grid: 1.5,
   };
 
-  static bool lowerIsBetter(BrainTest t) => t == BrainTest.reaction;
+  static bool lowerIsBetter(BrainTest t) => t == BrainTest.reaction || t == BrainTest.order;
 
   /// Mean for [g], read between the anchor ages of the table.
   static double mean(BrainTest t, AgeGroup g) {
@@ -95,6 +101,9 @@ class BrainResult {
   final AgeGroup group;
   final Map<BrainTest, double> scores;
   final DateTime at;
+
+  /// A full Brain Age check (old checks had 5 tests, new ones 7).
+  bool get isFull => scores.length >= 5;
 
   /// Each standard deviation is worth about 8 "brain years".
   static const yearsPerSd = 8.0;
@@ -200,15 +209,15 @@ class BrainStore {
 
   /// The test that needs practice most (lowest z in the last full check).
   static BrainTest? weakest() {
-    final h = history().where((r) => r.scores.length == BrainTest.values.length);
+    final h = history().where((r) => r.isFull);
     if (h.isEmpty) return null;
     final r = h.last;
-    return BrainTest.values.reduce((a, b) => r.zOf(a) <= r.zOf(b) ? a : b);
+    return r.scores.keys.reduce((a, b) => r.zOf(a) <= r.zOf(b) ? a : b);
   }
 
   /// Best (youngest) brain age so far.
   static int? best() {
-    final h = history().where((r) => r.scores.length == BrainTest.values.length);
+    final h = history().where((r) => r.isFull);
     if (h.isEmpty) return null;
     return h.map((r) => r.brainAge).reduce(math.min);
   }

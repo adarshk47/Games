@@ -498,3 +498,227 @@ class _PatternTestState extends _TimedState<PatternTest> {
         choiceGrid([for (final c in _q.choices) '$c'], _q.choices.indexOf(_q.answer)),
       );
 }
+
+// ---------------------------------------------------------------- order
+
+/// Tap 1, 2, 3 … 16 in order as fast as you can. Score = seconds.
+class OrderTest extends StatefulWidget {
+  const OrderTest({super.key, required this.onDone, this.random, this.count = 16});
+  final ScoreCallback onDone;
+  final math.Random? random;
+  final int count;
+
+  @override
+  State<OrderTest> createState() => _OrderTestState();
+}
+
+class _OrderTestState extends State<OrderTest> {
+  late final math.Random _r = widget.random ?? math.Random();
+  late final List<int> _nums = List.generate(widget.count, (i) => i + 1)..shuffle(_r);
+  final _watch = Stopwatch();
+  Timer? _tick;
+  int _next = 1;
+  int? _wrong;
+
+  @override
+  void initState() {
+    super.initState();
+    _tick = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      if (mounted && _watch.isRunning) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _tick?.cancel();
+    super.dispose();
+  }
+
+  void _tap(int n) {
+    if (_next > widget.count) return;
+    if (n != _next) {
+      AppAudio.play(Sound.fail, volume: 0.4);
+      setState(() => _wrong = n);
+      return;
+    }
+    if (!_watch.isRunning) _watch.start();
+    AppAudio.play(Sound.pop, volume: 0.5);
+    setState(() {
+      _wrong = null;
+      _next++;
+    });
+    if (_next > widget.count) {
+      _watch.stop();
+      widget.onDone(_watch.elapsedMilliseconds / 1000);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final side = math.sqrt(widget.count).ceil();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+      child: Column(children: [
+        Text(tr('brain.order.next', {'n': math.min(_next, widget.count)}), style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w900, fontSize: 18)),
+        Text('${(_watch.elapsedMilliseconds / 1000).toStringAsFixed(1)} s', style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Center(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: GridView.count(
+                crossAxisCount: side,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                children: [
+                  for (final n in _nums)
+                    GestureDetector(
+                      key: ValueKey('order_$n'),
+                      onTapDown: (_) => _tap(n),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: n < _next
+                              ? const Color(0xFF22C55E).withValues(alpha: 0.35)
+                              : (n == _wrong ? const Color(0xFFEF4444).withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.10)),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                        ),
+                        child: Text('$n', style: TextStyle(color: n < _next ? Colors.white54 : Pal.text, fontSize: 24, fontWeight: FontWeight.w900)),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+// ---------------------------------------------------------------- grid
+
+/// Squares light up for a moment; tap the same squares. Each cleared round
+/// adds a square; two failed rounds end the test. Score = most squares.
+class GridTest extends StatefulWidget {
+  const GridTest({super.key, required this.onDone, this.random, this.showMs = 1300});
+  final ScoreCallback onDone;
+  final math.Random? random;
+  final int showMs;
+
+  @override
+  State<GridTest> createState() => _GridTestState();
+}
+
+class _GridTestState extends State<GridTest> {
+  late final math.Random _r = widget.random ?? math.Random();
+  int _count = 3, _best = 0, _fails = 0;
+  Set<int> _target = {};
+  final Set<int> _picked = {};
+  bool _showing = true, _locked = false;
+  int _wrongTaps = 0;
+  Timer? _t;
+
+  int get _side => _count <= 6 ? 4 : 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _round();
+  }
+
+  @override
+  void dispose() {
+    _t?.cancel();
+    super.dispose();
+  }
+
+  void _round() {
+    final cells = List.generate(_side * _side, (i) => i)..shuffle(_r);
+    _target = cells.take(_count).toSet();
+    _picked.clear();
+    _wrongTaps = 0;
+    _showing = true;
+    _locked = false;
+    _t?.cancel();
+    _t = Timer(Duration(milliseconds: widget.showMs), () {
+      if (mounted) setState(() => _showing = false);
+    });
+    setState(() {});
+  }
+
+  void _tap(int i) {
+    if (_showing || _locked || _picked.contains(i)) return;
+    if (_target.contains(i)) {
+      AppAudio.play(Sound.pop, volume: 0.5);
+      setState(() => _picked.add(i));
+      if (_picked.length == _target.length) {
+        _best = _count;
+        _count++;
+        _next();
+      }
+    } else {
+      AppAudio.play(Sound.fail, volume: 0.4);
+      setState(() => _wrongTaps++);
+      if (_wrongTaps >= 2) {
+        _fails++;
+        _next();
+      }
+    }
+  }
+
+  void _next() {
+    _locked = true;
+    if (_fails >= 2 || _count > 12) {
+      widget.onDone(_best.toDouble());
+      return;
+    }
+    Timer(const Duration(milliseconds: 700), () {
+      if (mounted) _round();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+      child: Column(children: [
+        Text(tr(_showing ? 'brain.grid.watch' : 'brain.grid.tap', {'n': _count}), style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w900, fontSize: 17)),
+        const SizedBox(height: 12),
+        Expanded(
+          child: Center(
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: GridView.count(
+                crossAxisCount: _side,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                children: [
+                  for (var i = 0; i < _side * _side; i++)
+                    GestureDetector(
+                      key: ValueKey('grid_$i'),
+                      onTapDown: (_) => _tap(i),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 160),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: (_showing && _target.contains(i)) || _picked.contains(i)
+                              ? const Color(0xFF60A5FA)
+                              : Colors.white.withValues(alpha: 0.10),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ]),
+    );
+  }
+}
