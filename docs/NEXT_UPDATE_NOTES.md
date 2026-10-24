@@ -134,3 +134,8 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   - **Unity Ads Game ID (Android): 800409679.** Ad units still to be created by the user in the
     Unity dashboard (Monetization → Ad Units; default Rewarded_Android / Interstitial_Android /
     Banner_Android). Unity audience question answered "No" (not for children, 13+).
+  - **Unity placements ready (2026-10-24):** BP_Rewarded_Android (Rewarded),
+    BP_Interstitial_Android (Interstitial), BP_Banner_Android (Banner), all in game 800409679
+    "Master G: Brain Puzzle Games". Still needed from the user before release: Unity payment info
+    (any time), and a decision on test mode for own/tester phones (Unity dashboard → Testing →
+    test devices, or our TEST_ADS flag).
