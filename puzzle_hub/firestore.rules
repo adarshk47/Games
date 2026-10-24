@@ -346,6 +346,13 @@ service cloud.firestore {
         && getAfter(/databases/$(database)/documents/ludo_games/$(request.resource.data.gameId)).data.players.hasAll([uid, request.auth.uid]);
     }
 
+    // ---------------------------------------------------------------- config
+    // config/app = {ads: 'unity' | 'off'} – set by the developer in the console.
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

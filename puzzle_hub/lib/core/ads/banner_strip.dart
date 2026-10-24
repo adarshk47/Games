@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 
 import 'ads_service.dart';
 
-/// A standard 320×50 banner for menu screens (never on top of gameplay).
-/// Takes no space until an ad has loaded, and none for ad-free players.
+/// A standard 320×50 Unity banner for menu screens (never on top of
+/// gameplay). Takes (almost) no space until an ad has loaded, and none for
+/// ad-free players.
 class BannerStrip extends StatefulWidget {
   const BannerStrip({super.key});
 
@@ -19,8 +20,8 @@ class BannerStrip extends StatefulWidget {
 }
 
 class _BannerStripState extends State<BannerStrip> {
-  BannerAd? _ad;
   bool _loaded = false;
+  bool _failed = false;
 
   bool get _wanted => AdsService.available && !AdsService.adFree;
 
@@ -28,63 +29,46 @@ class _BannerStripState extends State<BannerStrip> {
   void initState() {
     super.initState();
     AdsService.changes.addListener(_sync);
-    _sync();
   }
 
   @override
   void dispose() {
     AdsService.changes.removeListener(_sync);
-    _ad?.dispose();
     BannerStrip.showing.value = false;
     super.dispose();
   }
 
   void _sync() {
     if (!mounted) return;
-    if (!_wanted) {
-      _ad?.dispose();
-      _ad = null;
-      if (_loaded) setState(() => _loaded = false);
-      BannerStrip.showing.value = false;
-      return;
-    }
-    if (_ad != null) return;
-    try {
-      _ad = BannerAd(
-        adUnitId: AdIds.banner,
-        size: AdSize.banner,
-        request: const AdRequest(),
-        listener: BannerAdListener(
-          onAdLoaded: (_) {
-            if (!mounted) return;
-            setState(() => _loaded = true);
-            BannerStrip.showing.value = true;
-          },
-          onAdFailedToLoad: (ad, e) {
-            debugPrint('banner load failed: ${e.message}');
-            ad.dispose();
-            if (identical(_ad, ad)) _ad = null;
-            if (mounted) setState(() => _loaded = false);
-            BannerStrip.showing.value = false;
-          },
-        ),
-      )..load();
-    } catch (e) {
-      _ad = null;
-    }
+    if (!_wanted) BannerStrip.showing.value = false;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final ad = _ad;
-    if (!_loaded || ad == null || !_wanted) return const SizedBox.shrink();
+    if (!_wanted || _failed) return const SizedBox.shrink();
+    // The platform view must be laid out to load; it stays 1 px tall until
+    // an ad is ready.
     return SizedBox(
-      height: BannerStrip.height,
+      height: _loaded ? BannerStrip.height : 1,
       child: Center(
-        child: SizedBox(
-          width: ad.size.width.toDouble(),
-          height: ad.size.height.toDouble(),
-          child: AdWidget(ad: ad),
+        child: UnityBannerAd(
+          placementId: AdIds.banner,
+          onLoad: (_) {
+            if (!mounted) return;
+            setState(() => _loaded = true);
+            BannerStrip.showing.value = true;
+          },
+          onFailed: (_, e, m) {
+            debugPrint('banner load failed: $e $m');
+            if (mounted) {
+              setState(() {
+                _loaded = false;
+                _failed = true;
+              });
+            }
+            BannerStrip.showing.value = false;
+          },
         ),
       ),
     );

@@ -3,7 +3,8 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 
 import '../i18n/i18n.dart';
 import '../rewards.dart';
@@ -11,40 +12,30 @@ import '../storage.dart';
 import '../features.dart';
 import 'coupon_service.dart';
 import 'adfree_grant.dart';
+import '../store/iap_service.dart';
+import '../cloud/cloud_service.dart';
 
-/// Ad unit ids.
+/// Unity Ads ids (game "Master G: Brain Puzzle Games").
 ///
-/// !!! REPLACE BEFORE RELEASE !!!
-/// These are Google's official TEST ad unit ids. Swap them (and the AdMob app
-/// id in AndroidManifest.xml) for the real ids from the AdMob console.
-/// Master G AdMob ad units. Release builds use the real units; debug/profile
-/// builds use Google's test units so testing never creates invalid traffic.
+/// Google AdMob was removed in 2.2 (the AdMob account was suspended for
+/// invalid traffic, Oct 23 – Nov 22, 2026). All ads now come from Unity Ads.
 class AdIds {
   AdIds._();
-  static const _realRewarded = 'ca-app-pub-4083049312549641/4244584412';
-  static const _realInterstitial = 'ca-app-pub-4083049312549641/7853848901';
-  static const _realBanner = 'ca-app-pub-4083049312549641/2287581470';
-  static const _testRewarded = 'ca-app-pub-3940256099942544/5224354917';
-  static const _testInterstitial = 'ca-app-pub-3940256099942544/1033173712';
-  static const _testBanner = 'ca-app-pub-3940256099942544/6300978111';
+  static const gameId = '800409679';
+  static const rewarded = 'BP_Rewarded_Android';
+  static const interstitial = 'BP_Interstitial_Android';
+  static const banner = 'BP_Banner_Android';
 
   /// Builds installed on our own / testers' phones must never show real ads
   /// (our own views and taps count as invalid traffic). Build them with
   ///   flutter build apk --release --dart-define=TEST_ADS=true
-  /// Only the Play Store AAB (no TEST_ADS) uses the real ad units.
+  /// Debug builds and TEST_ADS builds run Unity in test mode; only the Play
+  /// Store AAB serves real ads.
   static const testAds = bool.fromEnvironment('TEST_ADS');
-  static const _real = kReleaseMode && !testAds;
-
-  static const rewarded = _real ? _realRewarded : _testRewarded;
-  static const interstitial = _real ? _realInterstitial : _testInterstitial;
-  static const banner = _real ? _realBanner : _testBanner;
-
-  /// Hashed device ids (from logcat / AdMob console) of the developer's and
-  /// testers' phones: they always get test ads, even from the Play build.
-  static const testDevices = <String>[];
+  static const testMode = !kReleaseMode || testAds;
 }
 
-/// AdMob wrapper. Every method is safe to call when ads are unavailable
+/// Unity Ads wrapper. Every method is safe to call when ads are unavailable
 /// (web, desktop, widget tests, no consent, plugin errors); it then simply
 /// returns false / does nothing. Nothing here may ever throw or block startup.
 class AdsService {
@@ -57,12 +48,14 @@ class AdsService {
   // ---- Tunables --------------------------------------------------------------
   static const rewardedCoins = 25;
 
-  /// Minimum wait between two coin-reward ads.
+  /// Coin-reward ads: at most this many per day...
+  static const rewardedPerDay = 10;
+
+  /// ...and this long between two of them (keeps ad traffic natural).
+  static const rewardedGap = Duration(minutes: 2);
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
-  static const levelsPerInterstitial = 2; // one after every 2 games...
-  /// ...or at the next game end once this long has passed since the last one.
-  static const interstitialEvery = Duration(minutes: 1);
+  static const levelsPerInterstitial = 2; // one after every 2 games (win or lose)
   static const minInterstitialGap = Duration(seconds: 45); // never back-to-back
   static const sessionGrace = Duration(seconds: 30);
   static const interstitialDelay = Duration(milliseconds: 1200);
@@ -76,7 +69,7 @@ class AdsService {
   @visibleForTesting
   static DateTime Function() clock = DateTime.now;
 
-  /// Test hook: when set, [showRewarded] uses it instead of AdMob.
+  /// Test hook: when set, [showRewarded] uses it instead of Unity Ads.
   @visibleForTesting
   static Future<bool> Function(String reason)? rewardedOverride;
 
@@ -93,13 +86,18 @@ class AdsService {
   static DateTime? _lastInterstitial;
   static int _levelsSinceInterstitial = 0;
 
-  static bool _ready = false; // MobileAds initialised and consent allows ads
-  static RewardedAd? _rewarded;
-  static InterstitialAd? _interstitial;
+  static bool _ready = false; // Unity Ads initialised and ads switched on
+  static bool _rewardedReady = false;
+  static bool _interstitialReady = false;
   static bool _loadingRewarded = false;
   static bool _loadingInterstitial = false;
   static bool _showing = false;
   static Completer<void>? _rewardedLoaded;
+
+  /// Remote switch (Firestore `config/app.ads`): 'unity' (default) or 'off'.
+  /// Lets the developer turn ads off for everyone without an app update.
+  static const _kRemote = 'ads.remote';
+  static String get remoteProvider => Storage.globalString(_kRemote) ?? 'unity';
 
   /// Fires when ad availability / ad-free / daily counts change (for UI).
   static final ValueNotifier<int> changes = ValueNotifier<int>(0);
@@ -133,76 +131,62 @@ class AdsService {
     unawaited(
       _bootstrap().catchError((Object e) {
         debugPrint('ads init failed: $e');
-        _ready = false;
       }),
     );
   }
 
-  static Future<void> _bootstrap() async {
-    final consentOk = await _gatherConsent().timeout(
-      const Duration(seconds: 30),
-      onTimeout: () => false,
-    );
-    if (!consentOk) return;
-    await MobileAds.instance.initialize().timeout(const Duration(seconds: 20));
-    if (AdIds.testDevices.isNotEmpty) {
-      await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: AdIds.testDevices));
+  /// Reads the remote ads switch (cached for offline starts).
+  static Future<void> _readRemote() async {
+    if (!CloudService.available) return;
+    try {
+      final d = await FirebaseFirestore.instance.collection('config').doc('app').get().timeout(const Duration(seconds: 8));
+      final v = d.data()?['ads'];
+      if (v is String) await Storage.setGlobalString(_kRemote, v);
+    } catch (e) {
+      debugPrint('ads remote switch: $e');
     }
+  }
+
+  static Future<void> _bootstrap() async {
+    await _readRemote();
+    if (remoteProvider == 'off') return;
+    final done = Completer<bool>();
+    await UnityAds.init(
+      gameId: AdIds.gameId,
+      testMode: AdIds.testMode,
+      onComplete: () => done.isCompleted ? null : done.complete(true),
+      onFailed: (e, m) {
+        debugPrint('unity init failed: $e $m');
+        if (!done.isCompleted) done.complete(false);
+      },
+    );
+    if (!await done.future.timeout(const Duration(seconds: 30), onTimeout: () => false)) return;
     _ready = true;
     _notify();
     _loadRewarded();
     _loadInterstitial();
   }
 
-  /// UMP consent. Returns whether ads may be requested.
-  static Future<bool> _gatherConsent() async {
-    try {
-      final done = Completer<void>();
-      ConsentInformation.instance.requestConsentInfoUpdate(
-        ConsentRequestParameters(),
-        () => done.isCompleted ? null : done.complete(),
-        (FormError e) =>
-            done.isCompleted ? null : done.completeError(e.message),
-      );
-      try {
-        await done.future;
-        await ConsentForm.loadAndShowConsentFormIfRequired((FormError? e) {
-          if (e != null) debugPrint('consent form: ${e.message}');
-        });
-      } catch (e) {
-        debugPrint('consent update failed: $e');
-      }
-      // Even if the update failed, a previous session's consent may allow ads.
-      return await ConsentInformation.instance.canRequestAds();
-    } catch (e) {
-      debugPrint('consent error: $e');
-      return false;
-    }
-  }
-
   // ---- Loading ---------------------------------------------------------------
 
   static void _loadRewarded() {
-    if (!_ready || _rewarded != null || _loadingRewarded) return;
+    if (!_ready || _rewardedReady || _loadingRewarded) return;
     _loadingRewarded = true;
     _rewardedLoaded ??= Completer<void>();
     try {
-      RewardedAd.load(
-        adUnitId: AdIds.rewarded,
-        request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(
-          onAdLoaded: (ad) {
-            _loadingRewarded = false;
-            _rewarded = ad;
-            _completeRewardedWait();
-            _notify();
-          },
-          onAdFailedToLoad: (e) {
-            _loadingRewarded = false;
-            debugPrint('rewarded load failed: ${e.message}');
-            _completeRewardedWait();
-          },
-        ),
+      UnityAds.load(
+        placementId: AdIds.rewarded,
+        onComplete: (_) {
+          _loadingRewarded = false;
+          _rewardedReady = true;
+          _completeRewardedWait();
+          _notify();
+        },
+        onFailed: (_, e, m) {
+          _loadingRewarded = false;
+          debugPrint('rewarded load failed: $e $m');
+          _completeRewardedWait();
+        },
       );
     } catch (e) {
       _loadingRewarded = false;
@@ -217,24 +201,21 @@ class AdsService {
   }
 
   static void _loadInterstitial() {
-    if (!_ready || adFree || _interstitial != null || _loadingInterstitial) {
+    if (!_ready || adFree || _interstitialReady || _loadingInterstitial) {
       return;
     }
     _loadingInterstitial = true;
     try {
-      InterstitialAd.load(
-        adUnitId: AdIds.interstitial,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (ad) {
-            _loadingInterstitial = false;
-            _interstitial = ad;
-          },
-          onAdFailedToLoad: (e) {
-            _loadingInterstitial = false;
-            debugPrint('interstitial load failed: ${e.message}');
-          },
-        ),
+      UnityAds.load(
+        placementId: AdIds.interstitial,
+        onComplete: (_) {
+          _loadingInterstitial = false;
+          _interstitialReady = true;
+        },
+        onFailed: (_, e, m) {
+          _loadingInterstitial = false;
+          debugPrint('interstitial load failed: $e $m');
+        },
       );
     } catch (_) {
       _loadingInterstitial = false;
@@ -257,7 +238,7 @@ class AdsService {
       return false;
     }
     try {
-      if (_rewarded == null) {
+      if (!_rewardedReady) {
         _loadRewarded();
         final wait = _rewardedLoaded;
         if (wait != null) {
@@ -267,27 +248,28 @@ class AdsService {
           );
         }
       }
-      final ad = _rewarded;
-      if (ad == null) {
+      if (!_rewardedReady) {
         lastRewardedUnavailable = true; // no fill / no network
         return false;
       }
-      _rewarded = null;
+      _rewardedReady = false;
       _showing = true;
       var earned = false;
       final closed = Completer<void>();
-      ad.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (a) {
-          a.dispose();
+      await UnityAds.showVideoAd(
+        placementId: AdIds.rewarded,
+        onComplete: (_) {
+          earned = true;
           if (!closed.isCompleted) closed.complete();
         },
-        onAdFailedToShowFullScreenContent: (a, e) {
+        onSkipped: (_) {
+          if (!closed.isCompleted) closed.complete();
+        },
+        onFailed: (_, e, m) {
           lastRewardedUnavailable = true;
-          a.dispose();
           if (!closed.isCompleted) closed.complete();
         },
       );
-      await ad.show(onUserEarnedReward: (_, _) => earned = true);
       await closed.future.timeout(const Duration(minutes: 3), onTimeout: () {});
       _showing = false;
       _loadRewarded();
@@ -313,9 +295,22 @@ class AdsService {
       ? Storage.getInt(_kRewardCount)
       : 0;
 
-  /// The shop's "Watch ad: +25 coins" action: no daily cap and no waiting
-  /// time. Returns the coins granted (0 if the ad was not completed).
+  /// Time until the next coin ad is allowed (zero = now).
+  static Duration get rewardedWait {
+    final last = Storage.getInt(_kRewardLast);
+    if (last <= 0) return Duration.zero;
+    final left = rewardedGap - clock().difference(DateTime.fromMillisecondsSinceEpoch(last));
+    return left.isNegative ? Duration.zero : left;
+  }
+
+  /// Whether a coin ad may be watched now (daily cap and gap).
+  static bool get canWatchForCoins => rewardedToday < rewardedPerDay && rewardedWait == Duration.zero;
+
+  /// The shop's "Watch ad: +25 coins" action, at most [rewardedPerDay] a day
+  /// with [rewardedGap] between them. Returns the coins granted (0 if not
+  /// allowed now or the ad was not completed).
   static Future<int> watchAdForCoins() async {
+    if (!canWatchForCoins) return 0;
     final ok = await showRewarded(reason: 'coins');
     if (!ok) return 0;
     final today = _today();
@@ -342,7 +337,7 @@ class AdsService {
   /// True while the 24h ad-free pass is active.
   static bool get adFree {
     try {
-      if (CouponService.noAds.value || AdFreeGrant.active) return true;
+      if (CouponService.noAds.value || AdFreeGrant.active || IapService.active) return true;
       final u = adFreeUntil;
       return u != null && u.isAfter(clock());
     } catch (_) {
@@ -367,10 +362,6 @@ class AdsService {
       kAdFreeUntil,
       base.add(plan.duration).millisecondsSinceEpoch,
     );
-    try {
-      _interstitial?.dispose();
-    } catch (_) {}
-    _interstitial = null;
     _notify();
     return true;
   }
@@ -383,9 +374,7 @@ class AdsService {
     if (adFree || suppressed > 0) return false;
     if (gameId != null && _neverInterstitial.contains(gameId)) return false;
     final now = clock();
-    final since = _lastInterstitial ?? _sessionStart;
-    final timeUp = _levelsSinceInterstitial >= 1 && now.difference(since) >= interstitialEvery;
-    if (_levelsSinceInterstitial < levelsPerInterstitial && !timeUp) return false;
+    if (_levelsSinceInterstitial < levelsPerInterstitial) return false;
     if (now.difference(_sessionStart) < sessionGrace) return false;
     final last = _lastInterstitial;
     if (last != null && now.difference(last) < minInterstitialGap) return false;
@@ -443,27 +432,28 @@ class AdsService {
       if (_showing || !interstitialAllowed(gameId: gameId) || !_routeIdle) {
         return;
       }
-      final ad = _interstitial;
-      if (ad == null) {
+      if (!_interstitialReady) {
         _loadInterstitial();
         return;
       }
-      _interstitial = null;
+      _interstitialReady = false;
       _showing = true;
-      ad.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (a) {
-          a.dispose();
-          _showing = false;
-          _loadInterstitial();
-        },
-        onAdFailedToShowFullScreenContent: (a, e) {
-          a.dispose();
-          _showing = false;
-          _loadInterstitial();
-        },
-      );
       debugMarkInterstitialShown();
-      ad.show().catchError((Object _) {
+      UnityAds.showVideoAd(
+        placementId: AdIds.interstitial,
+        onComplete: (_) {
+          _showing = false;
+          _loadInterstitial();
+        },
+        onSkipped: (_) {
+          _showing = false;
+          _loadInterstitial();
+        },
+        onFailed: (_, e, m) {
+          _showing = false;
+          _loadInterstitial();
+        },
+      ).catchError((Object _) {
         _showing = false;
       });
     } catch (e) {

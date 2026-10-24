@@ -139,3 +139,10 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
     "Master G: Brain Puzzle Games". Still needed from the user before release: Unity payment info
     (any time), and a decision on test mode for own/tester phones (Unity dashboard → Testing →
     test devices, or our TEST_ADS flag).
+- 2026-10-24 DONE (code only, no build yet): AdMob removed (package, manifest app id, code);
+  Unity Ads (game 800409679, BP_* placements, test mode in debug / TEST_ADS builds); remote switch
+  Firestore config/app.ads = 'unity' | 'off'; interstitial every 2 games; coin ads 10/day, 2 min gap;
+  In-app purchase (in_app_purchase): adfree_1m (₹9, consumable), adfree_1y (₹39, consumable),
+  adfree_lifetime (₹99, non-consumable), Diwali sale strike prices ₹49/₹399/₹499 until 17 Nov 2026
+  (then raise Play prices). Needs: version bump 2.2.0+19, AAB, internal-testing upload, products in
+  Play Console, Data safety update (Unity Ads + purchases), app-ads.txt Unity line, publish rules.

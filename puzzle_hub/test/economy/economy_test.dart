@@ -127,13 +127,23 @@ void main() {
   });
 
   group('rewarded ads', () {
-    test('no daily cap and no waiting time between coin ads', () async {
+    test('coin ads: 10 a day with a 2-minute gap', () async {
       AdsService.rewardedOverride = (_) async => true;
-      for (var i = 0; i < 30; i++) {
-        expect(await AdsService.watchAdForCoins(), 25);
+      expect(await AdsService.watchAdForCoins(), 25);
+      // Right away again: too soon.
+      expect(AdsService.canWatchForCoins, isFalse);
+      expect(await AdsService.watchAdForCoins(), 0);
+      for (var i = 1; i < 10; i++) {
+        now = now.add(const Duration(minutes: 2));
+        expect(await AdsService.watchAdForCoins(), 25, reason: 'ad ${i + 1}');
       }
-      expect(Rewards.balance, 750);
-      expect(AdsService.rewardedToday, 30);
+      now = now.add(const Duration(minutes: 5));
+      expect(AdsService.rewardedToday, 10);
+      expect(await AdsService.watchAdForCoins(), 0, reason: 'daily cap');
+      expect(Rewards.balance, 250);
+      // Next day the count starts again.
+      now = now.add(const Duration(days: 1));
+      expect(await AdsService.watchAdForCoins(), 25);
       _expectInvariant();
     });
 
@@ -152,7 +162,7 @@ void main() {
   });
 
   group('interstitial rules', () {
-    test('after every 2nd game end or 1 minute, not in first 30s, 45s gap', () {
+    test('after every 2nd game end (win or lose), not in first 30s, 45s gap', () {
       now = now.add(const Duration(seconds: 10));
       AdsService.onLevelCompleted();
       AdsService.onLevelCompleted();
@@ -161,10 +171,10 @@ void main() {
       expect(AdsService.interstitialAllowed(), isTrue); // 2 games
       AdsService.debugMarkInterstitialShown();
       AdsService.onLevelCompleted();
-      now = now.add(const Duration(seconds: 50));
-      expect(AdsService.interstitialAllowed(), isFalse); // 1 game, < 1 min
-      now = now.add(const Duration(seconds: 10));
-      expect(AdsService.interstitialAllowed(), isTrue); // 1 minute passed
+      now = now.add(const Duration(minutes: 5));
+      expect(AdsService.interstitialAllowed(), isFalse, reason: 'only 1 game, time does not matter');
+      AdsService.onLevelCompleted();
+      expect(AdsService.interstitialAllowed(), isTrue);
       AdsService.debugMarkInterstitialShown();
       AdsService.onLevelCompleted();
       AdsService.onLevelCompleted();

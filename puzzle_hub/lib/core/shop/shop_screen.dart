@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../store/premium_card.dart';
 import 'package:flutter/material.dart';
 
 import '../ads/ads_service.dart';
@@ -25,17 +26,24 @@ class _ShopScreenState extends State<ShopScreen> {
   bool _busy = false;
   String? _msg;
 
+  /// Ticks while the coin-ad wait is counting down.
+  Timer? _adTick;
+
   @override
   void initState() {
     super.initState();
     AdsService.changes.addListener(_refresh);
     _syncTimer();
+    _adTick = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted && AdsService.rewardedWait > Duration.zero) setState(() {});
+    });
   }
 
   @override
   void dispose() {
     AdsService.changes.removeListener(_refresh);
     _tick?.cancel();
+    _adTick?.cancel();
     super.dispose();
   }
 
@@ -98,6 +106,8 @@ class _ShopScreenState extends State<ShopScreen> {
           children: [
             _header(bal),
             const SizedBox(height: 18),
+            const PremiumCard(),
+            const SizedBox(height: 14),
             // Ad features stay hidden until ads are switched on (features.dart).
             if (AdsService.featuresOn) ...[
               _adCard(),
@@ -197,6 +207,14 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _adCard() {
     const blue = Color(0xFF4DA8FF);
+    final left = AdsService.rewardedPerDay - AdsService.rewardedToday;
+    final wait = AdsService.rewardedWait;
+    final can = AdsService.canWatchForCoins;
+    final sub = left <= 0
+        ? tr('shop.ads_done_today')
+        : (wait > Duration.zero
+            ? tr('shop.ads_wait', {'time': '${wait.inMinutes}:${(wait.inSeconds % 60).toString().padLeft(2, '0')}', 'n': left})
+            : tr('shop.ads_left', {'left': left, 'cap': AdsService.rewardedPerDay}));
     return GlassCard(
       glow: blue,
       child: Row(
@@ -206,14 +224,14 @@ class _ShopScreenState extends State<ShopScreen> {
           Expanded(
             child: _title(
               tr('shop.watch_ad_title', {'coins': AdsService.rewardedCoins}),
-              tr('shop.ads_unlimited', {'n': AdsService.rewardedToday}),
+              sub,
             ),
           ),
           PremiumButton(
             label: _busy ? '…' : tr('shop.watch'),
             compact: true,
             color: blue,
-            onTap: _busy ? null : _watchAd,
+            onTap: _busy || !can ? null : _watchAd,
           ),
         ],
       ),
