@@ -28,13 +28,20 @@ class AdIds {
   static const _testInterstitial = 'ca-app-pub-3940256099942544/1033173712';
   static const _testBanner = 'ca-app-pub-3940256099942544/6300978111';
 
-  static const rewarded = kReleaseMode ? _realRewarded : _testRewarded;
-  static const interstitial = kReleaseMode
-      ? _realInterstitial
-      : _testInterstitial;
+  /// Builds installed on our own / testers' phones must never show real ads
+  /// (our own views and taps count as invalid traffic). Build them with
+  ///   flutter build apk --release --dart-define=TEST_ADS=true
+  /// Only the Play Store AAB (no TEST_ADS) uses the real ad units.
+  static const testAds = bool.fromEnvironment('TEST_ADS');
+  static const _real = kReleaseMode && !testAds;
 
-  /// Reserved for a future banner placement (not shown yet).
-  static const banner = kReleaseMode ? _realBanner : _testBanner;
+  static const rewarded = _real ? _realRewarded : _testRewarded;
+  static const interstitial = _real ? _realInterstitial : _testInterstitial;
+  static const banner = _real ? _realBanner : _testBanner;
+
+  /// Hashed device ids (from logcat / AdMob console) of the developer's and
+  /// testers' phones: they always get test ads, even from the Play build.
+  static const testDevices = <String>[];
 }
 
 /// AdMob wrapper. Every method is safe to call when ads are unavailable
@@ -138,6 +145,9 @@ class AdsService {
     );
     if (!consentOk) return;
     await MobileAds.instance.initialize().timeout(const Duration(seconds: 20));
+    if (AdIds.testDevices.isNotEmpty) {
+      await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: AdIds.testDevices));
+    }
     _ready = true;
     _notify();
     _loadRewarded();
