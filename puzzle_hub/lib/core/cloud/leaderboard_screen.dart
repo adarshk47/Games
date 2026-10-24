@@ -17,7 +17,10 @@ import 'leaderboard_service.dart';
 String boardTitle(Board b) => switch (b.metric) {
   BoardMetric.totalStars => tr('cloud.lb.total_stars'),
   BoardMetric.wins when b.gameId == 'chess' => tr('cloud.lb.chess_wins'),
-  _ => b.gameId == null ? b.title : tr('game.${b.gameId}.title', const {}, b.title),
+  _ =>
+    b.gameId == null
+        ? b.title
+        : tr('game.${b.gameId}.title', const {}, b.title),
 };
 
 /// "🌍 Global" or "🇮🇳 India".
@@ -38,7 +41,11 @@ String _placeName(LeaderboardScope scope, String? country) =>
 /// Leaderboards: one tab per score game + "Total stars", each Global or
 /// limited to the player's country. Needs cloud login.
 class LeaderboardScreen extends StatefulWidget {
-  const LeaderboardScreen({super.key, this.initialBoard, this.embedded = false});
+  const LeaderboardScreen({
+    super.key,
+    this.initialBoard,
+    this.embedded = false,
+  });
   final String? initialBoard;
 
   /// Shown as a home tab (no back button / own background).
@@ -78,26 +85,30 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   void _reload() {
     if (!mounted) return;
     setState(() {
-      _page = CloudService.available && CloudAuth.I.user.value != null
-          ? _fetch(_board, _scope)
-          : null;
+      // Signed-out players still see the board (public read) with their
+      // own offline score as the last row.
+      _page = CloudService.available ? _fetch(_board, _scope) : null;
+      _offline = LeaderboardService.I.localValue(_board);
     });
   }
 
   Object? _lastError;
+  Future<int>? _offline;
 
   Future<LeaderboardPage> _fetch(Board b, LeaderboardScope scope) async {
     // Push our own latest scores in the background (never block the screen on
     // writes), then read with a timeout so a stuck request shows Retry.
-    unawaited(
-      (b.gameId == null
-              ? LeaderboardService.I.submitTotalStars()
-              : LeaderboardService.I.submitAll())
-          .timeout(const Duration(seconds: 20))
-          .catchError(
-            (Object e) => debugPrint('leaderboard submit failed: $e'),
-          ),
-    );
+    if (CloudAuth.I.user.value != null) {
+      unawaited(
+        (b.gameId == null
+                ? LeaderboardService.I.submitTotalStars()
+                : LeaderboardService.I.submitAll())
+            .timeout(const Duration(seconds: 20))
+            .catchError(
+              (Object e) => debugPrint('leaderboard submit failed: $e'),
+            ),
+      );
+    }
     try {
       return await LeaderboardService.I
           .load(b, scope: scope)
@@ -277,6 +288,73 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         ],
       );
 
+  Widget _offlineRow() => FutureBuilder<int>(
+    future: _offline,
+    builder: (context, s) => Padding(
+      padding: const EdgeInsets.only(top: 12, bottom: 8),
+      child: GlassCard(
+        key: const ValueKey('lb_offline_row'),
+        blur: 0,
+        glow: Pal.gold,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 44,
+              child: Icon(Icons.cloud_off_rounded, color: Pal.textDim),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    tr('cloud.lb.offline_you'),
+                    style: const TextStyle(
+                      color: Pal.gold,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                    ),
+                  ),
+                  Text(
+                    tr('cloud.lb.offline_hint'),
+                    style: const TextStyle(
+                      color: Pal.textDim,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              '${s.data ?? 0}',
+              style: const TextStyle(
+                color: Pal.text,
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _signInCard() => GlassCard(
+    child: Column(
+      children: [
+        Text(
+          tr('cloud.lb.signin_text'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Pal.textDim, fontSize: 14, height: 1.4),
+        ),
+        const SizedBox(height: 14),
+        const CloudSignInPanel(),
+      ],
+    ),
+  );
+
   Widget _body() {
     if (!CloudService.available) {
       return _message(
@@ -285,20 +363,20 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         tr('cloud.lb.pending_text'),
       );
     }
-    if (CloudAuth.I.user.value == null) {
-      return _message(
-        Icons.emoji_events_rounded,
-        tr('cloud.lb.signin_title'),
-        tr('cloud.lb.signin_text'),
-        action: const CloudSignInPanel(),
-      );
-    }
+    final signedOut = CloudAuth.I.user.value == null;
     return FutureBuilder<LeaderboardPage>(
       future: _page,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
           return const Center(
             child: CircularProgressIndicator(color: Pal.gold),
+          );
+        }
+        if (signedOut && (snap.hasError || !snap.hasData)) {
+          // Board not readable without an account: own score + sign in.
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 28),
+            children: [_offlineRow(), _signInCard()],
           );
         }
         if (snap.hasError || !snap.hasData) {
@@ -361,7 +439,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           game: boardTitle(_board),
                           emoji: _board.emoji,
                           value: '${p.mine!.score}',
-                          label: tr('share.rank_label', {'rank': p.myRank ?? '-', 'place': _placeName(_scope, _country)}),
+                          label: tr('share.rank_label', {
+                            'rank': p.myRank ?? '-',
+                            'place': _placeName(_scope, _country),
+                          }),
                         ),
                       ),
                     ],
@@ -369,7 +450,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
               ),
             Expanded(
-              child: p.top.isEmpty
+              child: p.top.isEmpty && !signedOut
                   ? _message(
                       Icons.emoji_events_outlined,
                       tr('cloud.lb.no_scores'),
@@ -378,14 +459,27 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   : ListView(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
                       children: [
-                        _Podium(top: p.top.take(3).toList(), me: me),
+                        if (p.top.isNotEmpty)
+                          _Podium(top: p.top.take(3).toList(), me: me),
                         if (p.top.length > 3)
                           _SectionLabel(tr('cloud.lb.top10')),
                         for (var i = 3; i < p.top.length && i < 10; i++)
-                          _Row(rank: i + 1, entry: p.top[i], isMe: p.top[i].uid == me),
-                        if (p.top.length > 10) _SectionLabel(tr('cloud.lb.others')),
+                          _Row(
+                            rank: i + 1,
+                            entry: p.top[i],
+                            isMe: p.top[i].uid == me,
+                          ),
+                        if (p.top.length > 10)
+                          _SectionLabel(tr('cloud.lb.others')),
                         for (var i = 10; i < p.top.length; i++)
-                          _Row(rank: i + 1, entry: p.top[i], isMe: p.top[i].uid == me),
+                          _Row(
+                            rank: i + 1,
+                            entry: p.top[i],
+                            isMe: p.top[i].uid == me,
+                          ),
+                        // Always last, whatever the score: not on the board
+                        // until signed in.
+                        if (signedOut) ...[_offlineRow(), _signInCard()],
                       ],
                     ),
             ),
@@ -512,9 +606,17 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
-        child: Text(text, style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.6)),
-      );
+    padding: const EdgeInsets.fromLTRB(4, 12, 4, 8),
+    child: Text(
+      text,
+      style: const TextStyle(
+        color: Pal.textDim,
+        fontSize: 13,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.6,
+      ),
+    ),
+  );
 }
 
 /// Ranks 1–3 on a podium (2nd left, 1st in the middle and tallest, 3rd right).
@@ -527,47 +629,85 @@ class _Podium extends StatelessWidget {
     if (rank > top.length) return const Expanded(child: SizedBox());
     final e = top[rank - 1];
     final tier = leaderTier(rank)!;
-    final h = switch (rank) { 1 => 92.0, 2 => 70.0, _ => 56.0 };
+    final h = switch (rank) {
+      1 => 92.0,
+      2 => 70.0,
+      _ => 56.0,
+    };
     final isMe = e.uid == me;
     return Expanded(
-      child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        Text(tier.emoji, style: TextStyle(fontSize: rank == 1 ? 34 : 26)),
-        const SizedBox(height: 4),
-        Text(
-          isMe ? tr('cloud.lb.you', {'name': e.name}) : e.name,
-          key: ValueKey('lb_rank_$rank'),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: isMe ? Pal.gold : Pal.text, fontWeight: FontWeight.w800, fontSize: 13),
-        ),
-        Text('${e.score}', style: TextStyle(color: tier.color, fontWeight: FontWeight.w900, fontSize: 15)),
-        const SizedBox(height: 4),
-        Container(
-          height: h,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [tier.color.withValues(alpha: 0.85), tier.color.withValues(alpha: 0.25)],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(tier.emoji, style: TextStyle(fontSize: rank == 1 ? 34 : 26)),
+          const SizedBox(height: 4),
+          Text(
+            isMe ? tr('cloud.lb.you', {'name': e.name}) : e.name,
+            key: ValueKey('lb_rank_$rank'),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isMe ? Pal.gold : Pal.text,
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
             ),
-            boxShadow: [BoxShadow(color: tier.color.withValues(alpha: 0.5), blurRadius: 14)],
           ),
-          alignment: Alignment.center,
-          child: Text('$rank', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
-        ),
-      ]),
+          Text(
+            '${e.score}',
+            style: TextStyle(
+              color: tier.color,
+              fontWeight: FontWeight.w900,
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            height: h,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(14),
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  tier.color.withValues(alpha: 0.85),
+                  tier.color.withValues(alpha: 0.25),
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: tier.color.withValues(alpha: 0.5),
+                  blurRadius: 14,
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              '$rank',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(top: 6, bottom: 4),
-        child: SizedBox(
-          height: 190,
-          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [_step(2), _step(1), _step(3)]),
-        ),
-      );
+    padding: const EdgeInsets.only(top: 6, bottom: 4),
+    child: SizedBox(
+      height: 190,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [_step(2), _step(1), _step(3)],
+      ),
+    ),
+  );
 }

@@ -447,6 +447,13 @@ class LeaderboardService {
     return n.length > 24 ? n.substring(0, 24) : n;
   }
 
+  /// The player's own value for [b] on this phone (also when signed out).
+  Future<int> localValue(Board b) async {
+    if (b.gameId != null) return localScore(b);
+    final prefs = await SharedPreferences.getInstance();
+    return totalStarsOf(LocalKv(prefs).readAll(Storage.userPrefix));
+  }
+
   Future<void> submitTotalStars() async {
     if (!canSubmit) return;
     final prefs = await SharedPreferences.getInstance();

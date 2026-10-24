@@ -130,7 +130,7 @@ service cloud.firestore {
 
     // --------------------------------------------------------- leaderboards
     match /leaderboards/{board}/entries/{uid} {
-      allow read: if signedIn();
+      allow read: if true; // public: name + score only
       allow delete: if isOwner(uid);
       allow create, update: if isOwner(uid)
         && validBoard(board)

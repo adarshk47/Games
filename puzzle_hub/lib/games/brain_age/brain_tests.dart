@@ -17,6 +17,8 @@ Duration Function(BrainTest t) brainTestDuration = (t) => switch (t) {
       BrainTest.math => const Duration(seconds: 45),
       BrainTest.stroop => const Duration(seconds: 30),
       BrainTest.pattern => const Duration(seconds: 60),
+      BrainTest.odd => const Duration(seconds: 30),
+      BrainTest.compare => const Duration(seconds: 30),
       _ => Duration.zero,
     };
 
@@ -496,6 +498,107 @@ class _PatternTestState extends _TimedState<PatternTest> {
           FittedBox(child: _bigText('${_q.shown.join(', ')}, ?', size: 34)),
         ]),
         choiceGrid([for (final c in _q.choices) '$c'], _q.choices.indexOf(_q.answer)),
+      );
+}
+
+// ---------------------------------------------------------------- odd one out
+
+/// Find the one symbol that is different (visual search). Score = found in 30 s.
+class OddTest extends StatefulWidget {
+  const OddTest({super.key, required this.onDone, this.random});
+  final ScoreCallback onDone;
+  final math.Random? random;
+
+  @override
+  State<OddTest> createState() => _OddTestState();
+}
+
+class _OddTestState extends _TimedState<OddTest> {
+  @override
+  BrainTest get test => BrainTest.odd;
+  @override
+  ScoreCallback get onDone => widget.onDone;
+
+  late final math.Random _r = widget.random ?? math.Random();
+  late OddQ _q = OddQ.make(_r, 0);
+
+  @override
+  void next() => _q = OddQ.make(_r, correct);
+
+  @override
+  Widget build(BuildContext context) => frame(
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(tr('brain.odd.ask'), style: const TextStyle(color: Pal.textDim, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 14),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 340),
+            child: GridView.count(
+              crossAxisCount: _q.size,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              children: [
+                for (var i = 0; i < _q.size * _q.size; i++)
+                  Pressable(
+                    key: ValueKey('odd_$i'),
+                    onTap: () => answer(i, i == _q.index),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        color: Colors.white.withValues(alpha: 0.10),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.22), width: 1.2),
+                      ),
+                      child: FittedBox(
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Text(i == _q.index ? _q.odd : _q.common,
+                              style: const TextStyle(color: Pal.text, fontSize: 30, fontWeight: FontWeight.w900)),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ]),
+        const SizedBox.shrink(),
+      );
+}
+
+// ---------------------------------------------------------------- compare
+
+/// Tap the bigger of two numbers / sums. Score = right answers in 30 s.
+class CompareTest extends StatefulWidget {
+  const CompareTest({super.key, required this.onDone, this.random});
+  final ScoreCallback onDone;
+  final math.Random? random;
+
+  @override
+  State<CompareTest> createState() => _CompareTestState();
+}
+
+class _CompareTestState extends _TimedState<CompareTest> {
+  @override
+  BrainTest get test => BrainTest.compare;
+  @override
+  ScoreCallback get onDone => widget.onDone;
+
+  late final math.Random _r = widget.random ?? math.Random();
+  late CompareQ _q = CompareQ.make(_r, 0);
+
+  @override
+  void next() => _q = CompareQ.make(_r, correct);
+
+  @override
+  Widget build(BuildContext context) => frame(
+        Column(mainAxisSize: MainAxisSize.min, children: [
+          const Text('⚖️', style: TextStyle(fontSize: 54)),
+          const SizedBox(height: 10),
+          _bigText(tr('brain.compare.ask'), size: 22),
+        ]),
+        choiceGrid([_q.left, _q.right], _q.bigger),
       );
 }
 

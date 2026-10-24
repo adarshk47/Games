@@ -42,8 +42,8 @@ enum AgeGroup {
   }
 }
 
-/// The five quick tests of one Brain Age check.
-enum BrainTest { reaction, memory, math, stroop, pattern, order, grid }
+/// The nine quick tests of one Brain Age check.
+enum BrainTest { reaction, memory, math, stroop, pattern, order, grid, odd, compare }
 
 /// Rough norms for each test per age group (mean, sd), from typical results
 /// of these classic tasks on a phone. Reaction is milliseconds (lower is
@@ -61,6 +61,10 @@ class BrainNorms {
     BrainTest.order: [14.0, 14.5, 15.5, 17.0, 19.0, 22.0],
     // Squares remembered on a 4×4 / 5×5 grid.
     BrainTest.grid: [7.0, 7.0, 6.5, 6.0, 5.5, 5.0],
+    // Odd ones found in 30 s.
+    BrainTest.odd: [16.0, 17.0, 16.0, 14.5, 13.0, 11.0],
+    // "Which is bigger?" answers in 30 s.
+    BrainTest.compare: [20.0, 21.0, 20.0, 18.5, 16.5, 14.5],
   };
   static const _sd = {
     BrainTest.reaction: 55.0,
@@ -70,6 +74,8 @@ class BrainNorms {
     BrainTest.pattern: 2.0,
     BrainTest.order: 4.0,
     BrainTest.grid: 1.5,
+    BrainTest.odd: 4.0,
+    BrainTest.compare: 5.0,
   };
 
   static bool lowerIsBetter(BrainTest t) => t == BrainTest.reaction || t == BrainTest.order;
@@ -224,6 +230,57 @@ class BrainStore {
 }
 
 // ---------------------------------------------------------------- generators
+
+/// Odd one out: a square grid of one symbol with a single look-alike.
+class OddQ {
+  OddQ(this.size, this.common, this.odd, this.index);
+  final int size; // grid side (3..5)
+  final String common, odd;
+  final int index; // cell of the odd symbol
+
+  static const pairs = [
+    ['O', 'Q'], ['E', 'F'], ['6', '9'], ['b', 'd'], ['M', 'N'], ['8', 'B'],
+    ['😀', '😃'], ['🍎', '🍅'], ['🐶', '🐺'], ['⭐', '🌟'], ['🌕', '🌝'], ['🔵', '🟣'],
+  ];
+
+  static OddQ make(math.Random r, int found) {
+    final size = found < 4 ? 3 : (found < 10 ? 4 : 5);
+    final p = pairs[r.nextInt(pairs.length)];
+    final swap = r.nextBool();
+    return OddQ(size, p[swap ? 1 : 0], p[swap ? 0 : 1], r.nextInt(size * size));
+  }
+}
+
+/// Quick compare: two numbers or sums; tap the bigger one.
+class CompareQ {
+  CompareQ(this.left, this.right, this.leftValue, this.rightValue);
+  final String left, right;
+  final int leftValue, rightValue;
+  int get bigger => leftValue > rightValue ? 0 : 1;
+
+  static (String, int) _side(math.Random r, int level) {
+    if (level < 4) {
+      final v = 10 + r.nextInt(90);
+      return ('$v', v);
+    }
+    final a = 5 + r.nextInt(level < 10 ? 40 : 80), b = 2 + r.nextInt(level < 10 ? 30 : 60);
+    return switch (r.nextInt(level < 10 ? 2 : 3)) {
+      0 => ('$a + $b', a + b),
+      1 => ('${a + b} − $b', a),
+      _ => ('${2 + a % 9} × ${2 + b % 9}', (2 + a % 9) * (2 + b % 9)),
+    };
+  }
+
+  static CompareQ make(math.Random r, int level) {
+    while (true) {
+      final (l, lv) = _side(r, level);
+      final (rt, rv) = _side(r, level);
+      // Never equal; close values once warmed up.
+      if (lv == rv || (level >= 4 && (lv - rv).abs() > 25)) continue;
+      return CompareQ(l, rt, lv, rv);
+    }
+  }
+}
 
 /// Mental-math question with four choices.
 class MathQ {

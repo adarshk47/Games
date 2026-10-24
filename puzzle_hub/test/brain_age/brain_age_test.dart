@@ -131,4 +131,16 @@ void main() {
     expect(BrainStore.history().single.scores.keys, [BrainTest.math]);
     expect(t.takeException(), isNull);
   });
+
+  test('odd one out and quick compare generators', () {
+    final r = math.Random(7);
+    for (var found = 0; found < 30; found++) {
+      final q = OddQ.make(r, found);
+      expect(q.common, isNot(q.odd));
+      expect(q.index, inInclusiveRange(0, q.size * q.size - 1));
+      final c = CompareQ.make(r, found);
+      expect(c.leftValue, isNot(c.rightValue));
+      expect(c.bigger, c.leftValue > c.rightValue ? 0 : 1);
+    }
+  });
 }

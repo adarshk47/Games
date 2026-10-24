@@ -19,6 +19,8 @@ const _testIcons = {
   BrainTest.pattern: '🧩',
   BrainTest.order: '🔟',
   BrainTest.grid: '🟦',
+  BrainTest.odd: '🔍',
+  BrainTest.compare: '⚖️',
 };
 
 String _unit(BrainTest t, double v) => switch (t) {
@@ -29,8 +31,8 @@ String _unit(BrainTest t, double v) => switch (t) {
       _ => tr('brain.unit.correct', {'n': v % 1 == 0 ? v.round() : v.toStringAsFixed(1)}),
     };
 
-/// Brain Age: pick your age group, take 5 quick tests (reaction, memory,
-/// mental math, colour-word focus, patterns) and see how your brain compares
+/// Brain Age: pick your age group, take 9 quick tests (reaction, memory,
+/// mental math, colour-word focus, patterns, order, grid, odd one out, compare) and see how your brain compares
 /// with your age group. Every test ends with a tip that teaches a technique.
 class BrainAgeScreen extends StatefulWidget {
   const BrainAgeScreen({super.key});
@@ -291,6 +293,8 @@ class _BrainRunScreenState extends State<BrainRunScreen> {
         BrainTest.pattern => PatternTest(onDone: _done),
         BrainTest.order => OrderTest(onDone: _done),
         BrainTest.grid => GridTest(onDone: _done),
+        BrainTest.odd => OddTest(onDone: _done),
+        BrainTest.compare => CompareTest(onDone: _done),
       };
 
   Widget _card({required String emoji, required String title, required List<Widget> children, required String button, required VoidCallback onTap, Key? key}) =>
