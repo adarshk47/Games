@@ -108,3 +108,14 @@ age bands, range result, tips, practice), Mom Memory enabled (last), new default
 Settings), pure white / black chess pieces, Arrow Maze ~2x arrows + black-on-white / white-on-black
 styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the user signs in.
 **Publish firestore_rules.txt before releasing** (ludo_* rules, queue 'game' field).
+
+## Noted 2026-10-24 (do later, when the user says)
+- **AdMob suspended** (invalid clicks/impressions) Oct 23 – Nov 22, 2026. No ads / payments on hold.
+- **Remove "watch ad for coins" completely** (user's decision): Shop `_adCard` / `_watchAd` in
+  lib/core/shop/shop_screen.dart, `AdsService.watchAdForCoins`, `rewardedCoins`, `rewardedToday`,
+  strings shop.watch_ad_title / shop.ads_unlimited / shop.watch, tests in test/economy/economy_test.dart.
+  Keep undo / hint / extra-chance ads and interstitials.
+- Phone builds: always `--dart-define=TEST_ADS=true` (added 2026-10-24). The user's own phone is
+  already a registered AdMob test device.
+- Do NOT build any APK until the user asks. The 2.1.0+18 AAB was built before this note; rebuild it
+  after the coin-ad removal.
