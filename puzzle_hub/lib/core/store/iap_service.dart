@@ -1,8 +1,13 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../account/account_service.dart';
+import '../app_info.dart';
+import '../cloud/cloud_auth.dart';
+import '../cloud/cloud_service.dart';
 import '../storage.dart';
 
 /// Ad-free plans sold through Google Play Billing. Create these one-time
@@ -131,6 +136,8 @@ class IapService {
     for (final p in list) {
       switch (p.status) {
         case PurchaseStatus.purchased:
+          await _grant(p);
+          unawaited(_log(p));
         case PurchaseStatus.restored:
           await _grant(p);
         case PurchaseStatus.error:
@@ -165,6 +172,35 @@ class IapService {
       await Storage.setInt(_kUntil, base.add(plan.duration!).millisecondsSinceEpoch);
     }
     granted.value++;
+  }
+
+  /// Writes `purchases/{orderId}` so the developer can see in Firebase who
+  /// bought what (Play Console only shows order ids). Needs a signed-in
+  /// player; never throws.
+  Future<void> _log(PurchaseDetails p) async {
+    final u = CloudAuth.I.user.value;
+    if (!CloudService.available || u == null) return;
+    final d = products.value[p.productID];
+    final order = p.purchaseID ?? 'p${DateTime.now().millisecondsSinceEpoch}';
+    try {
+      await FirebaseFirestore.instance.collection('purchases').doc(order.replaceAll('/', '_')).set({
+        'uid': u.uid,
+        'email': u.email ?? '',
+        'name': AccountService.I.name,
+        'country': AccountService.I.country ?? '',
+        'product': p.productID,
+        'price': d?.price ?? '',
+        'amount': d?.rawPrice ?? 0,
+        'currency': d?.currencyCode ?? '',
+        'orderId': p.purchaseID ?? '',
+        'token': p.verificationData.serverVerificationData,
+        'sale': saleOn,
+        'appVersion': AppInfo.version,
+        'at': FieldValue.serverTimestamp(),
+      }).timeout(const Duration(seconds: 15));
+    } catch (e) {
+      debugPrint('purchase log: $e');
+    }
   }
 
   @visibleForTesting

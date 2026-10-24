@@ -346,6 +346,19 @@ service cloud.firestore {
         && getAfter(/databases/$(database)/documents/ludo_games/$(request.resource.data.gameId)).data.players.hasAll([uid, request.auth.uid]);
     }
 
+    // ------------------------------------------------------------- purchases
+    // purchases/{orderId}: one entry per Google Play purchase (who bought
+    // what, when, for how much). Players may only add their own; only the
+    // developer (Firebase console) can read them.
+    match /purchases/{order} {
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'name', 'country', 'product', 'price', 'amount', 'currency', 'orderId', 'token', 'sale', 'appVersion', 'at'])
+        && request.resource.data.product in ['adfree_1m', 'adfree_1y', 'adfree_lifetime']
+        && request.resource.data.at == request.time;
+      allow read, update, delete: if false;
+    }
+
     // ---------------------------------------------------------------- config
     // config/app = {ads: 'unity' | 'off'} – set by the developer in the console.
     match /config/{doc} {
