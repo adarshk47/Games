@@ -154,3 +154,8 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   purchases, online play). Play Console App content: Data safety (purchase history, device IDs),
   content rating (digital purchases = Yes), Ad ID declaration. After 17 Nov: raise prices to
   ₹49 / ₹399 / ₹499. Waiting for the user's next feature ideas.
+- Next update (with the purchase log): **refund → ads back.** Option 1 (chosen as default): developer
+  creates Firestore `iap_revoked/{uid}` after refunding (uid from purchases log); app checks at start
+  and clears iap.adfree.until / iap.adfree.lifetime. Option 2 later: Cloud Function + Play Voided
+  Purchases API (Blaze plan). Today a refunded 1m/1y keeps running till it ends; lifetime stays on
+  the phone that has it (Revoke stops restore elsewhere).
