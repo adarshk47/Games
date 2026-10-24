@@ -87,4 +87,16 @@ void main() {
     await t.pump(const Duration(seconds: 1));
     expect(SnakesSave.load(), isNotNull);
   });
+
+  test('home dice / riddle values and replay', () {
+    final g = SnakesGame(seats: _bots(2), seed: 9);
+    expect(g.roll(0, dice: 4), isTrue);
+    expect(g.pos[0], 14, reason: 'ladder 4 -> 14');
+    expect(g.roll(1, dice: 0), isTrue, reason: 'wrong riddle: no move');
+    expect(g.pos[1], 0);
+    expect(g.turn, 0);
+    final r = SnakesGame.replay(seats: _bots(2), seed: 9, rolls: g.log);
+    expect(r.pos, g.pos);
+    expect(r.turn, g.turn);
+  });
 }

@@ -171,6 +171,23 @@ void main() {
       await t.pump(const Duration(milliseconds: 200));
     }
     expect(LudoSave.load(), isNotNull);
+    // The menu is still scrolled down to the Start button: scroll back up.
+    await t.scrollUntilVisible(find.byKey(const ValueKey('ludo_continue')), -200, scrollable: find.byType(Scrollable).first);
     expect(find.byKey(const ValueKey('ludo_continue')), findsOneWidget);
+  });
+
+  test('home dice / riddle: given values are used, 0 skips the turn, save round-trips', () {
+    final g = LudoGame(seats: _bots(2), seed: 5);
+    expect(g.apply(const LudoAction.roll(0, dice: 6)), isTrue);
+    expect(g.pending, 6);
+    expect(g.apply(const LudoAction.move(0, 0)), isTrue);
+    expect(g.tokens[0][0], 0);
+    expect(g.apply(const LudoAction.roll(0, dice: 0)), isTrue, reason: 'wrong riddle answer');
+    expect(g.turn, 1);
+    expect(g.apply(const LudoAction.roll(1, dice: 9)), isFalse);
+    final json = [for (final a in g.log) a.toJson()];
+    final back = LudoGame.replay(seats: _bots(2), seed: 5, quick: false, actions: [for (final j in json) LudoAction.fromJson(j)!]);
+    expect(back.tokens, g.tokens);
+    expect(back.turn, g.turn);
   });
 }

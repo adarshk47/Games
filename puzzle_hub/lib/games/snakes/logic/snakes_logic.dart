@@ -46,7 +46,8 @@ class SnakesGame {
   final int seed;
   final List<int> pos;
 
-  /// Seats that rolled, in order (each entry is one roll).
+  /// One entry per roll: the seat, or seat + 10 × dice when the value was
+  /// given (a real dice at home: 1..6; a wrong riddle answer: 0 → +70).
   final List<int> log = [];
   int turn = 0;
   int? winner;
@@ -70,11 +71,19 @@ class SnakesGame {
     return _x * 6 ~/ _m + 1;
   }
 
-  /// Rolls for [seat]. False if it is not that seat's turn.
-  bool roll(int seat) {
+  /// Rolls for [seat]. False if it is not that seat's turn. [dice] (offline
+  /// only) is a value from a real dice (1..6), or 0 = wrong riddle answer
+  /// (the turn passes).
+  bool roll(int seat, {int? dice}) {
     if (over || seat != turn) return false;
-    log.add(seat);
-    final d = _nextDice();
+    if (dice != null && (dice < 0 || dice > 6)) return false;
+    log.add(dice == null ? seat : seat + 10 * (dice == 0 ? 7 : dice));
+    if (dice == 0) {
+      last = SnakesEvent(seat: seat, from: pos[seat], to: pos[seat], blocked: true);
+      _next();
+      return true;
+    }
+    final d = dice ?? _nextDice();
     final from = pos[seat];
     if (d == 6) {
       _sixes++;
@@ -119,8 +128,13 @@ class SnakesGame {
 
   static SnakesGame replay({required List<LudoSeat> seats, required int seed, required Iterable<int> rolls}) {
     final g = SnakesGame(seats: seats, seed: seed);
-    for (final s in rolls) {
-      g.roll(s);
+    for (final v in rolls) {
+      if (v < 10) {
+        g.roll(v);
+      } else {
+        final dice = v ~/ 10;
+        g.roll(v % 10, dice: dice == 7 ? 0 : dice);
+      }
     }
     return g;
   }

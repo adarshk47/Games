@@ -95,19 +95,24 @@ class LudoSeat {
 
 /// One log entry: a roll ([token] null) or moving [token] (0..3).
 class LudoAction {
-  const LudoAction.roll(this.seat) : token = null;
-  const LudoAction.move(this.seat, int this.token);
+  const LudoAction.roll(this.seat, {this.dice}) : token = null;
+  const LudoAction.move(this.seat, int this.token) : dice = null;
   final int seat;
   final int? token;
 
+  /// Offline only: the value of a real dice thrown at home (1..6), or 0 =
+  /// riddle answered wrong (the turn passes). Null = the app rolls.
+  final int? dice;
+
   bool get isRoll => token == null;
 
-  Object toJson() => isRoll ? [seat] : [seat, token];
+  Object toJson() => isRoll ? (dice == null ? [seat] : [seat, -1, dice]) : [seat, token];
 
   static LudoAction? fromJson(Object? j) {
     if (j is! List || j.isEmpty || j[0] is! int) return null;
     final s = j[0] as int;
     if (j.length == 1) return LudoAction.roll(s);
+    if (j.length == 3 && j[1] == -1 && j[2] is int) return LudoAction.roll(s, dice: j[2] as int);
     return j[1] is int ? LudoAction.move(s, j[1] as int) : null;
   }
 }
@@ -210,7 +215,16 @@ class LudoGame {
     if (over || a.seat != turn) return false;
     if (a.isRoll) {
       if (pending != null) return false;
-      final d = _nextDice();
+      final forced = a.dice;
+      if (forced != null && (forced < 0 || forced > 6)) return false;
+      if (forced == 0) {
+        // Riddle answered wrong: no move this turn.
+        log.add(a);
+        last = const LudoEvent(passed: true);
+        _nextTurn();
+        return true;
+      }
+      final d = forced ?? _nextDice();
       log.add(a);
       if (d == 6) {
         _sixes++;

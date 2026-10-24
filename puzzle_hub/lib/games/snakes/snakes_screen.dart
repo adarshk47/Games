@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../ludo/dice_input.dart';
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -21,19 +22,19 @@ const _tint = Color(0xFF43A047);
 class SnakesSave {
   static const key = 'snakes.inprogress';
 
-  static ({int players, bool cpu, int seed, List<int> rolls})? load() {
+  static ({int players, bool cpu, int seed, List<int> rolls, DiceMode dice})? load() {
     final raw = Storage.getString(key);
     if (raw == null) return null;
     try {
       final j = jsonDecode(raw) as Map<String, dynamic>;
-      return (players: j['p'] as int, cpu: j['c'] as bool, seed: j['s'] as int, rolls: (j['r'] as List).cast<int>());
+      return (players: j['p'] as int, cpu: j['c'] as bool, seed: j['s'] as int, rolls: (j['r'] as List).cast<int>(), dice: DiceMode.fromName(j['d'] as String?));
     } catch (_) {
       return null;
     }
   }
 
-  static void save(int players, bool cpu, SnakesGame g) =>
-      Storage.setString(key, jsonEncode({'p': players, 'c': cpu, 's': g.seed, 'r': g.log}));
+  static void save(int players, bool cpu, SnakesGame g, [DiceMode dice = DiceMode.auto]) =>
+      Storage.setString(key, jsonEncode({'p': players, 'c': cpu, 's': g.seed, 'r': g.log, 'd': dice.name}));
 
   static void clear() => Storage.remove(key);
 }
@@ -58,10 +59,11 @@ class SnakesScreen extends StatefulWidget {
 class _SnakesScreenState extends State<SnakesScreen> {
   int _players = 2;
   bool _cpu = true;
+  DiceMode _dice = DiceMode.auto;
 
-  Future<void> _start({required int players, required bool cpu, int? seed, List<int> rolls = const []}) async {
+  Future<void> _start({required int players, required bool cpu, int? seed, List<int> rolls = const [], DiceMode? dice}) async {
     await Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (_) => SnakesPlayScreen(players: players, cpu: cpu, seed: seed ?? math.Random().nextInt(1 << 30), resume: rolls),
+      builder: (_) => SnakesPlayScreen(players: players, cpu: cpu, seed: seed ?? math.Random().nextInt(1 << 30), resume: rolls, dice: dice ?? _dice),
     ));
     if (mounted) setState(() {});
   }
@@ -102,7 +104,7 @@ class _SnakesScreenState extends State<SnakesScreen> {
             key: const ValueKey('snakes_continue'),
             label: tr('ludo.continue'),
             icon: Icons.play_arrow_rounded,
-            onTap: () => _start(players: saved.players, cpu: saved.cpu, seed: saved.seed, rolls: saved.rolls),
+            onTap: () => _start(players: saved.players, cpu: saved.cpu, seed: saved.seed, rolls: saved.rolls, dice: saved.dice),
           ),
         ],
         _section(tr('ludo.mode')),
@@ -114,6 +116,12 @@ class _SnakesScreenState extends State<SnakesScreen> {
         Wrap(spacing: 8, children: [
           for (final n in const [2, 3, 4]) _chip(tr('ludo.n_players', {'n': n}), _players == n, () => setState(() => _players = n)),
         ]),
+        _section(tr('dice.title')),
+        DiceModePicker(value: _dice, color: _tint, onChanged: (m) => setState(() => _dice = m)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+          child: Text(tr('dice.help.${_dice.name}'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.4)),
+        ),
         const SizedBox(height: 20),
         PremiumButton(
           key: const ValueKey('snakes_start'),
@@ -197,7 +205,8 @@ class SnakesTable extends StatelessWidget {
 
 /// Offline game (computer players or friends on this phone).
 class SnakesPlayScreen extends StatefulWidget {
-  const SnakesPlayScreen({super.key, required this.players, required this.cpu, required this.seed, this.resume = const []});
+  const SnakesPlayScreen({super.key, required this.players, required this.cpu, required this.seed, this.resume = const [], this.dice = DiceMode.auto});
+  final DiceMode dice;
   final int players;
   final bool cpu;
   final int seed;
@@ -227,17 +236,29 @@ class _SnakesPlayScreenState extends State<SnakesPlayScreen> {
   @override
   void dispose() {
     _bot?.cancel();
-    if (!_g.over && _g.log.isNotEmpty) SnakesSave.save(widget.players, widget.cpu, _g);
+    if (!_g.over && _g.log.isNotEmpty) SnakesSave.save(widget.players, widget.cpu, _g, widget.dice);
     super.dispose();
   }
 
-  void _roll() {
-    if (!_g.roll(_g.turn)) return;
+  /// A player's roll: the app's dice, or a real dice / riddle answer.
+  Future<void> _humanRoll() async {
+    final seat = _g.turn;
+    if (widget.dice == DiceMode.auto) {
+      _roll();
+      return;
+    }
+    final v = await askDice(context, widget.dice, ludoColors[_g.seats[seat].colour]);
+    if (!mounted || v == null || _g.turn != seat || _g.over) return;
+    _roll(v);
+  }
+
+  void _roll([int? dice]) {
+    if (!_g.roll(_g.turn, dice: dice)) return;
     _rollSeq++;
     final e = _g.last;
     AppAudio.play(e.ladder ? Sound.success : (e.snake ? Sound.fail : Sound.pop));
     if (e.snake || e.ladder) AppAudio.haptic();
-    SnakesSave.save(widget.players, widget.cpu, _g);
+    SnakesSave.save(widget.players, widget.cpu, _g, widget.dice);
     setState(() {});
     if (_g.over) {
       _finish();
@@ -276,7 +297,7 @@ class _SnakesPlayScreenState extends State<SnakesPlayScreen> {
         actions: [
           DialogAction(tr('ludo.play_again'), () {
             Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
-              builder: (_) => SnakesPlayScreen(players: widget.players, cpu: widget.cpu, seed: math.Random().nextInt(1 << 30)),
+              builder: (_) => SnakesPlayScreen(players: widget.players, cpu: widget.cpu, seed: math.Random().nextInt(1 << 30), dice: widget.dice),
             ));
           }, primary: true),
           DialogAction(tr('ludo.menu'), () => Navigator.of(context).maybePop()),
@@ -289,6 +310,6 @@ class _SnakesPlayScreenState extends State<SnakesPlayScreen> {
   Widget build(BuildContext context) => GameScaffold(
         title: tr('game.snakes.title'),
         tint: _tint,
-        body: SnakesTable(game: _g, canRoll: _humanTurn, onRoll: _roll, rollSeq: _rollSeq),
+        body: SnakesTable(game: _g, canRoll: _humanTurn, onRoll: _humanRoll, rollSeq: _rollSeq),
       );
 }

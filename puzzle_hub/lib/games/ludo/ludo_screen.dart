@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dice_input.dart';
 import 'dart:convert';
 import 'dart:math' as math;
 
@@ -20,8 +21,11 @@ enum LudoMode { cpu, local }
 
 /// Settings of an offline game (also what is saved to continue later).
 class LudoSetup {
-  const LudoSetup({required this.mode, required this.players, required this.level, required this.quick, required this.seed});
+  const LudoSetup({required this.mode, required this.players, required this.level, required this.quick, required this.seed, this.dice = DiceMode.auto});
   final LudoMode mode;
+
+  /// App dice, a real dice at home, or riddles.
+  final DiceMode dice;
   final int players;
   final int level; // bots: 0 easy, 1 medium, 2 hard
   final bool quick;
@@ -39,7 +43,7 @@ class LudoSetup {
     ];
   }
 
-  Map<String, Object> toJson() => {'m': mode.name, 'p': players, 'l': level, 'q': quick, 's': seed};
+  Map<String, Object> toJson() => {'m': mode.name, 'p': players, 'l': level, 'q': quick, 's': seed, 'd': dice.name};
 
   static LudoSetup? fromJson(Map<String, dynamic> j) {
     try {
@@ -49,6 +53,7 @@ class LudoSetup {
         level: j['l'] as int,
         quick: j['q'] as bool,
         seed: j['s'] as int,
+        dice: DiceMode.fromName(j['d'] as String?),
       );
     } catch (_) {
       return null;
@@ -93,6 +98,7 @@ class _LudoScreenState extends State<LudoScreen> {
   int _players = 4;
   int _level = 1;
   bool _quick = false;
+  DiceMode _dice = DiceMode.auto;
 
   Future<void> _start(LudoSetup s, [List<LudoAction> log = const []]) async {
     await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => LudoPlayScreen(setup: s, resume: log)));
@@ -200,13 +206,19 @@ class _LudoScreenState extends State<LudoScreen> {
           padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
           child: Text(tr(_quick ? 'ludo.quick_text' : 'ludo.classic_text'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.4)),
         ),
+        _section(tr('dice.title')),
+        DiceModePicker(value: _dice, color: _tint, onChanged: (m) => setState(() => _dice = m)),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+          child: Text(tr('dice.help.${_dice.name}'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.4)),
+        ),
         const SizedBox(height: 20),
         PremiumButton(
           key: const ValueKey('ludo_start'),
           label: tr('ludo.start'),
           icon: Icons.casino_rounded,
           color: _tint,
-          onTap: () => _start(LudoSetup(mode: _mode, players: _players, level: _level, quick: _quick, seed: math.Random().nextInt(1 << 30))),
+          onTap: () => _start(LudoSetup(mode: _mode, players: _players, level: _level, quick: _quick, seed: math.Random().nextInt(1 << 30), dice: _dice)),
         ),
       ]),
     );
@@ -270,6 +282,18 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
     }
   }
 
+  /// A player's roll: the app's dice, or a real dice / riddle answer.
+  Future<void> _humanRoll() async {
+    final seat = _g.turn;
+    if (widget.setup.dice == DiceMode.auto) {
+      _act(LudoAction.roll(seat));
+      return;
+    }
+    final v = await askDice(context, widget.setup.dice, ludoColors[_g.colourOf(seat)]);
+    if (!mounted || v == null || _g.turn != seat || _g.pending != null) return;
+    _act(LudoAction.roll(seat, dice: v));
+  }
+
   /// Bots play by themselves; a human with exactly one possible move moves
   /// automatically.
   void _drive() {
@@ -322,7 +346,7 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
           DialogAction(tr('ludo.play_again'), () {
             Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
               builder: (_) => LudoPlayScreen(
-                setup: LudoSetup(mode: widget.setup.mode, players: widget.setup.players, level: widget.setup.level, quick: widget.setup.quick, seed: _rnd.nextInt(1 << 30)),
+                setup: LudoSetup(mode: widget.setup.mode, players: widget.setup.players, level: widget.setup.level, quick: widget.setup.quick, seed: _rnd.nextInt(1 << 30), dice: widget.setup.dice),
               ),
             ));
           }, primary: true),
@@ -341,7 +365,7 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
         game: _g,
         canAct: _humanTurn && !_g.over,
         rollSeq: _rollSeq,
-        onRoll: () => _act(LudoAction.roll(_g.turn)),
+        onRoll: _humanRoll,
         onToken: (i) => _act(LudoAction.move(_g.turn, i)),
         status: _g.last.lostTurn
             ? tr('ludo.three_sixes')
