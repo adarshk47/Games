@@ -11,6 +11,7 @@ import 'package:puzzle_hub/core/storage.dart';
 import 'package:puzzle_hub/games/bus_jam/bus_jam_game.dart';
 import 'package:puzzle_hub/games/bus_jam/logic/bus_jam_logic.dart';
 import 'package:puzzle_hub/home/games_tab.dart';
+import 'package:puzzle_hub/games/chess/widgets/chess_board.dart';
 import 'package:puzzle_hub/games/snakes/snakes_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,6 +53,18 @@ void main() {
     t.view.physicalSize = const Size(400, 820);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
+    await shot(
+        t,
+        Scaffold(
+          backgroundColor: const Color(0xFFB07A4A),
+          body: Center(
+            child: Wrap(children: [
+              for (final p in const [6, 5, 4, 3, 2, 1, -6, -5, -4, -3, -2, -1])
+                Container(color: (p.abs() + (p > 0 ? 0 : 1)).isEven ? const Color(0xFFF4DDB2) : const Color(0xFFB07A4A), child: PieceGlyph(p, size: 64)),
+            ]),
+          ),
+        ),
+        'chess_pieces_preview');
     await shot(t, BusJamGame(tier: BjTier.values[1], level: 5), 'bus_jam_preview');
     await shot(t, const Scaffold(backgroundColor: Color(0xFF1B1238), body: GamesTab()), 'home_preview');
     await shot(t, const SnakesPlayScreen(players: 4, cpu: true, seed: 42), 'snakes_preview');

@@ -89,7 +89,7 @@ class AdFreeGrant {
 
   /// Opens an email to the developer with everything needed to approve.
   /// Returns false when the player is not signed in (the user id is needed).
-  static Future<bool> sendRequest(AdFreeRequestPlan plan) async {
+  static Future<bool> sendRequest([AdFreeRequestPlan? plan]) async {
     final user = CloudService.available ? CloudAuth.I.user.value : null;
     if (user == null) return false;
     final now = DateTime.now();
@@ -102,7 +102,7 @@ class AdFreeGrant {
 
 I would like to remove all ads in ${AppInfo.name}.
 
-Requested period: ${plan.english}
+Requested period: ${plan?.english ?? 'developer decides'}
 Request date & time: $when
 Name: ${a.name}
 User ID: ${user.uid}
@@ -115,11 +115,11 @@ App version: ${AppInfo.version}
       scheme: 'mailto',
       path: supportEmail,
       query:
-          'subject=${Uri.encodeComponent('${AppInfo.name} – Ad-free request (${plan.english})')}'
+          'subject=${Uri.encodeComponent('${AppInfo.name} – Ad-free request${plan == null ? '' : ' (${plan.english})'}')}'
           '&body=${Uri.encodeComponent(body)}',
     );
     await Storage.setInt(_kReqAt, now.millisecondsSinceEpoch);
-    await Storage.setString(_kReqPlan, plan.name);
+    await Storage.setString(_kReqPlan, plan?.name ?? '');
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {

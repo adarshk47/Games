@@ -522,25 +522,37 @@ class _AdFreeRequestCard extends StatefulWidget {
 }
 
 class _AdFreeRequestCardState extends State<_AdFreeRequestCard> {
-  AdFreeRequestPlan _plan = AdFreeRequestPlan.m3;
-
   @override
   void initState() {
     super.initState();
     AdFreeGrant.refresh(); // pick up approvals / revokes without a restart
     CouponService.refresh();
   }
-  String? _msg;
 
   static String _date(DateTime d) {
     String two(int n) => n.toString().padLeft(2, '0');
-    return '${two(d.day)}-${two(d.month)}-${d.year} ${two(d.hour)}:${two(d.minute)}';
+    return '${two(d.day)}-${two(d.month)}-${d.year}';
   }
 
-  Future<void> _send() async {
-    final ok = await AdFreeGrant.sendRequest(_plan);
+  /// One tap: a small dialog with just "Send request".
+  Future<void> _ask() async {
+    var send = false;
+    await showPremiumDialog(
+      context,
+      title: tr('shop.adfree_req.title'),
+      message: tr('shop.adfree_req.sub_short'),
+      emoji: '✉️',
+      dismissible: true,
+      actions: [
+        DialogAction(tr('shop.adfree_req.send'), () => send = true, primary: true),
+        DialogAction(tr('common.cancel'), () {}),
+      ],
+    );
+    if (!send) return;
+    final ok = await AdFreeGrant.sendRequest();
     if (!mounted) return;
-    setState(() => _msg = ok ? null : tr('shop.adfree_req.signin'));
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(tr(ok ? 'shop.adfree_req.sent' : 'shop.adfree_req.signin'))));
+    setState(() {});
   }
 
   @override
@@ -550,76 +562,31 @@ class _AdFreeRequestCardState extends State<_AdFreeRequestCard> {
       builder: (_, until, _) {
         final active = AdFreeGrant.active;
         final reqAt = AdFreeGrant.requestedAt;
-        final reqPlan = AdFreeGrant.requestedPlan;
         return GlassCard(
           key: const ValueKey('adfree_request_card'),
+          blur: 0,
           glow: active ? Pal.success : null,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                tr('shop.adfree_req.title'),
-                style: const TextStyle(
-                  color: Pal.text,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
-                ),
+          padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+          child: Row(children: [
+            const Text('✉️', style: TextStyle(fontSize: 18)),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                active
+                    ? tr('shop.adfree_req.active', {'date': _date(until!)})
+                    : (reqAt != null ? tr('shop.adfree_req.pending_short', {'date': _date(reqAt)}) : tr('shop.adfree_req.title')),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: active ? Pal.success : Pal.textDim, fontSize: 12.5, fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: 6),
-              if (active)
-                Text(
-                  tr('shop.adfree_req.active', {'date': _date(until!)}),
-                  style: const TextStyle(
-                    color: Pal.success,
-                    fontWeight: FontWeight.w800,
-                  ),
-                )
-              else ...[
-                Text(
-                  tr('shop.adfree_req.sub'),
-                  style: const TextStyle(color: Pal.textDim, fontSize: 13),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final p in AdFreeRequestPlan.values)
-                      ChoiceChip(
-                        label: Text(tr('shop.adfree_req.plan.${p.name}')),
-                        selected: p == _plan,
-                        onSelected: (_) => setState(() => _plan = p),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                PremiumButton(
-                  key: const ValueKey('adfree_request_send'),
-                  label: tr('shop.adfree_req.send'),
-                  icon: Icons.mail_rounded,
-                  compact: true,
-                  onTap: _send,
-                ),
-                if (reqAt != null && reqPlan != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    tr('shop.adfree_req.pending', {
-                      'date': _date(reqAt),
-                      'plan': tr('shop.adfree_req.plan.${reqPlan.name}'),
-                    }),
-                    style: const TextStyle(color: Pal.gold, fontSize: 12),
-                  ),
-                ],
-                if (_msg != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    _msg!,
-                    style: const TextStyle(color: Pal.danger, fontSize: 13),
-                  ),
-                ],
-              ],
-            ],
-          ),
+            ),
+            if (!active)
+              TextButton(
+                key: const ValueKey('adfree_request_send'),
+                onPressed: _ask,
+                child: Text(tr('shop.adfree_req.request'), style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w800)),
+              ),
+          ]),
         );
       },
     );

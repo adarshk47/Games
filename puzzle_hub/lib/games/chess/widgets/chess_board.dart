@@ -4,51 +4,218 @@ import 'package:flutter/material.dart';
 
 import '../logic/chess_engine.dart';
 
-// Filled chess glyphs (king..pawn) forced to text presentation so Android
-// does not swap the pawn for an emoji.
-const _glyphs = {
-  pKing: '♚︎',
-  pQueen: '♛︎',
-  pRook: '♜︎',
-  pBishop: '♝︎',
-  pKnight: '♞︎',
-  pPawn: '♟︎',
-};
-
-/// A glossy chess piece: Unicode glyph with an outline, gradient fill and
-/// soft drop shadow. [piece] uses the engine's signed encoding.
+/// A chess piece drawn with vector shapes (not a font glyph, so it looks the
+/// same on every phone): white pieces are creamy white with a light red
+/// outline, black pieces are pure black with a thin grey rim. [piece] uses the
+/// engine's signed encoding.
 class PieceGlyph extends StatelessWidget {
   const PieceGlyph(this.piece, {super.key, required this.size});
   final int piece;
   final double size;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => SizedBox(
+        width: size,
+        height: size,
+        child: CustomPaint(painter: _PiecePainter(piece)),
+      );
+}
+
+class _PiecePainter extends CustomPainter {
+  _PiecePainter(this.piece);
+  final int piece;
+
+  @override
+  void paint(Canvas canvas, Size size) {
     final white = piece > 0;
-    final g = _glyphs[piece.abs()]!;
-    final style = TextStyle(fontSize: size * 0.84, height: 1.0, fontFamilyFallback: const ['Noto Sans Symbols 2', 'Segoe UI Symbol', 'DejaVu Sans']);
-    // Plain, high-contrast colours: pure white pieces with a black outline and
-    // pure black pieces with a white outline, readable on both board squares.
-    final fill = white ? const Color(0xFFFFFFFF) : const Color(0xFF0A0A0A);
-    final rim = white ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(alignment: Alignment.center, children: [
-        Text(g,
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-              foreground: Paint()
-                ..style = PaintingStyle.stroke
-                ..strokeWidth = size * 0.07
-                ..strokeJoin = StrokeJoin.round
-                ..color = rim,
-              shadows: [Shadow(color: Colors.black.withValues(alpha: 0.55), blurRadius: size * 0.08, offset: Offset(0, size * 0.05))],
-            )),
-        Text(g, textAlign: TextAlign.center, style: style.copyWith(color: fill)),
-      ]),
+    final k = size.width / 100;
+    canvas.save();
+    canvas.scale(k);
+    final body = _shape(piece.abs());
+    final fill = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        // White side: creamy white; black side: pure black.
+        colors: white
+            ? const [Color(0xFFFFFBF0), Color(0xFFFFF3D9), Color(0xFFF5E3BD)]
+            : const [Color(0xFF000000), Color(0xFF000000), Color(0xFF000000)],
+      ).createShader(const Rect.fromLTWH(0, 0, 100, 100));
+    final rim = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = white ? 4.5 : 3
+      ..strokeJoin = StrokeJoin.round
+      // Light red outline and details on the creamy pieces; a thin grey rim
+      // keeps the black pieces visible on dark squares.
+      ..color = white ? const Color(0xFFE57373) : const Color(0xFF5A5A5A);
+    // Soft shadow under the piece.
+    canvas.drawPath(
+      body.shift(const Offset(0, 3)),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.35)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
     );
+    canvas.drawPath(body, fill);
+    canvas.drawPath(body, rim);
+    // Detail lines (collars, eye) in the outline colour.
+    final detail = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..color = rim.color;
+    for (final l in _details(piece.abs())) {
+      canvas.drawLine(l.$1, l.$2, detail);
+    }
+    if (piece.abs() == pKnight) canvas.drawCircle(const Offset(52, 30), 3.2, Paint()..color = rim.color);
+    canvas.restore();
   }
+
+  /// Every piece stands on the same base.
+  static Path _base() => Path()
+    ..addRRect(RRect.fromLTRBR(20, 80, 80, 92, const Radius.circular(5)))
+    ..addRRect(RRect.fromLTRBR(28, 72, 72, 81, const Radius.circular(3)));
+
+  static Path _shape(int t) {
+    final p = _base();
+    switch (t) {
+      case pPawn:
+        p.addPath(
+          Path()
+            ..moveTo(34, 73)
+            ..quadraticBezierTo(38, 56, 44, 46)
+            ..lineTo(56, 46)
+            ..quadraticBezierTo(62, 56, 66, 73)
+            ..close(),
+          Offset.zero,
+        );
+        p.addOval(Rect.fromCenter(center: const Offset(50, 45), width: 30, height: 9));
+        p.addOval(Rect.fromCircle(center: const Offset(50, 30), radius: 13));
+      case pRook:
+        p.addPath(
+          Path()
+            ..moveTo(32, 73)
+            ..lineTo(35, 40)
+            ..lineTo(65, 40)
+            ..lineTo(68, 73)
+            ..close(),
+          Offset.zero,
+        );
+        p.addPath(
+          Path()
+            ..moveTo(26, 40)
+            ..lineTo(26, 16)
+            ..lineTo(36, 16)
+            ..lineTo(36, 24)
+            ..lineTo(45, 24)
+            ..lineTo(45, 16)
+            ..lineTo(55, 16)
+            ..lineTo(55, 24)
+            ..lineTo(64, 24)
+            ..lineTo(64, 16)
+            ..lineTo(74, 16)
+            ..lineTo(74, 40)
+            ..close(),
+          Offset.zero,
+        );
+      case pKnight:
+        p.addPath(
+          Path()
+            ..moveTo(30, 73)
+            ..cubicTo(30, 60, 40, 54, 42, 48)
+            ..cubicTo(34, 50, 24, 52, 22, 44)
+            ..cubicTo(20, 36, 30, 28, 38, 22)
+            ..lineTo(40, 12)
+            ..lineTo(48, 18)
+            ..cubicTo(62, 16, 74, 28, 76, 46)
+            ..cubicTo(78, 60, 72, 66, 72, 73)
+            ..close(),
+          Offset.zero,
+        );
+      case pBishop:
+        p.addPath(
+          Path()
+            ..moveTo(34, 73)
+            ..quadraticBezierTo(40, 58, 44, 50)
+            ..lineTo(56, 50)
+            ..quadraticBezierTo(60, 58, 66, 73)
+            ..close(),
+          Offset.zero,
+        );
+        p.addOval(Rect.fromCenter(center: const Offset(50, 49), width: 30, height: 8));
+        p.addPath(
+          Path()
+            ..moveTo(50, 14)
+            ..cubicTo(64, 24, 66, 36, 60, 46)
+            ..lineTo(40, 46)
+            ..cubicTo(34, 36, 36, 24, 50, 14)
+            ..close(),
+          Offset.zero,
+        );
+        p.addOval(Rect.fromCircle(center: const Offset(50, 11), radius: 5));
+      case pQueen:
+        p.addPath(
+          Path()
+            ..moveTo(32, 73)
+            ..quadraticBezierTo(40, 56, 40, 42)
+            ..lineTo(60, 42)
+            ..quadraticBezierTo(60, 56, 68, 73)
+            ..close(),
+          Offset.zero,
+        );
+        p.addPath(
+          Path()
+            ..moveTo(28, 44)
+            ..lineTo(22, 20)
+            ..lineTo(36, 32)
+            ..lineTo(42, 14)
+            ..lineTo(50, 30)
+            ..lineTo(58, 14)
+            ..lineTo(64, 32)
+            ..lineTo(78, 20)
+            ..lineTo(72, 44)
+            ..close(),
+          Offset.zero,
+        );
+        for (final x in [22.0, 42.0, 58.0, 78.0]) {
+          p.addOval(Rect.fromCircle(center: Offset(x, x == 22 || x == 78 ? 18 : 12), radius: 4.5));
+        }
+      default: // King
+        p.addPath(
+          Path()
+            ..moveTo(32, 73)
+            ..quadraticBezierTo(40, 56, 40, 42)
+            ..lineTo(60, 42)
+            ..quadraticBezierTo(60, 56, 68, 73)
+            ..close(),
+          Offset.zero,
+        );
+        p.addPath(
+          Path()
+            ..moveTo(28, 44)
+            ..cubicTo(22, 30, 34, 22, 44, 30)
+            ..lineTo(50, 24)
+            ..lineTo(56, 30)
+            ..cubicTo(66, 22, 78, 30, 72, 44)
+            ..close(),
+          Offset.zero,
+        );
+        p.addRect(const Rect.fromLTRB(46, 4, 54, 24));
+        p.addRect(const Rect.fromLTRB(40, 10, 60, 17));
+    }
+    p.fillType = PathFillType.nonZero;
+    return p;
+  }
+
+  static List<(Offset, Offset)> _details(int t) => switch (t) {
+        pRook => const [(Offset(33, 46), Offset(67, 46))],
+        pBishop => const [(Offset(46, 26), Offset(54, 36))],
+        pQueen || pKing => const [(Offset(33, 50), Offset(67, 50))],
+        pKnight => const [(Offset(42, 48), Offset(48, 40))],
+        _ => const [],
+      };
+
+  @override
+  bool shouldRepaint(_PiecePainter o) => o.piece != piece;
 }
 
 /// The wooden board with pieces, highlights and tap / drag input.
