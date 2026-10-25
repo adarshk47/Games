@@ -1,0 +1,42 @@
+[
+  {
+    "file": "Master_G_Hindi_16x9_Vibrant_Synced_56s.mp4",
+    "duration": 56.0,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "frames": "1680",
+    "decoded": true
+  },
+  {
+    "file": "Master_G_Hindi_9x16_Vibrant_Synced_56s.mp4",
+    "duration": 56.0,
+    "dimensions": [
+      1080,
+      1920
+    ],
+    "frames": "1680",
+    "decoded": true
+  },
+  {
+    "file": "Master_G_English_16x9_Vibrant_Synced_56s.mp4",
+    "duration": 56.0,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "frames": "1680",
+    "decoded": true
+  },
+  {
+    "file": "Master_G_English_9x16_Vibrant_Synced_56s.mp4",
+    "duration": 56.0,
+    "dimensions": [
+      1080,
+      1920
+    ],
+    "frames": "1680",
+    "decoded": true
+  }
+]

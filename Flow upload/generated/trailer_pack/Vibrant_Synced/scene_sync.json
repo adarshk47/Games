@@ -1,0 +1,242 @@
+[
+  {
+    "language": "Hindi",
+    "scene": 1,
+    "game": "YOUR NEXT MOVE",
+    "start": 0,
+    "end": 4,
+    "speech_start": 0.08,
+    "speech_end": 3.823,
+    "tempo": 1.177
+  },
+  {
+    "language": "Hindi",
+    "scene": 2,
+    "game": "BLOCK PUZZLE",
+    "start": 4,
+    "end": 9,
+    "speech_start": 4.08,
+    "speech_end": 8.816,
+    "tempo": 1.124
+  },
+  {
+    "language": "Hindi",
+    "scene": 3,
+    "game": "ARROW MAZE",
+    "start": 9,
+    "end": 14,
+    "speech_start": 9.08,
+    "speech_end": 13.815,
+    "tempo": 1.068
+  },
+  {
+    "language": "Hindi",
+    "scene": 4,
+    "game": "CHESS",
+    "start": 14,
+    "end": 19,
+    "speech_start": 14.08,
+    "speech_end": 18.82,
+    "tempo": 1.042
+  },
+  {
+    "language": "Hindi",
+    "scene": 5,
+    "game": "BALL SORT",
+    "start": 19,
+    "end": 24,
+    "speech_start": 19.08,
+    "speech_end": 23.857,
+    "tempo": 1.055
+  },
+  {
+    "language": "Hindi",
+    "scene": 6,
+    "game": "2048",
+    "start": 24,
+    "end": 28,
+    "speech_start": 24.08,
+    "speech_end": 27.84,
+    "tempo": 1.233
+  },
+  {
+    "language": "Hindi",
+    "scene": 7,
+    "game": "SLIDING PUZZLE",
+    "start": 28,
+    "end": 32,
+    "speech_start": 28.08,
+    "speech_end": 31.851,
+    "tempo": 1.242
+  },
+  {
+    "language": "Hindi",
+    "scene": 8,
+    "game": "MAZE ESCAPE",
+    "start": 32,
+    "end": 37,
+    "speech_start": 32.08,
+    "speech_end": 36.842,
+    "tempo": 1.013
+  },
+  {
+    "language": "Hindi",
+    "scene": 9,
+    "game": "FLOW",
+    "start": 37,
+    "end": 42,
+    "speech_start": 37.08,
+    "speech_end": 41.858,
+    "tempo": 1.066
+  },
+  {
+    "language": "Hindi",
+    "scene": 10,
+    "game": "BUS JAM",
+    "start": 42,
+    "end": 46,
+    "speech_start": 42.08,
+    "speech_end": 45.853,
+    "tempo": 1.305
+  },
+  {
+    "language": "Hindi",
+    "scene": 11,
+    "game": "PICK YOUR CHALLENGE",
+    "start": 46,
+    "end": 51,
+    "speech_start": 46.08,
+    "speech_end": 50.824,
+    "tempo": 1.229
+  },
+  {
+    "language": "Hindi",
+    "scene": 12,
+    "game": "MASTER G",
+    "start": 51,
+    "end": 56,
+    "speech_start": 51.08,
+    "speech_end": 55.823,
+    "tempo": 1.198
+  },
+  {
+    "language": "English",
+    "scene": 1,
+    "game": "YOUR NEXT MOVE",
+    "start": 0,
+    "end": 4,
+    "speech_start": 0.08,
+    "speech_end": 3.823,
+    "tempo": 1.179
+  },
+  {
+    "language": "English",
+    "scene": 2,
+    "game": "BLOCK PUZZLE",
+    "start": 4,
+    "end": 9,
+    "speech_start": 4.08,
+    "speech_end": 8.819,
+    "tempo": 1.013
+  },
+  {
+    "language": "English",
+    "scene": 3,
+    "game": "ARROW MAZE",
+    "start": 9,
+    "end": 14,
+    "speech_start": 9.08,
+    "speech_end": 13.311,
+    "tempo": 1
+  },
+  {
+    "language": "English",
+    "scene": 4,
+    "game": "CHESS",
+    "start": 14,
+    "end": 19,
+    "speech_start": 14.08,
+    "speech_end": 18.237,
+    "tempo": 1
+  },
+  {
+    "language": "English",
+    "scene": 5,
+    "game": "BALL SORT",
+    "start": 19,
+    "end": 24,
+    "speech_start": 19.08,
+    "speech_end": 23.836,
+    "tempo": 1.09
+  },
+  {
+    "language": "English",
+    "scene": 6,
+    "game": "2048",
+    "start": 24,
+    "end": 28,
+    "speech_start": 24.08,
+    "speech_end": 27.826,
+    "tempo": 1.274
+  },
+  {
+    "language": "English",
+    "scene": 7,
+    "game": "SLIDING PUZZLE",
+    "start": 28,
+    "end": 32,
+    "speech_start": 28.08,
+    "speech_end": 31.823,
+    "tempo": 1.155
+  },
+  {
+    "language": "English",
+    "scene": 8,
+    "game": "MAZE ESCAPE",
+    "start": 32,
+    "end": 37,
+    "speech_start": 32.08,
+    "speech_end": 36.402,
+    "tempo": 1
+  },
+  {
+    "language": "English",
+    "scene": 9,
+    "game": "FLOW",
+    "start": 37,
+    "end": 42,
+    "speech_start": 37.08,
+    "speech_end": 41.82,
+    "tempo": 1.069
+  },
+  {
+    "language": "English",
+    "scene": 10,
+    "game": "BUS JAM",
+    "start": 42,
+    "end": 46,
+    "speech_start": 42.08,
+    "speech_end": 45.821,
+    "tempo": 1.091
+  },
+  {
+    "language": "English",
+    "scene": 11,
+    "game": "PICK YOUR CHALLENGE",
+    "start": 46,
+    "end": 51,
+    "speech_start": 46.08,
+    "speech_end": 50.822,
+    "tempo": 1.121
+  },
+  {
+    "language": "English",
+    "scene": 12,
+    "game": "MASTER G",
+    "start": 51,
+    "end": 56,
+    "speech_start": 51.08,
+    "speech_end": 55.854,
+    "tempo": 1.064
+  }
+]

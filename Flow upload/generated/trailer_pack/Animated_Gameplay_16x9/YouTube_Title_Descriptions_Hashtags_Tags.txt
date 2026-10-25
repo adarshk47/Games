@@ -1,0 +1,62 @@
+MASTER G — YOUTUBE COPY (16:9 HINDI TRAILER)
+
+TITLE
+Master G Gameplay Trailer | Scroll Chhodo, Challenge Lo!
+
+SHORT DESCRIPTION — choose this OR the long description
+Scroll bahut hua, ab apni chaal dikhao! Master G mein Block Puzzle, Chess, Ball Sort, 2048 aur maze challenges dekho. Tum pehle kaunsa game kheloge?
+
+#MasterG #PuzzleGames #MobileGaming #HindiGaming #GamingIndia
+
+LONG DESCRIPTION
+Scroll se break lo, apni next move dikhao! Master G ke is 56-second Hindi gameplay trailer mein colourful puzzles, strategy aur satisfying moves dekhiye.
+
+Block Puzzle mein lines clear karo, Arrow Maze mein raasta dhoondo, Chess mein apna plan banao aur Ball Sort mein colours match karo. 2048 mein numbers merge karo, Sliding Puzzle mein tiles set karo, Maze Escape mein exit dhoondo, Flow mein matching colours connect karo aur Bus Jam ka challenge lo.
+
+Tumhara break, tumhare mood ka challenge. Team Chess, Team Flow ya Team Block Puzzle? Apna favourite game comment mein batao!
+
+Gameplay pasand aaye toh like karo, apne gaming friend ke saath share karo aur Master G updates ke liye subscribe karo.
+
+#MasterG #PuzzleGames #MobileGaming #HindiGaming #GamingIndia
+
+TAGS — paste into the Tags field, without #
+Master G, MasterG, Master G game, Master G gameplay, Master G trailer, Master G Hindi, puzzle games, mobile puzzle games, Hindi gaming, Indian gaming, gameplay trailer, block puzzle, arrow maze, ball sort, 2048 game, sliding puzzle, maze escape, flow puzzle, bus jam, chess game, casual gaming, puzzle challenge
+
+OPTIONAL ENGLISH SHORT DESCRIPTION
+Stop scrolling, start solving! Explore Block Puzzle, Chess, Ball Sort, 2048 and maze challenges in Master G. Which game would you try first?
+
+#MasterG #PuzzleGames #MobileGaming
+
+OPTIONAL ENGLISH LONG DESCRIPTION
+Your break. Your mood. Your next challenge. Explore Master G in this 56-second gameplay trailer.
+
+Clear lines in Block Puzzle, find a route through Arrow Maze, plan your next move in Chess and match colours in Ball Sort. Swipe and merge in 2048, arrange tiles in Sliding Puzzle, find an exit in Maze Escape, connect matching colours in Flow and take on Bus Jam.
+
+Which puzzle fits your mood? Comment with your favourite: Chess, Flow, Block Puzzle or something else.
+
+Enjoyed the gameplay? Like the video, share it with a gaming friend and subscribe for Master G updates.
+
+#MasterG #PuzzleGames #MobileGaming
+
+COUNTS
+{
+  "title_characters": 56,
+  "short_description_characters": 211,
+  "long_description_characters": 765,
+  "long_description_utf8_bytes": 765,
+  "tags_limit_count_including_quotes": 332
+}
+
+NOTES
+YouTube Studio: title up to 100 characters; description up to 5,000 characters.
+Tags: 500-character total; this pack also allows for commas and quotes around multiword tags.
+These are relevant genre/brand hashtags, not a verified current trending ranking.
+The 16:9 trailer does not need #Shorts.
+Add your actual app/website link when available. No URL or availability claim has been invented.
+Tags are secondary; YouTube says they play a minimal discovery role except for misspellings.
+
+SOURCES (checked 20 October 2026)
+https://support.google.com/youtube/answer/57407?hl=en
+https://developers.google.com/youtube/data/reference/rest/v3/videos
+https://support.google.com/youtube/answer/6390658?hl=en
+https://support.google.com/youtube/answer/146402?hl=en

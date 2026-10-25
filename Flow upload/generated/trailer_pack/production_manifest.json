@@ -1,0 +1,216 @@
+{
+  "brand": "Master G",
+  "duration": 56,
+  "fps": 30,
+  "voices": {
+    "hi": "hi-IN-SwaraNeural",
+    "en": "en-IN-NeerjaNeural"
+  },
+  "score": "Original locally synthesized electronic music",
+  "scenes": [
+    {
+      "d": 4,
+      "t": 218,
+      "game": "YOUR NEXT MOVE",
+      "en": [
+        "STOP SCROLLING.",
+        "START SOLVING."
+      ],
+      "hi": [
+        "स्क्रोल बहुत हुआ।",
+        "अब चाल दिखाओ।"
+      ],
+      "suben": "Meet your next puzzle obsession.",
+      "subhi": "मिलिए अपने नए गेमिंग चैलेंज से।",
+      "ven": "Stop scrolling. Start solving.",
+      "vhi": "स्क्रोल बहुत हुआ। अब चाल दिखाओ।"
+    },
+    {
+      "d": 5,
+      "t": 18,
+      "game": "BLOCK PUZZLE",
+      "en": [
+        "MAKE SPACE.",
+        "MAKE IT COUNT."
+      ],
+      "hi": [
+        "ब्लॉक्स जमाओ।",
+        "स्कोर बढ़ाओ।"
+      ],
+      "suben": "Place. Clear. Go again.",
+      "subhi": "हर सही फिट के साथ आगे बढ़ो।",
+      "ven": "Stack the blocks. Find the perfect fit.",
+      "vhi": "ब्लॉक्स जमाओ। परफेक्ट फिट ढूँढो।"
+    },
+    {
+      "d": 5,
+      "t": 48,
+      "game": "ARROW MAZE",
+      "en": [
+        "ONE WAY OUT.",
+        "YOUR CALL."
+      ],
+      "hi": [
+        "रास्ता एक।",
+        "चाल तुम्हारी।"
+      ],
+      "suben": "Read the arrows. Find your route.",
+      "subhi": "ऐरो समझो। अपना रास्ता खोजो।",
+      "ven": "Read the arrows. Find your way out.",
+      "vhi": "ऐरो समझो। बाहर निकल पाओगे?"
+    },
+    {
+      "d": 5,
+      "t": 78,
+      "game": "CHESS",
+      "en": [
+        "THINK AHEAD.",
+        "OWN THE BOARD."
+      ],
+      "hi": [
+        "दो कदम आगे।",
+        "बाज़ी तुम्हारी।"
+      ],
+      "suben": "A little strategy. A bigger challenge.",
+      "subhi": "हर चाल के पीछे एक प्लान।",
+      "ven": "Think ahead. Own the chessboard.",
+      "vhi": "चेस में दो कदम आगे सोचो।"
+    },
+    {
+      "d": 5,
+      "t": 102,
+      "game": "BALL SORT",
+      "en": [
+        "SORT THE CHAOS.",
+        "FIND YOUR FLOW."
+      ],
+      "hi": [
+        "रंग मिलाओ।",
+        "गेम बनाओ।"
+      ],
+      "suben": "One colour. One satisfying move.",
+      "subhi": "एक सही मूव। और रंग सेट।",
+      "ven": "Sort the colours. That perfect match feels good.",
+      "vhi": "रंग मिलाओ। सही मैच का सुकून ही अलग है।"
+    },
+    {
+      "d": 4,
+      "t": 122,
+      "game": "2048",
+      "en": [
+        "SMALL MOVES.",
+        "BIGGER NUMBERS."
+      ],
+      "hi": [
+        "छोटी चाल।",
+        "बड़ा नंबर।"
+      ],
+      "suben": "Swipe. Merge. Keep chasing.",
+      "subhi": "स्वाइप करो। मर्ज करो। आगे बढ़ो।",
+      "ven": "Swipe. Merge. Go bigger.",
+      "vhi": "स्वाइप। मर्ज। और अगला नंबर।"
+    },
+    {
+      "d": 4,
+      "t": 159,
+      "game": "SLIDING PUZZLE",
+      "en": [
+        "SHUFFLE THE GRID.",
+        "SOLVE THE VIBE."
+      ],
+      "hi": [
+        "टाइल्स सरकाओ।",
+        "पज़ल सुलझाओ।"
+      ],
+      "suben": "Every tile has its place.",
+      "subhi": "हर टाइल की सही जगह खोजो।",
+      "ven": "Slide the tiles. Find the pattern.",
+      "vhi": "टाइल्स सरकाओ। पैटर्न पकड़ो।"
+    },
+    {
+      "d": 5,
+      "t": 181,
+      "game": "MAZE ESCAPE",
+      "en": [
+        "GET LOST.",
+        "THEN GET OUT."
+      ],
+      "hi": [
+        "रास्ता खोजो।",
+        "बाहर निकलो।"
+      ],
+      "suben": "A maze worth getting into.",
+      "subhi": "हर मोड़ पर नया चैलेंज।",
+      "ven": "Every turn, a new challenge. Find your escape.",
+      "vhi": "हर मोड़ पर चैलेंज। एग्ज़िट ढूँढ पाओगे?"
+    },
+    {
+      "d": 5,
+      "t": 214,
+      "game": "FLOW",
+      "en": [
+        "CONNECT COLOURS.",
+        "CHASE THE GLOW."
+      ],
+      "hi": [
+        "रंग जोड़ो।",
+        "अपना फ़्लो पाओ।"
+      ],
+      "suben": "Connect the dots. Complete the path.",
+      "subhi": "डॉट्स जोड़ो। रास्ता पूरा करो।",
+      "ven": "Connect the colours. Find your flow.",
+      "vhi": "रंग जोड़ो। अपना फ़्लो पाओ।"
+    },
+    {
+      "d": 4,
+      "image": "9.jpeg",
+      "game": "BUS JAM",
+      "en": [
+        "CLEAR THE JAM.",
+        "KEEP IT MOVING."
+      ],
+      "hi": [
+        "जैम हटाओ।",
+        "बस बढ़ाओ।"
+      ],
+      "suben": "Another puzzle. A whole new mood.",
+      "subhi": "नया पज़ल। नया मूड।",
+      "ven": "Bus Jam. New puzzle. New mood.",
+      "vhi": "बस जैम। नया पज़ल, नया मूड।"
+    },
+    {
+      "d": 5,
+      "t": 23,
+      "game": "PICK YOUR CHALLENGE",
+      "en": [
+        "YOUR BREAK.",
+        "YOUR PLAYLIST."
+      ],
+      "hi": [
+        "तुम्हारा ब्रेक।",
+        "तुम्हारा गेम।"
+      ],
+      "suben": "Blocks. Chess. Mazes. And more.",
+      "subhi": "ब्लॉक्स, चेस, मेज़ और भी बहुत कुछ।",
+      "ven": "Your break. Your mood. Your challenge.",
+      "vhi": "तुम्हारा ब्रेक। तुम्हारे मूड का चैलेंज।"
+    },
+    {
+      "d": 5,
+      "t": 220,
+      "game": "MASTER G",
+      "en": [
+        "WHAT'S YOUR",
+        "NEXT MOVE?"
+      ],
+      "hi": [
+        "अब तुम्हारी",
+        "अगली चाल?"
+      ],
+      "suben": "MASTER G  •  Play your way.",
+      "subhi": "MASTER G  •  खेलो अपने अंदाज़ में।",
+      "ven": "Master G. What's your next move?",
+      "vhi": "मास्टर जी। क्या होगी तुम्हारी अगली चाल?"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "duration": 56,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "frames": 1680,
+  "visual_area_percent": 82.5,
+  "audio": "Same scene-synced Hindi female narration",
+  "animation": "Live gameplay plus continuous pan/zoom on detail and screenshot panels",
+  "decode_ok": true
+}

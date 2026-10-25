@@ -1,0 +1,18 @@
+[
+  {
+    "language": "Hindi",
+    "voice": "hi-IN-SwaraNeural",
+    "duration": 39.64,
+    "rate": "+20%",
+    "pitch": "+5Hz",
+    "music": false
+  },
+  {
+    "language": "English",
+    "voice": "en-IN-NeerjaNeural",
+    "duration": 36.9,
+    "rate": "+20%",
+    "pitch": "+5Hz",
+    "music": false
+  }
+]
