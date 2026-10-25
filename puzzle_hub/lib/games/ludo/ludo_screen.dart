@@ -1,4 +1,6 @@
 import 'dart:async';
+import '../../core/economy/undo_offer.dart';
+import '../../core/economy/undo_mode.dart';
 import 'dice_input.dart';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -21,8 +23,11 @@ enum LudoMode { cpu, local }
 
 /// Settings of an offline game (also what is saved to continue later).
 class LudoSetup {
-  const LudoSetup({required this.mode, required this.players, required this.level, required this.quick, required this.seed, this.dice = DiceMode.auto});
+  const LudoSetup({required this.mode, required this.players, required this.level, required this.quick, required this.seed, this.dice = DiceMode.auto, this.undo = UndoMode.unlimited});
   final LudoMode mode;
+
+  /// Taking a move back: as often as you like, 3 per game, or never.
+  final UndoMode undo;
 
   /// App dice, a real dice at home, or riddles.
   final DiceMode dice;
@@ -43,7 +48,9 @@ class LudoSetup {
     ];
   }
 
-  Map<String, Object> toJson() => {'m': mode.name, 'p': players, 'l': level, 'q': quick, 's': seed, 'd': dice.name};
+  Map<String, Object> toJson() => {'m': mode.name, 'p': players, 'l': level, 'q': quick, 's': seed, 'd': dice.name, 'u': undo.index};
+
+  LudoSetup withSeed(int s) => LudoSetup(mode: mode, players: players, level: level, quick: quick, seed: s, dice: dice, undo: undo);
 
   static LudoSetup? fromJson(Map<String, dynamic> j) {
     try {
@@ -54,6 +61,7 @@ class LudoSetup {
         quick: j['q'] as bool,
         seed: j['s'] as int,
         dice: DiceMode.fromName(j['d'] as String?),
+        undo: UndoMode.fromIndex((j['u'] as int?) ?? 0),
       );
     } catch (_) {
       return null;
@@ -99,6 +107,7 @@ class _LudoScreenState extends State<LudoScreen> {
   int _level = 1;
   bool _quick = false;
   DiceMode _dice = DiceMode.auto;
+  UndoMode _undo = UndoMode.fromIndex(Storage.getInt('ludo.pref.undo'));
 
   Future<void> _start(LudoSetup s, [List<LudoAction> log = const []]) async {
     await Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => LudoPlayScreen(setup: s, resume: log)));
@@ -212,13 +221,22 @@ class _LudoScreenState extends State<LudoScreen> {
           padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
           child: Text(tr('dice.help.${_dice.name}'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.4)),
         ),
+        _section(tr('undo.setting')),
+        UndoModePicker(
+          value: _undo,
+          color: _tint,
+          onChanged: (m) {
+            Storage.setInt('ludo.pref.undo', m.index);
+            setState(() => _undo = m);
+          },
+        ),
         const SizedBox(height: 20),
         PremiumButton(
           key: const ValueKey('ludo_start'),
           label: tr('ludo.start'),
           icon: Icons.casino_rounded,
           color: _tint,
-          onTap: () => _start(LudoSetup(mode: _mode, players: _players, level: _level, quick: _quick, seed: math.Random().nextInt(1 << 30), dice: _dice)),
+          onTap: () => _start(LudoSetup(mode: _mode, players: _players, level: _level, quick: _quick, seed: math.Random().nextInt(1 << 30), dice: _dice, undo: _undo)),
         ),
       ]),
     );
@@ -241,6 +259,51 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
   Timer? _bot;
   bool _ended = false;
   final _rnd = math.Random();
+  late int _undosLeft = _savedUndos();
+
+  /// After an undo, a single possible move is not played automatically.
+  bool _noAuto = false;
+
+  int _savedUndos() => widget.resume.isEmpty ? UndoMode.freeUndos : Storage.getInt(_kUndos, UndoMode.freeUndos);
+  static const _kUndos = 'ludo.undos_left';
+
+  /// Index in the log of the last move a human made (null = none).
+  int? get _lastHumanMove {
+    for (var i = _g.log.length - 1; i >= 0; i--) {
+      final a = _g.log[i];
+      if (!a.isRoll && _g.seats[a.seat].kind == SeatKind.human) return i;
+    }
+    return null;
+  }
+
+  bool get _canUndo {
+    final mode = widget.setup.undo;
+    if (_g.over || !_humanTurn || mode == UndoMode.off) return false;
+    if (mode == UndoMode.three && _undosLeft <= 0) return false;
+    return _lastHumanMove != null;
+  }
+
+  /// Takes the last human move back: the same dice stays, so another token
+  /// can be chosen (no re-roll). Bot turns after it are replayed later.
+  Future<void> _undo() async {
+    final i = _lastHumanMove;
+    if (!_canUndo || i == null) return;
+    final three = widget.setup.undo == UndoMode.three;
+    final steps = three ? 1 : await UndoOffer.ask(context, available: 1);
+    if (!mounted || steps == 0 || !_canUndo) return;
+    _bot?.cancel();
+    setState(() {
+      _g = LudoGame.replay(seats: widget.setup.seats(), seed: widget.setup.seed, quick: widget.setup.quick, actions: _g.log.sublist(0, i));
+      if (three) {
+        _undosLeft--;
+        Storage.setInt(_kUndos, _undosLeft);
+      }
+      _noAuto = true;
+    });
+    LudoSave.save(widget.setup, _g);
+    AppAudio.play(Sound.slide);
+    _drive();
+  }
 
   /// Delay before bots act (shorter in tests).
   @visibleForTesting
@@ -250,6 +313,7 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
   void initState() {
     super.initState();
     _g = LudoGame.replay(seats: widget.setup.seats(), seed: widget.setup.seed, quick: widget.setup.quick, actions: widget.resume);
+    if (widget.resume.isEmpty) Storage.setInt(_kUndos, UndoMode.freeUndos);
     WidgetsBinding.instance.addPostFrameCallback((_) => _drive());
   }
 
@@ -264,6 +328,7 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
 
   void _act(LudoAction a) {
     if (!_g.apply(a)) return;
+    if (_g.seats[a.seat].kind == SeatKind.human) _noAuto = false;
     final e = _g.last;
     if (a.isRoll) {
       _rollSeq++;
@@ -310,7 +375,7 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
       });
       return;
     }
-    if (_g.pending != null) {
+    if (_g.pending != null && !_noAuto) {
       final opts = _g.movable(_g.turn, _g.pending!);
       if (opts.length == 1) {
         _bot = Timer(botDelay, () {
@@ -346,7 +411,7 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
           DialogAction(tr('ludo.play_again'), () {
             Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
               builder: (_) => LudoPlayScreen(
-                setup: LudoSetup(mode: widget.setup.mode, players: widget.setup.players, level: widget.setup.level, quick: widget.setup.quick, seed: _rnd.nextInt(1 << 30), dice: widget.setup.dice),
+                setup: widget.setup.withSeed(_rnd.nextInt(1 << 30)),
               ),
             ));
           }, primary: true),
@@ -358,9 +423,20 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final undo = widget.setup.undo;
     return GameScaffold(
       title: tr('game.ludo.title'),
       tint: _tint,
+      actions: [
+        if (undo != UndoMode.off)
+          TextButton.icon(
+            key: const ValueKey('ludo_undo'),
+            onPressed: _canUndo ? _undo : null,
+            icon: const Icon(Icons.undo_rounded),
+            label: Text(undo == UndoMode.three ? '${tr('common.undo')} ($_undosLeft)' : tr('common.undo')),
+            style: TextButton.styleFrom(foregroundColor: Pal.gold, disabledForegroundColor: Pal.textDim),
+          ),
+      ],
       body: LudoTable(
         game: _g,
         canAct: _humanTurn && !_g.over,

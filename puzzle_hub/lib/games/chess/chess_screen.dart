@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:puzzle_hub/core/economy/undo_mode.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -51,6 +52,8 @@ class _ChessScreenState extends State<ChessScreen> {
   int _colorPref = 0; // 0 white, 1 black, 2 random
   bool _autoRotate = true;
   bool _midStart = false; // start from a curated middlegame position
+  UndoMode _undoMode = UndoMode.unlimited;
+  int _undosLeft = UndoMode.freeUndos; // UndoMode.three only
 
   // ---- game state
   ChessGame? _game;
@@ -81,6 +84,7 @@ class _ChessScreenState extends State<ChessScreen> {
     _colorPref = Storage.getInt('chess.pref.color').clamp(0, 2);
     _autoRotate = Storage.getBool('chess.pref.rotate', true);
     _midStart = Storage.getInt('chess.pref.start').clamp(0, 1) == 1;
+    _undoMode = UndoMode.fromIndex(Storage.getInt('chess.pref.undo'));
     // A game left half-way continues straight away.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _resume();
@@ -110,6 +114,8 @@ class _ChessScreenState extends State<ChessScreen> {
         'wms': _clock.whiteMs,
         'bms': _clock.blackMs,
         'run': _clockRunning,
+        'um': _undoMode.index,
+        'ul': _undosLeft,
       }),
     );
   }
@@ -142,6 +148,8 @@ class _ChessScreenState extends State<ChessScreen> {
           ..whiteMs = j['wms'] as int
           ..blackMs = j['bms'] as int;
         _playerWhite = j['white'] as bool;
+        _undoMode = UndoMode.fromIndex((j['um'] as int?) ?? _undoMode.index);
+        _undosLeft = (j['ul'] as int?) ?? UndoMode.freeUndos;
         _thinking = false;
         _selected = null;
         _animMove = null;
@@ -180,6 +188,7 @@ class _ChessScreenState extends State<ChessScreen> {
     Storage.setInt('chess.pref.color', _colorPref);
     Storage.setBool('chess.pref.rotate', _autoRotate);
     Storage.setInt('chess.pref.start', _midStart ? 1 : 0);
+    Storage.setInt('chess.pref.undo', _undoMode.index);
   }
 
   // ---------------------------------------------------------------- stats
@@ -220,6 +229,7 @@ class _ChessScreenState extends State<ChessScreen> {
       _startFullmove = _game!.pos.fullmove;
       _clock = ChessClock(_tc);
       _playerWhite = _colorPref == 2 ? math.Random().nextBool() : _colorPref == 0;
+      _undosLeft = UndoMode.freeUndos;
       _thinking = false;
       _selected = null;
       _animMove = null;
@@ -419,26 +429,34 @@ class _ChessScreenState extends State<ChessScreen> {
 
   bool get _canUndo {
     final g = _game;
-    if (g == null || !_cpu || g.over || _thinking || !_humanTurn) return false;
-    // Need the player's own move + the reply, and never undo past the start.
-    return g.moves.length >= (_playerWhite == _startWhite ? 2 : 3);
+    if (g == null || g.over || _thinking || !_humanTurn) return false;
+    if (_undoMode == UndoMode.off || (_undoMode == UndoMode.three && _undosLeft <= 0)) return false;
+    // vs computer: the player's own move + the reply, never past the start.
+    if (_cpu) return g.moves.length >= (_playerWhite == _startWhite ? 2 : 3);
+    return g.moves.isNotEmpty;
   }
 
-  /// Full moves (yours + the reply) that can be taken back.
+  /// Moves per undo step: yours + the computer's reply, or one move (2 players).
+  int get _undoPly => _cpu ? 2 : 1;
+
+  /// Undo steps that can still be taken back.
   int get _undoDepth {
     final g = _game;
     if (g == null) return 0;
+    if (!_cpu) return g.moves.length;
     final base = _playerWhite == _startWhite ? 0 : 1;
     return (g.moves.length - base) ~/ 2;
   }
 
   Future<void> _undo() async {
     if (!_canUndo) return;
-    final steps = await UndoOffer.ask(context, available: _undoDepth);
+    // Unlimited: an ad every few steps (UndoOffer); 3 per game: free.
+    final steps = _undoMode == UndoMode.three ? 1 : await UndoOffer.ask(context, available: _undoDepth);
     if (!mounted || steps == 0) return;
     setState(() {
       for (var k = 0; k < steps && _canUndo; k++) {
-        _game!.undo(2);
+        _game!.undo(_undoPly);
+        if (_undoMode == UndoMode.three) _undosLeft--;
       }
       _selected = null;
       _animMove = null;
@@ -771,6 +789,8 @@ class _ChessScreenState extends State<ChessScreen> {
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
             child: Text(tr('chess.mid_hint'), style: const TextStyle(color: Pal.textDim, fontSize: 12, height: 1.35)),
           ),
+        _section(tr('undo.setting')),
+        UndoModePicker(value: _undoMode, color: _tint, onChanged: (m) => setState(() => _undoMode = m)),
         const SizedBox(height: 16),
         GlassCard(
           blur: 0,
@@ -1079,12 +1099,12 @@ class _ChessScreenState extends State<ChessScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 2, 12, 10),
       child: Row(children: [
-        if (_cpu)
+        if (_undoMode != UndoMode.off)
           Expanded(
             child: _ctrl(
               const ValueKey('undoBtn'),
               Icons.undo_rounded,
-              tr('common.undo'),
+              _undoMode == UndoMode.three ? '${tr('common.undo')} ($_undosLeft)' : tr('common.undo'),
               _canUndo ? _undo : null,
             ),
           ),
