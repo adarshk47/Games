@@ -7,6 +7,7 @@ import '../core/account/auth_screens.dart';
 import '../core/cloud/cloud_auth.dart';
 import '../core/cloud/cloud_service.dart';
 import '../core/cloud/leaderboard_screen.dart';
+import '../core/shop/shop_screen.dart';
 import '../core/daily/daily_hub_screen.dart';
 import '../core/cloud/referral_service.dart';
 import '../core/cloud/sync_service.dart';
@@ -603,6 +604,12 @@ class _ProfileBodyState extends State<_ProfileBody> {
                         builder: (_) => const LeaderboardScreen(),
                       ),
                     ),
+                  ),
+                  _QuickAction(
+                    key: const ValueKey('profile_quick_shop'),
+                    icon: Icons.storefront_rounded,
+                    label: tr('home.nav.shop'),
+                    onTap: () => ShopScreen.open(context),
                   ),
                   _QuickAction(
                     key: const ValueKey('profile_quick_records'),

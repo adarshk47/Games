@@ -5,15 +5,15 @@
 const Map<String, Map<String, String>> homeStrings = {
   // ------------------------------------------------------------ bottom nav
   'home.nav.games': {
-    'en': "Games",
-    'hi': "गेम्स",
-    'hinglish': "Games",
-    'te': "ఆటలు",
-    'ta': "விளையாட்டுகள்",
-    'pa': "ਗੇਮਾਂ",
-    'bho': "खेल",
-    'mr': "गेम्स",
-    'sa': "क्रीडाः",
+    'en': "All Games",
+    'hi': "सभी गेम्स",
+    'hinglish': "All Games",
+    'te': "అన్ని ఆటలు",
+    'ta': "எல்லா ஆட்டங்கள்",
+    'pa': "ਸਾਰੀਆਂ ਗੇਮਾਂ",
+    'bho': "सब खेल",
+    'mr': "सर्व गेम्स",
+    'sa': "सर्वाः क्रीडाः",
   },
   'home.nav.daily': {
     'en': "Daily",

@@ -38,22 +38,17 @@ void main() {
       await _pumpHome(t, size);
       expect(t.takeException(), isNull);
 
-      for (final id in ['games', 'leaderboard', 'shop', 'profile']) {
+      for (final id in ['games', 'ludo', 'chess', 'profile']) {
         expect(find.byKey(ValueKey('nav_$id')), findsOneWidget);
       }
       expect(_stackIndex(t), 0);
       expect(find.text('Master G'), findsOneWidget);
       expect(find.text('GAME OF THE DAY'), findsOneWidget);
 
-      await t.tap(find.byKey(const ValueKey('nav_shop')));
-      await t.pump(const Duration(milliseconds: 500));
-      expect(_stackIndex(t), 2);
-      await t.tap(find.byKey(const ValueKey('nav_leaderboard')));
-      await t.pump(const Duration(milliseconds: 500));
-      expect(_stackIndex(t), 1);
       await t.tap(find.byKey(const ValueKey('nav_profile')));
       await t.pump(const Duration(milliseconds: 500));
-      expect(_stackIndex(t), 3);
+      expect(_stackIndex(t), 1);
+      expect(find.byKey(const ValueKey('profile_quick_shop')), findsOneWidget);
       await t.tap(find.byKey(const ValueKey('nav_games')));
       await t.pump(const Duration(milliseconds: 500));
       expect(_stackIndex(t), 0);

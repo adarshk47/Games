@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 
 import '../core/ads/banner_strip.dart';
 import '../core/audio.dart';
-import '../core/cloud/leaderboard_screen.dart';
 import '../core/i18n/i18n.dart';
 import '../core/shop/shop_screen.dart';
 import '../core/ui/app_theme.dart';
@@ -54,17 +53,18 @@ class _HomeScreenState extends State<HomeScreen>
       Icons.sports_esports_outlined,
       Icons.sports_esports_rounded,
     ),
+    // Ludo and Chess open the game directly (no tab of their own).
     _NavItem(
-      'leaderboard',
-      'home.nav.leaderboard',
-      Icons.leaderboard_outlined,
-      Icons.leaderboard_rounded,
+      'ludo',
+      'game.ludo.title',
+      Icons.casino_outlined,
+      Icons.casino_rounded,
     ),
     _NavItem(
-      'shop',
-      'home.nav.shop',
-      Icons.storefront_outlined,
-      Icons.storefront_rounded,
+      'chess',
+      'game.chess.title',
+      Icons.castle_outlined,
+      Icons.castle_rounded,
     ),
     _NavItem(
       'profile',
@@ -74,7 +74,16 @@ class _HomeScreenState extends State<HomeScreen>
     ),
   ];
 
+  /// Nav items that open a game instead of switching the tab.
+  static const _gameItems = {1: 'ludo', 2: 'chess'};
+
   void _select(int i) {
+    final gameId = _gameItems[i];
+    if (gameId != null) {
+      final g = games.where((x) => x.id == gameId);
+      if (g.isNotEmpty) openGame(context, g.first);
+      return;
+    }
     if (i == _tab) return;
     setState(() => _tab = i);
     _fade.forward(from: 0);
@@ -204,14 +213,12 @@ class _HomeScreenState extends State<HomeScreen>
                     curve: Curves.easeOut,
                   ),
                   child: IndexedStack(
-                    index: _tab,
+                    index: _tab == 0 ? 0 : 1,
                     children: [
                       GamesTab(
                         bottomInset: inset,
-                        onOpenShop: () => _select(2),
+                        onOpenShop: () => ShopScreen.open(context),
                       ),
-                      padded(const LeaderboardScreen(embedded: true)),
-                      padded(const ShopScreen()),
                       padded(const ProfileTab()),
                     ],
                   ),

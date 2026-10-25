@@ -17,6 +17,17 @@ import '../ads/adfree_grant.dart';
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
 
+  /// Opens the shop as its own page (from Profile or the coin pill).
+  static Future<void> open(BuildContext context) => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => GameScaffold(
+            title: tr('home.nav.shop'),
+            tint: Pal.gold,
+            body: const ShopScreen(),
+          ),
+        ),
+      );
+
   @override
   State<ShopScreen> createState() => _ShopScreenState();
 }
