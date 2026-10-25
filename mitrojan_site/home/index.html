@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mitrojan – Games, Wellness &amp; More</title>
+<meta name="description" content="Mitrojan: one friendly home for games, AYUSH wellness consultation and more. Play Master G games free – Ludo, Chess, Brain Age and 20 games.">
+<meta name="theme-color" content="#140E38">
+<meta property="og:title" content="Mitrojan – Games, Wellness &amp; More">
+<meta property="og:description" content="Play Master G games free, and soon consult AYUSH experts online.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>">
+<style>
+  :root {
+    --bg0: #0d0926; --bg1: #1d1450; --gold: #ffd369; --violet: #b794ff; --mint: #5eead4;
+    --text: #f6f3ff; --dim: #c9c2e8; --card: rgba(255,255,255,.06); --border: rgba(255,255,255,.14);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    color: var(--text); min-height: 100vh; line-height: 1.5;
+    background: radial-gradient(900px 500px at 10% -10%, #3b2a8f 0%, transparent 60%),
+                radial-gradient(800px 500px at 110% 20%, #0f5d57 0%, transparent 55%),
+                linear-gradient(180deg, var(--bg1), var(--bg0) 70%);
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; gap: 12px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 22px; letter-spacing: .3px; }
+  .logo .mark { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px;
+    background: linear-gradient(135deg, var(--gold), #ff9f1c); box-shadow: 0 6px 20px rgba(255,211,105,.35); }
+  nav a { text-decoration: none; color: var(--dim); margin-left: 16px; font-weight: 600; font-size: 15px; }
+  nav a:hover { color: var(--text); }
+  .hero { text-align: center; padding: 56px 0 40px; }
+  .hero h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.1; margin: 0 0 14px; font-weight: 900; }
+  .hero h1 span { background: linear-gradient(90deg, var(--gold), var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { color: var(--dim); font-size: 18px; max-width: 640px; margin: 0 auto; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; padding: 24px 0 56px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 10px;
+    backdrop-filter: blur(8px); transition: transform .2s, border-color .2s; }
+  .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.3); }
+  .card .e { font-size: 44px; }
+  .card h2 { margin: 0; font-size: 24px; }
+  .card p { margin: 0; color: var(--dim); flex: 1; }
+  .tag { align-self: flex-start; font-size: 12px; font-weight: 800; letter-spacing: .6px; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; }
+  .live { background: rgba(94,234,212,.15); color: var(--mint); }
+  .soon { background: rgba(183,148,255,.15); color: var(--violet); }
+  .btn { display: inline-block; text-decoration: none; font-weight: 800; padding: 12px 20px; border-radius: 14px; text-align: center; margin-top: 8px; }
+  .btn.primary { background: linear-gradient(135deg, var(--gold), #ff9f1c); color: #2a1600; }
+  .btn.ghost { border: 1px solid var(--border); color: var(--text); }
+  .about { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 28px; margin-bottom: 48px; }
+  .about h2 { margin-top: 0; }
+  .about p { color: var(--dim); margin-bottom: 0; }
+  footer { border-top: 1px solid var(--border); padding: 24px 0 36px; color: var(--dim); font-size: 14px; text-align: center; }
+  footer a { margin: 0 10px; }
+  @media (max-width: 560px) { nav a.hide-sm { display: none; } .hero { padding-top: 32px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo"><div class="mark">🤝</div>Mitrojan</div>
+    <nav>
+      <a href="#services">Services</a>
+      <a class="hide-sm" href="#about">About</a>
+      <a href="mailto:aiforsmart@gmail.com">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Your <span>friendly</span> place for play and wellness</h1>
+    <p>Mitrojan brings together fun brain games and trusted AYUSH wellness – simple, safe and made for everyone in India and beyond.</p>
+  </section>
+
+  <section id="services" class="cards">
+    <div class="card">
+      <span class="tag live">Live</span>
+      <div class="e">🎲</div>
+      <h2>Master G Games</h2>
+      <p>Ludo and Snakes &amp; Ladders with friends online, Chess, the Brain Age test, Sudoku and 20 games in 9 languages. Free on web and Android.</p>
+      <a class="btn primary" href="https://games.mitrojan.in/">Play now</a>
+      <a class="btn ghost" href="https://play.google.com/store/apps/details?id=com.memorypuzzle.app">Get it on Google Play</a>
+    </div>
+    <div class="card">
+      <span class="tag soon">Coming soon</span>
+      <div class="e">🌿</div>
+      <h2>AYUSH Vaidya</h2>
+      <p>Consult registered Ayurveda, Yoga, Unani, Siddha and Homoeopathy practitioners online – from home, in your language.</p>
+      <a class="btn ghost" href="https://ayush.mitrojan.in/">Learn more</a>
+    </div>
+    <div class="card">
+      <span class="tag soon">Coming soon</span>
+      <div class="e">✨</div>
+      <h2>More from Mitrojan</h2>
+      <p>New tools and services for families are on the way. Write to us with what you would like to see next.</p>
+      <a class="btn ghost" href="mailto:aiforsmart@gmail.com">Suggest an idea</a>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <h2>About Mitrojan</h2>
+    <p>"Mitro" means friends and "jan" means people. Mitrojan is built by Adarsh Kumar (Ideal World) to give people one friendly home online – for relaxing with games that keep the mind sharp, and soon for caring for health the traditional AYUSH way.</p>
+  </section>
+
+  <footer>
+    <a href="https://games.mitrojan.in/privacy.html">Privacy Policy</a>
+    <a href="mailto:aiforsmart@gmail.com">aiforsmart@gmail.com</a>
+    <div style="margin-top:10px">© 2026 Mitrojan · Ideal World. All rights reserved.</div>
+  </footer>
+</div>
+</body>
+</html>
