@@ -6,11 +6,18 @@ import '../ui/ui.dart';
 import 'account_service.dart';
 import 'countries.dart';
 
-/// Searchable country list (India first). Used before sign-in and from Profile.
+/// Searchable country list in A–Z order. Used on the first-start screen and
+/// from Profile.
 class CountryList extends StatefulWidget {
-  const CountryList({super.key, required this.onPicked, this.shrinkWrap = false});
+  const CountryList({super.key, required this.onPicked, this.shrinkWrap = false, this.selected, this.save = true});
   final ValueChanged<Country> onPicked;
   final bool shrinkWrap;
+
+  /// Ticked country (default: the saved one).
+  final String? selected;
+
+  /// Save the pick as the player's country right away.
+  final bool save;
 
   @override
   State<CountryList> createState() => _CountryListState();
@@ -21,8 +28,9 @@ class _CountryListState extends State<CountryList> {
 
   @override
   Widget build(BuildContext context) {
-    final cur = AccountService.I.country;
-    final list = countries.where((c) => c.name.toLowerCase().contains(_q.toLowerCase())).toList();
+    final cur = widget.selected ?? AccountService.I.country;
+    final list = countries.where((c) => c.name.toLowerCase().contains(_q.toLowerCase())).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
     return Column(mainAxisSize: MainAxisSize.min, children: [
       GlassCard(
         blur: 0,
@@ -53,7 +61,7 @@ class _CountryListState extends State<CountryList> {
               title: Text(c.name, style: TextStyle(color: Pal.text, fontWeight: sel ? FontWeight.w900 : FontWeight.w500)),
               trailing: sel ? const Icon(Icons.check_circle_rounded, color: Pal.gold) : null,
               onTap: () async {
-                await AccountService.I.setCountry(c.code);
+                if (widget.save) await AccountService.I.setCountry(c.code);
                 widget.onPicked(c);
               },
             );

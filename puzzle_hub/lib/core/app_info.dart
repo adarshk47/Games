@@ -2,8 +2,9 @@
 class AppInfo {
   AppInfo._();
   static const name = 'Master G';
-  static const version = '2.2.0';
+  static const version = '2.3.1';
   static const copyrightYear = 2026;
+  static const brandUrl = 'https://mitrojan.in';
   static const privacyUrl = 'https://adarshk47.github.io/Idealworld/master-g/privacy.html';
   static const deleteAccountUrl = 'https://adarshk47.github.io/Idealworld/master-g/delete-account.html';
 }

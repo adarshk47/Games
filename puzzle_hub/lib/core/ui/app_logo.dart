@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 /// The "Master G" logo mark for in-app use (splash, lock screen, home header).
 ///
-/// Paints the same artwork that is used for the launcher icon (see
-/// [MasterGLogoPainter] and test/tool/render_icons_test.dart).
+/// Shows the launcher icon artwork ("Ludo Puzzle": chess king on a
+/// four-colour puzzle piece with a sweeping arrow).
 class AppLogo extends StatelessWidget {
   const AppLogo({super.key, this.size = 64});
   final double size;
@@ -16,7 +16,8 @@ class AppLogo extends StatelessWidget {
         height: size,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(size * 0.23),
-          child: const CustomPaint(painter: MasterGLogoPainter()),
+          // Same artwork as the launcher icon (assets/icon/app_icon.png).
+          child: Image.asset('assets/icon/logo_256.png', fit: BoxFit.cover, filterQuality: FilterQuality.medium),
         ),
       );
 }

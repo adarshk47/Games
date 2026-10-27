@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 
 import '../account/account_service.dart';
 import '../app_info.dart';
@@ -117,6 +118,28 @@ class IapService {
     if (!_available) return;
     _sub ??= InAppPurchase.instance.purchaseStream.listen(_onPurchases, onError: (Object e) => debugPrint('iap stream: $e'));
     await loadProducts();
+    await checkLifetimeOwned();
+  }
+
+  /// Refunded lifetime purchase: Google Play no longer lists it as owned, so
+  /// ads come back by themselves. Only acts on a successful answer from Play
+  /// (offline / errors never remove ad-free). Monthly / yearly packs are
+  /// consumed when bought, so Play cannot report their refunds to the app:
+  /// those are handled with `iap_revoked/{uid}` ([checkRevoked]).
+  Future<void> checkLifetimeOwned() async {
+    if (!_available || !lifetime || defaultTargetPlatform != TargetPlatform.android) return;
+    try {
+      final addition = InAppPurchase.instance.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
+      final r = await addition.queryPastPurchases().timeout(const Duration(seconds: 15));
+      if (r.error != null) return;
+      final owned = r.pastPurchases.any((p) => p.productID == IapPlan.lifetime.id && p.status != PurchaseStatus.error);
+      if (!owned) {
+        await Storage.setBool(_kLifetime, false);
+        granted.value++;
+      }
+    } catch (e) {
+      debugPrint('iap lifetime check: $e');
+    }
   }
 
   Future<void> loadProducts() async {

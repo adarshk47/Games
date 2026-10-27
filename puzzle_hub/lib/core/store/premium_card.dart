@@ -59,7 +59,9 @@ class _PremiumCardState extends State<PremiumCard> {
 
   Widget _row(IapPlan p) {
     final d = _iap.products.value[p.id];
-    final sale = IapService.saleOn;
+    // Play shows d.price in the player's own currency ($, €, ₹ …); the
+    // struck-through regular price is only known in rupees.
+    final sale = IapService.saleOn && d?.currencyCode == 'INR';
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(children: [

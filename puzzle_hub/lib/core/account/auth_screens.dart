@@ -8,8 +8,7 @@ import '../ui/app_logo.dart';
 import '../ui/ui.dart';
 import 'account_service.dart';
 import '../i18n/i18n.dart';
-import '../i18n/language_picker.dart';
-import 'country_select.dart';
+import 'setup_screen.dart';
 
 const int kPinLength = 4;
 
@@ -24,9 +23,8 @@ class AuthGate extends StatelessWidget {
       listenable: Listenable.merge([AccountService.I, I18n.revision]),
       builder: (context, _) {
         final a = AccountService.I;
-        // Country first, then languages ordered for that country.
-        if (a.country == null) return const CountrySelectScreen();
-        if (!I18n.chosen) return LanguageSelectScreen(onDone: () {});
+        // First start: language + country on one screen.
+        if (a.country == null || !I18n.chosen) return const FirstSetupScreen();
         if (a.loggedIn) return home;
         return a.hasAccount ? const LockScreen() : const WelcomeScreen();
       },

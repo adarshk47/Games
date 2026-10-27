@@ -826,6 +826,27 @@ class _ProfileBodyState extends State<_ProfileBody> {
                 onTap: AppStore.sendFeedback,
               ),
               ListTile(
+                key: const ValueKey('profile_mitrojan'),
+                leading: const Text('🤝', style: TextStyle(fontSize: 22)),
+                title: Text(
+                  tr('home.profile.mitrojan'),
+                  style: const TextStyle(color: Pal.text),
+                ),
+                subtitle: Text(
+                  tr('home.profile.mitrojan_sub'),
+                  style: const TextStyle(color: Pal.textDim),
+                ),
+                trailing: const Icon(
+                  Icons.open_in_new_rounded,
+                  color: Pal.textDim,
+                  size: 18,
+                ),
+                onTap: () => launchUrl(
+                  Uri.parse(AppInfo.brandUrl),
+                  mode: LaunchMode.externalApplication,
+                ),
+              ),
+              ListTile(
                 key: const ValueKey('profile_privacy'),
                 leading: const Icon(Icons.privacy_tip_rounded, color: Pal.text),
                 title: Text(
