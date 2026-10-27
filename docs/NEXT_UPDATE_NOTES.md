@@ -181,3 +181,12 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   3. **Leaderboard for players not signed in:** show their local (offline) score at the END of the
      list (even if it would rank higher) with "Sign in to join the leaderboard".
   4. (message cut off – ask the user)
+- 2026-10-27 noted for the next update (do NOT build yet – wait for the user's go):
+  1. **New app languages:** European languages (German, French, Spanish, Italian – confirm the
+     list with the user), **Urdu** and **Arabic** (Saudi Arabia). Urdu and Arabic are
+     right-to-left: needs RTL layout checks (Directionality, mirrored icons/arrows, board games
+     stay left-to-right), Arabic/Urdu fonts, and the string modules in lib/core/i18n/strings/*.dart
+     (AppLang enum + languagesFor() country order: SA/AE → Arabic first, PK → Urdu first).
+     Also add the matching Play Store listing translations.
+  2. Europe/UK launch (when these languages land): GDPR consent popup for Unity ads, EU DSA
+     trader status in Play Console, privacy policy update.
