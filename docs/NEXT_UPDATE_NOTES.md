@@ -190,3 +190,15 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
      Also add the matching Play Store listing translations.
   2. Europe/UK launch (when these languages land): GDPR consent popup for Unity ads, EU DSA
      trader status in Play Console, privacy policy update.
+- 2026-10-27 more notes for the next development round (do NOT build yet):
+  3. **Leaderboard shows country next to the name:** every row (podium, Top 10, others) shows
+     the player's flag (and country code) beside the name. Entries already store `country`
+     (leaderboard_service.dart LeaderEntry.country); use countries.dart for the flag emoji.
+  4. **Play Console warning "Improve your app's memory and performance with R8 optimization –
+     your R8 configuration could be causing higher memory usage and lower performance":**
+     android/app/proguard-rules.pro has very broad keep rules (`-keep class androidx.work.** { *; }`,
+     `-keep class androidx.room.** { *; }`, `-keep class com.dexterous.** { *; }`) that stop R8
+     from shrinking/optimising those libraries. Replace them with the narrow rules the libraries
+     ship themselves (consumer rules), check gradle.properties has no R8 full-mode opt-out,
+     then build, install with TEST_ADS and test notifications/reminders (flutter_local_notifications)
+     + WorkManager + every game before releasing.
