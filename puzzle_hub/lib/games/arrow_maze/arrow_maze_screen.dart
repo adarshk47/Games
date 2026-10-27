@@ -596,7 +596,11 @@ class _ArrowMazeGamePageState extends State<ArrowMazeGamePage>
         final travel = _bodyLen(s) + board.rayCells(s).length + 1.0;
         final dur = (300 + travel * 38).clamp(380, 1100).round();
         _fx.add(_Fx(id, true, now, dur, travel));
-        AppAudio.play(Sound.slide);
+        AppAudio.play(Sound.slide, volume: 0.6);
+        // Whoosh as the arrow flies off the board.
+        Future<void>.delayed(Duration(milliseconds: (dur * 0.55).round()), () {
+          if (mounted) AppAudio.play(Sound.whoosh, volume: 0.8);
+        });
       } else {
         lives--;
         AppAudio.play(Sound.fail);

@@ -132,7 +132,9 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> _showWelcome() async {
     if (!mounted) return;
     final a = AccountService.I;
-    final g = _gameOfDay;
+    // Arrow Maze is the default quick-play game.
+    final arrow = games.where((x) => x.id == 'arrow_maze');
+    final g = arrow.isNotEmpty ? arrow.first : _gameOfDay;
     await showPremiumDialog(
       context,
       emoji: '👋',

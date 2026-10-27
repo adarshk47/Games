@@ -173,8 +173,8 @@ class LevelSpec {
 }
 
 enum MazeTier {
-  easy('Easy', 'easy', 100, 3, 5, 7, 5, 12, 9, 2, 5, 'Small boards, short arrows'),
-  medium('Medium', 'medium', 100, 3, 3, 10, 7, 20, 14, 3, 9, 'Classic tangle'),
+  easy('Easy', 'easy', 100, 3, 5, 8, 6, 14, 10, 2, 5, 'Small boards, short arrows'),
+  medium('Medium', 'medium', 100, 3, 3, 11, 8, 21, 15, 3, 9, 'Classic tangle'),
   hard('Hard', 'hard', 100, 2, 2, 16, 11, 26, 17, 3, 14, 'Big, dense, 2 lives'),
   extreme('Extreme', 'extreme', 100, 1, 1, 20, 14, 30, 20, 4, 22,
       'Giant tangles, tons of arrows, one life');
@@ -193,7 +193,7 @@ enum MazeTier {
   double get deepBias => const [0.1, 0.45, 0.85, 0.97][index];
 
   /// Target board density (Easy/Medium are thinned to open free lanes).
-  double get thinTo => const [0.88, 0.85, 1.0, 1.0][index];
+  double get thinTo => const [0.92, 0.9, 1.0, 1.0][index];
 }
 
 class ArrowMazeLevels {
@@ -242,7 +242,7 @@ class ArrowMazeLevels {
     for (var attempt = 0; attempt < tries + 4; attempt++) {
       final rng = math.Random(_seed(tier, level, attempt));
       // Shorter arrows = many more arrows on the same picture.
-      var snakes = generateTangle(sh.rows, sh.cols, sp.minLen, math.max(sp.minLen + 1, (sp.maxLen * 0.6).round()), rng,
+      var snakes = generateTangle(sh.rows, sh.cols, sp.minLen, math.max(sp.minLen + 1, (sp.maxLen * 0.3).round()), rng,
           deepBias: tier.deepBias, inside: sh.inside);
       if (tier.thinTo < 1) {
         snakes = thinOut(sh.rows, sh.cols, snakes, tier.thinTo, inside: sh.inside);
