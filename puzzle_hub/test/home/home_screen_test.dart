@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/release_stage.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
 import 'package:puzzle_hub/core/ui/app_theme.dart';
@@ -82,12 +83,15 @@ void main() {
     AppThemeController.current.value = 0;
     await AppThemeController.init();
     expect(AppThemeController.current.value, 1);
-    // Locked themes cannot be selected without buying.
-    expect(await AppThemeController.select(3), isFalse);
-    expect(AppThemeController.current.value, 1);
+    // Locked themes cannot be selected without buying (all free in 2.7.0).
+    if (kStage < 3) {
+      expect(await AppThemeController.select(3), isFalse);
+      expect(AppThemeController.current.value, 1);
+    }
   });
 
   testWidgets('locked theme purchase from settings spends coins', (t) async {
+    if (kStage >= 3) return; // every theme is free in 2.7.0
     await _setup({'coins': 1000});
     expect(Rewards.coins.value, 1000);
     t.view.physicalSize = const Size(390, 1400);
@@ -137,6 +141,7 @@ void main() {
   });
 
   test('buying without enough coins fails and spends nothing', () async {
+    if (kStage >= 3) return; // every theme is free in 2.7.0
     await _setup({'coins': 100});
     expect(await AppThemeController.buy(5), ThemeBuyResult.notEnoughCoins);
     expect(Rewards.coins.value, 100);

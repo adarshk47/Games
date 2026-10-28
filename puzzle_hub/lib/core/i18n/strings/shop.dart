@@ -1569,4 +1569,15 @@ const Map<String, Map<String, String>> shopStrings = {
     'mr': "अनडू नाही",
     'sa': "पुनरावर्तनं नास्ति",
   },
+  'iap.sale_newyear': {
+    'en': "🎆 New Year sale – till {date}",
+    'hi': "🎆 नए साल की सेल – {date} तक",
+    'hinglish': "🎆 New Year sale – {date} tak",
+    'te': "🎆 న్యూ ఇయర్ సేల్ – {date} వరకు",
+    'ta': "🎆 புத்தாண்டு விற்பனை – {date} வரை",
+    'pa': "🎆 ਨਵੇਂ ਸਾਲ ਦੀ ਸੇਲ – {date} ਤੱਕ",
+    'bho': "🎆 नया साल सेल – {date} ले",
+    'mr': "🎆 नववर्ष सेल – {date} पर्यंत",
+    'sa': "🎆 नववर्षविक्रयः – {date} पर्यन्तम्",
+  },
 };

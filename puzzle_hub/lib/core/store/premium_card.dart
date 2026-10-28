@@ -61,7 +61,14 @@ class _PremiumCardState extends State<PremiumCard> {
     final d = _iap.products.value[p.id];
     // Play shows d.price in the player's own currency ($, €, ₹ …); the
     // struck-through regular price is only known in rupees.
-    final sale = IapService.saleOn && d?.currencyCode == 'INR';
+    // Sales: the regular price is known in rupees only (struck through for
+    // Indian Play accounts); the New Year sale also shows the real discount.
+    final inr = d?.currencyCode == 'INR';
+    final regular = (IapService.diwaliSale || IapService.newYearSale) && inr ? '₹${p.regularRupees}' : null;
+    final raw = d?.rawPrice;
+    final off = IapService.newYearSale && inr && raw != null && raw < p.regularRupees
+        ? ((1 - raw / p.regularRupees) * 100).round()
+        : null;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(children: [
@@ -69,12 +76,20 @@ class _PremiumCardState extends State<PremiumCard> {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(_label(p), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
             Row(children: [
-              if (sale) ...[
-                Text('₹${p.regularRupees}',
+              if (regular != null) ...[
+                Text(regular,
                     style: const TextStyle(color: Pal.textDim, fontSize: 13, decoration: TextDecoration.lineThrough, decorationThickness: 2)),
                 const SizedBox(width: 6),
               ],
               Text(d?.price ?? '…', style: const TextStyle(color: Pal.gold, fontSize: 16, fontWeight: FontWeight.w900)),
+              if (off != null) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(color: const Color(0xFFE53935), borderRadius: BorderRadius.circular(6)),
+                  child: Text('-$off%', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900)),
+                ),
+              ],
             ]),
           ]),
         ),
@@ -120,7 +135,10 @@ class _PremiumCardState extends State<PremiumCard> {
               gradient: const LinearGradient(colors: [Color(0xFFFF9F1C), Color(0xFFE53935)]),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Text(tr('iap.sale', {'date': '17/11'}), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12)),
+            child: Text(
+              IapService.newYearSale ? tr('iap.sale_newyear', {'date': '5/1'}) : tr('iap.sale', {'date': '17/11'}),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12),
+            ),
           ),
         ],
         if (!_iap.available)

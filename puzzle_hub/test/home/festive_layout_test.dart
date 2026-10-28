@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:puzzle_hub/core/release_stage.dart';
 import 'package:puzzle_hub/core/i18n/i18n.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
@@ -52,10 +53,10 @@ void main() {
     final diwali = AppThemeController.themes[_themeIndex('diwali')];
     expect(utsav.festive && diwali.festive, isTrue);
     expect(utsav.free, isTrue);
-    expect(diwali.free, isFalse);
+    expect(diwali.free, kStage >= 3, reason: 'every theme is free in 2.7.0');
     expect(await AppThemeController.select(_themeIndex('utsav')), isTrue);
     expect(AppThemeController.theme.id, 'utsav');
-    expect(await AppThemeController.select(_themeIndex('diwali')), isFalse);
+    expect(await AppThemeController.select(_themeIndex('diwali')), kStage >= 3);
     // The original themes keep their indices (saved choices stay valid).
     expect(AppThemeController.themes.take(6).map((t) => t.id).toList(),
         ['royal', 'ocean', 'sunset', 'emerald', 'rose', 'midnight']);

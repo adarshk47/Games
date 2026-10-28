@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../release_stage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -47,7 +48,20 @@ class IapService {
   /// Diwali sale: struck-through regular prices are shown until this moment
   /// (end of 17 Nov 2026, India time). Change the Play prices back after it.
   static final saleEnds = DateTime.utc(2026, 11, 17, 18, 30);
-  static bool get saleOn => DateTime.now().toUtc().isBefore(saleEnds);
+
+  /// New Year sale (2.7.0 only), 20 Dec 2026 – 5 Jan 2027 (IST). Set the Play
+  /// prices to ₹19 / ₹199 / ₹299 for these dates in Play Console; the app
+  /// shows the regular price struck through and each plan's real discount.
+  static final newYearStarts = DateTime.utc(2026, 12, 19, 18, 30);
+  static final newYearEnds = DateTime.utc(2027, 1, 5, 18, 30);
+
+  static bool get diwaliSale => DateTime.now().toUtc().isBefore(saleEnds);
+  static bool get newYearSale {
+    final now = DateTime.now().toUtc();
+    return kStage >= 3 && now.isAfter(newYearStarts) && now.isBefore(newYearEnds);
+  }
+
+  static bool get saleOn => diwaliSale || newYearSale;
 
   static const _kUntil = 'iap.adfree.until';
   static const _kLifetime = 'iap.adfree.lifetime';
