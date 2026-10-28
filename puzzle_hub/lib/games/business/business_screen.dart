@@ -438,14 +438,11 @@ class _BusinessPlayScreenState extends State<BusinessPlayScreen> {
         body: Column(children: [
           Padding(padding: const EdgeInsets.fromLTRB(8, 4, 8, 6), child: _playerBar()),
           Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(6),
-                child: BusinessBoard(game: _g, world: widget.world, center: _center(), onSquare: _showSquare),
-              ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+              child: BusinessBoard(game: _g, world: widget.world, center: _center(), onSquare: _showSquare),
             ),
           ),
-          const SizedBox(height: 8),
         ]),
       );
 }

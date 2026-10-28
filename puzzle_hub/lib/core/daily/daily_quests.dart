@@ -126,7 +126,7 @@ class DailyQuests {
   static const kClaimedTotal = 'quests.claimedTotal';
 
   /// Enabled games (id -> title). Overridable in tests.
-  static Map<String, String> Function() gameTitles = () => {for (final g in games) g.id: g.title};
+  static Map<String, String> Function() gameTitles = () => {for (final g in games) if (!g.comingSoon) g.id: g.title};
 
   static Map<String, dynamic> _load() {
     final today = dateKey(DailyClock.today());

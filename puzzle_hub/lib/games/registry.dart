@@ -53,7 +53,7 @@ final List<GameInfo> allGames = [
     icon: Icons.stairs_rounded,
     emoji: '🐍',
     color: const Color(0xFF43A047),
-    featured: true,
+    comingSoon: true,
     builder: (_) => const SnakesScreen(),
   ),
   GameInfo(
@@ -63,7 +63,7 @@ final List<GameInfo> allGames = [
     icon: Icons.psychology_rounded,
     emoji: '🧠',
     color: const Color(0xFFB794FF),
-    featured: true,
+    comingSoon: true,
     builder: (_) => const BrainAgeScreen(),
   ),
   GameInfo(
@@ -127,7 +127,7 @@ final List<GameInfo> allGames = [
     icon: Icons.business_center_rounded,
     emoji: '💼',
     color: const Color(0xFF2E7D32),
-    featured: true,
+    comingSoon: true,
     builder: (_) => const BusinessScreen(),
   ),
   GameInfo(
@@ -238,6 +238,7 @@ final List<GameInfo> allGames = [
     icon: Icons.favorite_rounded,
     emoji: '🤰',
     color: const Color(0xFFFF8FB8),
+    comingSoon: true,
     builder: (_) => const MomMemoryScreen(),
   ),
 ];

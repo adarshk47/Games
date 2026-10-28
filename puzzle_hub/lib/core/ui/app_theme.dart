@@ -21,6 +21,7 @@ class AppThemeData {
     required this.highlight,
     this.price = 0,
     this.festive = false,
+    this.decor,
   // Private fields cannot be named initializing formals.
   // ignore: prefer_initializing_formals
   }) : _name = name;
@@ -51,6 +52,10 @@ class AppThemeData {
   /// Festive themes paint diya glows, marigold petals, rangoli and sparkles
   /// over the animated background.
   final bool festive;
+
+  /// Extra animated decoration: 'arcade' (floating game pieces), 'winter',
+  /// 'neon', 'christmas' or 'newyear'.
+  final String? decor;
 
   LinearGradient get swatch => LinearGradient(
         begin: Alignment.topLeft,
@@ -160,8 +165,80 @@ class AppThemeController {
       price: 500,
       festive: true,
     ),
+    AppThemeData(
+      id: 'arcade',
+      name: 'Master Arcade',
+      bg0: Color(0xFF080522), // night indigo
+      bg1: Color(0xFF241066), // icon purple
+      orb: Color(0xFF5B2BD6),
+      orb2: Color(0xFF22D3EE), // cyan
+      accent: Color(0xFF8B5CF6),
+      highlight: Color(0xFFFFD369), // M-coin gold
+      decor: 'arcade',
+    ),
+    AppThemeData(
+      id: 'winter',
+      name: 'Winter Lights',
+      bg0: Color(0xFF040D1F),
+      bg1: Color(0xFF0E2A52),
+      orb: Color(0xFF1E4C8F),
+      orb2: Color(0xFFA5F3FC),
+      accent: Color(0xFF60A5FA),
+      highlight: Color(0xFFE0F2FE),
+      decor: 'winter',
+    ),
+    AppThemeData(
+      id: 'neon',
+      name: 'Neon Night',
+      bg0: Color(0xFF05010D),
+      bg1: Color(0xFF1A0633),
+      orb: Color(0xFF7A00D6),
+      orb2: Color(0xFF00F0FF),
+      accent: Color(0xFFFF2BD6),
+      highlight: Color(0xFF00F0FF),
+      decor: 'neon',
+    ),
+    AppThemeData(
+      id: 'christmas',
+      name: 'Merry Christmas',
+      bg0: Color(0xFF06140C),
+      bg1: Color(0xFF14402A),
+      orb: Color(0xFFB91C1C),
+      orb2: Color(0xFFF59E0B),
+      accent: Color(0xFFDC2626),
+      highlight: Color(0xFFFDE68A),
+      decor: 'christmas',
+    ),
+    AppThemeData(
+      id: 'newyear',
+      name: 'Happy New Year',
+      bg0: Color(0xFF07071A),
+      bg1: Color(0xFF1F1147),
+      orb: Color(0xFF7C3AED),
+      orb2: Color(0xFFF472B6),
+      accent: Color(0xFFF59E0B),
+      highlight: Color(0xFFFDE68A),
+      decor: 'newyear',
+    ),
   ];
-  static final int defaultIndex = themes.indexWhere((t) => t.id == 'utsav');
+
+  /// Festive Utsav until Diwali season ends, then Master Arcade.
+  static final DateTime festiveEnds = DateTime(2026, 11, 16);
+
+  /// The season's theme for players who never picked one themselves:
+  /// Utsav (Diwali season 2026), Winter Lights (1–17 Dec and January),
+  /// Merry Christmas (18–27 Dec), Happy New Year (28 Dec – 3 Jan), else
+  /// Master Arcade.
+  static String seasonalId(DateTime now) {
+    if (now.isBefore(festiveEnds)) return 'utsav';
+    final m = now.month, d = now.day;
+    if (m == 12 && d >= 28 || m == 1 && d <= 3) return 'newyear';
+    if (m == 12 && d >= 18) return 'christmas';
+    if (m == 12 || m == 1) return 'winter';
+    return 'arcade';
+  }
+
+  static int get defaultIndex => themes.indexWhere((t) => t.id == seasonalId(DateTime.now()));
   static final ValueNotifier<int> current = ValueNotifier<int>(defaultIndex);
 
   /// Bumped whenever the unlocked set changes (so pickers can refresh).
@@ -171,7 +248,8 @@ class AppThemeController {
   static AppThemeData get theme => themes[current.value.clamp(0, themes.length - 1)];
 
   static Future<void> init() async {
-    // New installs start in the festive Utsav theme.
+    // Players who never picked a theme follow the season: Utsav during
+    // Diwali, Master Arcade afterwards.
     final i = int.tryParse(Storage.globalString(_kTheme) ?? '') ?? defaultIndex;
     current.value = (i >= 0 && i < themes.length) ? i : defaultIndex;
     await AppLayoutController.init();

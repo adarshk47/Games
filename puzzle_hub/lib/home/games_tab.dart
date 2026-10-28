@@ -23,7 +23,10 @@ import '../core/shortcuts/game_shortcuts.dart';
 import '../core/cloud/game_stats.dart';
 
 /// "Game of the day" pick: rotates through [list] by calendar date.
-GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
+GameInfo gameOfTheDay(List<GameInfo> all, [DateTime? now]) {
+  // "Coming soon" games are never the game of the day.
+  final playable = [for (final g in all) if (!g.comingSoon) g];
+  final list = playable.isEmpty ? all : playable;
   final d = now ?? DateTime.now();
   final day = DateTime.utc(
     d.year,
@@ -35,6 +38,16 @@ GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
 
 /// Opens [g] with the hub's fade + slide transition.
 Future<void> openGame(BuildContext context, GameInfo g) {
+  if (g.comingSoon) {
+    return showPremiumDialog(
+      context,
+      emoji: g.emoji ?? '🔒',
+      title: '${g.title} · ${tr('home.coming_soon')}',
+      message: tr('home.coming_soon_text', {'game': g.title}),
+      dismissible: true,
+      actions: [DialogAction(tr('common.ok'), () {}, primary: true)],
+    );
+  }
   unawaited(GameShortcuts.played(g.id, games)); // widget / icon shortcuts
   GameStats.played(g.id); // developer: which game is played most
   Analytics.gameOpened(g.id); // ad campaigns: installs that really play

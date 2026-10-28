@@ -53,6 +53,7 @@
   .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; color: var(--dim); font-size: 13px; }
   .badges span { background: var(--card); border: 1px solid var(--border); padding: 5px 10px; border-radius: 999px; }
   section { padding: 28px 0; }
+  .ad-slot { margin: 18px auto; max-width: 970px; min-height: 90px; text-align: center; }
   .shots { display: flex; gap: 18px; overflow-x: auto; padding: 4px 2px 12px; scroll-snap-type: x mandatory; }
   .shots figure { margin: 0; flex: 0 0 auto; width: min(240px, 70vw); scroll-snap-align: start; text-align: center; }
   .shots img { width: 100%; border-radius: 24px; border: 2px solid var(--zari); box-shadow: 0 14px 40px rgba(0,0,0,.45); display: block; }
@@ -111,7 +112,8 @@
     <img class="shot" src="/assets/shot-home.jpg" alt="Master G home screen: Ludo, Game of the Day and top games">
   </div>
 
-  <section id="screens">
+  <div class="ad-slot" data-ad-slot-name="top" hidden></div>
+<section id="screens">
 <h2>See it in action</h2>
 <p class="sub">Business, Dominoes, Ludo, Chess and 18 more – all in one free app.</p>
 <div class="shots">
@@ -120,6 +122,7 @@
 <figure><img src="/assets/shot-dominoes.jpg" alt="Dominoes" loading="lazy"><figcaption>Dominoes vs computer</figcaption></figure>
 </div>
 </section>
+<div class="ad-slot" data-ad-slot-name="middle" hidden></div>
 <section id="games">
     <h2>22 games for fun, memory, focus and logic</h2>
     <p class="sub">Every game has Easy, Medium, Hard and Extreme – and a "How to play" guide inside.</p>
@@ -176,7 +179,8 @@
     </div>
   </section>
 
-  <footer>
+  <div class="ad-slot" data-ad-slot-name="bottom" hidden></div>
+<footer>
     <div class="links">
       <a href="/play/">Play</a>
       <a href="/privacy.html">Privacy Policy</a>
@@ -186,5 +190,28 @@
     © 2026 Adarsh Kumar · Ideal World. All rights reserved.
   </footer>
 </div>
+<script>
+/* Ads: fill in after AdSense approval (same old account, after 22 Nov 2026).
+   ADSENSE_CLIENT = 'ca-pub-XXXXXXXXXXXXXXXX'; SLOTS = {top: '1234567890', ...}.
+   While ADSENSE_CLIENT is empty the slots stay hidden and nothing loads. */
+(function () {
+  var ADSENSE_CLIENT = '';
+  var SLOTS = { top: '', middle: '', bottom: '' };
+  if (!ADSENSE_CLIENT) return;
+  var s = document.createElement('script');
+  s.async = true;
+  s.crossOrigin = 'anonymous';
+  s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ADSENSE_CLIENT;
+  document.head.appendChild(s);
+  document.querySelectorAll('.ad-slot').forEach(function (el) {
+    var id = SLOTS[el.getAttribute('data-ad-slot-name')];
+    if (!id) return;
+    el.hidden = false;
+    el.innerHTML = '<ins class="adsbygoogle" style="display:block" data-ad-client="' + ADSENSE_CLIENT +
+      '" data-ad-slot="' + id + '" data-ad-format="auto" data-full-width-responsive="true"></ins>';
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  });
+})();
+</script>
 </body>
 </html>

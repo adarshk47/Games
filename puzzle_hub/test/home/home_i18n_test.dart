@@ -77,7 +77,7 @@ void main() {
       expect(t.takeException(), isNull);
       expect(find.text(tr('home.nav.games')), findsOneWidget);
 
-      for (final id in ['profile', 'games']) {
+      for (final id in ['shop', 'profile', 'games']) {
         await t.tap(find.byKey(ValueKey('nav_$id')));
         await t.pump(const Duration(milliseconds: 500));
         expect(t.takeException(), isNull, reason: 'tab $id');

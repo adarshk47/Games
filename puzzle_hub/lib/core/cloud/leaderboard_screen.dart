@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../games/registry.dart';
 import 'package:flutter/material.dart';
 
 import '../account/account_service.dart';
@@ -147,6 +148,66 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     _reload();
   }
 
+  /// Boards shown (games marked "Coming soon" are left out for now).
+  List<Board> get _boards {
+    final soon = {for (final g in allGames) if (g.comingSoon) g.id};
+    return [for (final b in leaderboards) if (b.gameId == null || !soon.contains(b.gameId)) b];
+  }
+
+  void _pickBoard() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1B1245),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (sheet) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 16, 14, 10),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text(tr('cloud.lb.choose_game'), style: const TextStyle(color: Pal.text, fontSize: 18, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 12),
+            Flexible(
+              child: GridView.count(
+                crossAxisCount: 4,
+                shrinkWrap: true,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 0.95,
+                children: [
+                  for (final b in _boards)
+                    GestureDetector(
+                      key: ValueKey('lb_board_${b.id}'),
+                      onTap: () {
+                        Navigator.of(sheet).pop();
+                        _select(b);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          color: b.id == _board.id ? Pal.goldDeep : Colors.white.withValues(alpha: 0.07),
+                          border: Border.all(color: b.id == _board.id ? Pal.gold : Pal.glassBorder),
+                        ),
+                        padding: const EdgeInsets.all(4),
+                        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                          Text(b.emoji, style: const TextStyle(fontSize: 24)),
+                          const SizedBox(height: 4),
+                          Text(boardTitle(b),
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(color: Pal.text, fontSize: 11, fontWeight: FontWeight.w700, height: 1.1)),
+                        ]),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
   void _selectScope(LeaderboardScope s) {
     if (s == _scope) return;
     _scope = s;
@@ -185,22 +246,26 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       ],
       body: Column(
         children: [
-          SizedBox(
-            height: 48,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              children: [
-                for (final b in leaderboards)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8, top: 4, bottom: 4),
-                    child: _chip(
-                      '${b.emoji} ${boardTitle(b)}',
-                      b.id == _board.id,
-                      () => _select(b),
-                    ),
-                  ),
-              ],
+          // One button with the chosen game; tapping opens every board in a
+          // compact grid (all games visible at once, no long scrolling).
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
+            child: GlassCard(
+              key: const ValueKey('lb_pick_board'),
+              blur: 0,
+              radius: 16,
+              onTap: _pickBoard,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              child: Row(children: [
+                Text(_board.emoji, style: const TextStyle(fontSize: 22)),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(boardTitle(_board),
+                      style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w900, fontSize: 16)),
+                ),
+                Text(tr('cloud.lb.change'), style: const TextStyle(color: Pal.gold, fontWeight: FontWeight.w800)),
+                const Icon(Icons.expand_more_rounded, color: Pal.gold),
+              ]),
             ),
           ),
           if (_board.tiers.isNotEmpty)

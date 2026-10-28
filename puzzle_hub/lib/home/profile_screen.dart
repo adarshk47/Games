@@ -886,6 +886,34 @@ class _ProfileBodyState extends State<_ProfileBody> {
           ),
         ),
         const SizedBox(height: 12),
+        // Our other websites, last in Profile.
+        GlassCard(
+          key: const ValueKey('profile_websites'),
+          padding: const EdgeInsets.fromLTRB(4, 10, 4, 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Text(
+                  tr('home.site.title'),
+                  style: const TextStyle(color: Pal.textDim, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 0.6),
+                ),
+              ),
+              for (final (emoji, key, url) in AppInfo.websites)
+                if (url != null)
+                  ListTile(
+                    key: ValueKey('profile_site_$key'),
+                    leading: Text(emoji, style: const TextStyle(fontSize: 22)),
+                    title: Text(tr(key), style: const TextStyle(color: Pal.text)),
+                    subtitle: Text(Uri.parse(url).host, style: const TextStyle(color: Pal.textDim)),
+                    trailing: const Icon(Icons.open_in_new_rounded, color: Pal.textDim, size: 18),
+                    onTap: () => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
+                  ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
         Center(
           child: Text(
             '${AppInfo.name} • ${tr('home.profile.version', {'v': AppInfo.version})}',

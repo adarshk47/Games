@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'festive/season_backgrounds.dart';
+import 'festive/arcade_background.dart';
 import 'package:flutter/material.dart';
 
 import 'app_theme.dart';
@@ -81,6 +83,18 @@ class _OrbPainter extends CustomPainter {
     orb(0.9, 0.45, s.width * 0.6, Color.lerp(tint, theme.highlight, 0.35)!, 2);
     orb(0.2, 0.9, s.width * 0.75, Color.lerp(tint, theme.orb2, 0.4)!, 4);
     if (theme.festive) paintFestiveLayer(canvas, s, t, glow: tint, accent: theme.accent);
+    switch (theme.decor) {
+      case 'arcade':
+        paintArcadeLayer(canvas, s, t);
+      case 'winter':
+        paintWinterLayer(canvas, s, t);
+      case 'neon':
+        paintNeonLayer(canvas, s, t);
+      case 'christmas':
+        paintChristmasLayer(canvas, s, t);
+      case 'newyear':
+        paintNewYearLayer(canvas, s, t);
+    }
   }
 
   @override

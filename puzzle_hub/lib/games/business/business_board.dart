@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/i18n.dart';
@@ -59,10 +61,12 @@ class BusinessBoard extends StatelessWidget {
   final ValueChanged<int>? onSquare;
 
   @override
-  Widget build(BuildContext context) => AspectRatio(
-        aspectRatio: 1,
+  // Fills all the space it gets (cells are taller than wide on phones), so
+  // the board uses the whole screen below the balance bar.
+  Widget build(BuildContext context) => SizedBox.expand(
         child: LayoutBuilder(builder: (context, c) {
-          final cell = c.maxWidth / 10;
+          final cw = c.maxWidth / 10, ch = c.maxHeight / 10;
+          final cell = math.min(cw, ch);
           return Container(
             decoration: BoxDecoration(
               color: const Color(0xFFE8F5E9),
@@ -72,16 +76,16 @@ class BusinessBoard extends StatelessWidget {
             child: Stack(children: [
               for (var s = 0; s < Biz.size; s++)
                 Positioned(
-                  left: bizCell(s).$2 * cell,
-                  top: bizCell(s).$1 * cell,
-                  width: cell,
-                  height: cell,
+                  left: bizCell(s).$2 * cw,
+                  top: bizCell(s).$1 * ch,
+                  width: cw,
+                  height: ch,
                   child: GestureDetector(
                     onTap: onSquare == null ? null : () => onSquare!(s),
-                    child: _SquareTile(game: game, s: s, world: world, cell: cell),
+                    child: _SquareTile(game: game, s: s, world: world, cell: cell, tall: ch / cw),
                   ),
                 ),
-              Positioned(left: cell, top: cell, width: cell * 8, height: cell * 8, child: center),
+              Positioned(left: cw, top: ch, width: cw * 8, height: ch * 8, child: center),
               // Tokens.
               for (var p = 0; p < game.players; p++)
                 if (!game.out[p])
@@ -89,8 +93,8 @@ class BusinessBoard extends StatelessWidget {
                     key: ValueKey('biz_token_$p'),
                     duration: const Duration(milliseconds: 450),
                     curve: Curves.easeOutBack,
-                    left: bizCell(game.pos[p]).$2 * cell + cell * (0.12 + (p % 2) * 0.42),
-                    top: bizCell(game.pos[p]).$1 * cell + cell * (0.38 + (p ~/ 2) * 0.3),
+                    left: bizCell(game.pos[p]).$2 * cw + cw * (0.12 + (p % 2) * 0.42),
+                    top: bizCell(game.pos[p]).$1 * ch + ch * (0.4 + (p ~/ 2) * 0.28),
                     width: cell * 0.36,
                     height: cell * 0.36,
                     child: Container(
@@ -109,11 +113,14 @@ class BusinessBoard extends StatelessWidget {
 }
 
 class _SquareTile extends StatelessWidget {
-  const _SquareTile({required this.game, required this.s, required this.world, required this.cell});
+  const _SquareTile({required this.game, required this.s, required this.world, required this.cell, this.tall = 1});
   final BusinessGame game;
   final int s;
   final bool world;
   final double cell;
+
+  /// Cell height / width (taller cells get bigger names).
+  final double tall;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +140,7 @@ class _SquareTile extends StatelessWidget {
       Sq.city => '',
     };
     final name = BizNames.square(s, world: world);
-    final fs = (cell * 0.17).clamp(5.0, 11.0);
+    final fs = (cell * 0.17 * math.min(tall, 1.35)).clamp(5.0, 12.0);
     return Container(
       decoration: BoxDecoration(
         color: o >= 0 ? bizPlayerColors[o].withValues(alpha: 0.18) : Colors.white,

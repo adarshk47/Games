@@ -13,6 +13,7 @@ class GameInfo {
     this.emoji,
     this.featured = false,
     this.enabled = true,
+    this.comingSoon = false,
   // Private fields cannot be named initializing formals.
   // ignore: prefer_initializing_formals
   })  : _title = title,
@@ -26,7 +27,7 @@ class GameInfo {
   /// Localised via keys `game.<id>.title` / `game.<id>.subtitle`, falling back
   /// to the text given in the registry.
   String get title => tr('game.$id.title', const {}, _title);
-  String get subtitle => tr('game.$id.subtitle', const {}, _subtitle);
+  String get subtitle => comingSoon ? '🔒 ${tr('home.coming_soon')}' : tr('game.$id.subtitle', const {}, _subtitle);
   final IconData icon;
   final Color color;
   final WidgetBuilder builder;
@@ -39,4 +40,7 @@ class GameInfo {
 
   /// Disabled games are fully built but hidden from the hub (enable in a later release).
   final bool enabled;
+
+  /// Shown in the hub as a locked "Coming soon" card (code stays in the app).
+  final bool comingSoon;
 }

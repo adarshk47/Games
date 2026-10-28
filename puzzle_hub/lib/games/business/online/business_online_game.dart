@@ -229,11 +229,9 @@ class _BusinessOnlineGameScreenState extends State<BusinessOnlineGameScreen> {
                 ]),
               ),
               Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: BusinessBoard(game: g, world: _world, center: _center(g)),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+                  child: BusinessBoard(game: g, world: _world, center: _center(g)),
                 ),
               ),
               const SizedBox(height: 8),

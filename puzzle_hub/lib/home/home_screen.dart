@@ -67,6 +67,12 @@ class _HomeScreenState extends State<HomeScreen>
       Icons.castle_rounded,
     ),
     _NavItem(
+      'shop',
+      'home.nav.shop',
+      Icons.storefront_outlined,
+      Icons.storefront_rounded,
+    ),
+    _NavItem(
       'profile',
       'home.nav.profile',
       Icons.person_outline_rounded,
@@ -123,10 +129,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// Same pick as the Games tab banner: one game per calendar day.
   GameInfo? get _gameOfDay {
-    if (games.isEmpty) return null;
+    final list = [for (final g in games) if (!g.comingSoon) g];
+    if (list.isEmpty) return null;
     final now = DateTime.now();
     final day = now.difference(DateTime(now.year)).inDays;
-    return games[day % games.length];
+    return list[day % list.length];
   }
 
   Future<void> _showWelcome() async {
@@ -215,12 +222,13 @@ class _HomeScreenState extends State<HomeScreen>
                     curve: Curves.easeOut,
                   ),
                   child: IndexedStack(
-                    index: _tab == 0 ? 0 : 1,
+                    index: switch (_tab) { 3 => 1, 4 => 2, _ => 0 },
                     children: [
                       GamesTab(
                         bottomInset: inset,
-                        onOpenShop: () => ShopScreen.open(context),
+                        onOpenShop: () => _select(3),
                       ),
+                      padded(const ShopScreen()),
                       padded(const ProfileTab()),
                     ],
                   ),
