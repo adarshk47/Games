@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'business/business_screen.dart';
 import 'dominoes/dominoes_screen.dart';
+import '../core/release_stage.dart';
 import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
@@ -30,7 +31,13 @@ import 'tile_match/tile_match_screen.dart';
 /// Release builds never set it, so hidden games stay hidden there.
 const bool kShowAllGames = bool.fromEnvironment('SHOW_ALL_GAMES');
 
-final List<GameInfo> games = [for (final g in allGames) if (g.enabled || kShowAllGames) g];
+final List<GameInfo> games = [
+  // Games opened in this release come first, then the usual order.
+  for (final g in allGames)
+    if ((g.enabled || kShowAllGames) && kStageNewGames.contains(g.id)) g,
+  for (final g in allGames)
+    if ((g.enabled || kShowAllGames) && !kStageNewGames.contains(g.id)) g,
+];
 
 /// Every game that exists in the codebase. To release a hidden game, flip its
 /// `enabled` flag to true (and bump the version).
@@ -53,7 +60,8 @@ final List<GameInfo> allGames = [
     icon: Icons.stairs_rounded,
     emoji: '🐍',
     color: const Color(0xFF43A047),
-    comingSoon: true,
+    featured: kStageNewGames.contains('snakes'),
+    comingSoon: kStage < kGameStage['snakes']!,
     builder: (_) => const SnakesScreen(),
   ),
   GameInfo(
@@ -63,7 +71,8 @@ final List<GameInfo> allGames = [
     icon: Icons.psychology_rounded,
     emoji: '🧠',
     color: const Color(0xFFB794FF),
-    comingSoon: true,
+    featured: kStageNewGames.contains('brain_age'),
+    comingSoon: kStage < kGameStage['brain_age']!,
     builder: (_) => const BrainAgeScreen(),
   ),
   GameInfo(
@@ -127,7 +136,8 @@ final List<GameInfo> allGames = [
     icon: Icons.business_center_rounded,
     emoji: '💼',
     color: const Color(0xFF2E7D32),
-    comingSoon: true,
+    featured: kStageNewGames.contains('business'),
+    comingSoon: kStage < kGameStage['business']!,
     builder: (_) => const BusinessScreen(),
   ),
   GameInfo(
@@ -238,7 +248,21 @@ final List<GameInfo> allGames = [
     icon: Icons.favorite_rounded,
     emoji: '🤰',
     color: const Color(0xFFFF8FB8),
-    comingSoon: true,
+    featured: kStageNewGames.contains('mom_memory'),
+    comingSoon: kStage < kGameStage['mom_memory']!,
     builder: (_) => const MomMemoryScreen(),
   ),
+  // Stage 3: two placeholder cards for games announced later.
+  for (final n in const [1, 2])
+    GameInfo(
+      id: 'soon_$n',
+      title: 'New game',
+      subtitle: 'Coming soon',
+      icon: Icons.card_giftcard_rounded,
+      emoji: n == 1 ? '🎁' : '✨',
+      color: n == 1 ? const Color(0xFF7C5CFF) : const Color(0xFF0EA5E9),
+      enabled: kStage >= 3,
+      comingSoon: true,
+      builder: (_) => const SizedBox.shrink(),
+    ),
 ];

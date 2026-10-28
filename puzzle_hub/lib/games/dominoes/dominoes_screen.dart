@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../core/ui/player_names.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -147,7 +148,7 @@ class _DominoesPlayScreenState extends State<DominoesPlayScreen> {
     super.dispose();
   }
 
-  String _name(int seat) => seat == 0 ? tr('domino.you') : tr('domino.cpu', {'n': seat});
+  String _name(int seat) => seat == 0 ? tr('domino.you') : PlayerNames.bot(seat);
 
   void _drive() {
     _bot?.cancel();
@@ -292,7 +293,7 @@ class _DominoesPlayScreenState extends State<DominoesPlayScreen> {
         border: Border.all(color: active ? Pal.gold : Pal.glassBorder, width: active ? 2 : 1),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text('🤖 ${_name(seat)}', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 13)),
+        Text(_name(seat), style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 13)),
         const SizedBox(height: 4),
         Row(mainAxisSize: MainAxisSize.min, children: [
           for (var i = 0; i < math.min(_g.hands[seat].length, 7); i++)

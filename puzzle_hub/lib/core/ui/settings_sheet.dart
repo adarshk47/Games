@@ -338,15 +338,18 @@ class ThemePicker extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            itemCount: AppThemeController.themes.length,
+            itemCount: AppThemeController.visibleIndices.length,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
-            itemBuilder: (_, i) => _Swatch(
-              key: ValueKey('theme_swatch_${AppThemeController.themes[i].id}'),
-              theme: AppThemeController.themes[i],
-              selected: i == cur,
-              unlocked: AppThemeController.isUnlocked(i),
-              onTap: () => _tap(context, i),
-            ),
+            itemBuilder: (_, k) {
+              final i = AppThemeController.visibleIndices[k];
+              return _Swatch(
+                key: ValueKey('theme_swatch_${AppThemeController.themes[i].id}'),
+                theme: AppThemeController.themes[i],
+                selected: i == cur,
+                unlocked: AppThemeController.isUnlocked(i),
+                onTap: () => _tap(context, i),
+              );
+            },
           ),
         ),
       ),

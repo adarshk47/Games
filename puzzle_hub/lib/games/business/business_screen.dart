@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../core/ui/player_names.dart';
 import '../ludo/online/ludo_online_lobby.dart';
 import 'dart:math' as math;
 
@@ -112,6 +113,10 @@ class _BusinessScreenState extends State<BusinessScreen> {
           Wrap(spacing: 8, runSpacing: 8, children: [
             for (final n in const [2, 3, 4]) _chip(tr('ludo.n_players', {'n': n}), _players == n, () => setState(() => _players = n), key: ValueKey('biz_players_$n')),
           ]),
+          if (!_cpu) ...[
+            _section(tr('players.names')),
+            PlayerNamesEditor(count: _players, colors: bizPlayerColors),
+          ],
           if (_cpu) ...[
             _section(tr('ludo.difficulty')),
             Wrap(spacing: 8, runSpacing: 8, children: [
@@ -168,8 +173,8 @@ class _BusinessPlayScreenState extends State<BusinessPlayScreen> {
   bool _isBot(int seat) => widget.cpu && seat > 0;
 
   String _name(int seat) => widget.cpu
-      ? (seat == 0 ? tr('domino.you') : tr('domino.cpu', {'n': seat}))
-      : tr('biz.player_n', {'n': seat + 1});
+      ? (seat == 0 ? tr('domino.you') : PlayerNames.bot(seat))
+      : PlayerNames.friend(seat);
 
   String _money(int v) => BizNames.money(v, world: widget.world);
 

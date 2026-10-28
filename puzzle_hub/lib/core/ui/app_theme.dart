@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../release_stage.dart';
 import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
@@ -22,6 +23,7 @@ class AppThemeData {
     this.price = 0,
     this.festive = false,
     this.decor,
+    this.layout = AppLayout.arcade,
   // Private fields cannot be named initializing formals.
   // ignore: prefer_initializing_formals
   }) : _name = name;
@@ -47,7 +49,8 @@ class AppThemeData {
   /// Coins needed to unlock; 0 = free.
   final int price;
 
-  bool get free => price == 0;
+  /// Stage 3 (2.7.0): every theme is free.
+  bool get free => price == 0 || kStage >= 3;
 
   /// Festive themes paint diya glows, marigold petals, rangoli and sparkles
   /// over the animated background.
@@ -56,6 +59,9 @@ class AppThemeData {
   /// Extra animated decoration: 'arcade' (floating game pieces), 'winter',
   /// 'neon', 'christmas' or 'newyear'.
   final String? decor;
+
+  /// Home layout that goes with this theme (applied when the theme is picked).
+  final AppLayout layout;
 
   LinearGradient get swatch => LinearGradient(
         begin: Alignment.topLeft,
@@ -151,6 +157,7 @@ class AppThemeController {
       orb2: Color(0xFF0F8A84), // peacock teal
       accent: Color(0xFFFF8F1F), // genda orange
       highlight: Color(0xFFFFC93C), // haldi
+      layout: AppLayout.festive,
       festive: true,
     ),
     AppThemeData(
@@ -163,6 +170,7 @@ class AppThemeController {
       accent: Color(0xFFE0A526), // zari gold
       highlight: Color(0xFFFFE08A),
       price: 500,
+      layout: AppLayout.festive,
       festive: true,
     ),
     AppThemeData(
@@ -238,7 +246,11 @@ class AppThemeController {
     return 'arcade';
   }
 
-  static int get defaultIndex => themes.indexWhere((t) => t.id == seasonalId(DateTime.now()));
+  static int get defaultIndex => themes.indexWhere((t) => t.id == (kStage >= 3 ? seasonalId(DateTime.now()) : 'utsav'));
+
+  /// Themes that can be picked in this release (see release_stage.dart).
+  static bool visible(int i) => i >= 0 && i < themes.length && themeInStage(themes[i].id);
+  static List<int> get visibleIndices => [for (var i = 0; i < themes.length; i++) if (visible(i)) i];
   static final ValueNotifier<int> current = ValueNotifier<int>(defaultIndex);
 
   /// Bumped whenever the unlocked set changes (so pickers can refresh).
@@ -250,9 +262,13 @@ class AppThemeController {
   static Future<void> init() async {
     // Players who never picked a theme follow the season: Utsav during
     // Diwali, Master Arcade afterwards.
-    final i = int.tryParse(Storage.globalString(_kTheme) ?? '') ?? defaultIndex;
-    current.value = (i >= 0 && i < themes.length) ? i : defaultIndex;
+    final saved = int.tryParse(Storage.globalString(_kTheme) ?? '');
+    final i = saved ?? defaultIndex;
+    current.value = visible(i) ? i : defaultIndex;
     await AppLayoutController.init();
+    // Seasonal theme (never picked by the player): use its layout too.
+    // (Utsav keeps the Arcade home that new installs have had since 2.1.)
+    if (saved == null && theme.decor != null) AppLayoutController.current.value = theme.layout;
   }
 
   static Set<String> get _unlockedIds =>
@@ -262,9 +278,11 @@ class AppThemeController {
 
   /// Applies theme [i] if it is unlocked. Returns false when locked.
   static Future<bool> select(int i) async {
-    if (i < 0 || i >= themes.length || !isUnlocked(i)) return false;
+    if (!visible(i) || !isUnlocked(i)) return false;
     current.value = i;
     await Storage.setGlobalString(_kTheme, '$i');
+    // The home layout follows the theme (2.6.0+; it can still be changed in Settings).
+    if (kStage >= 2) await AppLayoutController.select(themes[i].layout);
     return true;
   }
 

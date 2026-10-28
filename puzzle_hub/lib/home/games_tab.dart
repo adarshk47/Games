@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'theme_styles.dart';
 import '../core/cloud/analytics.dart';
 import 'dart:math' as math;
 
@@ -266,6 +267,10 @@ class _GamesTabState extends State<GamesTab> {
             child: _Header(onOpenShop: widget.onOpenShop),
           ),
         ),
+        if (ThemeStyle.greeting() case final greet?)
+          SliverToBoxAdapter(
+            child: Padding(padding: EdgeInsets.fromLTRB(hPad, 10, hPad, 0), child: _enter(greet, 100)),
+          ),
         if (featured.isNotEmpty)
           SliverToBoxAdapter(
             child: Padding(
@@ -279,11 +284,14 @@ class _GamesTabState extends State<GamesTab> {
                     padding: EdgeInsets.symmetric(horizontal: hPad),
                     itemCount: featured.length,
                     separatorBuilder: (_, _) => const SizedBox(width: 12),
-                    itemBuilder: (context, i) => _HeroCard(
-                      key: ValueKey('game_${featured[i].id}'),
-                      g: featured[i],
-                      width: math.min(width * 0.78, 340),
-                      onTap: () => _open(featured[i]),
+                    itemBuilder: (context, i) => ThemeStyle.frame(
+                      _HeroCard(
+                        key: ValueKey('game_${featured[i].id}'),
+                        g: featured[i],
+                        width: math.min(width * 0.78, 340),
+                        onTap: () => _open(featured[i]),
+                      ),
+                      radius: 26,
                     ),
                   ),
                 ),
@@ -328,11 +336,13 @@ class _GamesTabState extends State<GamesTab> {
                   padding: EdgeInsets.symmetric(horizontal: hPad),
                   itemCount: list.length,
                   separatorBuilder: (_, _) => const SizedBox(width: 12),
-                  itemBuilder: (context, j) => _ShelfTile(
-                    key: featured.contains(list[j]) || (i == 0 && top.length >= 3) ? null : ValueKey('game_${list[j].id}'),
-                    g: list[j],
-                    rank: i == 0 && top.length >= 3 ? j + 1 : null,
-                    onTap: () => _open(list[j]),
+                  itemBuilder: (context, j) => ThemeStyle.frame(
+                    _ShelfTile(
+                      key: featured.contains(list[j]) || (i == 0 && top.length >= 3) ? null : ValueKey('game_${list[j].id}'),
+                      g: list[j],
+                      rank: i == 0 && top.length >= 3 ? j + 1 : null,
+                      onTap: () => _open(list[j]),
+                    ),
                   ),
                 ),
               ),

@@ -1,8 +1,10 @@
+import 'release_stage.dart';
+
 /// App-wide constants shown in Profile (keep [version] in sync with pubspec.yaml).
 class AppInfo {
   AppInfo._();
   static const name = 'Master G';
-  static const version = '2.4.0';
+  static const version = kStageVersion;
   static const copyrightYear = 2026;
   static const brandUrl = 'https://mitrojan.in';
 

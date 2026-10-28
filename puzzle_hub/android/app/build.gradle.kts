@@ -63,9 +63,12 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             // Local crash-testing only: `flutter build apk --release --android-project-arg=rtest=true`
             // installs as a separate app next to the Play Store build.
+            // `rtest=1|2|3` installs one test app per staged release (V1/V2/V3).
             if (project.hasProperty("rtest")) {
-                applicationIdSuffix = ".rtest"
-                manifestPlaceholders["appLabel"] = "Master G Test"
+                val rt = project.property("rtest").toString()
+                val n = if (rt in listOf("1", "2", "3")) rt else ""
+                applicationIdSuffix = ".rtest$n"
+                manifestPlaceholders["appLabel"] = if (n.isEmpty()) "Master G Test" else "Master G V$n"
             }
             signingConfig = if (keystoreProperties.containsKey("storeFile"))
                 signingConfigs.getByName("release") else signingConfigs.getByName("debug")

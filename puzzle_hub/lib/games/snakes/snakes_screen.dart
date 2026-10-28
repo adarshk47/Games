@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../core/ui/player_names.dart';
 import '../ludo/dice_input.dart';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -44,7 +45,7 @@ List<LudoSeat> snakesSeats(int players, bool cpu) {
   return [
     for (var i = 0; i < players; i++)
       LudoSeat(cols[i], cpu && i > 0 ? SeatKind.bot : SeatKind.human,
-          name: cpu ? (i == 0 ? tr('ludo.you') : tr('ludo.cpu_n', {'n': i})) : tr('ludo.colour.${cols[i]}')),
+          name: cpu ? (i == 0 ? tr('ludo.you') : PlayerNames.bot(i)) : PlayerNames.friend(i)),
   ];
 }
 
@@ -116,6 +117,10 @@ class _SnakesScreenState extends State<SnakesScreen> {
         Wrap(spacing: 8, children: [
           for (final n in const [2, 3, 4]) _chip(tr('ludo.n_players', {'n': n}), _players == n, () => setState(() => _players = n)),
         ]),
+        if (!_cpu) ...[
+          _section(tr('players.names')),
+          PlayerNamesEditor(count: _players, colors: [for (final c in ludoColours(_players)) ludoColors[c]]),
+        ],
         _section(tr('dice.title')),
         DiceModePicker(value: _dice, color: _tint, onChanged: (m) => setState(() => _dice = m)),
         Padding(

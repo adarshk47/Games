@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../core/ui/player_names.dart';
 import '../../core/economy/undo_offer.dart';
 import '../../core/economy/undo_mode.dart';
 import 'dice_input.dart';
@@ -43,7 +44,7 @@ class LudoSetup {
         LudoSeat(
           cols[i],
           mode == LudoMode.cpu && i > 0 ? SeatKind.bot : SeatKind.human,
-          name: mode == LudoMode.cpu ? (i == 0 ? tr('ludo.you') : tr('ludo.cpu_n', {'n': i})) : '',
+          name: mode == LudoMode.cpu ? (i == 0 ? tr('ludo.you') : PlayerNames.bot(i)) : PlayerNames.friend(i),
         ),
     ];
   }
@@ -200,6 +201,10 @@ class _LudoScreenState extends State<LudoScreen> {
         Wrap(spacing: 8, children: [
           for (final n in const [2, 3, 4]) _chip(tr('ludo.n_players', {'n': n}), _players == n, () => setState(() => _players = n), key: ValueKey('ludo_players_$n')),
         ]),
+        if (_mode == LudoMode.local) ...[
+          _section(tr('players.names')),
+          PlayerNamesEditor(count: _players, colors: [for (final c in ludoColours(_players)) ludoColors[c]]),
+        ],
         if (_mode == LudoMode.cpu) ...[
           _section(tr('ludo.difficulty')),
           Wrap(spacing: 8, children: [
