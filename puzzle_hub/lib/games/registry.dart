@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'business/business_screen.dart';
 import 'dominoes/dominoes_screen.dart';
 import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
@@ -118,6 +119,16 @@ final List<GameInfo> allGames = [
     emoji: '♟️',
     color: const Color(0xFFE5E7EB),
     builder: (_) => const ChessScreen(),
+  ),
+  GameInfo(
+    id: 'business',
+    title: 'Business',
+    subtitle: 'Buy cities, build hotels, collect rent',
+    icon: Icons.business_center_rounded,
+    emoji: '💼',
+    color: const Color(0xFF2E7D32),
+    featured: true,
+    builder: (_) => const BusinessScreen(),
   ),
   GameInfo(
     id: 'dominoes',

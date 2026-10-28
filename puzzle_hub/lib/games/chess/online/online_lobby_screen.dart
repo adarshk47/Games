@@ -21,7 +21,7 @@ void openOnlineGame(BuildContext context, String gameId) {
 
 /// Accepts [c] (Chess or Ludo) and opens the new game.
 Future<void> acceptChallenge(Challenge c, NavigatorState? nav) async {
-  if (c.game == 'ludo' || c.game == 'snakes') {
+  if (c.game == 'ludo' || c.game == 'snakes' || c.game == 'business') {
     final id = await LudoOnline.I.acceptChallenge(c);
     if (nav != null) openBoardGame(nav, id, c.game);
   } else {
@@ -38,8 +38,13 @@ void installChallengePopup() {
     showPremiumDialog(
       ctx,
       title: tr('online.challenged', {'name': '@${c.fromName}'}),
-      message: tr(switch (c.game) { 'ludo' => 'online.challenged_text_ludo', 'snakes' => 'online.challenged_text_snakes', _ => 'online.challenged_text' }),
-      emoji: switch (c.game) { 'ludo' => '🎲', 'snakes' => '🐍', _ => '♟️' },
+      message: tr(switch (c.game) {
+        'ludo' => 'online.challenged_text_ludo',
+        'snakes' => 'online.challenged_text_snakes',
+        'business' => 'online.challenged_text_business',
+        _ => 'online.challenged_text',
+      }),
+      emoji: switch (c.game) { 'ludo' => '🎲', 'snakes' => '🐍', 'business' => '💼', _ => '♟️' },
       actions: [
         DialogAction(tr('online.accept'), () async {
           try {

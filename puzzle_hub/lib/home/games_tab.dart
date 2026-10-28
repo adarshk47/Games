@@ -217,7 +217,7 @@ class _GamesTabState extends State<GamesTab> {
 
   /// Game shelves of the Arcade layout (any game not listed goes to "More").
   static const _shelves = [
-    ('home.shelf.board', '🎲', ['ludo', 'snakes', 'chess', 'dominoes']),
+    ('home.shelf.board', '🎲', ['ludo', 'snakes', 'business', 'chess', 'dominoes']),
     ('home.shelf.brain', '🧠', ['brain_age', 'memory_boost', 'focus_color', 'sudoku', 'game_2048']),
     ('home.shelf.puzzle', '🧩', ['block_puzzle', 'arrow_maze', 'maze_escape', 'flow_pairs', 'sliding_puzzle', 'minesweeper']),
     ('home.shelf.sort', '🎯', ['ball_sort', 'screw_jam', 'bus_jam', 'tile_match', 'hexa_sort']),

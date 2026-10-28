@@ -118,7 +118,11 @@ class LudoOnline {
       _db.collection('ludo_games').doc(id).snapshots().map((s) => s.exists ? LudoOnlineGame.fromDoc(s.id, s.data()!) : null);
 
   /// Appends [a] if the log is still [expectLen] long (no double moves).
-  Future<bool> act(String id, int expectLen, LudoAction a, {String? endWinner}) async {
+  Future<bool> act(String id, int expectLen, LudoAction a, {String? endWinner}) =>
+      actRaw(id, expectLen, encodeLudo(a), endWinner: endWinner);
+
+  /// Appends an already encoded move (Ludo / Saanp-Seedhi / Business).
+  Future<bool> actRaw(String id, int expectLen, int value, {String? endWinner}) async {
     final ref = _db.collection('ludo_games').doc(id);
     try {
       return await _db.runTransaction((tx) async {
@@ -126,7 +130,7 @@ class LudoOnline {
         final log = [for (final v in s.data()?['log'] as List? ?? const []) (v as num).toInt()];
         if (log.length != expectLen || s.data()?['status'] == 'over') return false;
         tx.update(ref, {
-          'log': [...log, encodeLudo(a)],
+          'log': [...log, value],
           'updatedAt': FieldValue.serverTimestamp(),
           if (endWinner != null) ...{'status': 'over', 'winner': endWinner},
         });

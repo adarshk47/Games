@@ -34,6 +34,7 @@ service cloud.firestore {
         'ludo': 1000000,
         'snakes': 1000000,
         'dominoes': 1000000,
+        'business': 1000000,
         'brain_age': 1000,
         'sudoku': 100000,
         'arrow_maze': 100000,
@@ -304,8 +305,12 @@ service cloud.firestore {
       function isPlayer() {
         return signedIn() && request.auth.uid in resource.data.players;
       }
+      // Ludo / Saanp-Seedhi: roll = 100 + seat, move = seat * 10 + token.
+      // Business: seat * 1000 + code.
       function seatOf(v) {
-        return v >= 100 ? v - 100 : int(v / 10);
+        return resource.data.get('game', 'ludo') == 'business'
+          ? int(v / 1000)
+          : (v >= 100 ? v - 100 : int(v / 10));
       }
       allow read: if isPlayer();
       allow create: if signedIn()

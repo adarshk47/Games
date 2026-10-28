@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import '../../business/online/business_online_game.dart';
 import '../../../core/share/score_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,11 @@ import 'ludo_online_service.dart';
 
 /// Opens an online Ludo or Saanp-Seedhi game.
 void openBoardGame(NavigatorState nav, String id, String game) => nav.push(MaterialPageRoute<void>(
-      builder: (_) => game == 'snakes' ? SnakesOnlineGameScreen(gameId: id) : LudoOnlineGameScreen(gameId: id),
+      builder: (_) => switch (game) {
+        'snakes' => SnakesOnlineGameScreen(gameId: id),
+        'business' => BusinessOnlineGameScreen(gameId: id),
+        _ => LudoOnlineGameScreen(gameId: id),
+      },
     ));
 
 /// Online Ludo / Saanp-Seedhi: quick match, rooms with a code for 2–4
@@ -344,7 +349,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
                       glow: Pal.gold,
                       padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
                       child: Row(children: [
-                        Text(switch (c.game) { 'ludo' => '🎲 ', 'snakes' => '🐍 ', _ => '♟️ ' }),
+                        Text(switch (c.game) { 'ludo' => '🎲 ', 'snakes' => '🐍 ', 'business' => '💼 ', _ => '♟️ ' }),
                         Expanded(child: Text('@${c.fromName}', style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800))),
                         TextButton(onPressed: () => OnlineService.I.decline(c), child: Text(tr('online.decline'), style: const TextStyle(color: Pal.textDim))),
                         PremiumButton(
@@ -379,7 +384,7 @@ class _LudoOnlineLobbyState extends State<LudoOnlineLobby> {
                     blur: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     child: Row(children: [
-                      Text(widget.game == 'snakes' ? '🐍' : '🎲', style: const TextStyle(fontSize: 20)),
+                      Text(switch (widget.game) { 'snakes' => '🐍', 'business' => '💼', _ => '🎲' }, style: const TextStyle(fontSize: 20)),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text([for (final (i, n) in g.names.indexed) if (g.players[i] != me) '@$n'].join(', '),

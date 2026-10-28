@@ -58,7 +58,7 @@ void main() {
 
   testWidgets('only enabled games appear in the grid', (t) async {
     await _setup();
-    await _pumpHome(t, const Size(1024, 2400));
+    await _pumpHome(t, const Size(2000, 3600));
     for (final g in allGames) {
       expect(find.byKey(ValueKey('game_${g.id}'), skipOffstage: false), g.enabled ? findsOneWidget : findsNothing);
     }

@@ -127,6 +127,7 @@ const List<Board> leaderboards = [
   Board('ludo', 'Ludo', '🎲', gameId: 'ludo', maxScore: 1000000, metric: BoardMetric.wins),
   Board('snakes', 'Saanp-Seedhi', '🐍', gameId: 'snakes', maxScore: 1000000, metric: BoardMetric.wins),
   Board('dominoes', 'Dominoes', '🁫', gameId: 'dominoes', maxScore: 1000000, metric: BoardMetric.wins),
+  Board('business', 'Business', '💼', gameId: 'business', maxScore: 1000000, metric: BoardMetric.wins),
   Board('brain_age', 'Brain Age', '🧠', gameId: 'brain_age', maxScore: 1000, metric: BoardMetric.best),
   Board('sudoku', 'Sudoku', '🔢', gameId: 'sudoku', maxScore: 100000, metric: BoardMetric.progress),
   Board('arrow_maze', 'Arrow Maze', '➰', gameId: 'arrow_maze', maxScore: 100000, metric: BoardMetric.progress),

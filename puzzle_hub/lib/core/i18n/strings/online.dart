@@ -583,4 +583,15 @@ const Map<String, Map<String, String>> onlineStrings = {
     'mr': "🎮 Master G वर माझ्यासोबत {game} खेळा! माझे नाव {name} – Master G → {game} → ऑनलाइनमध्ये शोधा.",
     'sa': "🎮 Master G मध्ये मया सह {game} क्रीडतु! मम नाम {name} – Master G → {game} → जाले अन्विष्यतु।",
   },
+  'online.challenged_text_business': {
+    'en': "wants to play Business with you online!",
+    'hi': "आपके साथ ऑनलाइन बिज़नेस खेलना चाहता है!",
+    'hinglish': "aapke saath online Business khelna chahta hai!",
+    'te': "మీతో ఆన్‌లైన్ బిజినెస్ ఆడాలనుకుంటున్నారు!",
+    'ta': "உங்களுடன் ஆன்லைனில் பிசினஸ் விளையாட விரும்புகிறார்!",
+    'pa': "ਤੁਹਾਡੇ ਨਾਲ ਆਨਲਾਈਨ ਬਿਜ਼ਨੈੱਸ ਖੇਡਣਾ ਚਾਹੁੰਦਾ ਹੈ!",
+    'bho': "रउआ साथे ऑनलाइन बिजनेस खेले चाहत बा!",
+    'mr': "तुमच्यासोबत ऑनलाइन बिझनेस खेळू इच्छितो!",
+    'sa': "भवता सह अन्तर्जाले व्यापारं क्रीडितुम् इच्छति!",
+  },
 };

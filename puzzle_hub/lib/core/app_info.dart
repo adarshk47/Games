@@ -2,7 +2,7 @@
 class AppInfo {
   AppInfo._();
   static const name = 'Master G';
-  static const version = '2.3.1';
+  static const version = '2.4.0';
   static const copyrightYear = 2026;
   static const brandUrl = 'https://mitrojan.in';
   static const privacyUrl = 'https://adarshk47.github.io/Idealworld/master-g/privacy.html';
