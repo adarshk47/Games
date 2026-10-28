@@ -5,25 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Master G – 22 Games: Ludo, Business, Chess, Dominoes & Puzzles | Play free</title>
 <meta name="description" content="Master G: 22 games in one app – Ludo and Snakes &amp; Ladders online, Chess, Brain Age test, Block Puzzle, Sudoku, Ball Sort and more. Play free in your browser, on iPhone or Android, in 9 languages.">
-<meta name="theme-color" content="#4A1410">
+<meta name="theme-color" content="#3B1C7A">
 <link rel="icon" href="/play/favicon.png">
 <link rel="apple-touch-icon" href="/play/icons/apple-touch-icon.png">
 <meta property="og:title" content="Master G – Ludo, Chess, Business &amp; 22 games">
 <meta property="og:description" content="Ludo, Chess, Brain Age, Sudoku and more. Free on web, iPhone and Android.">
-<meta property="og:image" content="/assets/feature.png">
+<meta property="og:image" content="https://games.mitrojan.in/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
   :root {
-    --bg0: #1c0805; --bg1: #4a1410; --gold: #ffd369; --zari: #d4af37;
-    --marigold: #ff9f1c; --text: #fff7ea; --dim: #e6cfb3; --card: rgba(255,255,255,.07);
-    --border: rgba(255,224,138,.28);
+    --bg0: #120a2e; --bg1: #3b1c7a; --gold: #ffd369; --zari: #d4af37;
+    --marigold: #ffb020; --text: #f7f3ff; --dim: #d9d0f2; --card: rgba(255,255,255,.07);
+    --border: rgba(255,211,105,.30);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
     color: var(--text);
-    background: radial-gradient(1200px 600px at 20% -10%, #7a2a14 0%, transparent 60%),
-                radial-gradient(900px 500px at 110% 10%, #3b1a6b 0%, transparent 55%),
+    background: radial-gradient(1200px 600px at 20% -10%, #5b2bb5 0%, transparent 60%),
+                radial-gradient(900px 500px at 110% 10%, #1f6f8b 0%, transparent 55%),
                 linear-gradient(180deg, var(--bg1), var(--bg0) 60%);
     min-height: 100vh;
     line-height: 1.55;
@@ -52,6 +53,10 @@
   .badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; color: var(--dim); font-size: 13px; }
   .badges span { background: var(--card); border: 1px solid var(--border); padding: 5px 10px; border-radius: 999px; }
   section { padding: 28px 0; }
+  .shots { display: flex; gap: 18px; overflow-x: auto; padding: 4px 2px 12px; scroll-snap-type: x mandatory; }
+  .shots figure { margin: 0; flex: 0 0 auto; width: min(240px, 70vw); scroll-snap-align: start; text-align: center; }
+  .shots img { width: 100%; border-radius: 24px; border: 2px solid var(--zari); box-shadow: 0 14px 40px rgba(0,0,0,.45); display: block; }
+  .shots figcaption { color: var(--dim); font-size: 13px; margin-top: 8px; }
   h2 { font-size: 26px; margin: 0 0 6px; }
   .sub { color: var(--dim); margin: 0 0 18px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
@@ -92,9 +97,8 @@
 
   <div class="hero">
     <div>
-      <h1>Ludo, Chess &amp; your daily <span>brain gym</span> – 22 games in one app</h1>
-      <p>Block Puzzle, 2048, Chess, Sudoku, Ball Sort, Maze and more. Easy to Extreme levels, leaderboards and
-        festive themes – free in your browser, on iPhone and on Android, in 9 languages.</p>
+      <h1>Ludo, Business, Chess &amp; your daily <span>brain gym</span> – 22 games in one app</h1>
+      <p>Play Ludo, Business (Vyapar) and Snakes &amp; Ladders with friends online, Chess, Dominoes, the Brain Age test, Arrow Maze, Sudoku and more. Easy to Extreme levels, leaderboards with your country flag and festive themes – free in your browser, on iPhone and on Android, in 9 languages.</p>
       <div class="cta">
         <a class="btn play" href="/play/">▶ Play now</a>
         <a class="btn alt" href="https://play.google.com/store/apps/details?id=com.memorypuzzle.app">Get it on Google Play</a>
@@ -104,10 +108,19 @@
         <span>No download needed</span><span>Works offline</span><span>Hindi · English · Hinglish · +6</span>
       </div>
     </div>
-    <img class="shot" src="/assets/home.png" alt="Master G home screen with the Diya Chakra of games">
+    <img class="shot" src="/assets/shot-home.jpg" alt="Master G home screen: Ludo, Game of the Day and top games">
   </div>
 
-  <section id="games">
+  <section id="screens">
+<h2>See it in action</h2>
+<p class="sub">Business, Dominoes, Ludo, Chess and 18 more – all in one free app.</p>
+<div class="shots">
+<figure><img src="/assets/shot-home.jpg" alt="Home screen" loading="lazy"><figcaption>All games in one place</figcaption></figure>
+<figure><img src="/assets/shot-business.jpg" alt="Business board game" loading="lazy"><figcaption>Business – buy cities, build hotels</figcaption></figure>
+<figure><img src="/assets/shot-dominoes.jpg" alt="Dominoes" loading="lazy"><figcaption>Dominoes vs computer</figcaption></figure>
+</div>
+</section>
+<section id="games">
     <h2>22 games for fun, memory, focus and logic</h2>
     <p class="sub">Every game has Easy, Medium, Hard and Extreme – and a "How to play" guide inside.</p>
     <div class="grid">
