@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'dart:io' show Platform;
 
 import 'package:firebase_core/firebase_core.dart';
@@ -41,6 +42,17 @@ class CloudService {
         await Firebase.initializeApp(options: kIsWeb ? webFirebaseOptions : null);
       }
       available = true;
+      // App Check: Firestore/Auth calls carry a Play Integrity token so
+      // scripts and modified apps can be rejected once enforcement is turned
+      // on in the Firebase console (Build -> App Check). Android only; the
+      // web game has no reCAPTCHA key yet.
+      if (!kIsWeb) {
+        unawaited(
+          FirebaseAppCheck.instance
+              .activate(providerAndroid: kDebugMode ? const AndroidDebugProvider() : const AndroidPlayIntegrityProvider())
+              .catchError((Object e) => debugPrint('app check: $e')),
+        );
+      }
     } catch (e) {
       debugPrint('Firebase unavailable: $e');
       available = false;

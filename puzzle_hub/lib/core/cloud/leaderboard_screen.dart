@@ -543,9 +543,10 @@ class _Row extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    isMe
-                        ? tr('cloud.lb.you', {'name': entry.name})
-                        : entry.name,
+                    withFlag(
+                      entry,
+                      isMe ? tr('cloud.lb.you', {'name': entry.name}) : entry.name,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -588,6 +589,12 @@ class LeaderTier {
   final String id;
   final String emoji;
   final Color color;
+}
+
+/// The player's name with their country flag in front (e.g. "🇮🇳 Adarsh").
+String withFlag(LeaderEntry e, String name) {
+  final flag = countryByCode(e.country)?.flag;
+  return flag == null || flag.isEmpty ? name : '$flag $name';
 }
 
 LeaderTier? leaderTier(int rank) => switch (rank) {
@@ -642,7 +649,7 @@ class _Podium extends StatelessWidget {
           Text(tier.emoji, style: TextStyle(fontSize: rank == 1 ? 34 : 26)),
           const SizedBox(height: 4),
           Text(
-            isMe ? tr('cloud.lb.you', {'name': e.name}) : e.name,
+            withFlag(e, isMe ? tr('cloud.lb.you', {'name': e.name}) : e.name),
             key: ValueKey('lb_rank_$rank'),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

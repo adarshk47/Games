@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'dominoes/dominoes_screen.dart';
 import '../core/game_info.dart';
 import 'arrow_maze/arrow_maze_screen.dart';
 import 'ball_sort/ball_sort_screen.dart';
@@ -117,6 +118,16 @@ final List<GameInfo> allGames = [
     emoji: '♟️',
     color: const Color(0xFFE5E7EB),
     builder: (_) => const ChessScreen(),
+  ),
+  GameInfo(
+    id: 'dominoes',
+    title: 'Dominoes',
+    subtitle: 'Classic Dominoes vs computer',
+    icon: Icons.view_agenda_rounded,
+    emoji: '🁫',
+    color: const Color(0xFF0E9F6E),
+    featured: true,
+    builder: (_) => const DominoesScreen(),
   ),
   GameInfo(
     id: 'memory_boost',

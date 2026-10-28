@@ -256,7 +256,10 @@ class _SnakesPlayScreenState extends State<SnakesPlayScreen> {
     if (!_g.roll(_g.turn, dice: dice)) return;
     _rollSeq++;
     final e = _g.last;
-    AppAudio.play(e.ladder ? Sound.success : (e.snake ? Sound.fail : Sound.pop));
+    AppAudio.play(Sound.dice);
+    if (e.ladder || e.snake) {
+      Future<void>.delayed(const Duration(milliseconds: 450), () => AppAudio.play(e.ladder ? Sound.success : Sound.fail));
+    }
     if (e.snake || e.ladder) AppAudio.haptic();
     SnakesSave.save(widget.players, widget.cpu, _g, widget.dice);
     setState(() {});

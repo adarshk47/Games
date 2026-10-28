@@ -9,6 +9,7 @@ import 'chess.dart';
 import 'cloud.dart';
 import 'common.dart';
 import 'daily.dart';
+import 'dominoes.dart';
 import 'flow_pairs.dart';
 import 'hexa_sort.dart';
 import 'ludo.dart';
@@ -39,6 +40,7 @@ final Map<String, Map<String, String>> allStrings = {
   ...cloudStrings,
   ...commonStrings,
   ...dailyStrings,
+  ...dominoesStrings,
   ...flowPairsStrings,
   ...hexaSortStrings,
   ...ludoStrings,

@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'storage.dart';
 
 /// Sound effects available to every game. Files live in assets/audio/NAME.wav.
-enum Sound { tap, pop, flip, slide, success, win, fail, coin, whoosh }
+enum Sound { tap, pop, flip, slide, success, win, fail, coin, whoosh, place, dice, capture }
 
 /// Background music tracks (looping).
 enum MusicTrack { main, calm }

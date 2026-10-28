@@ -67,7 +67,7 @@ class _LudoOnlineGameScreenState extends State<LudoOnlineGameScreen> {
     });
     if (g.log.length > before && before > 0) {
       final e = g.last;
-      AppAudio.play(e.captured.isNotEmpty ? Sound.success : (e.rolled != null && g.log.last.isRoll ? Sound.tap : Sound.pop));
+      AppAudio.play(e.captured.isNotEmpty ? Sound.capture : (e.rolled != null && g.log.last.isRoll ? Sound.dice : Sound.pop));
     }
     if (g.over || d.over) {
       _finish(g);

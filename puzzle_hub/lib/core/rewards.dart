@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'cloud/analytics.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -235,6 +236,7 @@ class Rewards {
     try {
       AdsService.onLevelCompleted(gameId: gameId);
     } catch (_) {}
+    Analytics.levelComplete(gameId, stars);
     return reward;
   }
 
@@ -251,6 +253,7 @@ class Rewards {
     final pay = runReward(score: score, won: won);
     if (pay > 0) addCoins(pay, source: 'game', gameId: gameId);
     won ? Cheer.win() : Cheer.lose();
+    Analytics.gameEnd(gameId, won: won);
     try {
       AdsService.onLevelCompleted(gameId: gameId);
     } catch (_) {}

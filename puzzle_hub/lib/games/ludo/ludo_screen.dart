@@ -332,10 +332,10 @@ class _LudoPlayScreenState extends State<LudoPlayScreen> {
     final e = _g.last;
     if (a.isRoll) {
       _rollSeq++;
-      AppAudio.play(Sound.tap);
+      AppAudio.play(Sound.dice);
       if (e.lostTurn || e.passed) AppAudio.play(Sound.fail, volume: 0.35);
     } else {
-      AppAudio.play(e.captured.isNotEmpty ? Sound.success : (e.reachedHome ? Sound.coin : Sound.pop));
+      AppAudio.play(e.captured.isNotEmpty ? Sound.capture : (e.reachedHome ? Sound.coin : Sound.pop));
       if (e.captured.isNotEmpty) AppAudio.haptic();
     }
     LudoSave.save(widget.setup, _g);

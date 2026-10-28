@@ -85,6 +85,8 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    // enableEdgeToEdge() in MainActivity (Android 15 edge-to-edge).
+    implementation("androidx.activity:activity-ktx:1.9.3")
 }
 
 // Firebase config is added by the developer (FIREBASE_SETUP.md). Until then the

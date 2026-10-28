@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../core/cloud/analytics.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ GameInfo gameOfTheDay(List<GameInfo> list, [DateTime? now]) {
 Future<void> openGame(BuildContext context, GameInfo g) {
   unawaited(GameShortcuts.played(g.id, games)); // widget / icon shortcuts
   GameStats.played(g.id); // developer: which game is played most
+  Analytics.gameOpened(g.id); // ad campaigns: installs that really play
   return _openGame(context, g);
 }
 
@@ -215,7 +217,7 @@ class _GamesTabState extends State<GamesTab> {
 
   /// Game shelves of the Arcade layout (any game not listed goes to "More").
   static const _shelves = [
-    ('home.shelf.board', '🎲', ['ludo', 'snakes', 'chess']),
+    ('home.shelf.board', '🎲', ['ludo', 'snakes', 'chess', 'dominoes']),
     ('home.shelf.brain', '🧠', ['brain_age', 'memory_boost', 'focus_color', 'sudoku', 'game_2048']),
     ('home.shelf.puzzle', '🧩', ['block_puzzle', 'arrow_maze', 'maze_escape', 'flow_pairs', 'sliding_puzzle', 'minesweeper']),
     ('home.shelf.sort', '🎯', ['ball_sort', 'screw_jam', 'bus_jam', 'tile_match', 'hexa_sort']),

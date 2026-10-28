@@ -347,9 +347,9 @@ class _ChessScreenState extends State<ChessScreen> {
         AppAudio.play(Sound.success, volume: 0.6);
         AppAudio.haptic(true);
       } else if (capture) {
-        AppAudio.play(Sound.pop);
+        AppAudio.play(Sound.capture, volume: 0.7);
       } else {
-        AppAudio.play(Sound.tap);
+        AppAudio.play(Sound.place, volume: 0.7);
       }
     }
     setState(() {

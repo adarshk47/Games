@@ -72,7 +72,7 @@ class _SnakesOnlineGameScreenState extends State<SnakesOnlineGameScreen> {
     });
     if (g.log.length > before && before > 0) {
       final e = g.last;
-      AppAudio.play(e.ladder ? Sound.success : (e.snake ? Sound.fail : Sound.pop));
+      AppAudio.play(e.ladder ? Sound.success : (e.snake ? Sound.fail : Sound.dice));
     }
     if (g.over) _finish(g);
   }

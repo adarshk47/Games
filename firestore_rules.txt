@@ -33,6 +33,7 @@ service cloud.firestore {
         'chess': 1000000,
         'ludo': 1000000,
         'snakes': 1000000,
+        'dominoes': 1000000,
         'brain_age': 1000,
         'sudoku': 100000,
         'arrow_maze': 100000,
