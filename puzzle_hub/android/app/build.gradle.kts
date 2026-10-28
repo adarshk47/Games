@@ -65,7 +65,7 @@ android {
             // installs as a separate app next to the Play Store build.
             if (project.hasProperty("rtest")) {
                 applicationIdSuffix = ".rtest"
-                manifestPlaceholders["appLabel"] = "Master G RTest"
+                manifestPlaceholders["appLabel"] = "Master G Test"
             }
             signingConfig = if (keystoreProperties.containsKey("storeFile"))
                 signingConfigs.getByName("release") else signingConfigs.getByName("debug")
