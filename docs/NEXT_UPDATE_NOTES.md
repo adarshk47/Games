@@ -209,3 +209,6 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
   V1/V2/V3 to come from the user.
 - 2026-10-29 UPDATE (user): **keep the mitrojan.in link** (Profile tile + "Our websites"); remove only
   AYUSH (ayush.mitrojan.in) from the app.
+- 2026-10-29 DONE in V3 test build: German/French/Spanish/Italian (lib/core/i18n/strings/euro.dart),
+  new soft sound effects, Profile order (Google login, name/country, leaderboard, Settings card),
+  AYUSH link and shop coin-ad removed. User decision: NO Urdu/Arabic, do not promote in those regions.
