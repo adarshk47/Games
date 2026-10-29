@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
 
-import '../i18n/i18n.dart';
 import '../rewards.dart';
 import '../storage.dart';
 import '../features.dart';
@@ -46,13 +45,6 @@ class AdsService {
   AdsService._();
 
   // ---- Tunables --------------------------------------------------------------
-  static const rewardedCoins = 25;
-
-  /// Coin-reward ads: at most this many per day...
-  static const rewardedPerDay = 10;
-
-  /// ...and this long between two of them (keeps ad traffic natural).
-  static const rewardedGap = Duration(minutes: 2);
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
   static const levelsPerInterstitial = 2; // one after every 2 games (win or lose)
@@ -61,9 +53,6 @@ class AdsService {
   static const interstitialDelay = Duration(milliseconds: 1200);
 
   static const kAdFreeUntil = 'ads.adfree.until';
-  static const _kRewardDay = 'ads.rewarded.day';
-  static const _kRewardCount = 'ads.rewarded.count';
-  static const _kRewardLast = 'ads.rewarded.last';
 
   /// Clock (overridable in tests).
   @visibleForTesting
@@ -283,48 +272,6 @@ class AdsService {
       _loadRewarded();
       return false;
     }
-  }
-
-  static String _today() {
-    final d = clock();
-    return '${d.year}-${d.month}-${d.day}';
-  }
-
-  /// Coin-reward ads watched today.
-  static int get rewardedToday => Storage.getString(_kRewardDay) == _today()
-      ? Storage.getInt(_kRewardCount)
-      : 0;
-
-  /// Time until the next coin ad is allowed (zero = now).
-  static Duration get rewardedWait {
-    final last = Storage.getInt(_kRewardLast);
-    if (last <= 0) return Duration.zero;
-    final left = rewardedGap - clock().difference(DateTime.fromMillisecondsSinceEpoch(last));
-    return left.isNegative ? Duration.zero : left;
-  }
-
-  /// Whether a coin ad may be watched now (daily cap and gap).
-  static bool get canWatchForCoins => rewardedToday < rewardedPerDay && rewardedWait == Duration.zero;
-
-  /// The shop's "Watch ad: +25 coins" action, at most [rewardedPerDay] a day
-  /// with [rewardedGap] between them. Returns the coins granted (0 if not
-  /// allowed now or the ad was not completed).
-  static Future<int> watchAdForCoins() async {
-    if (!canWatchForCoins) return 0;
-    final ok = await showRewarded(reason: 'coins');
-    if (!ok) return 0;
-    final today = _today();
-    final count = rewardedToday + 1;
-    await Storage.setString(_kRewardDay, today);
-    await Storage.setInt(_kRewardCount, count);
-    await Storage.setInt(_kRewardLast, clock().millisecondsSinceEpoch);
-    await Rewards.addCoins(
-      rewardedCoins,
-      label: tr('ads.reward_label'),
-      source: 'ad',
-    );
-    _notify();
-    return rewardedCoins;
   }
 
   // ---- Ad-free pass ----------------------------------------------------------

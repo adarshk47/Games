@@ -202,3 +202,10 @@ styles, Bus Jam bus-stop + park look, ad-free grant / coupon re-checked when the
      ship themselves (consumer rules), check gradle.properties has no R8 full-mode opt-out,
      then build, install with TEST_ADS and test notifications/reminders (flutter_local_notifications)
      + WorkManager + every game before releasing.
+- 2026-10-29 (user, noted – do when building the next AABs): **remove mitrojan.in and AYUSH
+  from the app everywhere** – Profile "More from Mitrojan" tile (AppInfo.brandUrl), the
+  "Our websites" section entries for Mitrojan + AYUSH (AppInfo.websites), and any other
+  mention. Gita / Ramcharitmanas links stay planned (URLs still pending). More feedback on
+  V1/V2/V3 to come from the user.
+- 2026-10-29 UPDATE (user): **keep the mitrojan.in link** (Profile tile + "Our websites"); remove only
+  AYUSH (ayush.mitrojan.in) from the app.

@@ -52,7 +52,7 @@ void main() {
       await t.tap(find.byKey(const ValueKey('nav_profile')));
       await t.pump(const Duration(milliseconds: 500));
       expect(_stackIndex(t), 2);
-      expect(find.byKey(const ValueKey('profile_quick_shop')), findsOneWidget);
+      expect(find.byKey(const ValueKey('profile_name_country')), findsOneWidget);
       await t.tap(find.byKey(const ValueKey('nav_games')));
       await t.pump(const Duration(milliseconds: 500));
       expect(_stackIndex(t), 0);

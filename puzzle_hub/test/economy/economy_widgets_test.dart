@@ -22,7 +22,7 @@ void main() {
   testWidgets('shop renders body-only with balance and cards', (t) async {
     await t.pumpWidget(const MaterialApp(home: Material(color: Colors.black, child: ShopScreen())));
     expect(find.text('Shop'), findsOneWidget);
-    expect(find.text('Watch ad: +25 coins'), findsOneWidget);
+    expect(find.text('Watch ad: +25 coins'), findsNothing);
     expect(find.text('24h Ad-free pass'), findsOneWidget);
     expect(find.byType(Scaffold), findsNothing);
     await t.scrollUntilVisible(find.text('Coin history'), 200);

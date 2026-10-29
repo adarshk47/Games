@@ -531,6 +531,52 @@ class _ProfileBodyState extends State<_ProfileBody> {
               ),
             ),
           ),
+        _Head(tr('home.profile.cloud_account')),
+        _cloudCard(),
+        const SizedBox(height: 12),
+        GlassCard(
+          key: const ValueKey('profile_name_country'),
+          blur: 0,
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.person_rounded, color: Pal.text),
+                title: Text(
+                  tr('home.rename'),
+                  style: const TextStyle(color: Pal.text),
+                ),
+                subtitle: Text(
+                  a.name,
+                  style: const TextStyle(color: Pal.textDim),
+                ),
+                onTap: _rename,
+              ),
+              ListTile(
+                key: const ValueKey('profile_country'),
+                leading: Text(
+                  countryByCode(a.country)?.flag ?? '🌍',
+                  style: const TextStyle(fontSize: 22),
+                ),
+                title: Text(
+                  tr('account.country.label'),
+                  style: const TextStyle(color: Pal.text),
+                ),
+                subtitle: Text(
+                  countryByCode(a.country)?.name ?? '-',
+                  style: const TextStyle(color: Pal.textDim),
+                ),
+                onTap: () async {
+                  await showCountrySheet(context);
+                  if (mounted) setState(() {});
+                },
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        _actions(),
+        const SizedBox(height: 18),
         GlassCard(
           glow: Pal.gold,
           child: Column(
@@ -626,12 +672,6 @@ class _ProfileBodyState extends State<_ProfileBody> {
             ],
           ),
         ),
-        const SizedBox(height: 18),
-        _Head(tr('home.profile.cloud_account')),
-        _cloudCard(),
-        const SizedBox(height: 12),
-        _actions(),
-        const SizedBox(height: 18),
         _Head(tr('home.profile.records')),
         GlassCard(
           key: const ValueKey('profile_records'),
@@ -668,37 +708,6 @@ class _ProfileBodyState extends State<_ProfileBody> {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Column(
             children: [
-              ListTile(
-                leading: const Icon(Icons.person_rounded, color: Pal.text),
-                title: Text(
-                  tr('home.rename'),
-                  style: const TextStyle(color: Pal.text),
-                ),
-                subtitle: Text(
-                  a.name,
-                  style: const TextStyle(color: Pal.textDim),
-                ),
-                onTap: _rename,
-              ),
-              ListTile(
-                key: const ValueKey('profile_country'),
-                leading: Text(
-                  countryByCode(a.country)?.flag ?? '🌍',
-                  style: const TextStyle(fontSize: 22),
-                ),
-                title: Text(
-                  tr('account.country.label'),
-                  style: const TextStyle(color: Pal.text),
-                ),
-                subtitle: Text(
-                  countryByCode(a.country)?.name ?? '-',
-                  style: const TextStyle(color: Pal.textDim),
-                ),
-                onTap: () async {
-                  await showCountrySheet(context);
-                  if (mounted) setState(() {});
-                },
-              ),
               if (a.hasPin) ...[
                 FutureBuilder<bool>(
                   future: a.biometricAvailable(),

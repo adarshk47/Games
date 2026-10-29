@@ -11,7 +11,6 @@ class AppInfo {
   /// "Our websites" links at the end of Profile (null = not live yet, hidden).
   static const List<(String emoji, String key, String? url)> websites = [
     ('🤝', 'home.site.mitrojan', 'https://mitrojan.in'),
-    ('🌿', 'home.site.ayush', 'https://ayush.mitrojan.in'),
     ('🪔', 'home.site.gita', null),
     ('📜', 'home.site.ramcharitmanas', null),
   ];

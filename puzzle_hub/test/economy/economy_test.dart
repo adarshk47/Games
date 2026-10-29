@@ -127,33 +127,6 @@ void main() {
   });
 
   group('rewarded ads', () {
-    test('coin ads: 10 a day with a 2-minute gap', () async {
-      AdsService.rewardedOverride = (_) async => true;
-      expect(await AdsService.watchAdForCoins(), 25);
-      // Right away again: too soon.
-      expect(AdsService.canWatchForCoins, isFalse);
-      expect(await AdsService.watchAdForCoins(), 0);
-      for (var i = 1; i < 10; i++) {
-        now = now.add(const Duration(minutes: 2));
-        expect(await AdsService.watchAdForCoins(), 25, reason: 'ad ${i + 1}');
-      }
-      now = now.add(const Duration(minutes: 5));
-      expect(AdsService.rewardedToday, 10);
-      expect(await AdsService.watchAdForCoins(), 0, reason: 'daily cap');
-      expect(Rewards.balance, 250);
-      // Next day the count starts again.
-      now = now.add(const Duration(days: 1));
-      expect(await AdsService.watchAdForCoins(), 25);
-      _expectInvariant();
-    });
-
-    test('unfinished ad grants nothing', () async {
-      AdsService.rewardedOverride = (_) async => false;
-      expect(await AdsService.watchAdForCoins(), 0);
-      expect(Rewards.balance, 0);
-      expect(AdsService.rewardedToday, 0);
-    });
-
     test('ads are a no-op on the test host', () async {
       await AdsService.init();
       expect(AdsService.available, isFalse);
