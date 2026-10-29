@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../storage.dart';
 import 'strings/all.dart';
+import 'strings/euro.dart';
 
 /// Languages the user can pick in the app (independent of the phone locale).
 enum AppLang {
@@ -13,12 +14,23 @@ enum AppLang {
   pa('pa', 'ਪੰਜਾਬੀ', 'Punjabi'),
   bho('bho', 'भोजपुरी', 'Bhojpuri'),
   mr('mr', 'मराठी', 'Marathi'),
-  sa('sa', 'संस्कृतम्', 'Sanskrit');
+  sa('sa', 'संस्कृतम्', 'Sanskrit'),
+  de('de', 'Deutsch', 'German'),
+  fr('fr', 'Français', 'French'),
+  es('es', 'Español', 'Spanish'),
+  it('it', 'Italiano', 'Italian');
 
   const AppLang(this.code, this.nativeName, this.englishName);
   final String code;
   final String nativeName;
   final String englishName;
+
+  /// German, French, Spanish and Italian live in strings/euro.dart instead of
+  /// the per-module tables.
+  bool get isEuro => index >= AppLang.de.index;
+
+  /// Languages every per-module string table must contain.
+  static List<AppLang> get tableLangs => [for (final l in values) if (!l.isEuro) l];
 
   /// Locale used for Flutter's built-in widget texts (date picker etc.).
   /// Bhojpuri falls back to Hindi and Hinglish to English.
@@ -70,8 +82,9 @@ class I18n {
 /// then to [fallback], then to the key itself so a gap is visible but never crashes.
 String tr(String key, [Map<String, Object?> args = const {}, String? fallback]) {
   final entry = allStrings[key];
-  String? s;
-  if (entry != null) {
+  // European languages live in their own tables (strings/euro.dart).
+  String? s = euroStrings[I18n.lang.value.code]?[key];
+  if (s == null && entry != null) {
     for (final c in I18n.lang.value.fallbacks) {
       s = entry[c];
       if (s != null) break;
@@ -92,6 +105,13 @@ List<AppLang> languagesFor(String? countryCode) {
     'LK' || 'SG' || 'MY' => const [AppLang.en, AppLang.ta],
     'FJ' || 'MU' || 'TT' || 'GY' || 'SR' => const [AppLang.en, AppLang.hi, AppLang.bho],
     'AE' || 'SA' || 'QA' || 'KW' || 'OM' || 'BH' => const [AppLang.en, AppLang.hi, AppLang.hinglish, AppLang.te, AppLang.ta, AppLang.mr],
+    'DE' || 'AT' || 'LI' => const [AppLang.de, AppLang.en],
+    'CH' => const [AppLang.de, AppLang.fr, AppLang.it, AppLang.en],
+    'FR' || 'MC' || 'LU' => const [AppLang.fr, AppLang.en],
+    'BE' => const [AppLang.fr, AppLang.en, AppLang.de],
+    'CA' => const [AppLang.en, AppLang.fr, AppLang.hi, AppLang.pa],
+    'ES' || 'MX' || 'AR' || 'CO' || 'CL' || 'PE' || 'VE' || 'EC' || 'UY' => const [AppLang.es, AppLang.en],
+    'IT' || 'SM' => const [AppLang.it, AppLang.en],
     _ => const [AppLang.en],
   };
   return [...first, ...AppLang.values.where((l) => !first.contains(l))];

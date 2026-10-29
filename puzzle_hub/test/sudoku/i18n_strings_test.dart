@@ -19,7 +19,7 @@ void main() {
       expect(table, isNotEmpty);
       for (final MapEntry(:key, :value) in table.entries) {
         expect(key.startsWith('$module.'), isTrue, reason: key);
-        for (final l in AppLang.values) {
+        for (final l in AppLang.tableLangs) {
           final s = value[l.code];
           expect(s, isNotNull, reason: '$key missing ${l.code}');
           expect(s!.trim(), isNotEmpty, reason: '$key empty ${l.code}');

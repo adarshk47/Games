@@ -12,7 +12,7 @@ import 'package:puzzle_hub/games/maze_escape/maze_escape_screen.dart';
 import 'package:puzzle_hub/games/maze_escape/memory_maze_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final _langs = AppLang.values.map((l) => l.code).toSet();
+final _langs = AppLang.tableLangs.map((l) => l.code).toSet();
 final _ph = RegExp(r'\{(\w+)\}');
 
 void checkTable(String prefix, Map<String, Map<String, String>> table) {

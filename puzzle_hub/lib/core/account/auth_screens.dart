@@ -696,8 +696,11 @@ class CloudPendingNote extends StatelessWidget {
 /// "Continue with Google" + "Continue with Email". Disabled with a friendly
 /// note while the cloud is not set up. Calls [onSignedIn] after success.
 class CloudSignInPanel extends StatefulWidget {
-  const CloudSignInPanel({super.key, this.onSignedIn});
+  const CloudSignInPanel({super.key, this.onSignedIn, this.compact = false});
   final VoidCallback? onSignedIn;
+
+  /// One short row ("Google" | "Email") instead of two full-width buttons.
+  final bool compact;
 
   @override
   State<CloudSignInPanel> createState() => _CloudSignInPanelState();
@@ -727,6 +730,33 @@ class _CloudSignInPanelState extends State<CloudSignInPanel> {
   @override
   Widget build(BuildContext context) {
     final on = CloudService.available && !_busy;
+    if (widget.compact && CloudService.available) {
+      return Row(
+        children: [
+          Expanded(
+            child: PremiumButton(
+              key: const ValueKey('signin_google'),
+              label: _busy ? '…' : 'Google',
+              icon: Icons.g_mobiledata_rounded,
+              compact: true,
+              color: const Color(0xFF4285F4),
+              onTap: on ? _google : null,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: PremiumButton(
+              key: const ValueKey('signin_email'),
+              label: tr('account.email'),
+              icon: Icons.email_rounded,
+              compact: true,
+              color: const Color(0xFF22B07D),
+              onTap: on ? _email : null,
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

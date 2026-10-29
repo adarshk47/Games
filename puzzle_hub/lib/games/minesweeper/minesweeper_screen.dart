@@ -572,8 +572,12 @@ class _MinesweeperScreenState extends State<MinesweeperScreen> {
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 Icon(_flagMode ? Icons.flag_rounded : Icons.touch_app_rounded, color: _flagMode ? _tint : Pal.text, size: 22),
                 const SizedBox(width: 8),
-                Text(_flagMode ? tr('minesweeper.flag') : tr('minesweeper.reveal'),
-                    style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
+                Flexible(
+                  child: Text(_flagMode ? tr('minesweeper.flag') : tr('minesweeper.reveal'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15)),
+                ),
               ]),
             ),
           ),

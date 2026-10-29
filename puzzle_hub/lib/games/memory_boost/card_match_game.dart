@@ -413,8 +413,12 @@ class _CardBoardState extends State<_CardBoard> {
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(peeking ? Icons.visibility_rounded : Icons.lightbulb_rounded, size: 18, color: Pal.gold),
               const SizedBox(width: 8),
-              Text(freePeekUsed ? tr('memory_boost.card.peek_coins', {'n': Prices.hint}) : tr('memory_boost.card.peek_free'),
-                  style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 14)),
+              Flexible(
+                child: Text(freePeekUsed ? tr('memory_boost.card.peek_coins', {'n': Prices.hint}) : tr('memory_boost.card.peek_free'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 14)),
+              ),
             ]),
           ),
         ),

@@ -20,7 +20,7 @@ Set<String> _placeholders(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m
 
 void main() {
   final tables = {'daily': dailyStrings, 'shop': shopStrings, 'cloud': cloudStrings};
-  final langs = [for (final l in AppLang.values) l.code];
+  final langs = [for (final l in AppLang.tableLangs) l.code];
 
   group('string tables', () {
     for (final t in tables.entries) {

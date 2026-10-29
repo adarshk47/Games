@@ -12,7 +12,7 @@ void main() {
     final ph = RegExp(r'\{(\w+)\}');
     for (final e in onlineStrings.entries) {
       final want = ph.allMatches(e.value['en']!).map((m) => m[1]).toSet();
-      for (final l in AppLang.values) {
+      for (final l in AppLang.tableLangs) {
         final s = e.value[l.code];
         expect(s, isNotNull, reason: '${e.key} missing ${l.code}');
         expect(ph.allMatches(s!).map((m) => m[1]).toSet(), want, reason: '${e.key} ${l.code}');

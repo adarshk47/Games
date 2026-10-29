@@ -415,7 +415,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           style: const TextStyle(color: Pal.textDim, fontSize: 14, height: 1.4),
         ),
         const SizedBox(height: 14),
-        const CloudSignInPanel(),
+        const CloudSignInPanel(compact: true),
       ],
     ),
   );

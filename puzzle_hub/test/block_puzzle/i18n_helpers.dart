@@ -9,7 +9,7 @@ import 'package:puzzle_hub/core/i18n/strings/all.dart';
 import 'package:puzzle_hub/core/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final langCodes = [for (final l in AppLang.values) l.code];
+final langCodes = [for (final l in AppLang.tableLangs) l.code];
 
 Set<String> _placeholders(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toSet();
 

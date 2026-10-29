@@ -10,7 +10,7 @@ import 'package:puzzle_hub/games/tile_match/logic/tile_match_logic.dart';
 import 'package:puzzle_hub/games/tile_match/tile_match_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final _langs = {for (final l in AppLang.values) l.code};
+final _langs = {for (final l in AppLang.tableLangs) l.code};
 final _ph = RegExp(r'\{(\w+)\}');
 
 void main() {

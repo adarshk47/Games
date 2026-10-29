@@ -21,7 +21,7 @@ Set<String> _placeholders(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m
 void main() {
   group('memory_boost strings', () {
     test('every key is prefixed and has all languages with identical placeholders', () {
-      final langs = AppLang.values.map((l) => l.code).toSet();
+      final langs = AppLang.tableLangs.map((l) => l.code).toSet();
       expect(memoryBoostStrings, isNotEmpty);
       memoryBoostStrings.forEach((key, entry) {
         expect(key.startsWith('memory_boost.'), isTrue, reason: key);

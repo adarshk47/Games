@@ -24,7 +24,7 @@ void main() {
   tearDown(() => I18n.lang.value = AppLang.en);
 
   test('mmLangs matches every app language', () {
-    expect(mmLangs.toSet(), AppLang.values.map((l) => l.code).toSet());
+    expect(mmLangs.toSet(), AppLang.tableLangs.map((l) => l.code).toSet());
     expect(langs.toSet(), mmLangs.toSet());
   });
 

@@ -300,12 +300,15 @@ class _FlowGamePageState extends State<FlowGamePage> with TickerProviderStateMix
             radius: 20,
             blur: 0,
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              _Stat(tr('flow_pairs.pairs'), '${board.connectedCount}/${puzzle.pairs.length}'),
-              _Stat(tr('common.moves'), '${_game.moves}'),
-              if (puzzle.requireFill)
-                _Stat(tr('flow_pairs.fill_all'), '${(board.filledCount * 100 ~/ puzzle.cells)}%')
-              else
-                _Stat(tr('flow_pairs.grid'), '${puzzle.size}x${puzzle.size}'),
+              for (final s in [
+                _Stat(tr('flow_pairs.pairs'), '${board.connectedCount}/${puzzle.pairs.length}'),
+                _Stat(tr('common.moves'), '${_game.moves}'),
+                if (puzzle.requireFill)
+                  _Stat(tr('flow_pairs.fill_all'), '${(board.filledCount * 100 ~/ puzzle.cells)}%')
+                else
+                  _Stat(tr('flow_pairs.grid'), '${puzzle.size}x${puzzle.size}'),
+              ])
+                Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: s)),
             ]),
           ),
           Expanded(

@@ -10,7 +10,7 @@ import 'package:puzzle_hub/games/arrow_maze/arrow_maze_screen.dart';
 import 'package:puzzle_hub/games/arrow_maze/logic/arrow_maze_logic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final _langs = AppLang.values.map((l) => l.code).toSet();
+final _langs = AppLang.tableLangs.map((l) => l.code).toSet();
 final _ph = RegExp(r'\{(\w+)\}');
 
 void checkTable(String prefix, Map<String, Map<String, String>> table) {

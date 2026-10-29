@@ -307,30 +307,23 @@ class _ProfileBodyState extends State<_ProfileBody> {
     }
     final u = CloudAuth.I.user.value;
     if (u == null) {
+      // Short: one title line and a Google | Email row.
       return GlassCard(
         blur: 0,
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              tr('home.cloud.backup_title'),
+              '☁️ ${tr('home.cloud.backup_title')}',
               style: const TextStyle(
                 color: Pal.text,
-                fontSize: 17,
+                fontSize: 15,
                 fontWeight: FontWeight.w900,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              tr('home.cloud.backup_body'),
-              style: const TextStyle(
-                color: Pal.textDim,
-                fontSize: 13,
-                height: 1.35,
-              ),
-            ),
-            const SizedBox(height: 14),
-            const CloudSignInPanel(),
+            const SizedBox(height: 10),
+            const CloudSignInPanel(compact: true),
           ],
         ),
       );
@@ -576,6 +569,27 @@ class _ProfileBodyState extends State<_ProfileBody> {
         ),
         const SizedBox(height: 12),
         _actions(),
+        const SizedBox(height: 12),
+        // Settings on their own card, apart from the account.
+        GlassCard(
+          key: const ValueKey('profile_settings'),
+          blur: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          onTap: () => showSettingsSheet(context),
+          child: Row(
+            children: [
+              const Icon(Icons.tune_rounded, color: Pal.gold, size: 26),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  tr('home.settings.tooltip'),
+                  style: const TextStyle(color: Pal.text, fontWeight: FontWeight.w800, fontSize: 15),
+                ),
+              ),
+              const Icon(Icons.chevron_right_rounded, color: Pal.textDim),
+            ],
+          ),
+        ),
         const SizedBox(height: 18),
         GlassCard(
           glow: Pal.gold,
@@ -629,12 +643,6 @@ class _ProfileBodyState extends State<_ProfileBody> {
               // Everything in one place, right under the name.
               Row(
                 children: [
-                  _QuickAction(
-                    key: const ValueKey('profile_quick_settings'),
-                    icon: Icons.tune_rounded,
-                    label: tr('home.settings.tooltip'),
-                    onTap: () => showSettingsSheet(context),
-                  ),
                   _QuickAction(
                     key: const ValueKey('profile_quick_daily'),
                     icon: Icons.calendar_month_rounded,

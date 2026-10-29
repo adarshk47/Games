@@ -126,15 +126,21 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _header(int bal) => Row(
     children: [
-      Text(
-        tr('shop.title'),
-        style: const TextStyle(
-          color: Pal.text,
-          fontSize: 30,
-          fontWeight: FontWeight.w900,
+      Expanded(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            tr('shop.title'),
+            style: const TextStyle(
+              color: Pal.text,
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
         ),
       ),
-      const Spacer(),
+      const SizedBox(width: 10),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(

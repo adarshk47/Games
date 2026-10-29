@@ -70,6 +70,10 @@ class Cheer {
         AppLang.te => 'te-IN',
         AppLang.ta => 'ta-IN',
         AppLang.pa => 'pa-IN',
+        AppLang.de => 'de-DE',
+        AppLang.fr => 'fr-FR',
+        AppLang.es => 'es-ES',
+        AppLang.it => 'it-IT',
         _ => 'hi-IN', // hi, hinglish, bho, sa
       };
       await _tts!.setLanguage(lang);

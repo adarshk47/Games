@@ -10,7 +10,7 @@ import 'package:puzzle_hub/games/hexa_sort/hexa_sort_screen.dart';
 import 'package:puzzle_hub/games/hexa_sort/logic/hexa_sort_logic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final _langs = {for (final l in AppLang.values) l.code};
+final _langs = {for (final l in AppLang.tableLangs) l.code};
 final _ph = RegExp(r'\{(\w+)\}');
 
 void main() {

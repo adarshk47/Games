@@ -31,7 +31,7 @@ void main() {
 
   group('focus_color strings', () {
     test('every key is prefixed and has all languages with identical placeholders', () {
-      final langs = AppLang.values.map((l) => l.code).toSet();
+      final langs = AppLang.tableLangs.map((l) => l.code).toSet();
       expect(focusColorStrings, isNotEmpty);
       focusColorStrings.forEach((key, entry) {
         expect(key.startsWith('focus_color.'), isTrue, reason: key);
@@ -66,7 +66,7 @@ void main() {
         I18n.lang.value = lang;
         final names = StroopColor.values.map(stroopColorName).toList();
         for (final c in StroopColor.values) {
-          expect(focusColorStrings['focus_color.color.${c.name}']![lang.code], isNotNull, reason: '${c.name}/${lang.code}');
+          expect(tr('focus_color.color.${c.name}'), isNot('focus_color.color.${c.name}'), reason: '${c.name}/${lang.code}');
         }
         expect(names.toSet().length, names.length, reason: lang.code);
       }

@@ -15,7 +15,7 @@ Set<String> _ph(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.gro
 void main() {
   test('chess strings: all 9 languages, non-empty, same placeholders', () {
     expect(chessStrings, isNotEmpty);
-    expect(langCodes.toSet(), AppLang.values.map((l) => l.code).toSet());
+    expect(langCodes.toSet(), AppLang.tableLangs.map((l) => l.code).toSet());
     for (final MapEntry(:key, :value) in chessStrings.entries) {
       expect(key.startsWith('chess.'), isTrue, reason: key);
       expect(value.keys.toSet(), langCodes.toSet(), reason: key);

@@ -16,7 +16,7 @@ final _ph = RegExp(r'\{(\w+)\}');
 void main() {
   test('bus_jam strings: all 9 languages, identical placeholders', () {
     expect(busJamStrings, isNotEmpty);
-    expect(AppLang.values.map((l) => l.code).toSet(), _langs);
+    expect(AppLang.tableLangs.map((l) => l.code).toSet(), _langs);
     for (final MapEntry(:key, :value) in busJamStrings.entries) {
       expect(key.startsWith('bus_jam.'), isTrue, reason: key);
       expect(value.keys.toSet(), _langs, reason: '$key languages');

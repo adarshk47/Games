@@ -29,7 +29,7 @@ void main() {
   tearDown(() => I18n.lang.value = AppLang.en);
 
   test('AppLang codes match the languages every entry must have', () {
-    expect(AppLang.values.map((l) => l.code).toList(), _langs);
+    expect(AppLang.tableLangs.map((l) => l.code).toList(), _langs);
   });
 
   for (final (name, table) in [('homeStrings', homeStrings), ('accountStrings', accountStrings)]) {
