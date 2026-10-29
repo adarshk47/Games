@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'spotlight_journey_layouts.dart';
+import 'bento_layout.dart';
 import 'theme_styles.dart';
 import '../core/cloud/analytics.dart';
 import 'dart:math' as math;
@@ -120,6 +122,23 @@ class _GamesTabState extends State<GamesTab> {
         AppLayout.classic => _buildClassic(context),
         AppLayout.festive => _buildFestive(context),
         AppLayout.chakra => _buildChakra(context),
+        AppLayout.bento => _buildBento(context),
+        AppLayout.spotlight => SpotlightHome(
+            header: _Header(onOpenShop: widget.onOpenShop),
+            games: [
+              for (final g in games) if (g.featured) g,
+              for (final g in games) if (!g.featured) g,
+            ],
+            categories: [for (final (key, emoji, ids) in _shelves) (tr(key), emoji, ids)],
+            onOpen: _open,
+            bottomInset: widget.bottomInset,
+          ),
+        AppLayout.journey => JourneyHome(
+            header: _Header(onOpenShop: widget.onOpenShop),
+            games: games,
+            onOpen: _open,
+            bottomInset: widget.bottomInset,
+          ),
       },
     );
   }
@@ -240,6 +259,24 @@ class _GamesTabState extends State<GamesTab> {
 
   /// Arcade layout (default): header, big cards for the new / popular
   /// games, then a horizontal shelf per category.
+  /// New games (this release) and the game of the day as big tiles, then
+  /// every game; tabs per category.
+  Widget _buildBento(BuildContext context) {
+    final gotd = gameOfTheDay(games);
+    final big = [
+      for (final g in games) if (g.featured && !g.comingSoon) g,
+      if (!gotd.featured) gotd,
+    ].take(4).toList();
+    return BentoHome(
+      header: _Header(onOpenShop: widget.onOpenShop),
+      games: games,
+      big: big,
+      categories: [for (final (key, emoji, ids) in _shelves) (tr(key), emoji, ids)],
+      onOpen: _open,
+      bottomInset: widget.bottomInset,
+    );
+  }
+
   Widget _buildArcade(BuildContext context) => ValueListenableBuilder<List<String>>(
         valueListenable: GameStats.top,
         builder: (context, _, _) => _arcade(context),

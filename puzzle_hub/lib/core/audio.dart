@@ -1,11 +1,13 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'ui/app_theme.dart';
+import 'release_stage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'storage.dart';
 
 /// Sound effects available to every game. Files live in assets/audio/NAME.wav.
-enum Sound { tap, pop, flip, slide, success, win, fail, coin, whoosh, place, dice, capture }
+enum Sound { tap, pop, flip, slide, success, win, fail, coin, whoosh, place, dice, capture, levelup, combo, unlock, celebrate, coins, buzzer, tick, button, swoosh }
 
 /// Background music tracks (looping).
 enum MusicTrack { main, calm }
@@ -124,6 +126,26 @@ class AppAudio with WidgetsBindingObserver {
     await I._startMusic();
   }
 
+  /// Music file for [t]: the main track follows the active theme, calm
+  /// screens play the lo-fi loop.
+  static String _file(MusicTrack t) {
+    if (kStage < kNewLayoutsStage) return t.name;
+    if (t == MusicTrack.calm) return 'lofi';
+    return switch (AppThemeController.theme.decor) {
+      'arcade' => 'arcade',
+      'neon' => 'neon',
+      'winter' || 'christmas' || 'newyear' => 'winter',
+      _ => 'main',
+    };
+  }
+
+  /// Theme changed: restart the main music with the theme's track.
+  static Future<void> themeChanged() async {
+    if (I._track != MusicTrack.main || !I._musicStarted) return;
+    await I._stopMusic();
+    await I._startMusic();
+  }
+
   /// Start music for the current track if enabled (call after login).
   static Future<void> startMusic() => I._startMusic();
 
@@ -133,7 +155,7 @@ class AppAudio with WidgetsBindingObserver {
       _music ??= AudioPlayer();
       await _music!.setReleaseMode(ReleaseMode.loop);
       await _music!.setVolume(0.35);
-      await _music!.play(AssetSource('audio/music_${_track.name}.wav'));
+      await _music!.play(AssetSource('audio/music_${_file(_track)}.wav'));
       _musicStarted = true;
     } catch (e) {
       debugPrint('music failed: $e');

@@ -213,7 +213,7 @@ class Rewards {
     _record(gameId, won: true, score: score, level: first ? 1 : 0);
     _recordTier(gameId, tier, won: true, score: score);
     unawaited(_afterWin(gameId));
-    AppAudio.play(Sound.win);
+    AppAudio.play(Sound.levelup);
     Cheer.win();
     addCoins(
       reward,
@@ -252,6 +252,7 @@ class Rewards {
     if (won) unawaited(_afterWin(gameId));
     final pay = runReward(score: score, won: won);
     if (pay > 0) addCoins(pay, source: 'game', gameId: gameId);
+    if (won) AppAudio.play(Sound.celebrate);
     won ? Cheer.win() : Cheer.lose();
     Analytics.gameEnd(gameId, won: won);
     try {

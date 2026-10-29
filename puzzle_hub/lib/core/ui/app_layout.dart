@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../release_stage.dart';
 import '../i18n/i18n.dart';
 import '../storage.dart';
 
@@ -15,7 +16,21 @@ enum AppLayout {
   festive,
 
   /// Festive look with every game on rings around a lit diya.
-  chakra;
+  chakra,
+
+  /// Category tabs + every game on one screen in big / small tiles (goes
+  /// with the new themes; 2.7.0+).
+  bento,
+
+  /// One big swipeable game card with a Play button (2.7.0+).
+  spotlight,
+
+  /// Personal list: each game with your progress, most played first (2.7.0+).
+  journey;
+
+  /// Layouts added in 2.7.0 ("Coming soon" in earlier releases).
+  bool get isNew => index >= AppLayout.bento.index;
+  bool get available => !isNew || kStage >= kNewLayoutsStage;
 
   /// Localised label (keys `home.layout.<name>`).
   String get label => tr('home.layout.$name');
@@ -51,13 +66,15 @@ class AppLayoutController {
       }
     }
     final s = Storage.globalString(kLayout);
-    current.value = AppLayout.values.firstWhere(
+    final l = AppLayout.values.firstWhere(
       (l) => l.name == s,
       orElse: () => AppLayout.arcade,
     );
+    current.value = l.available ? l : AppLayout.arcade;
   }
 
   static Future<void> select(AppLayout l) async {
+    if (!l.available) l = AppLayout.arcade;
     current.value = l;
     await Storage.setGlobalString(kLayout, l.name);
   }

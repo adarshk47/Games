@@ -343,7 +343,9 @@ class ThemePicker extends StatelessWidget {
             itemBuilder: (_, k) {
               final i = AppThemeController.visibleIndices[k];
               return _Swatch(
-                key: ValueKey('theme_swatch_${AppThemeController.themes[i].id}'),
+                key: ValueKey(
+                  'theme_swatch_${AppThemeController.themes[i].id}',
+                ),
                 theme: AppThemeController.themes[i],
                 selected: i == cur,
                 unlocked: AppThemeController.isUnlocked(i),
@@ -475,18 +477,31 @@ class LayoutPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<AppLayout>(
       valueListenable: AppLayoutController.current,
-      builder: (_, cur, _) => Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 14, 4),
-        child: Row(
+      builder: (_, cur, _) => SizedBox(
+        height: 112,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 4),
           children: [
             for (final l in AppLayout.values) ...[
-              if (l.index > 0) const SizedBox(width: 12),
-              Expanded(
+              if (l.index > 0) const SizedBox(width: 8),
+              SizedBox(
+                width: 92,
                 child: _LayoutOption(
                   key: ValueKey('layout_option_${l.name}'),
                   layout: l,
                   selected: l == cur,
                   onTap: () {
+                    if (!l.available) {
+                      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${l.label} · ${tr('home.coming_soon')}',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     if (l != cur) AppLayoutController.select(l);
                   },
                 ),
@@ -541,31 +556,43 @@ class _LayoutOption extends StatelessWidget {
           ),
           child: Column(
             children: [
-              SizedBox(
-                height: 64,
-                width: double.infinity,
-                child: CustomPaint(
-                  painter: layout == AppLayout.chakra
-                      ? ChakraPreviewPainter(bg0: t.bg0, bg1: t.bg1)
-                      : LayoutPreviewPainter(
-                          festive: layout == AppLayout.festive,
-                          bg0: t.bg0,
-                          bg1: t.bg1,
-                          accent: t.accent,
-                        ),
+              Expanded(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: CustomPaint(
+                    painter: layout.isNew
+                        ? BentoPreviewPainter(
+                            bg0: t.bg0,
+                            bg1: t.bg1,
+                            accent: t.accent,
+                            style: layout.index - AppLayout.bento.index,
+                          )
+                        : layout == AppLayout.chakra
+                        ? ChakraPreviewPainter(bg0: t.bg0, bg1: t.bg1)
+                        : LayoutPreviewPainter(
+                            festive: layout == AppLayout.festive,
+                            bg0: t.bg0,
+                            bg1: t.bg1,
+                            accent: t.accent,
+                          ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (selected) ...[
-                    Icon(Icons.check_circle_rounded, color: t.highlight, size: 14),
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: t.highlight,
+                      size: 14,
+                    ),
                     const SizedBox(width: 4),
                   ],
                   Flexible(
                     child: Text(
-                      layout.label,
+                      layout.available ? layout.label : '🔒 ${layout.label}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -673,4 +700,145 @@ class _BuyDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Settings thumbnail of the Bento home: tabs, two big tiles, small grid.
+class BentoPreviewPainter extends CustomPainter {
+  const BentoPreviewPainter({
+    required this.bg0,
+    required this.bg1,
+    required this.accent,
+    this.style = 0,
+  });
+  final Color bg0, bg1, accent;
+
+  /// 0 Bento grid, 1 Spotlight card, 2 Journey list.
+  final int style;
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final r = RRect.fromRectAndRadius(
+      Offset.zero & s,
+      const Radius.circular(10),
+    );
+    canvas.drawRRect(
+      r,
+      Paint()
+        ..shader = LinearGradient(colors: [bg1, bg0])
+            .createShader(Offset.zero & s),
+    );
+    final p = Paint();
+    const colors = [
+      Color(0xFFE53935),
+      Color(0xFF43A047),
+      Color(0xFF1E88E5),
+      Color(0xFFFBC02D),
+      Color(0xFF8E24AA),
+      Color(0xFF00ACC1),
+      Color(0xFFFF7043),
+    ];
+    if (style == 1) {
+      // Big card, dots, play button, icon row.
+      p.color = colors[0].withValues(alpha: 0.85);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(s.width * 0.18, 6, s.width * 0.64, s.height * 0.5),
+          const Radius.circular(6),
+        ),
+        p,
+      );
+      for (var i = 0; i < 4; i++) {
+        p.color = Colors.white.withValues(alpha: i == 0 ? 0.9 : 0.35);
+        canvas.drawCircle(
+          Offset(s.width / 2 - 9 + i * 6, s.height * 0.62),
+          1.6,
+          p,
+        );
+      }
+      p.color = accent;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(s.width * 0.3, s.height * 0.68, s.width * 0.4, 7),
+          const Radius.circular(4),
+        ),
+        p,
+      );
+      for (var i = 0; i < 4; i++) {
+        p.color = colors[i + 1].withValues(alpha: 0.85);
+        canvas.drawCircle(
+          Offset(s.width * (0.2 + i * 0.2), s.height * 0.88),
+          4,
+          p,
+        );
+      }
+      return;
+    }
+    if (style == 2) {
+      // Rows with progress bars.
+      for (var i = 0; i < 5; i++) {
+        final y = 5 + i * (s.height - 8) / 5;
+        p.color = colors[i].withValues(alpha: 0.9);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(5, y, 8, 8),
+            const Radius.circular(2),
+          ),
+          p,
+        );
+        p.color = Colors.white.withValues(alpha: 0.2);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(17, y + 2, s.width - 24, 4),
+            const Radius.circular(2),
+          ),
+          p,
+        );
+        p.color = accent;
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(17, y + 2, (s.width - 24) * (0.85 - i * 0.15), 4),
+            const Radius.circular(2),
+          ),
+          p,
+        );
+      }
+      return;
+    }
+    // Tabs.
+    for (var i = 0; i < 4; i++) {
+      p.color = i == 0 ? accent : Colors.white.withValues(alpha: 0.25);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(4 + i * (s.width - 8) / 4, 4, (s.width - 8) / 4 - 3, 6),
+          const Radius.circular(3),
+        ),
+        p,
+      );
+    }
+    final w = (s.width - 8 - 6) / 3, h = (s.height - 16 - 6) / 3;
+    var k = 0;
+    for (var row = 0; row < 3; row++) {
+      for (var col = 0; col < 3; col++) {
+        final wide = row == 0 && col == 0;
+        if (row == 0 && col == 1) continue;
+        p.color = colors[k++ % colors.length].withValues(alpha: 0.85);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(
+              4 + col * (w + 3),
+              14 + row * (h + 3),
+              wide ? w * 2 + 3 : w,
+              h,
+            ),
+            const Radius.circular(4),
+          ),
+          p,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(BentoPreviewPainter o) =>
+      o.bg0 != bg0 || o.bg1 != bg1 || o.accent != accent || o.style != style;
 }

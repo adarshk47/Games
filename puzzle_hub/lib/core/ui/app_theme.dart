@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../audio.dart';
+import 'dart:async';
 import '../release_stage.dart';
 import '../i18n/i18n.dart';
 import '../rewards.dart';
@@ -183,6 +185,7 @@ class AppThemeController {
       accent: Color(0xFF8B5CF6),
       highlight: Color(0xFFFFD369), // M-coin gold
       decor: 'arcade',
+      layout: AppLayout.bento,
     ),
     AppThemeData(
       id: 'winter',
@@ -194,6 +197,7 @@ class AppThemeController {
       accent: Color(0xFF60A5FA),
       highlight: Color(0xFFE0F2FE),
       decor: 'winter',
+      layout: AppLayout.bento,
     ),
     AppThemeData(
       id: 'neon',
@@ -205,6 +209,7 @@ class AppThemeController {
       accent: Color(0xFFFF2BD6),
       highlight: Color(0xFF00F0FF),
       decor: 'neon',
+      layout: AppLayout.bento,
     ),
     AppThemeData(
       id: 'christmas',
@@ -216,6 +221,7 @@ class AppThemeController {
       accent: Color(0xFFDC2626),
       highlight: Color(0xFFFDE68A),
       decor: 'christmas',
+      layout: AppLayout.bento,
     ),
     AppThemeData(
       id: 'newyear',
@@ -227,6 +233,7 @@ class AppThemeController {
       accent: Color(0xFFF59E0B),
       highlight: Color(0xFFFDE68A),
       decor: 'newyear',
+      layout: AppLayout.bento,
     ),
   ];
 
@@ -268,7 +275,7 @@ class AppThemeController {
     await AppLayoutController.init();
     // Seasonal theme (never picked by the player): use its layout too.
     // (Utsav keeps the Arcade home that new installs have had since 2.1.)
-    if (saved == null && theme.decor != null) AppLayoutController.current.value = theme.layout;
+    if (saved == null && theme.decor != null && theme.layout.available) AppLayoutController.current.value = theme.layout;
   }
 
   static Set<String> get _unlockedIds =>
@@ -283,6 +290,7 @@ class AppThemeController {
     await Storage.setGlobalString(_kTheme, '$i');
     // The home layout follows the theme (2.6.0+; it can still be changed in Settings).
     if (kStage >= 2) await AppLayoutController.select(themes[i].layout);
+    unawaited(AppAudio.themeChanged());
     return true;
   }
 
@@ -297,6 +305,7 @@ class AppThemeController {
     final ids = _unlockedIds..add(themes[i].id);
     await Storage.setString(_kUnlocked, ids.join(','));
     unlocks.value++;
+    AppAudio.play(Sound.unlock);
     await select(i);
     return ThemeBuyResult.bought;
   }

@@ -30,3 +30,7 @@ const Map<String, int> kThemeStage = {
 };
 
 bool themeInStage(String id) => kStage >= (kThemeStage[id] ?? 1);
+
+/// New home layouts (Bento, Spotlight, Journey) and the themed music open in
+/// 2.7.0; earlier releases show the layouts as "Coming soon".
+const int kNewLayoutsStage = 3;
