@@ -58,6 +58,7 @@ dependencies:
   home_widget: ^0.10.0
   quick_actions: ^1.1.1
   unity_ads_plugin: ^0.5.0
+  google_mobile_ads: ^9.1.0
   in_app_purchase: ^3.3.1
   in_app_purchase_android: ^0.5.5
   firebase_analytics: ^12.6.1
@@ -91,6 +92,9 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/audio/sfx_v1/
+    - assets/audio/sfx_v2/
+    - assets/audio/sfx_v3/
     - assets/icon/logo_256.png
 
   # To add assets to your application, add an assets section, like this:

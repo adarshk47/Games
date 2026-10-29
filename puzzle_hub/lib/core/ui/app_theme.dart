@@ -237,23 +237,8 @@ class AppThemeController {
     ),
   ];
 
-  /// Festive Utsav until Diwali season ends, then Master Arcade.
-  static final DateTime festiveEnds = DateTime(2026, 11, 16);
-
-  /// The season's theme for players who never picked one themselves:
-  /// Utsav (Diwali season 2026), Winter Lights (1–17 Dec and January),
-  /// Merry Christmas (18–27 Dec), Happy New Year (28 Dec – 3 Jan), else
-  /// Master Arcade.
-  static String seasonalId(DateTime now) {
-    if (now.isBefore(festiveEnds)) return 'utsav';
-    final m = now.month, d = now.day;
-    if (m == 12 && d >= 28 || m == 1 && d <= 3) return 'newyear';
-    if (m == 12 && d >= 18) return 'christmas';
-    if (m == 12 || m == 1) return 'winter';
-    return 'arcade';
-  }
-
-  static int get defaultIndex => themes.indexWhere((t) => t.id == (kStage >= 3 ? seasonalId(DateTime.now()) : 'utsav'));
+  /// Players who never picked a theme get this release's own theme.
+  static int get defaultIndex => themes.indexWhere((t) => t.id == kStageTheme);
 
   /// Themes that can be picked in this release (see release_stage.dart).
   static bool visible(int i) => i >= 0 && i < themes.length && themeInStage(themes[i].id);
@@ -272,10 +257,13 @@ class AppThemeController {
     final saved = int.tryParse(Storage.globalString(_kTheme) ?? '');
     final i = saved ?? defaultIndex;
     current.value = visible(i) ? i : defaultIndex;
+    final layoutPicked = Storage.globalString(AppLayoutController.kLayout) != null;
     await AppLayoutController.init();
     // Seasonal theme (never picked by the player): use its layout too.
     // (Utsav keeps the Arcade home that new installs have had since 2.1.)
-    if (saved == null && theme.decor != null && theme.layout.available) AppLayoutController.current.value = theme.layout;
+    if (saved == null && !layoutPicked && theme.decor != null && theme.layout.available) {
+      AppLayoutController.current.value = theme.layout;
+    }
   }
 
   static Set<String> get _unlockedIds =>

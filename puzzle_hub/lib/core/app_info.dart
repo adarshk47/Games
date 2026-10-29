@@ -11,8 +11,6 @@ class AppInfo {
   /// "Our websites" links at the end of Profile (null = not live yet, hidden).
   static const List<(String emoji, String key, String? url)> websites = [
     ('🤝', 'home.site.mitrojan', 'https://mitrojan.in'),
-    ('🪔', 'home.site.gita', null),
-    ('📜', 'home.site.ramcharitmanas', null),
   ];
   static const privacyUrl = 'https://adarshk47.github.io/Idealworld/master-g/privacy.html';
   static const deleteAccountUrl = 'https://adarshk47.github.io/Idealworld/master-g/delete-account.html';

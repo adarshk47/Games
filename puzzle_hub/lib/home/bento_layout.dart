@@ -152,9 +152,12 @@ class _BentoTile extends StatelessWidget {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
                     _badge(g.comingSoon ? '🔒' : (g.featured ? tr('home.new_badge') : '⭐')),
                     const SizedBox(height: 6),
-                    Text(g.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, height: 1.1)),
-                    const SizedBox(height: 4),
-                    Text(g.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 11.5, height: 1.2)),
+                    // Small phones: one-line title, no subtitle.
+                    Text(g.title, maxLines: height < 110 ? 1 : 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, height: 1.1)),
+                    if (height >= 110) ...[
+                      const SizedBox(height: 4),
+                      Text(g.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 11.5, height: 1.2)),
+                    ],
                   ]),
                 ),
                 _art(height * 0.55),

@@ -6,7 +6,9 @@ import 'package:flutter/widgets.dart';
 
 import 'storage.dart';
 
-/// Sound effects available to every game. Files live in assets/audio/NAME.wav.
+/// Sound effects available to every game. Files live in
+/// assets/audio/sfx_vN/NAME.wav – each release has its own set (kStageSfxDir):
+/// 2.5.0 classic, 2.6.0 retro arcade, 2.7.0 soft.
 enum Sound { tap, pop, flip, slide, success, win, fail, coin, whoosh, place, dice, capture, levelup, combo, unlock, celebrate, coins, buzzer, tick, button, swoosh }
 
 /// Background music tracks (looping).
@@ -101,7 +103,7 @@ class AppAudio with WidgetsBindingObserver {
       try {
         await p.stop();
       } catch (_) {}
-      await p.play(AssetSource('audio/${s.name}.wav'), volume: volume);
+      await p.play(AssetSource('audio/$kStageSfxDir/${s.name}.wav'), volume: volume);
     } catch (e) {
       debugPrint('sfx ${s.name} failed: $e');
       try {
@@ -110,7 +112,7 @@ class AppAudio with WidgetsBindingObserver {
           final idx = (_next[s]! - 1) % list.length;
           final newP = AudioPlayer()..setReleaseMode(ReleaseMode.stop);
           list[idx] = newP;
-          await newP.play(AssetSource('audio/${s.name}.wav'), volume: volume);
+          await newP.play(AssetSource('audio/$kStageSfxDir/${s.name}.wav'), volume: volume);
         }
       } catch (_) {}
     }

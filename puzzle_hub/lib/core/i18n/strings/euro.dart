@@ -3,6 +3,12 @@
 
 const Map<String, Map<String, String>> euroStrings = {
   'de': {
+    "home.layout.mosaic": "Mosaik",
+    "home.layout.az": "A–Z",
+    "home.layout.rooms": "Räume",
+    "home.az.search": "Spiele suchen",
+    "home.az.empty": "Kein Spiel gefunden",
+    "home.rooms.games": "{n} Spiele",
     "account.welcome_back": "Willkommen zurück,",
     "account.enter_pin": "Gib deine PIN ein",
     "account.wrong_pin_retry": "Falsche PIN, versuch es nochmal",
@@ -1438,6 +1444,12 @@ const Map<String, Map<String, String>> euroStrings = {
     "tile_match.returned": "3 Steine gingen zurück aufs Feld",
   },
   'fr': {
+    "home.layout.mosaic": "Mosaïque",
+    "home.layout.az": "A–Z",
+    "home.layout.rooms": "Salles",
+    "home.az.search": "Rechercher un jeu",
+    "home.az.empty": "Aucun jeu trouvé",
+    "home.rooms.games": "{n} jeux",
     "account.welcome_back": "Bon retour,",
     "account.enter_pin": "Saisis ton code PIN",
     "account.wrong_pin_retry": "Code PIN incorrect, réessaie",
@@ -2870,6 +2882,12 @@ const Map<String, Map<String, String>> euroStrings = {
     "tile_match.returned": "3 tuiles sont retournées sur le plateau",
   },
   'es': {
+    "home.layout.mosaic": "Mosaico",
+    "home.layout.az": "A–Z",
+    "home.layout.rooms": "Salas",
+    "home.az.search": "Buscar juegos",
+    "home.az.empty": "No se encontró ningún juego",
+    "home.rooms.games": "{n} juegos",
     "account.welcome_back": "Bienvenido de nuevo,",
     "account.enter_pin": "Introduce tu PIN",
     "account.wrong_pin_retry": "PIN incorrecto, inténtalo de nuevo",
@@ -4320,6 +4338,12 @@ const Map<String, Map<String, String>> euroStrings = {
     "tile_match.returned": "3 fichas volvieron al tablero",
   },
   'it': {
+    "home.layout.mosaic": "Mosaico",
+    "home.layout.az": "A–Z",
+    "home.layout.rooms": "Stanze",
+    "home.az.search": "Cerca giochi",
+    "home.az.empty": "Nessun gioco trovato",
+    "home.rooms.games": "{n} giochi",
     "account.welcome_back": "Bentornato,",
     "account.enter_pin": "Inserisci il tuo PIN",
     "account.wrong_pin_retry": "PIN errato, riprova",

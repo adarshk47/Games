@@ -24,10 +24,17 @@ const Map<String, int> kGameStage = {'business': 2, 'brain_age': 2, 'snakes': 3,
 const Map<String, int> kThemeStage = {
   'arcade': 3,
   'winter': 3,
-  'christmas': 3,
+  'neon': 1,
+  'christmas': 2,
   'newyear': 3,
-  'neon': 2,
 };
+
+/// Each release's own theme, used until the player picks one:
+/// 2.5.0 Neon Night, 2.6.0 Merry Christmas, 2.7.0 Happy New Year.
+const String kStageTheme = kStage == 1 ? 'neon' : (kStage == 2 ? 'christmas' : 'newyear');
+
+/// Each release has its own sound-effect set (assets/audio/sfx_vN/).
+const String kStageSfxDir = 'sfx_v$kStage';
 
 bool themeInStage(String id) => kStage >= (kThemeStage[id] ?? 1);
 

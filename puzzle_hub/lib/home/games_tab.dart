@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'spotlight_journey_layouts.dart';
 import 'bento_layout.dart';
+import 'more_layouts.dart';
 import 'theme_styles.dart';
 import '../core/cloud/analytics.dart';
 import 'dart:math' as math;
@@ -136,6 +137,25 @@ class _GamesTabState extends State<GamesTab> {
         AppLayout.journey => JourneyHome(
             header: _Header(onOpenShop: widget.onOpenShop),
             games: games,
+            onOpen: _open,
+            bottomInset: widget.bottomInset,
+          ),
+        AppLayout.mosaic => MosaicHome(
+            header: _Header(onOpenShop: widget.onOpenShop),
+            games: games,
+            onOpen: _open,
+            bottomInset: widget.bottomInset,
+          ),
+        AppLayout.az => AzHome(
+            header: _Header(onOpenShop: widget.onOpenShop),
+            games: games,
+            onOpen: _open,
+            bottomInset: widget.bottomInset,
+          ),
+        AppLayout.rooms => RoomsHome(
+            header: _Header(onOpenShop: widget.onOpenShop),
+            games: games,
+            rooms: [for (final (key, emoji, ids) in _shelves) (tr(key), emoji, ids)],
             onOpen: _open,
             bottomInset: widget.bottomInset,
           ),

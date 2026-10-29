@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:unity_ads_plugin/unity_ads_plugin.dart';
+
+import 'admob_ads.dart';
 
 import 'ads_service.dart';
 
@@ -22,6 +25,7 @@ class BannerStrip extends StatefulWidget {
 class _BannerStripState extends State<BannerStrip> {
   bool _loaded = false;
   bool _failed = false;
+  BannerAd? _admob;
 
   bool get _wanted => AdsService.available && !AdsService.adFree;
 
@@ -34,6 +38,7 @@ class _BannerStripState extends State<BannerStrip> {
   @override
   void dispose() {
     AdsService.changes.removeListener(_sync);
+    _admob?.dispose();
     BannerStrip.showing.value = false;
     super.dispose();
   }
@@ -47,6 +52,7 @@ class _BannerStripState extends State<BannerStrip> {
   @override
   Widget build(BuildContext context) {
     if (!_wanted || _failed) return const SizedBox.shrink();
+    if (AdsService.usingAdmob) return _admobBanner();
     // The platform view must be laid out to load; it stays 1 px tall until
     // an ad is ready.
     return SizedBox(
@@ -69,6 +75,40 @@ class _BannerStripState extends State<BannerStrip> {
             }
             BannerStrip.showing.value = false;
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _admobBanner() {
+    _admob ??= BannerAd(
+      adUnitId: AdmobIds.banner,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          if (!mounted) return;
+          setState(() => _loaded = true);
+          BannerStrip.showing.value = true;
+        },
+        onAdFailedToLoad: (ad, e) {
+          debugPrint('admob banner failed: ${e.message}');
+          ad.dispose();
+          _admob = null;
+          if (mounted) setState(() => _failed = true);
+          BannerStrip.showing.value = false;
+        },
+      ),
+    )..load();
+    final ad = _admob!;
+    if (!_loaded) return const SizedBox.shrink();
+    return SizedBox(
+      height: BannerStrip.height,
+      child: Center(
+        child: SizedBox(
+          width: ad.size.width.toDouble(),
+          height: ad.size.height.toDouble(),
+          child: AdWidget(ad: ad),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:puzzle_hub/core/release_stage.dart';
 import 'package:puzzle_hub/core/rewards.dart';
 import 'package:puzzle_hub/core/storage.dart';
+import 'package:puzzle_hub/core/ui/app_layout.dart';
 import 'package:puzzle_hub/core/ui/app_theme.dart';
 import 'package:puzzle_hub/core/ui/settings_sheet.dart';
 import 'package:puzzle_hub/games/registry.dart';
@@ -44,7 +45,12 @@ void main() {
       }
       expect(_stackIndex(t), 0);
       expect(find.text('Master G'), findsOneWidget);
-      expect(find.text('GAME OF THE DAY'), findsOneWidget);
+      // V3's own New Year theme opens on the Bento home; earlier releases on Arcade.
+      if (AppLayoutController.layout == AppLayout.arcade) {
+        expect(find.text('GAME OF THE DAY'), findsOneWidget);
+      } else {
+        expect(find.byKey(const ValueKey('bento_layout')), findsOneWidget);
+      }
 
       await t.tap(find.byKey(const ValueKey('nav_shop')));
       await t.pump(const Duration(milliseconds: 500));

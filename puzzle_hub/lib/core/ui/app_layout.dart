@@ -26,7 +26,16 @@ enum AppLayout {
   spotlight,
 
   /// Personal list: each game with your progress, most played first (2.7.0+).
-  journey;
+  journey,
+
+  /// Two columns of cards in mixed heights, like a magazine (2.7.0+).
+  mosaic,
+
+  /// Search box + every game A to Z with a quick Play button (2.7.0+).
+  az,
+
+  /// One big tile per category that opens in place (2.7.0+).
+  rooms;
 
   /// Layouts added in 2.7.0 ("Coming soon" in earlier releases).
   bool get isNew => index >= AppLayout.bento.index;

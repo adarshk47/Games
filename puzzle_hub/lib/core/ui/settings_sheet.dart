@@ -712,7 +712,7 @@ class BentoPreviewPainter extends CustomPainter {
   });
   final Color bg0, bg1, accent;
 
-  /// 0 Bento grid, 1 Spotlight card, 2 Journey list.
+  /// 0 Bento grid, 1 Spotlight card, 2 Journey list, 3 Mosaic, 4 A–Z, 5 Rooms.
   final int style;
 
   @override
@@ -770,6 +770,69 @@ class BentoPreviewPainter extends CustomPainter {
           4,
           p,
         );
+      }
+      return;
+    }
+    if (style == 3) {
+      // Two staggered columns of mixed-height cards.
+      const hl = [0.42, 0.3, 0.36], hr = [0.3, 0.42, 0.3];
+      final w = (s.width - 12) / 2;
+      for (final (col, hs) in [(0, hl), (1, hr)]) {
+        var y = col == 0 ? 4.0 : 9.0;
+        for (final (i, h) in hs.indexed) {
+          p.color = colors[col * 3 + i].withValues(alpha: 0.88);
+          final hh = (s.height - 10) * h;
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(Rect.fromLTWH(4 + col * (w + 4), y, w, hh - 3), const Radius.circular(4)),
+            p,
+          );
+          y += hh;
+        }
+      }
+      return;
+    }
+    if (style == 4) {
+      // Search bar + list rows with play dots.
+      p.color = Colors.white.withValues(alpha: 0.25);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(Rect.fromLTWH(4, 4, s.width - 8, 8), const Radius.circular(4)),
+        p,
+      );
+      for (var i = 0; i < 4; i++) {
+        final y = 17 + i * (s.height - 20) / 4;
+        p.color = colors[i].withValues(alpha: 0.9);
+        canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(5, y, 9, 9), const Radius.circular(2)), p);
+        p.color = Colors.white.withValues(alpha: 0.35);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromLTWH(18, y + 2, s.width - 40, 4), const Radius.circular(2)),
+          p,
+        );
+        p.color = accent;
+        canvas.drawCircle(Offset(s.width - 10, y + 4.5), 4, p);
+      }
+      return;
+    }
+    if (style == 5) {
+      // Category doors, the first one open with small tiles.
+      var y = 4.0;
+      for (var i = 0; i < 3; i++) {
+        p.color = colors[i + 3].withValues(alpha: 0.9);
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(Rect.fromLTWH(4, y, s.width - 8, 11), const Radius.circular(4)),
+          p,
+        );
+        y += 14;
+        if (i == 0) {
+          final w = (s.width - 16) / 3;
+          for (var k = 0; k < 3; k++) {
+            p.color = Colors.white.withValues(alpha: 0.3);
+            canvas.drawRRect(
+              RRect.fromRectAndRadius(Rect.fromLTWH(4 + k * (w + 4), y, w, 12), const Radius.circular(3)),
+              p,
+            );
+          }
+          y += 16;
+        }
       }
       return;
     }

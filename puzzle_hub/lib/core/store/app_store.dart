@@ -107,15 +107,17 @@ class AppStore {
   }
 
   /// Profile "Rate us": opens the Play Store page.
+  /// Always the real Play listing (test builds have other package names, so
+  /// InAppReview.openStoreListing() would open a "not found" page there).
   static Future<void> openStorePage() async {
+    const id = 'com.memorypuzzle.app';
     try {
-      await InAppReview.instance.openStoreListing();
-    } catch (_) {
-      await launchUrl(
-        Uri.parse('https://play.google.com/store/apps/details?id=com.memorypuzzle.app'),
-        mode: LaunchMode.externalApplication,
-      );
-    }
+      if (await launchUrl(Uri.parse('market://details?id=$id'), mode: LaunchMode.externalApplication)) return;
+    } catch (_) {}
+    await launchUrl(
+      Uri.parse('https://play.google.com/store/apps/details?id=$id'),
+      mode: LaunchMode.externalApplication,
+    );
   }
 
   /// Profile "Send feedback": an email to the developer.

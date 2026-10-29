@@ -23,6 +23,9 @@ Future<void> _setup([Map<String, Object> prefs = const {}]) async {
 
 int _themeIndex(String id) => AppThemeController.themes.indexWhere((t) => t.id == id);
 
+/// A saved theme choice, so the theme's own layout is not applied.
+String get _utsav => '${_themeIndex('utsav')}';
+
 Future<void> _pumpHome(WidgetTester t, Size size) async {
   t.view.physicalSize = size;
   t.view.devicePixelRatio = 1;
@@ -64,22 +67,25 @@ void main() {
 
   test('layout choice persists globally under set.layout', () async {
     await _setup();
-    // New installs default to the Arcade home and the Utsav theme.
-    expect(AppLayoutController.layout, AppLayout.arcade);
-    expect(AppThemeController.theme.id, 'utsav');
+    // New installs get this release's own theme (Neon / Christmas / New Year)
+    // and its home layout when that layout is open in this release.
+    expect(AppThemeController.theme.id, kStageTheme);
+    final own = AppThemeController.theme.layout;
+    expect(AppLayoutController.layout, own.available ? own : AppLayout.arcade);
     await AppLayoutController.select(AppLayout.festive);
     expect(Storage.globalString('set.layout'), 'festive');
     AppLayoutController.current.value = AppLayout.classic;
     await AppThemeController.init(); // also restores the layout
     expect(AppLayoutController.festive, isTrue);
 
-    await _setup({'set.layout': 'bogus'});
+    // (A picked theme keeps the theme's own layout out of these checks.)
+    await _setup({'set.layout': 'bogus', 'set.theme': _utsav});
     expect(AppLayoutController.layout, AppLayout.arcade);
     // Players still on the old default chakra move to Arcade once...
-    await _setup({'set.layout': 'chakra'});
+    await _setup({'set.layout': 'chakra', 'set.theme': _utsav});
     expect(AppLayoutController.layout, AppLayout.arcade);
     // ...but after that a chakra picked in Settings stays.
-    await _setup({'set.layout': 'chakra', 'set.layout.arcade': true});
+    await _setup({'set.layout': 'chakra', 'set.layout.arcade': true, 'set.theme': _utsav});
     expect(AppLayoutController.layout, AppLayout.chakra);
     await _setup({'set.layout': 'classic', 'set.theme': '0'});
     expect(AppLayoutController.layout, AppLayout.classic);
@@ -166,7 +172,7 @@ void main() {
 
   for (final lang in AppLang.values) {
     testWidgets('arcade home (default) renders in ${lang.code} without overflow', (t) async {
-      await _setup();
+      await _setup({'set.theme': _utsav});
       I18n.lang.value = lang;
       for (final size in const [Size(320, 480), Size(390, 844), Size(360, 3200)]) {
         await _pumpHome(t, size);
@@ -185,7 +191,7 @@ void main() {
     });
 
     testWidgets('chakra home renders in ${lang.code} without overflow', (t) async {
-      await _setup({'set.layout': 'chakra', 'set.layout.arcade': true});
+      await _setup({'set.layout': 'chakra', 'set.layout.arcade': true, 'set.theme': _utsav});
       I18n.lang.value = lang;
       for (final size in const [Size(320, 480), Size(390, 844), Size(360, 3200)]) {
         await _pumpHome(t, size);

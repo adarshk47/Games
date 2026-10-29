@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../core/release_stage.dart';
 import '../core/i18n/i18n.dart';
 import '../core/ui/app_theme.dart';
 import '../core/ui/ui.dart';
@@ -11,7 +10,7 @@ class ThemeStyle {
   ThemeStyle._();
 
   /// No themed frames / greetings in 2.5.0 (stage 1).
-  static String? get decor => kStage >= 2 ? AppThemeController.theme.decor : null;
+  static String? get decor => AppThemeController.theme.decor;
 
   /// Wraps a game card in the theme's frame (neon glow, frost, gold …).
   static Widget frame(Widget child, {double radius = 22}) {
@@ -41,7 +40,7 @@ class ThemeStyle {
       'christmas' => ('🎄', tr('home.season.christmas'), tr('home.season.christmas_sub'), const [Color(0xFFB91C1C), Color(0xFF14532D)]),
       'newyear' => (
           '🎆',
-          tr('home.season.newyear', {'year': now.month == 12 ? now.year + 1 : now.year}),
+          tr('home.season.newyear', {'year': now.month >= 7 ? now.year + 1 : now.year}),
           tr('home.season.newyear_sub'),
           const [Color(0xFF7C3AED), Color(0xFFDB2777)],
         ),

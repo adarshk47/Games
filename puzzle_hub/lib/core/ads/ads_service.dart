@@ -13,11 +13,13 @@ import 'coupon_service.dart';
 import 'adfree_grant.dart';
 import '../store/iap_service.dart';
 import '../cloud/cloud_service.dart';
+import 'admob_ads.dart';
 
 /// Unity Ads ids (game "Master G: Brain Puzzle Games").
 ///
-/// Google AdMob was removed in 2.2 (the AdMob account was suspended for
-/// invalid traffic, Oct 23 – Nov 22, 2026). All ads now come from Unity Ads.
+/// Unity is the default network. Google AdMob (admob_ads.dart) can be switched
+/// on remotely with Firestore `config/app.ads` = 'admob' (the AdMob account is
+/// suspended for invalid traffic until 22 Nov 2026).
 class AdIds {
   AdIds._();
   static const gameId = '800409679';
@@ -47,7 +49,8 @@ class AdsService {
   // ---- Tunables --------------------------------------------------------------
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
-  static const levelsPerInterstitial = 2; // one after every 2 games (win or lose)
+  static const levelsPerInterstitial =
+      2; // one after every 2 games (win or lose)
   static const minInterstitialGap = Duration(seconds: 45); // never back-to-back
   static const sessionGrace = Duration(seconds: 30);
   static const interstitialDelay = Duration(milliseconds: 1200);
@@ -83,10 +86,14 @@ class AdsService {
   static bool _showing = false;
   static Completer<void>? _rewardedLoaded;
 
-  /// Remote switch (Firestore `config/app.ads`): 'unity' (default) or 'off'.
-  /// Lets the developer turn ads off for everyone without an app update.
+  /// Remote switch (Firestore `config/app.ads`): 'unity' (default), 'admob'
+  /// or 'off'. Changes the ad network (or turns ads off) for everyone without
+  /// an app update; read at app start (cached for offline starts).
   static const _kRemote = 'ads.remote';
   static String get remoteProvider => Storage.globalString(_kRemote) ?? 'unity';
+
+  /// True when this session runs on AdMob instead of Unity.
+  static bool usingAdmob = false;
 
   /// Fires when ad availability / ad-free / daily counts change (for UI).
   static final ValueNotifier<int> changes = ValueNotifier<int>(0);
@@ -128,7 +135,11 @@ class AdsService {
   static Future<void> _readRemote() async {
     if (!CloudService.available) return;
     try {
-      final d = await FirebaseFirestore.instance.collection('config').doc('app').get().timeout(const Duration(seconds: 8));
+      final d = await FirebaseFirestore.instance
+          .collection('config')
+          .doc('app')
+          .get()
+          .timeout(const Duration(seconds: 8));
       final v = d.data()?['ads'];
       if (v is String) await Storage.setGlobalString(_kRemote, v);
     } catch (e) {
@@ -139,6 +150,15 @@ class AdsService {
   static Future<void> _bootstrap() async {
     await _readRemote();
     if (remoteProvider == 'off') return;
+    if (remoteProvider == 'admob') {
+      if (!await AdmobAds.init()) return;
+      usingAdmob = true;
+      _ready = true;
+      _notify();
+      _loadRewarded();
+      _loadInterstitial();
+      return;
+    }
     final done = Completer<bool>();
     await UnityAds.init(
       gameId: AdIds.gameId,
@@ -149,7 +169,12 @@ class AdsService {
         if (!done.isCompleted) done.complete(false);
       },
     );
-    if (!await done.future.timeout(const Duration(seconds: 30), onTimeout: () => false)) return;
+    if (!await done.future.timeout(
+      const Duration(seconds: 30),
+      onTimeout: () => false,
+    )) {
+      return;
+    }
     _ready = true;
     _notify();
     _loadRewarded();
@@ -162,6 +187,26 @@ class AdsService {
     if (!_ready || _rewardedReady || _loadingRewarded) return;
     _loadingRewarded = true;
     _rewardedLoaded ??= Completer<void>();
+    if (usingAdmob) {
+      try {
+        AdmobAds.loadRewarded(
+          onLoaded: () {
+            _loadingRewarded = false;
+            _rewardedReady = true;
+            _completeRewardedWait();
+            _notify();
+          },
+          onFailed: () {
+            _loadingRewarded = false;
+            _completeRewardedWait();
+          },
+        );
+      } catch (_) {
+        _loadingRewarded = false;
+        _completeRewardedWait();
+      }
+      return;
+    }
     try {
       UnityAds.load(
         placementId: AdIds.rewarded,
@@ -194,6 +239,19 @@ class AdsService {
       return;
     }
     _loadingInterstitial = true;
+    if (usingAdmob) {
+      try {
+        AdmobAds.loadInterstitial(
+          onDone: () {
+            _loadingInterstitial = false;
+            _interstitialReady = AdmobAds.interstitialReady;
+          },
+        );
+      } catch (_) {
+        _loadingInterstitial = false;
+      }
+      return;
+    }
     try {
       UnityAds.load(
         placementId: AdIds.interstitial,
@@ -245,20 +303,27 @@ class AdsService {
       _showing = true;
       var earned = false;
       final closed = Completer<void>();
-      await UnityAds.showVideoAd(
-        placementId: AdIds.rewarded,
-        onComplete: (_) {
-          earned = true;
-          if (!closed.isCompleted) closed.complete();
-        },
-        onSkipped: (_) {
-          if (!closed.isCompleted) closed.complete();
-        },
-        onFailed: (_, e, m) {
-          lastRewardedUnavailable = true;
-          if (!closed.isCompleted) closed.complete();
-        },
-      );
+      if (usingAdmob) {
+        final (shown, got) = await AdmobAds.showRewarded();
+        if (!shown) lastRewardedUnavailable = true;
+        earned = got;
+        closed.complete();
+      } else {
+        await UnityAds.showVideoAd(
+          placementId: AdIds.rewarded,
+          onComplete: (_) {
+            earned = true;
+            if (!closed.isCompleted) closed.complete();
+          },
+          onSkipped: (_) {
+            if (!closed.isCompleted) closed.complete();
+          },
+          onFailed: (_, e, m) {
+            lastRewardedUnavailable = true;
+            if (!closed.isCompleted) closed.complete();
+          },
+        );
+      }
       await closed.future.timeout(const Duration(minutes: 3), onTimeout: () {});
       _showing = false;
       _loadRewarded();
@@ -284,7 +349,9 @@ class AdsService {
   /// True while the 24h ad-free pass is active.
   static bool get adFree {
     try {
-      if (CouponService.noAds.value || AdFreeGrant.active || IapService.active) return true;
+      if (CouponService.noAds.value || AdFreeGrant.active || IapService.active) {
+        return true;
+      }
       final u = adFreeUntil;
       return u != null && u.isAfter(clock());
     } catch (_) {
@@ -386,6 +453,14 @@ class AdsService {
       _interstitialReady = false;
       _showing = true;
       debugMarkInterstitialShown();
+      if (usingAdmob) {
+        final shown = AdmobAds.showInterstitial(() {
+          _showing = false;
+          _loadInterstitial();
+        });
+        if (!shown) _showing = false;
+        return;
+      }
       UnityAds.showVideoAd(
         placementId: AdIds.interstitial,
         onComplete: (_) {
