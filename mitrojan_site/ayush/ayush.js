@@ -7,7 +7,7 @@
     hi: {
       brand: 'आयुष वैद्य', brandSub: 'मित्रोजन द्वारा', menu: 'मेन्यू',
       navDoctors: 'चिकित्सक', navBenefits: 'फ़ायदे', navEat: 'क्या खाएँ', navBmi: 'BMI', navBook: 'बुक करें', navHome: 'होम',
-      navDiet: 'डाइट प्लान', navProducts: 'प्रोडक्ट', navHistory: 'इतिहास', navMore: 'और',
+      navConsult: 'जनरल फ़िज़िशियन', navDiet: 'डाइट प्लान', navProducts: 'प्रोडक्ट', navHistory: 'इतिहास', navMore: 'और',
       mQuiz: 'प्रकृति क्विज़', mTrust: 'चिकित्सकों की योग्यता', mReviews: 'समीक्षाएँ', mArticles: 'स्वास्थ्य लेख', mContact: 'संपर्क', mPolicies: 'नीतियाँ',
       ddDolly: 'वैद्य डॉली गुप्ता', ddPooja: 'वैद्य पूजा गुप्ता', ddDollyRole: 'जनरल फ़िज़िशियन', ddPoojaRole: 'आहार, पोषण और जीवनशैली',
       tk1: '🌿 आयुर्वेद, आज की ज़िंदगी के लिए', tk2: '📹 15 मिनट का ऑनलाइन परामर्श', tk3: '🥗 वैद्य पूजा गुप्ता के डाइट प्लान', tk4: '⚖️ मुफ़्त BMI कैलकुलेटर', tk5: '🇮🇳 पूरे भारत में, घर बैठे',
@@ -17,7 +17,7 @@
     hinglish: {
       brand: 'AYUSH Vaidya', brandSub: 'Mitrojan ki taraf se', menu: 'Menu',
       navDoctors: 'Doctors', navBenefits: 'Fayde', navEat: 'Kya khayein', navBmi: 'BMI', navBook: 'Book kariye', navHome: 'Home',
-      navDiet: 'Diet plan', navProducts: 'Products', navHistory: 'Itihaas', navMore: 'Aur',
+      navConsult: 'General Physician', navDiet: 'Diet plan', navProducts: 'Products', navHistory: 'Itihaas', navMore: 'Aur',
       mQuiz: 'Prakriti quiz', mTrust: 'Doctors ki qualification', mReviews: 'Reviews', mArticles: 'Health articles', mContact: 'Contact', mPolicies: 'Policies',
       ddDolly: 'Vaidya Dolly Gupta', ddPooja: 'Vaidya Pooja Gupta', ddDollyRole: 'General Physician', ddPoojaRole: 'Diet, Nutrition aur Lifestyle',
       tk1: '🌿 Ayurveda, aaj ki life ke liye', tk2: '📹 15 minute ka online consultation', tk3: '🥗 Vaidya Pooja Gupta ke diet plans', tk4: '⚖️ Free BMI calculator', tk5: '🇮🇳 Poore Bharat mein, ghar baithe',
@@ -59,7 +59,7 @@
   function drawTips(lang) {
     bg.querySelectorAll('.tip').forEach(function (t) { t.remove(); });
     var list = TIPS[lang] || TIPS.en;
-    var n = window.innerWidth < 700 ? 8 : list.length;
+    var n = window.innerWidth < 700 ? 4 : 8;
     for (var i = 0; i < n; i++) {
       var s = document.createElement('span');
       s.className = 'tip';

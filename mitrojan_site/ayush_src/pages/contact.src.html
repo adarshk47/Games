@@ -27,8 +27,8 @@
 </div></section>
 
 <section class="block"><div class="wrap ways">
-  <div class="card way"><span class="e">💬</span><h3>WhatsApp</h3><p class="blank">+91 00000 00000 (demo)</p></div>
-  <div class="card way"><span class="e">📞</span><h3 data-i18n="phoneH">Phone</h3><p class="blank">+91 00000 00000 (demo)</p></div>
+  <div class="card way"><span class="e">💬</span><h3>WhatsApp</h3><p>[[clinic.whatsapp]]</p><!--if:clinic.whatsapp--><a class="btn primary" href="https://wa.me/[[raw:clinic.whatsapp]]" target="_blank" rel="noopener" data-i18n="waBtn">Chat on WhatsApp</a><!--/if:clinic.whatsapp--></div>
+  <div class="card way"><span class="e">📞</span><h3 data-i18n="phoneH">Phone</h3><p>[[clinic.phone]]</p><!--if:clinic.phone--><a class="btn" href="tel:[[tel:clinic.phone]]" data-i18n="callBtn">Call the clinic</a><!--/if:clinic.phone--></div>
   <div class="card way"><span class="e">✉️</span><h3 data-i18n="mailH">Email</h3><p>aiforsmart@gmail.com</p><a class="btn" href="mailto:aiforsmart@gmail.com?subject=AYUSH%20Vaidya" data-i18n="mailBtn">Send an email</a></div>
 </div></section>
 
@@ -36,13 +36,13 @@
   <article class="card">
     <h2 style="font-size:28px;margin-bottom:10px" data-i18n="clinicH">Clinic details</h2>
     <dl>
-      <div><dt data-i18n="dAddr">Address</dt><dd class="blank">Demo Clinic, Main Road, India (demo)</dd></div>
-      <div><dt data-i18n="dHours">Hours</dt><dd data-i18n="hours">Mon – Sat · 10 AM – 1 PM, 5 – 7 PM (demo)</dd></div>
+      <div><dt data-i18n="dAddr">Address</dt><dd>[[clinic.address]]</dd></div>
+      <div><dt data-i18n="dHours">Hours</dt><dd>[[clinic.hours]]</dd></div>
       <div><dt data-i18n="dMode">Consultations</dt><dd data-i18n="mode">Online video, across India</dd></div>
-      <div><dt data-i18n="dReply">Reply time</dt><dd class="blank" data-i18n="replyTime">Within 24 hours (demo)</dd></div>
+      <div><dt data-i18n="dReply">Reply time</dt><dd>[[clinic.reply_time]]</dd></div>
     </dl>
   </article>
-  <div class="map" data-i18n="mapNote">📍 Google Map of the clinic will appear here once the address is added.</div>
+  <!--if:clinic.map_embed--><iframe class="map" src="[[raw:clinic.map_embed]]" title="Clinic location on Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="border:0;width:100%"></iframe><!--/if:clinic.map_embed--><!--ifnot:clinic.map_embed--><div class="map" data-i18n="mapNote">📍 Google Map of the clinic will appear here once the address is added.</div><!--/ifnot:clinic.map_embed-->
 </div>
 <div class="wrap"><p class="disclaimer" data-i18n="emerg">Not for emergencies. In an emergency, call 112 or go to the nearest hospital.</p></div>
 </section>

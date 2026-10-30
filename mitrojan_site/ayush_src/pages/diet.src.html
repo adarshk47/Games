@@ -86,6 +86,8 @@
     <aside class="card">
       <h3 data-i18n="howH">How it works</h3>
       <ol><li data-i18n="hw1">Send this request with a time slot.</li><li data-i18n="hw2">The clinic confirms and tells you the fee.</li><li data-i18n="hw3">15-minute video call with Vaidya Pooja Gupta.</li><li data-i18n="hw4">You get your personal diet chart after the call.</li></ol>
+      <p style="margin:12px 0 0"><b data-i18n="bsFee">Consultation fee:</b> [[clinic.fee_consult]]</p>
+      <p class="note" style="margin:4px 0 0" data-i18n="bsPay">💳 Online payment (UPI / cards) – coming soon</p>
       <p class="disclaimer" data-i18n="medNote">Diabetes, BP, kidney, thyroid, pregnancy or a food allergy? Mention it in the call – your plan will be made with it in mind, alongside your regular treatment.</p>
     </aside>
     <form class="card booking" id="dietForm" novalidate>
@@ -108,6 +110,7 @@
       <div class="field"><label for="dTime" data-i18n="fTime">Time slot</label><select id="dTime" name="time" required></select></div>
       <div class="field"><label for="dLang" data-i18n="fLang">Language</label><select id="dLang" name="lang"><option value="hi" data-i18n="optHi">Hindi</option><option value="en" data-i18n="optEn">English</option></select></div>
       <label class="consent full"><input type="checkbox" name="consent" required> <span data-i18n="fConsent">I agree that the clinic may contact me on this number about my diet consultation, and I understand this is not an emergency service.</span></label>
+      <p class="note full" style="margin:-4px 0 0">🔒 <a href="policies.html#consent" data-i18n="consentLink">Read the teleconsultation consent &amp; privacy policy</a></p>
       <div class="form-msg full" role="status" aria-live="polite"></div>
       <div id="msgs" hidden><span data-i18n="msgName">Please enter your name.</span><span data-i18n="msgPhone">Please enter a valid 10-digit mobile number.</span><span data-i18n="msgSlot">Please choose a date and time.</span><span data-i18n="msgConsent">Please tick the consent box to continue.</span><span data-i18n="msgOk">Thank you! Your diet request has been received. The clinic will call or WhatsApp you soon to confirm.</span><span data-i18n="msgTaken">This time may already be booked. Please choose another slot.</span><span data-i18n="msgFail">The request could not be sent. Check your internet and try again.</span><span data-i18n="msgSending">Sending…</span></div>
       <div class="full"><button class="btn primary" type="submit" data-i18n="fSubmit">Request diet plan 🥗</button></div>
@@ -128,6 +131,7 @@
 <script>
 window.AYUSH_PAGE = {
   hi: {
+    consentLink: 'टेलीकंसल्टेशन सहमति और गोपनीयता नीति पढ़ें', bsFee: 'परामर्श शुल्क:', bsPay: '💳 ऑनलाइन भुगतान (UPI / कार्ड) – जल्द आ रहा है', priceL: 'शुल्क:',
     sticker: '🥗 डाइट प्लान', h1a: 'आपका डाइट प्लान,', h1b: 'वैद्य के हाथों बना।',
     lead: 'वैद्य पूजा गुप्ता के व्यक्तिगत भारतीय डाइट प्लान – आपके शरीर, दिनचर्या और स्वाद के हिसाब से। न क्रैश डाइट, न सबके लिए एक जैसा चार्ट।',
     ctaReq: 'मेरा डाइट प्लान माँगें ↓', ctaMeet: 'वैद्य पूजा गुप्ता से मिलें', demo: 'डेमो प्रोफ़ाइल', pooja: 'वैद्य पूजा गुप्ता', poojaRole: 'आहार, पोषण और जीवनशैली प्रबंधन (आयुर्वेद)',
@@ -157,6 +161,7 @@ window.AYUSH_PAGE = {
     eatLink: 'खाने की आम सलाह देखें →', bmiLink: 'BMI जाँचें ⚖️'
   },
   hinglish: {
+    consentLink: 'Teleconsultation consent aur privacy policy padhiye', bsFee: 'Consultation fees:', bsPay: '💳 Online payment (UPI / card) – jaldi aa raha hai', priceL: 'Daam:',
     sticker: '🥗 Diet plan', h1a: 'Aapka diet plan,', h1b: 'Vaidya ke haathon bana.',
     lead: 'Vaidya Pooja Gupta ke personal Indian diet plans – aapke body, dincharya aur swaad ke hisaab se. Na crash diet, na sabke liye ek jaisa chart.',
     ctaReq: 'Mera diet plan maango ↓', ctaMeet: 'Vaidya Pooja Gupta se miliye', demo: 'Demo profile', pooja: 'Vaidya Pooja Gupta', poojaRole: 'Diet, Nutrition aur Lifestyle Management (Ayurveda)',

@@ -6,11 +6,17 @@
 <title>Diet plan by Vaidya Pooja Gupta · AYUSH Vaidya</title>
 <meta name="description" content="Personal Indian diet plans by Vaidya Pooja Gupta (Diet & Nutrition, Ayurveda): a 15-minute video call and a diet chart planned around your body, routine and taste.">
 <meta name="theme-color" content="#2f8f5b">
+<link rel="canonical" href="https://ayush.mitrojan.in/diet.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AYUSH Vaidya by Mitrojan">
+<meta property="og:title" content="Diet plan by Vaidya Pooja Gupta · AYUSH Vaidya">
+<meta property="og:description" content="Personal Indian diet plans by Vaidya Pooja Gupta (Diet & Nutrition, Ayurveda): a 15-minute video call and a diet chart planned around your body, routine and taste.">
+<meta property="og:url" content="https://ayush.mitrojan.in/diet.html">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='14' fill='%232f8f5b'/><path d='M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z' fill='%23c9f2dc'/><path d='M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z' fill='%23fff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ayush.css?v=4">
+<link rel="stylesheet" href="ayush.css?v=7">
 <style>
   .hero { padding: 40px 0 0; }
   .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: center; }
@@ -77,6 +83,7 @@
       </div>
     </div>
     <a href="benefits.html" data-i18n="navBenefits">Benefits</a>
+    <a href="consult.html" data-i18n="navConsult">General Physician</a>
     <a href="diet.html" aria-current="page" data-i18n="navDiet">Diet plan</a>
     <a href="products.html" data-i18n="navProducts">Products</a>
     <a href="history.html" data-i18n="navHistory">History</a>
@@ -136,6 +143,8 @@
     <aside class="card">
       <h3 data-i18n="howH">How it works</h3>
       <ol><li data-i18n="hw1">Send this request with a time slot.</li><li data-i18n="hw2">The clinic confirms and tells you the fee.</li><li data-i18n="hw3">15-minute video call with Vaidya Pooja Gupta.</li><li data-i18n="hw4">You get your personal diet chart after the call.</li></ol>
+      <p style="margin:12px 0 0"><b data-i18n="bsFee">Consultation fee:</b> <span class="blank-field">______</span></p>
+      <p class="note" style="margin:4px 0 0" data-i18n="bsPay">💳 Online payment (UPI / cards) – coming soon</p>
       <p class="disclaimer" data-i18n="medNote">Diabetes, BP, kidney, thyroid, pregnancy or a food allergy? Mention it in the call – your plan will be made with it in mind, alongside your regular treatment.</p>
     </aside>
     <form class="card booking" id="dietForm" novalidate>
@@ -158,6 +167,7 @@
       <div class="field"><label for="dTime" data-i18n="fTime">Time slot</label><select id="dTime" name="time" required></select></div>
       <div class="field"><label for="dLang" data-i18n="fLang">Language</label><select id="dLang" name="lang"><option value="hi" data-i18n="optHi">Hindi</option><option value="en" data-i18n="optEn">English</option></select></div>
       <label class="consent full"><input type="checkbox" name="consent" required> <span data-i18n="fConsent">I agree that the clinic may contact me on this number about my diet consultation, and I understand this is not an emergency service.</span></label>
+      <p class="note full" style="margin:-4px 0 0">🔒 <a href="policies.html#consent" data-i18n="consentLink">Read the teleconsultation consent &amp; privacy policy</a></p>
       <div class="form-msg full" role="status" aria-live="polite"></div>
       <div id="msgs" hidden><span data-i18n="msgName">Please enter your name.</span><span data-i18n="msgPhone">Please enter a valid 10-digit mobile number.</span><span data-i18n="msgSlot">Please choose a date and time.</span><span data-i18n="msgConsent">Please tick the consent box to continue.</span><span data-i18n="msgOk">Thank you! Your diet request has been received. The clinic will call or WhatsApp you soon to confirm.</span><span data-i18n="msgTaken">This time may already be booked. Please choose another slot.</span><span data-i18n="msgFail">The request could not be sent. Check your internet and try again.</span><span data-i18n="msgSending">Sending…</span></div>
       <div class="full"><button class="btn primary" type="submit" data-i18n="fSubmit">Request diet plan 🥗</button></div>
@@ -179,7 +189,7 @@
   <div class="wrap">
     <div class="fcols">
       <div><b data-i18n="brand">AYUSH Vaidya</b><p class="note" style="color:#a9c7b6;margin:6px 0 0" data-i18n="fAbout">Online Ayurveda care by Mitrojan.</p></div>
-      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
+      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="consult.html" data-i18n="navConsult">General Physician</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
       <div><a href="benefits.html" data-i18n="navBenefits">Benefits</a><a href="products.html" data-i18n="navProducts">Products</a><a href="history.html" data-i18n="navHistory">History</a><a href="prakriti.html" data-i18n="mQuiz">Prakriti quiz</a><a href="articles.html" data-i18n="mArticles">Health articles</a></div>
       <div><a href="trust.html" data-i18n="mTrust">Doctors' credentials</a><a href="reviews.html" data-i18n="mReviews">Reviews</a><a href="contact.html" data-i18n="mContact">Contact</a><a href="policies.html" data-i18n="mPolicies">Policies</a><a href="admin.html" data-i18n="fAdmin">Clinic login</a><a href="https://mitrojan.in/" data-i18n="fHome">Mitrojan home</a></div>
     </div>
@@ -187,9 +197,11 @@
   <div class="wrap note" style="color:#a9c7b6;margin-top:16px"><span data-i18n="fNote">This website does not give medical advice. In an emergency, call 112.</span> · <span data-i18n="fRights">© 2026 Mitrojan · Ideal World</span></div>
 </footer>
 
+
 <script>
 window.AYUSH_PAGE = {
   hi: {
+    consentLink: 'टेलीकंसल्टेशन सहमति और गोपनीयता नीति पढ़ें', bsFee: 'परामर्श शुल्क:', bsPay: '💳 ऑनलाइन भुगतान (UPI / कार्ड) – जल्द आ रहा है', priceL: 'शुल्क:',
     sticker: '🥗 डाइट प्लान', h1a: 'आपका डाइट प्लान,', h1b: 'वैद्य के हाथों बना।',
     lead: 'वैद्य पूजा गुप्ता के व्यक्तिगत भारतीय डाइट प्लान – आपके शरीर, दिनचर्या और स्वाद के हिसाब से। न क्रैश डाइट, न सबके लिए एक जैसा चार्ट।',
     ctaReq: 'मेरा डाइट प्लान माँगें ↓', ctaMeet: 'वैद्य पूजा गुप्ता से मिलें', demo: 'डेमो प्रोफ़ाइल', pooja: 'वैद्य पूजा गुप्ता', poojaRole: 'आहार, पोषण और जीवनशैली प्रबंधन (आयुर्वेद)',
@@ -219,6 +231,7 @@ window.AYUSH_PAGE = {
     eatLink: 'खाने की आम सलाह देखें →', bmiLink: 'BMI जाँचें ⚖️'
   },
   hinglish: {
+    consentLink: 'Teleconsultation consent aur privacy policy padhiye', bsFee: 'Consultation fees:', bsPay: '💳 Online payment (UPI / card) – jaldi aa raha hai', priceL: 'Daam:',
     sticker: '🥗 Diet plan', h1a: 'Aapka diet plan,', h1b: 'Vaidya ke haathon bana.',
     lead: 'Vaidya Pooja Gupta ke personal Indian diet plans – aapke body, dincharya aur swaad ke hisaab se. Na crash diet, na sabke liye ek jaisa chart.',
     ctaReq: 'Mera diet plan maango ↓', ctaMeet: 'Vaidya Pooja Gupta se miliye', demo: 'Demo profile', pooja: 'Vaidya Pooja Gupta', poojaRole: 'Diet, Nutrition aur Lifestyle Management (Ayurveda)',
@@ -249,7 +262,7 @@ window.AYUSH_PAGE = {
   }
 };
 </script>
-<script src="ayush.js?v=4"></script>
+<script src="ayush.js?v=7"></script>
 <script type="module">
   import { setupBooking } from './booking.js';
   // Diet requests always go to Vaidya Pooja Gupta; the clinic sees the details in the booking note.

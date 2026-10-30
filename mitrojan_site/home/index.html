@@ -193,6 +193,23 @@
   .vid.playing { cursor: default; }
   .vid-links { display: flex; gap: 8px 18px; flex-wrap: wrap; font-weight: 700; font-size: 15px; }
   .vid-links a { color: #c4002b; }
+  .ayush-feat { display: grid; grid-template-columns: 1.15fr 1fr; gap: 24px; align-items: center;
+    background: linear-gradient(135deg, #c3f5dd, #e5f4ff 55%, #fff3c4); }
+  .ayush-feat h3 { font-size: 36px; }
+  .af-left { display: flex; flex-direction: column; gap: 10px; }
+  .af-leaf { animation: afsway 4s ease-in-out infinite alternate; }
+  @keyframes afsway { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+  .af-sub { font-weight: 800 !important; color: #17663a !important; }
+  .af-docs { display: flex; gap: 10px; flex-wrap: wrap; }
+  .af-docs a { display: flex; gap: 10px; align-items: center; text-decoration: none; background: #fff; border: 2.5px solid var(--ink); border-radius: 18px; padding: 6px 14px 6px 6px; box-shadow: 3px 3px 0 var(--ink); transition: transform .15s; }
+  .af-docs a:hover { transform: translate(-2px, -2px); }
+  .af-docs .av { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; border: 2px solid var(--ink); }
+  .af-docs b { display: block; font-size: 16px; line-height: 1.2; }
+  .af-docs small { color: var(--ink-2); font-weight: 600; }
+  .af-right { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .af-tile { display: flex; gap: 10px; align-items: center; text-decoration: none; background: #fff; border: 2.5px solid var(--ink); border-radius: 18px; padding: 12px 14px; box-shadow: 3px 3px 0 var(--ink); font-size: 16px; transition: transform .15s, box-shadow .15s; }
+  .af-tile:hover { transform: translate(-2px, -2px) rotate(-1deg); box-shadow: 5px 5px 0 var(--ink); }
+  .af-tile span { font-size: 28px; }
   .more { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 16px 20px; }
   .more .txt { flex: 1 1 320px; display: flex; flex-direction: column; gap: 6px; }
 
@@ -213,6 +230,8 @@
   @media (max-width: 620px) {
     .grid { grid-template-columns: 1fr; gap: 18px; }
     .span3, .span2 { grid-column: auto; }
+    .ayush-feat { grid-template-columns: 1fr; }
+    .ayush-feat h3 { font-size: 30px; }
     .videos { grid-template-columns: 1fr; }
     nav a.hide-sm { display: none; }
     header, .nav-right { justify-content: center; }
@@ -299,7 +318,7 @@
     <use class="sway" style="--d:5.6s" href="#t-pine" x="1250" y="228" width="48" height="96"/>
     <use class="sway" style="--d:6.4s" href="#t-neem" x="1300" y="220" width="120" height="124"/>
 
-    <text x="790" y="346" text-anchor="middle" font-family="Baloo 2, Noto Sans Devanagari, sans-serif" font-weight="800" font-size="72" fill="#ffffff" opacity=".5">पेड़ लगाओ</text>
+    <text x="790" y="346" text-anchor="middle" font-family="Baloo 2, Noto Sans Devanagari, sans-serif" font-weight="800" font-size="72" fill="#ffffff" opacity=".3">पेड़ लगाओ</text>
     <path d="M0 372 Q360 336 720 360 T1440 352 V420 H0Z" fill="url(#hill3)"/>
     <!-- "Plant trees" signboard -->
     <g transform="translate(470 290)">
@@ -696,14 +715,29 @@
   <section id="services">
     <div class="sec-head">
       <h2 data-i18n="secTitle">Explore More ✨</h2>
-      <p data-i18n="secSub">AYUSH care, Bittu Mobile and Master G Games – all together, plus videos and apps 👀</p>
+      <p data-i18n="secSub">AYUSH Vaidya, Bittu Mobile, Master G Games, videos and apps – all in one place 👀</p>
     </div>
     <div class="grid">
-      <article class="card" style="--bg: var(--c-ayush)">
-        <div class="card-top"><div class="icon">🌿</div><span class="badge live" data-i18n="live">Live</span></div>
-        <h3 data-i18n="ayushTitle">AYUSH Vaidya</h3>
-        <p data-i18n="ayushDesc">15-minute online Ayurveda consultations and personalised diet guidance – from home, in Hindi or English.</p>
-        <div class="btns"><a class="btn" href="https://ayush.mitrojan.in/#book" data-i18n="learnMore">Book consultation</a></div>
+      <article class="card ayush-feat span3">
+        <div class="af-left">
+          <div class="card-top"><div class="icon af-leaf">🌿</div><span class="badge live" data-i18n="live">Live</span></div>
+          <h3 data-i18n="ayushTitle">AYUSH Vaidya</h3>
+          <p class="af-sub" data-i18n="ayushTag">✨ Ayurveda, but make it modern</p>
+          <p data-i18n="ayushDesc">15-minute online video consultations with Ayurveda doctors, personal diet plans and simple daily habits – from home, anywhere in India, in Hindi or English.</p>
+          <div class="af-docs">
+            <a href="https://ayush.mitrojan.in/dolly.html"><span class="av" style="background:#ffdcc7">DG</span><span><b data-i18n="dollyN">Vaidya Dolly Gupta</b><small data-i18n="dollyR">General Physician</small></span></a>
+            <a href="https://ayush.mitrojan.in/pooja.html"><span class="av" style="background:#c9f2dc">PG</span><span><b data-i18n="poojaN">Vaidya Pooja Gupta</b><small data-i18n="poojaR">Diet, Nutrition &amp; Lifestyle</small></span></a>
+          </div>
+          <div class="btns"><a class="btn primary" href="https://ayush.mitrojan.in/#book" data-i18n="learnMore">Book consultation</a><a class="btn" href="https://ayush.mitrojan.in/diet.html" data-i18n="ayDiet">Get a diet plan 🥗</a></div>
+        </div>
+        <div class="af-right">
+          <a class="af-tile" href="https://ayush.mitrojan.in/#bmi"><span>⚖️</span><b data-i18n="afBmi">BMI check</b></a>
+          <a class="af-tile" href="https://ayush.mitrojan.in/prakriti.html"><span>🧬</span><b data-i18n="afQuiz">Prakriti quiz</b></a>
+          <a class="af-tile" href="https://ayush.mitrojan.in/winter-health.html"><span>🧣</span><b data-i18n="afWinter">Winter health</b></a>
+          <a class="af-tile" href="https://ayush.mitrojan.in/winter-diet.html"><span>🥣</span><b data-i18n="afWDiet">Winter diet plan</b></a>
+          <a class="af-tile" href="https://ayush.mitrojan.in/benefits.html"><span>🌱</span><b data-i18n="afBen">Benefits of Ayurveda</b></a>
+          <a class="af-tile" href="https://ayush.mitrojan.in/history.html"><span>📜</span><b data-i18n="afHist">History of Ayurveda</b></a>
+        </div>
       </article>
 
       <article class="card" style="--bg: var(--c-shop)">
@@ -734,6 +768,13 @@
         </div>
       </article>
 
+      <article class="card" style="--bg: #ffe9f7">
+        <div class="card-top"><div class="icon">🔮</div><span class="badge live" data-i18n="live">Live</span></div>
+        <h3>Know Your Aura</h3>
+        <p data-i18n="auraDesc">Fun readings from traditional books – face, palm, numerology, zodiac, Lo Shu grid and a live aura scan – plus a full Bhagavad Gita library. For entertainment.</p>
+        <div class="btns"><a class="btn primary" href="https://play.google.com/store/apps/details?id=com.auravision.app" target="_blank" rel="noopener" data-i18n="auraBtn">Get it on Google Play</a></div>
+      </article>
+
       <article class="card yt span3">
         <div class="yt-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="3" y="9" width="42" height="30" rx="10" fill="#ff0033" stroke="#1b1b3a" stroke-width="3"/><path d="M20 17 L32 24 L20 31Z" fill="#fff"/></svg></div>
         <div class="txt">
@@ -758,14 +799,7 @@
         </div>
       </article>
 
-      <article class="card" style="--bg: #ffe9f7">
-        <div class="card-top"><div class="icon">🔮</div><span class="badge live" data-i18n="live">Live</span></div>
-        <h3>Know Your Aura</h3>
-        <p data-i18n="auraDesc">Fun readings from traditional books – face, palm, numerology, zodiac, Lo Shu grid and a live aura scan – plus a full Bhagavad Gita library. For entertainment.</p>
-        <div class="btns"><a class="btn primary" href="https://play.google.com/store/apps/details?id=com.auravision.app" target="_blank" rel="noopener" data-i18n="auraBtn">Get it on Google Play</a></div>
-      </article>
-
-      <article class="card soon-card more span2" style="--bg: var(--c-more)">
+      <article class="card soon-card more span3" style="--bg: var(--c-more)">
         <div class="icon">✨</div>
         <div class="txt">
           <div><span class="badge soon" data-i18n="soon">Coming soon</span></div>
@@ -810,12 +844,12 @@
       gitaDesc: 'आइए, श्रीकृष्ण से पूछिए। मन में जो भी है लिखिए, और उसी के अनुसार आपको गीता का सत्यापित श्लोक मिलेगा – जैसे कुरुक्षेत्र में श्रीकृष्ण ने अर्जुन को राह दिखाई।',
       gitaPh: 'मन की बात लिखिए… जैसे: फ़ैसला नहीं कर पा रहा', gitaLabel: 'गीता के श्लोक के लिए अपने मन की बात लिखिए',
       gitaBtn: 'श्लोक पाएँ 🙏', gitaOpen: 'या श्रीमद्भगवद्गीता शुरू से पढ़ें →',
-      secTitle: 'और भी खोजें ✨', secSub: 'आयुष देखभाल, बिट्टू मोबाइल और मास्टर G गेम्स – सब एक साथ, साथ में वीडियो और ऐप्स 👀',
+      secTitle: 'और भी खोजें ✨', secSub: 'आयुष वैद्य, बिट्टू मोबाइल, मास्टर G गेम्स, वीडियो और ऐप्स – सब एक जगह 👀',
       ytDesc: 'हमारा YouTube चैनल। वीडियो अच्छे लगें तो Subscribe 🔔, Like 👍 और Comment 💬 ज़रूर करें – इससे चैनल को आगे बढ़ने में बहुत मदद मिलती है।',
       ytSub2: 'सब्सक्राइब', ytLike: 'लाइक', ytComment: 'कमेंट', ytSubscribe: 'सब्सक्राइब करें 🔔', ytWatch: 'वीडियो देखें ▶',
       yt1: 'YouTube पर Short देखें ↗', yt2: 'YouTube पर EP 2 देखें ↗', yt3: 'गेम का ट्रेलर देखें ↗',
       auraDesc: 'पारंपरिक ग्रंथों पर आधारित मज़ेदार रीडिंग – चेहरा, हस्तरेखा, अंक ज्योतिष, राशि, लो शू ग्रिड और लाइव ऑरा स्कैन – साथ में पूरी भगवद्गीता लाइब्रेरी। मनोरंजन के लिए।', auraBtn: 'Google Play पर पाएँ',
-      ayushTitle: 'आयुष वैद्य', ayushDesc: '15 मिनट का ऑनलाइन आयुर्वेद परामर्श और व्यक्तिगत आहार मार्गदर्शन – घर बैठे, हिंदी या अंग्रेज़ी में।', learnMore: 'परामर्श बुक करें',
+      ayushTitle: 'आयुष वैद्य', ayushTag: '✨ आयुर्वेद, नए अंदाज़ में', ayushDesc: 'आयुर्वेद चिकित्सकों के साथ 15 मिनट का ऑनलाइन वीडियो परामर्श, व्यक्तिगत डाइट प्लान और आसान रोज़ की आदतें – घर बैठे, भारत में कहीं से भी, हिंदी या अंग्रेज़ी में।', learnMore: 'परामर्श बुक करें', dollyN: 'वैद्य डॉली गुप्ता', dollyR: 'जनरल फ़िज़िशियन', poojaN: 'वैद्य पूजा गुप्ता', poojaR: 'आहार, पोषण और जीवनशैली', ayDiet: 'डाइट प्लान लें 🥗', afBmi: 'BMI जाँच', afQuiz: 'प्रकृति क्विज़', afWinter: 'सर्दियों में सेहत', afWDiet: 'सर्दियों का डाइट प्लान', afBen: 'आयुर्वेद के फ़ायदे', afHist: 'आयुर्वेद का इतिहास',
       gamesDesc: 'दोस्तों के साथ ऑनलाइन लूडो और साँप-सीढ़ी, शतरंज, ब्रेन एज टेस्ट, सुडोकू और 9 भाषाओं में 20 गेम। वेब और Android पर मुफ़्त।',
       playNow: 'अभी खेलें', getPlay: 'Google Play',
       shopTitle: 'बिट्टू मोबाइल', shopDesc: 'नए फ़ोन, मोबाइल रिपेयर, रिचार्ज, नई सिम, और टीवी, फ्रिज, वॉशिंग मशीन जैसे इलेक्ट्रॉनिक्स – साथ में ऑफ़र।', notify: 'दुकान का पेज देखें',
@@ -839,12 +873,12 @@
       gitaDesc: 'Aaiye, Krishna ji se poochhiye. Man mein jo bhi hai likhiye, aur uske hisaab se aapko Gita ka verified shloka milega – jaise Kurukshetra mein Shri Krishna ne Arjun ko raah dikhayi.',
       gitaPh: 'Man ki baat likhiye… jaise: decide nahi kar pa raha', gitaLabel: 'Gita ke shloka ke liye apne man ki baat likhiye',
       gitaBtn: 'Shloka paayein 🙏', gitaOpen: 'Ya Shrimad Bhagavad Gita shuru se padhiye →',
-      secTitle: 'Aur Explore Karo ✨', secSub: 'AYUSH care, Bittu Mobile aur Master G Games – sab ek saath, saath mein videos aur apps 👀',
+      secTitle: 'Aur Explore Karo ✨', secSub: 'AYUSH Vaidya, Bittu Mobile, Master G Games, videos aur apps – sab ek jagah 👀',
       ytDesc: 'Hamara YouTube channel. Videos achhe lagein to Subscribe 🔔, Like 👍 aur Comment 💬 zaroor kariye – isse channel ko aage badhne mein bahut madad milti hai.',
       ytSub2: 'Subscribe', ytLike: 'Like', ytComment: 'Comment', ytSubscribe: 'Subscribe kariye 🔔', ytWatch: 'Videos dekhiye ▶',
       yt1: 'YouTube pe Short dekhiye ↗', yt2: 'YouTube pe EP 2 dekhiye ↗', yt3: 'Game ka trailer dekhiye ↗',
       auraDesc: 'Traditional books pe based mazedaar readings – face, palm, numerology, zodiac, Lo Shu grid aur live aura scan – saath mein poori Bhagavad Gita library. Entertainment ke liye.', auraBtn: 'Google Play pe lijiye',
-      ayushTitle: 'AYUSH Vaidya', ayushDesc: '15 minute ka online Ayurveda consultation aur personal diet guidance – ghar baithe, Hindi ya English mein.', learnMore: 'Consultation book kariye',
+      ayushTitle: 'AYUSH Vaidya', ayushTag: '✨ Ayurveda, naye andaaz mein', ayushDesc: 'Ayurveda doctors ke saath 15 minute ka online video consultation, personal diet plan aur aasaan roz ki aadatein – ghar baithe, Bharat mein kahin se bhi, Hindi ya English mein.', learnMore: 'Consultation book kariye', dollyN: 'Vaidya Dolly Gupta', dollyR: 'General Physician', poojaN: 'Vaidya Pooja Gupta', poojaR: 'Diet, Nutrition aur Lifestyle', ayDiet: 'Diet plan lo 🥗', afBmi: 'BMI check', afQuiz: 'Prakriti quiz', afWinter: 'Sardi mein sehat', afWDiet: 'Sardiyon ka diet plan', afBen: 'Ayurveda ke fayde', afHist: 'Ayurveda ka itihaas',
       gamesDesc: 'Dosto ke saath online Ludo aur Saanp-Seedhi, Chess, Brain Age test, Sudoku aur 9 languages mein 20 games. Web aur Android pe free.',
       playNow: 'Abhi khelo', getPlay: 'Google Play',
       shopTitle: 'Bittu Mobile', shopDesc: 'Naye phone, mobile repair, recharge, nayi SIM, aur TV, fridge, washing machine jaise electronics – saath mein offers.', notify: 'Shop ka page dekhiye',

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AYUSH Vaidya – Bookings calendar</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1f4d3a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='14' fill='%231f4d3a'/><rect x='11' y='13' width='26' height='24' rx='4' fill='%23fff'/><path d='M11 20h26' stroke='%231f4d3a' stroke-width='3'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ivory: #faf6ee; --forest: #1f4d3a; --sage-l: #dfe9d8; --line: #ddd3c0; --text: #22332b; --dim: #5b6b62;
+    --dolly: #c9772f; --dolly-l: #fbe8d6; --pooja: #2f8f86; --pooja-l: #d8f0ed; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body { font-family: Mukta, system-ui, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif; background: var(--ivory); color: var(--text); font-size: 16px; line-height: 1.5; }
+  button { font: inherit; cursor: pointer; }
+  :focus-visible { outline: 3px solid #b8683a; outline-offset: 2px; }
+  header { background: var(--forest); color: #fff; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; max-width: 1280px; margin: 0 auto; }
+  header h1 { margin: 0; font-size: 22px; }
+  header small { opacity: .8; }
+  .user { display: flex; gap: 10px; align-items: center; font-size: 14px; }
+  .btn { border: 1.5px solid var(--forest); background: #fff; color: var(--forest); border-radius: 10px; padding: 7px 14px; font-weight: 600; }
+  .btn.primary { background: var(--forest); color: #fff; }
+  header .btn { border-color: #fff; }
+  .lang { display: inline-flex; border: 1.5px solid #fff; border-radius: 999px; padding: 2px; }
+  .lang button { border: 0; background: none; color: #fff; font-weight: 700; font-size: 14px; padding: 2px 12px; border-radius: 999px; }
+  .lang button[aria-pressed="true"] { background: #fff; color: var(--forest); }
+  main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 40px; }
+
+  .gate { max-width: 460px; margin: 60px auto; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 30px; text-align: center; }
+  .gate h2 { margin-top: 0; color: var(--forest); }
+  .gate p { color: var(--dim); }
+  .err { background: #fdecea; color: #7a2a20; border-radius: 12px; padding: 10px 14px; margin-top: 14px; }
+
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .nav { display: flex; gap: 8px; align-items: center; }
+  .nav h2 { margin: 0 8px; font-size: 24px; min-width: 190px; text-align: center; color: var(--forest); }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filters button { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 4px 12px; font-weight: 600; }
+  .filters button[aria-pressed="true"] { background: var(--forest); color: #fff; border-color: var(--forest); }
+  .stats { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .stat { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px; font-size: 14px; color: var(--dim); }
+  .stat b { display: block; font-size: 22px; color: var(--text); }
+
+  .layout { display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start; }
+  .cal { background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .dow, .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .dow div { padding: 8px; font-size: 13px; font-weight: 700; color: var(--dim); text-align: center; background: #f4efe4; }
+  .day { min-height: 112px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); padding: 6px; text-align: left; background: #fff; display: flex; flex-direction: column; gap: 3px; border-right: 0; border-bottom: 0; border-radius: 0; }
+  .day:nth-child(7n+1) { border-left: 0; }
+  .day.out { background: #faf8f3; color: #b5ab98; }
+  .day.today .num { background: var(--forest); color: #fff; }
+  .day.sel { box-shadow: inset 0 0 0 2px var(--forest); }
+  .num { align-self: flex-start; font-weight: 700; font-size: 14px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+  .chip { font-size: 12px; border-radius: 6px; padding: 1px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 3px solid; }
+  .chip.dolly { background: var(--dolly-l); border-color: var(--dolly); }
+  .chip.pooja { background: var(--pooja-l); border-color: var(--pooja); }
+  .chip.cancelled { text-decoration: line-through; opacity: .55; }
+  .chip.done { opacity: .7; }
+  .more { font-size: 12px; color: var(--dim); font-weight: 600; }
+
+  .side { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+  .side h3 { margin: 0 0 10px; color: var(--forest); }
+  .empty { color: var(--dim); }
+  .bk { border: 1px solid var(--line); border-left: 5px solid; border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+  .bk.dolly { border-left-color: var(--dolly); } .bk.pooja { border-left-color: var(--pooja); }
+  .bk .top { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; }
+  .bk .meta { font-size: 14px; color: var(--dim); }
+  .bk .reason { font-size: 14px; background: #f7f3ea; border-radius: 8px; padding: 6px 8px; margin: 6px 0; white-space: pre-wrap; }
+  .bk .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .bk .acts a, .bk .acts button { font-size: 13px; padding: 3px 10px; border-radius: 8px; border: 1.5px solid var(--line); background: #fff; text-decoration: none; color: var(--text); font-weight: 600; }
+  .st { font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 1px 8px; border-radius: 999px; }
+  .st.requested { background: #fff3dc; color: #8a5a12; } .st.confirmed { background: #e3f4e6; color: #1f5a2e; }
+  .st.done { background: #e6eefc; color: #2c4a8a; } .st.cancelled { background: #fdecea; color: #7a2a20; }
+  .legend { display: flex; gap: 14px; font-size: 14px; color: var(--dim); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+  @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } .side { position: static; max-height: none; } }
+  @media (max-width: 640px) {
+    .day { min-height: 64px; padding: 4px; }
+    .chip { font-size: 0; padding: 0; height: 6px; border-left-width: 0; }
+    .chip.dolly { background: var(--dolly); } .chip.pooja { background: var(--pooja); }
+    .nav h2 { min-width: 0; font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div><h1><span>AYUSH Vaidya · </span><span data-t="title">बुकिंग कैलेंडर</span></h1><small data-t="sub">केवल क्लिनिक के लिए</small></div>
+  <div class="user">
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="hi" aria-pressed="true" lang="hi">हिं</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <span id="userBox" hidden><span id="userEmail"></span> <button class="btn" id="signOut" data-t="logout">लॉग आउट</button></span>
+  </div>
+</div></header>
+
+<main>
+  <section class="gate" id="gate">
+    <h2 data-t="loginH">लॉग इन करें</h2>
+    <p data-t="loginP">बुकिंग देखने के लिए क्लिनिक के Google खाते से लॉग इन करें।</p>
+    <button class="btn primary" id="signIn" data-t="loginBtn">Google से लॉग इन</button>
+    <div class="err" id="gateErr" hidden></div>
+  </section>
+
+  <section id="app" hidden>
+    <div class="bar">
+      <div class="nav">
+        <button class="btn" id="prev" data-t-label="prevM" aria-label="पिछला महीना">‹</button>
+        <h2 id="monthTitle"></h2>
+        <button class="btn" id="next" data-t-label="nextM" aria-label="अगला महीना">›</button>
+        <button class="btn" id="todayBtn" data-t="today">आज</button>
+      </div>
+      <div class="filters" role="group" data-t-label="doctor" aria-label="चिकित्सक">
+        <button data-doc="all" aria-pressed="true" data-t="all">सभी</button>
+        <button data-doc="dolly" aria-pressed="false" data-t="dolly">वैद्य डॉली गुप्ता</button>
+        <button data-doc="pooja" aria-pressed="false" data-t="pooja">वैद्य पूजा गुप्ता</button>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="layout">
+      <div>
+        <div class="cal">
+          <div class="dow" id="dow"></div>
+          <div class="grid" id="grid"></div>
+        </div>
+        <p class="legend"><span><i style="background:var(--dolly)"></i><span data-t="dollyShort">डॉली गुप्ता</span></span><span><i style="background:var(--pooja)"></i><span data-t="poojaShort">पूजा गुप्ता</span></span></p>
+      </div>
+      <aside class="side" id="side" aria-live="polite"></aside>
+    </div>
+    <div class="err" id="appErr" hidden></div>
+  </section>
+</main>
+
+<script type="module">
+  import { firebaseConfig, SDK, isoDate } from './firebase-config.js';
+
+  const T = {
+    hi: {
+      title: 'बुकिंग कैलेंडर', sub: 'केवल क्लिनिक के लिए', logout: 'लॉग आउट',
+      loginH: 'लॉग इन करें', loginP: 'बुकिंग देखने के लिए क्लिनिक के Google खाते से लॉग इन करें।', loginBtn: 'Google से लॉग इन',
+      prevM: 'पिछला महीना', nextM: 'अगला महीना', today: 'आज', doctor: 'चिकित्सक', all: 'सभी',
+      dolly: 'वैद्य डॉली गुप्ता', pooja: 'वैद्य पूजा गुप्ता', dollyShort: 'डॉली गुप्ता', poojaShort: 'पूजा गुप्ता',
+      months: ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'],
+      dow: ['सोम', 'मंगल', 'बुध', 'गुरु', 'शुक्र', 'शनि', 'रवि'],
+      status: { requested: 'अनुरोध', confirmed: 'पक्का', done: 'हो गया', cancelled: 'रद्द' },
+      lang: { hi: 'हिंदी', en: 'अंग्रेज़ी' },
+      stTotal: 'इस महीने कुल', stNew: 'नए अनुरोध', stConf: 'पक्के', stDone: 'हो गए', stCanc: 'रद्द',
+      bookings: 'बुकिंग', more: 'और', none: 'इस दिन कोई बुकिंग नहीं।',
+      call: '📞 कॉल', aConfirm: '✔ पक्का करें', aDone: '✓ हो गया', aCancel: '✕ रद्द', aDelete: '🗑 हटाएँ (समय खाली करें)',
+      delAsk: 'यह रद्द बुकिंग हमेशा के लिए हटाएँ? इससे यह समय फिर से बुक हो सकेगा।',
+      eLogin: 'लॉग इन नहीं हो पाया: ', eDenied: 'इस खाते को बुकिंग देखने की अनुमति नहीं है। Firestore rules में इस ईमेल को admin सूची में जोड़ें।',
+      eLoad: 'बुकिंग लोड नहीं हो पाईं: ', eSave: 'बदलाव सेव नहीं हुआ: ',
+    },
+    en: {
+      title: 'Bookings calendar', sub: 'For the clinic only', logout: 'Log out',
+      loginH: 'Log in', loginP: "Log in with the clinic's Google account to see bookings.", loginBtn: 'Log in with Google',
+      prevM: 'Previous month', nextM: 'Next month', today: 'Today', doctor: 'Doctor', all: 'All',
+      dolly: 'Vaidya Dolly Gupta', pooja: 'Vaidya Pooja Gupta', dollyShort: 'Dolly Gupta', poojaShort: 'Pooja Gupta',
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      dow: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      status: { requested: 'Requested', confirmed: 'Confirmed', done: 'Done', cancelled: 'Cancelled' },
+      lang: { hi: 'Hindi', en: 'English' },
+      stTotal: 'This month', stNew: 'New requests', stConf: 'Confirmed', stDone: 'Done', stCanc: 'Cancelled',
+      bookings: 'bookings', more: 'more', none: 'No bookings on this day.',
+      call: '📞 Call', aConfirm: '✔ Confirm', aDone: '✓ Done', aCancel: '✕ Cancel', aDelete: '🗑 Delete (free the slot)',
+      delAsk: 'Delete this cancelled booking for good? The slot can then be booked again.',
+      eLogin: 'Could not log in: ', eDenied: 'This account is not allowed to see bookings. Add this email to the admin list in the Firestore rules.',
+      eLoad: 'Could not load bookings: ', eSave: 'Change not saved: ',
+    },
+  };
+  let L = 'hi';
+  try { L = localStorage.getItem('ayush.admin.lang') === 'en' ? 'en' : 'hi'; } catch (e) {}
+  const t = (k) => T[L][k];
+
+  const [{ initializeApp }, auth, fs] = await Promise.all([
+    import(`${SDK}/firebase-app.js`), import(`${SDK}/firebase-auth.js`), import(`${SDK}/firebase-firestore.js`),
+  ]);
+  const app = initializeApp(firebaseConfig);
+  const A = auth.getAuth(app);
+  const db = fs.getFirestore(app);
+  const $ = (id) => document.getElementById(id);
+
+  let month = new Date(); month.setDate(1);
+  let selected = isoDate(new Date());
+  let docFilter = 'all';
+  let bookings = [];
+  let unsub = null;
+  let lastError = null;
+
+  function applyLang() {
+    document.documentElement.lang = L;
+    document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t); });
+    document.querySelectorAll('[data-t-label]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.tLabel)));
+    document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === L)));
+    $('dow').replaceChildren(...t('dow').map((d) => Object.assign(document.createElement('div'), { textContent: d })));
+    if (lastError) { $('appErr').textContent = lastError(); }
+    render();
+  }
+  document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
+    L = b.dataset.lang;
+    try { localStorage.setItem('ayush.admin.lang', L); } catch (e) {}
+    applyLang();
+  });
+
+  $('signIn').onclick = async () => {
+    $('gateErr').hidden = true;
+    try { await auth.signInWithPopup(A, new auth.GoogleAuthProvider()); }
+    catch (e) { $('gateErr').textContent = t('eLogin') + (e.code || e.message); $('gateErr').hidden = false; }
+  };
+  $('signOut').onclick = () => auth.signOut(A);
+
+  auth.onAuthStateChanged(A, (user) => {
+    $('gate').hidden = !!user; $('app').hidden = !user; $('userBox').hidden = !user;
+    $('userEmail').textContent = user ? user.email : '';
+    if (user) listen(); else if (unsub) { unsub(); unsub = null; }
+  });
+
+  // Live listener on the visible month (plus the spill-over days shown in the grid).
+  function listen() {
+    if (unsub) unsub();
+    const { start, end } = range();
+    const q = fs.query(fs.collection(db, 'ayush_bookings'), fs.where('date', '>=', isoDate(start)), fs.where('date', '<=', isoDate(end)));
+    unsub = fs.onSnapshot(q, (snap) => {
+      $('appErr').hidden = true; lastError = null;
+      bookings = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+      render();
+    }, (e) => {
+      lastError = () => (e.code === 'permission-denied' ? t('eDenied') : t('eLoad') + (e.code || e.message));
+      $('appErr').textContent = lastError();
+      $('appErr').hidden = false; bookings = []; render();
+    });
+  }
+
+  function range() {
+    const start = new Date(month); start.setDate(1 - ((start.getDay() + 6) % 7));
+    const end = new Date(start); end.setDate(start.getDate() + 41);
+    return { start, end };
+  }
+
+  const visible = () => bookings.filter((b) => docFilter === 'all' || b.doctor === docFilter);
+  const label12 = (tm) => { const [h, m] = tm.split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`; };
+
+  function render() {
+    const MONTHS = t('months');
+    $('monthTitle').textContent = `${MONTHS[month.getMonth()]} ${month.getFullYear()}`;
+    const list = visible();
+    const byDay = {};
+    for (const b of list) (byDay[b.date] ||= []).push(b);
+    const inMonth = list.filter((b) => b.date.slice(0, 7) === isoDate(month).slice(0, 7));
+    const count = (s) => inMonth.filter((b) => b.status === s).length;
+    $('stats').replaceChildren();
+    for (const [k, v] of [['stTotal', inMonth.length], ['stNew', count('requested')], ['stConf', count('confirmed')], ['stDone', count('done')], ['stCanc', count('cancelled')]]) {
+      const el = document.createElement('div'); el.className = 'stat';
+      const num = document.createElement('b'); num.textContent = v;
+      el.append(num, t(k)); $('stats').append(el);
+    }
+
+    const grid = $('grid'); grid.replaceChildren();
+    const { start } = range();
+    const todayIso = isoDate(new Date());
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const iso = isoDate(d);
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'day' + (d.getMonth() !== month.getMonth() ? ' out' : '') + (iso === todayIso ? ' today' : '') + (iso === selected ? ' sel' : '');
+      const items = byDay[iso] || [];
+      cell.setAttribute('aria-label', `${d.getDate()} ${MONTHS[d.getMonth()]}: ${items.length} ${t('bookings')}`);
+      const num = document.createElement('span'); num.className = 'num'; num.textContent = d.getDate(); cell.append(num);
+      items.slice(0, 3).forEach((b) => {
+        const c = document.createElement('span'); c.className = `chip ${b.doctor} ${b.status}`;
+        c.textContent = `${label12(b.time)} ${b.name}`; cell.append(c);
+      });
+      if (items.length > 3) { const m = document.createElement('span'); m.className = 'more'; m.textContent = `+${items.length - 3} ${t('more')}`; cell.append(m); }
+      cell.onclick = () => { selected = iso; render(); };
+      grid.append(cell);
+    }
+    renderDay(byDay[selected] || []);
+  }
+
+  function renderDay(items) {
+    const MONTHS = t('months');
+    const side = $('side'); side.replaceChildren();
+    const [y, m, d] = selected.split('-').map(Number);
+    const h = document.createElement('h3'); h.textContent = `${d} ${MONTHS[m - 1]} ${y} · ${items.length} ${t('bookings')}`; side.append(h);
+    if (!items.length) { const p = document.createElement('p'); p.className = 'empty'; p.textContent = t('none'); side.append(p); return; }
+    for (const b of items) {
+      const card = document.createElement('article'); card.className = `bk ${b.doctor}`;
+      const top = document.createElement('div'); top.className = 'top';
+      top.append(`${label12(b.time)} · ${b.name}`);
+      const st = document.createElement('span'); st.className = `st ${b.status}`; st.textContent = t('status')[b.status] || b.status; top.append(st);
+      const meta = document.createElement('div'); meta.className = 'meta';
+      meta.textContent = `${t(b.doctor) || b.doctor} · ${t('lang')[b.lang] || b.lang} · 📞 ${b.phone}`;
+      card.append(top, meta);
+      if (b.reason) { const r = document.createElement('div'); r.className = 'reason'; r.textContent = b.reason; card.append(r); }
+      const acts = document.createElement('div'); acts.className = 'acts';
+      const call = document.createElement('a'); call.href = `tel:+91${b.phone}`; call.textContent = t('call');
+      const wa = document.createElement('a'); wa.href = `https://wa.me/91${b.phone}`; wa.target = '_blank'; wa.rel = 'noopener'; wa.textContent = '💬 WhatsApp';
+      acts.append(call, wa);
+      for (const [s, key] of [['confirmed', 'aConfirm'], ['done', 'aDone'], ['cancelled', 'aCancel']]) {
+        if (b.status === s) continue;
+        const btn = document.createElement('button'); btn.type = 'button'; btn.textContent = t(key);
+        btn.onclick = () => setStatus(b, s); acts.append(btn);
+      }
+      if (b.status === 'cancelled') {
+        const del = document.createElement('button'); del.type = 'button'; del.textContent = t('aDelete');
+        del.onclick = async () => { if (confirm(t('delAsk'))) await fs.deleteDoc(fs.doc(db, 'ayush_bookings', b.id)).catch(showErr); };
+        acts.append(del);
+      }
+      card.append(acts);
+      side.append(card);
+    }
+  }
+
+  const showErr = (e) => { $('appErr').textContent = t('eSave') + (e.code || e.message); $('appErr').hidden = false; };
+  const setStatus = (b, status) => fs.updateDoc(fs.doc(db, 'ayush_bookings', b.id), { status }).catch(showErr);
+
+  const shift = (n) => { month = new Date(month.getFullYear(), month.getMonth() + n, 1); listen(); render(); };
+  $('prev').onclick = () => shift(-1);
+  $('next').onclick = () => shift(1);
+  $('todayBtn').onclick = () => { month = new Date(); month.setDate(1); selected = isoDate(new Date()); listen(); render(); };
+  document.querySelectorAll('.filters button').forEach((b) => b.onclick = () => {
+    docFilter = b.dataset.doc;
+    document.querySelectorAll('.filters button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    render();
+  });
+  applyLang();
+</script>
+</body>
+</html>

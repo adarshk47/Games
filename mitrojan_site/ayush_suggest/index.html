@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AYUSH Vaidya – Ayurveda for real life · Mitrojan</title>
+<meta name="description" content="AYUSH Vaidya by Mitrojan: 15-minute online Ayurveda consultations with Vaidya Dolly Gupta and Vaidya Pooja Gupta, benefits of Ayurveda, what to eat, and a BMI calculator for Indians.">
+<meta name="theme-color" content="#2f8f5b">
+<link rel="canonical" href="https://ayush.mitrojan.in/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AYUSH Vaidya by Mitrojan">
+<meta property="og:title" content="AYUSH Vaidya – Ayurveda for real life · Mitrojan">
+<meta property="og:description" content="AYUSH Vaidya by Mitrojan: 15-minute online Ayurveda consultations with Vaidya Dolly Gupta and Vaidya Pooja Gupta, benefits of Ayurveda, what to eat, and a BMI calculator for Indians.">
+<meta property="og:url" content="https://ayush.mitrojan.in/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='14' fill='%232f8f5b'/><path d='M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z' fill='%23c9f2dc'/><path d='M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ayush.css?v=6">
+<style>
+  /* Hero */
+  .hero { padding: 46px 0 10px; }
+  .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; gap: 40px; align-items: center; }
+  .hero h1 { font-size: clamp(44px, 6.8vw, 84px); margin: 16px 0 16px; }
+  .hero .lead { font-size: 20px; color: var(--ink-2); max-width: 560px; margin: 0 0 24px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px; }
+  .art { position: relative; aspect-ratio: 1 / 1; max-width: 480px; margin: 0 auto; width: 100%; }
+  .orb { position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 10%, #c9f2dc 40%, #7fd6a6 75%, #2f8f5b); box-shadow: inset -20px -30px 60px rgba(20, 48, 42, .25), 0 30px 60px rgba(47, 143, 91, .25); animation: spinSlow 30s linear infinite; }
+  @keyframes spinSlow { to { transform: rotate(360deg); } }
+  .orb-leaf { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(110px, 16vw, 170px); animation: sway 5s ease-in-out infinite alternate; }
+  @keyframes sway { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+  .float { position: absolute; background: rgba(255, 255, 255, .92); border-radius: 18px; padding: 10px 14px; box-shadow: var(--shadow); font-weight: 700; font-size: 15px; display: flex; gap: 8px; align-items: center; animation: bob 6s ease-in-out infinite; }
+  .float small { display: block; font-weight: 500; color: var(--ink-2); font-size: 12px; }
+  .float.f1 { left: -4%; top: 14%; }
+  .float.f2 { right: -6%; top: 40%; animation-delay: -2s; }
+  .float.f3 { left: 6%; bottom: 6%; animation-delay: -4s; }
+  .avs { display: flex; }
+  .avs span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; border: 2px solid #fff; background: var(--peach); }
+  .avs span + span { margin-left: -8px; background: var(--mint); }
+
+  /* Doctors */
+  .docs { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .doc { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; text-decoration: none; transition: transform .2s; }
+  .doc:hover { transform: translateY(-4px); }
+  .avatar { width: 116px; height: 116px; border-radius: 50%; display: grid; place-items: center; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 40px; color: var(--ink); position: relative; background: var(--peach); }
+  .avatar::before { content: ""; position: absolute; inset: -6px; border-radius: 50%; background: conic-gradient(var(--coral), var(--sun), var(--leaf), var(--teal), var(--coral)); z-index: -1; animation: spinSlow 8s linear infinite; }
+  .avatar::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 4px solid var(--bg); }
+  .doc.pg .avatar { background: var(--mint); }
+  .doc h3 { font-size: 28px; margin: 6px 0 4px; }
+  .doc p { margin: 0 0 10px; color: var(--ink-2); }
+  .doc .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .doc .go { font-weight: 700; color: var(--leaf-d); }
+
+  /* Benefits bento */
+  .bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .ben { position: relative; overflow: hidden; transition: transform .2s; }
+  .ben:hover { transform: translateY(-4px) rotate(-.4deg); }
+  .ben .e { font-size: 42px; display: block; margin-bottom: 8px; }
+  .ben h3 { font-size: 24px; margin-bottom: 6px; }
+  .ben p { margin: 0; color: var(--ink-2); }
+  .ben.wide { grid-column: span 2; }
+  .ben.full { grid-column: 1 / -1; }
+  .ben:nth-child(1) { background: linear-gradient(140deg, #fff, #d9f6e5); }
+  .ben:nth-child(2) { background: linear-gradient(140deg, #fff, #ffe5d6); }
+  .ben:nth-child(3) { background: linear-gradient(140deg, #fff, #fff3c4); }
+  .ben:nth-child(4) { background: linear-gradient(140deg, #fff, #e9e1ff); }
+  .ben:nth-child(5) { background: linear-gradient(140deg, #fff, #d8ecff); }
+  .ben:nth-child(6) { background: linear-gradient(140deg, #fff, #ffdbe8); }
+  .ben .tag { position: absolute; right: 16px; top: 16px; font-size: 13px; font-weight: 700; color: var(--ink-2); background: rgba(255,255,255,.8); border-radius: 999px; padding: 2px 10px; }
+
+  /* Eat right */
+  .eat-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 22px; align-items: start; }
+  .plate { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: center; }
+  .plate svg { width: 200px; height: 200px; animation: spinSlow 60s linear infinite; }
+  .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .legend li { display: flex; gap: 10px; align-items: flex-start; }
+  .legend i { width: 16px; height: 16px; border-radius: 5px; flex: none; margin-top: 5px; }
+  .legend b { display: block; }
+  .legend span { color: var(--ink-2); font-size: 15px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tabs button { font: inherit; font-weight: 700; font-size: 15px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .meal h3 { font-size: 24px; margin: 0 0 8px; }
+  .meal ul { margin: 0; padding-left: 20px; }
+  .meal li { margin: 4px 0; }
+  .meal .when { color: var(--leaf-d); font-weight: 700; }
+  .moreless { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px; }
+  .moreless h3 { font-size: 24px; margin-bottom: 10px; }
+  .moreless ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .moreless li { background: #fff; border-radius: 999px; padding: 4px 14px; font-weight: 600; font-size: 15px; border: 1px solid var(--line); }
+  .more-yes { background: linear-gradient(140deg, #fff, #d9f6e5); }
+  .more-no { background: linear-gradient(140deg, #fff, #ffe1d9); }
+
+  /* BMI */
+  .bmi { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
+  .bmi form { display: grid; gap: 14px; }
+  .unit { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 3px; justify-self: start; }
+  .unit button { font: inherit; font-weight: 700; font-size: 14px; border: 0; background: none; padding: 4px 14px; border-radius: 999px; cursor: pointer; }
+  .unit button[aria-pressed="true"] { background: var(--leaf); color: #fff; }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .field label, .field legend { font-weight: 700; font-size: 15px; }
+  .field input, .field select, .field textarea { font: inherit; font-size: 17px; color: var(--ink); padding: 11px 14px; border: 1.5px solid #cfe0d6; border-radius: 14px; background: #fff; width: 100%; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--leaf); box-shadow: 0 0 0 4px rgba(47, 143, 91, .15); }
+  .field small { color: var(--ink-2); font-size: 13px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .result { text-align: center; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+  .result .num { font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: clamp(64px, 9vw, 96px); line-height: 1; }
+  .result .cat { display: inline-block; align-self: center; font-weight: 800; font-size: 18px; padding: 4px 18px; border-radius: 999px; background: #eee; }
+  .gauge { position: relative; height: 16px; border-radius: 999px; background: linear-gradient(90deg, #7cc4ff 0 17.5%, #48c774 17.5% 39.5%, #ffcc33 39.5% 49.5%, #ff7a59 49.5%); margin: 12px 0 6px; }
+  .gauge .mk { position: absolute; top: -8px; width: 6px; height: 32px; border-radius: 4px; background: var(--ink); transform: translateX(-50%); transition: left .4s; }
+  .scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
+  .result .advice { color: var(--ink-2); margin: 0; }
+  .ranges { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 13px; }
+  .ranges div { background: #fff; border-radius: 12px; padding: 6px; border: 1px solid var(--line); }
+  .ranges b { display: block; font-size: 15px; }
+
+  /* Booking */
+  .book { display: grid; grid-template-columns: .8fr 1.2fr; gap: 22px; align-items: start; }
+  .book-side { background: linear-gradient(150deg, #d9f6e5, #e9e1ff); }
+  .book-side h3 { font-size: 26px; margin-bottom: 10px; }
+  .book-side ul { margin: 0; padding-left: 20px; }
+  .book-side li { margin: 6px 0; }
+  form.booking { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .full { grid-column: 1 / -1; }
+  fieldset.field { border: 0; padding: 0; margin: 0; }
+  .docpick { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+  .docpick label { display: inline-flex; align-items: center; gap: 6px; border: 1.5px solid #cfe0d6; border-radius: 999px; padding: 6px 14px; cursor: pointer; font-weight: 600; background: #fff; }
+  .docpick input { accent-color: var(--leaf); width: auto; }
+  .docpick label:has(input:checked) { border-color: var(--leaf); background: #d9f6e5; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--ink-2); }
+  .consent input { margin-top: 5px; accent-color: var(--leaf); width: 18px; height: 18px; flex: none; }
+  .form-msg { border-radius: 14px; padding: 12px 14px; font-weight: 600; display: none; }
+  .form-msg.ok { display: block; background: #e3f4e6; color: #1f5a2e; }
+  .form-msg.err { display: block; background: #fdecea; color: #7a2a20; }
+
+  /* Steps, plans, FAQ, CTA */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .step b { font-family: "Baloo 2", sans-serif; font-size: 46px; line-height: 1; }
+  .step h3 { font-size: 22px; margin: 8px 0 4px; }
+  .step p { margin: 0; color: var(--ink-2); }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+  .plan ul { margin: 4px 0 8px; padding-left: 20px; color: var(--ink-2); font-size: 15px; }
+  .plan .btn { align-self: flex-start; margin-top: 6px; }
+  .plan.pop { position: relative; border: 2px solid var(--leaf); transform: translateY(-6px); }
+  .plan .badge { position: absolute; top: -14px; right: 18px; background: var(--sun); font-weight: 800; font-size: 13px; padding: 3px 12px; border-radius: 999px; }
+  .plan { display: flex; flex-direction: column; gap: 6px; }
+  .plan small { font-weight: 700; color: var(--leaf-d); text-transform: uppercase; letter-spacing: 1px; font-size: 12px; }
+  .plan h3 { font-size: 21px; }
+  .plan p { margin: 0; color: var(--ink-2); font-size: 15px; flex: 1; }
+  .plan .price { font-weight: 800; color: var(--coral); }
+  .faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 30px; align-items: start; }
+  .faq-grid .head { text-align: left; margin: 0; }
+  details { background: #fff; border-radius: 18px; padding: 14px 18px; margin-bottom: 10px; border: 1px solid var(--line); }
+  summary { cursor: pointer; font-weight: 700; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 24px; line-height: 1; color: var(--leaf); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin: 10px 0 0; color: var(--ink-2); }
+  .systems { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .cta { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cta .card { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .cta h3 { font-size: 26px; }
+  .cta p { margin: 0; color: var(--ink-2); }
+
+  @media (max-width: 960px) {
+    .hero-grid, .eat-grid, .bmi, .book, .faq-grid { grid-template-columns: 1fr; }
+    .art { max-width: 380px; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .plans { grid-template-columns: 1fr; }
+    .plan.pop { transform: none; }
+  }
+  @media (max-width: 680px) {
+    .docs, .bento, .moreless, .steps, .cta, form.booking { grid-template-columns: 1fr; }
+    .ben.wide { grid-column: auto; }
+    .doc { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+    .doc .row { justify-content: center; }
+    .plate { grid-template-columns: 1fr; justify-items: center; }
+    .plans { grid-template-columns: 1fr; }
+    .float { font-size: 13px; padding: 8px 10px; }
+    .float.f2 { right: -2%; }
+    .ranges { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div style="background:#1b1b3a;color:#ffd84d;font-weight:700;font-size:14px;padding:8px 16px;text-align:center;line-height:1.7">
+  💡 Suggestion preview (local only) ·
+  <a style="color:#fff" href="suggestions.html">Checklist</a> ·
+  <a style="color:#fff" href="trust.html">Credentials</a> ·
+  <a style="color:#fff" href="prakriti.html">Prakriti quiz</a> ·
+  <a style="color:#fff" href="contact.html">Contact &amp; clinic</a> ·
+  <a style="color:#fff" href="reviews.html">Reviews</a> ·
+  <a style="color:#fff" href="articles.html">Articles</a> ·
+  <a style="color:#fff" href="policies.html">Policies</a>
+</div>
+
+<div class="topbar" aria-hidden="true"><div class="track">
+  <span data-i18n="tk1">🌿 Ayurveda for today's life</span><span data-i18n="tk2">📹 15-minute online consultation</span><span data-i18n="tk3">🥗 Diet plans by Vaidya Pooja Gupta</span><span data-i18n="tk4">⚖️ Free BMI calculator</span><span data-i18n="tk5">🇮🇳 Across India, from home</span>
+  <span data-i18n="tk1">🌿 Ayurveda for today's life</span><span data-i18n="tk2">📹 15-minute online consultation</span><span data-i18n="tk3">🥗 Diet plans by Vaidya Pooja Gupta</span><span data-i18n="tk4">⚖️ Free BMI calculator</span><span data-i18n="tk5">🇮🇳 Across India, from home</span>
+</div></div>
+
+<header class="site"><div class="wrap">
+  <a class="logo" href="index.html" aria-label="AYUSH Vaidya home">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f8f5b"/><stop offset="1" stop-color="#1fa39a"/></linearGradient></defs><rect width="48" height="48" rx="15" fill="url(#lg)"/><path d="M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z" fill="#c9f2dc"/><path d="M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z" fill="#fff"/><circle cx="36" cy="36" r="5" fill="#ffd84d"/></svg>
+    <span><b data-i18n="brand">AYUSH Vaidya</b><small data-i18n="brandSub">by Mitrojan</small></span>
+  </a>
+  <nav class="main" id="mainNav" aria-label="Main">
+    <div class="dd"><button type="button" aria-expanded="false"><span data-i18n="navDoctors">Doctors</span> ▾</button>
+      <div class="dd-menu">
+        <a href="dolly.html"><span class="av">DG</span><span><span data-i18n="ddDolly">Vaidya Dolly Gupta</span><small data-i18n="ddDollyRole">General Physician</small></span></a>
+        <a href="pooja.html"><span class="av">PG</span><span><span data-i18n="ddPooja">Vaidya Pooja Gupta</span><small data-i18n="ddPoojaRole">Diet, Nutrition &amp; Lifestyle</small></span></a>
+      </div>
+    </div>
+    <a href="benefits.html" data-i18n="navBenefits">Benefits</a>
+    <a href="diet.html" data-i18n="navDiet">Diet plan</a>
+    <a href="products.html" data-i18n="navProducts">Products</a>
+    <a href="history.html" data-i18n="navHistory">History</a>
+    <div class="dd"><button type="button" aria-expanded="false"><span data-i18n="navMore">More</span> ▾</button>
+      <div class="dd-menu">
+        <a href="prakriti.html"><span class="av">🧬</span><span data-i18n="mQuiz">Prakriti quiz</span></a>
+        <a href="trust.html"><span class="av">🛡️</span><span data-i18n="mTrust">Doctors' credentials</span></a>
+        <a href="reviews.html"><span class="av">⭐</span><span data-i18n="mReviews">Reviews</span></a>
+        <a href="articles.html"><span class="av">📰</span><span data-i18n="mArticles">Health articles</span></a>
+        <a href="contact.html"><span class="av">📞</span><span data-i18n="mContact">Contact</span></a>
+        <a href="policies.html"><span class="av">⚖️</span><span data-i18n="mPolicies">Policies</span></a>
+      </div>
+    </div>
+    <a class="cta" href="#book" data-i18n="navBook">Book now</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button><button type="button" data-lang="hinglish" aria-pressed="false">Hinglish</button></div>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Menu">☰</button>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="sticker" data-i18n="heroSticker">✨ Ayurveda, but make it modern</span>
+    <h1><span data-i18n="h1a">Feel good,</span><br><span class="grad-text" data-i18n="h1b">the Ayurveda way.</span></h1>
+    <p class="lead" data-i18n="heroLead">15-minute video consultations with real Ayurveda doctors, food that fits your routine, and simple daily habits – from your phone, anywhere in India.</p>
+    <div class="actions">
+      <a class="btn primary" href="#book" data-i18n="ctaBook">Book a 15-min consult ↗</a>
+      <a class="btn" href="#bmi" data-i18n="ctaBmi">Check your BMI ⚖️</a>
+    </div>
+    <div class="chips"><span class="chip">📹 <span data-i18n="c1">15-min video call</span></span><span class="chip">🇮🇳 <span data-i18n="c2">Across India</span></span><span class="chip">🗣️ <span data-i18n="c3">Hindi &amp; English</span></span><span class="chip">🔒 <span data-i18n="c4">Private &amp; secure</span></span></div>
+  </div>
+  <div class="art" aria-hidden="true">
+    <div class="orb"></div>
+    <div class="orb-leaf">🌿</div>
+    <div class="float f1">🧘 <span><span data-i18n="fl1">Dinacharya</span><small data-i18n="fl1s">daily routine</small></span></div>
+    <div class="float f2">⚖️ <span>BMI 21.8 ✅<small data-i18n="fl2s">healthy range</small></span></div>
+    <div class="float f3"><span class="avs"><span>DG</span><span>PG</span></span><span><span data-i18n="fl3">2 Vaidyas</span><small data-i18n="fl3s">online today</small></span></div>
+  </div>
+</div></section>
+
+<section class="block" id="doctors"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="docSticker">👩‍⚕️ Meet your Vaidyas</span><h2 data-i18n="docTitle">Two doctors. Zero judgement.</h2><p data-i18n="docSub">Pick a doctor you vibe with – tap a card to see the full profile.</p></div>
+  <div class="docs">
+    <a class="card doc dg" href="dolly.html">
+      <span class="avatar">DG</span>
+      <span>
+        <span class="pill demo" data-i18n="demo">Demo profile</span>
+        <h3 data-i18n="dolly">Vaidya Dolly Gupta</h3>
+        <p data-i18n="docLineD">General Physician (Ayurveda) · everyday health, digestion and daily routine.</p>
+        <span class="row"><span class="chip">📹 <span data-i18n="docC1">Video · 15 min</span></span><span class="chip">🗣️ <span data-i18n="docC2">Hindi · English</span></span></span>
+        <p class="go" style="margin-top:12px" data-i18n="docGo">View profile →</p>
+      </span>
+    </a>
+    <a class="card doc pg" href="pooja.html">
+      <span class="avatar">PG</span>
+      <span>
+        <span class="pill demo" data-i18n="demo">Demo profile</span>
+        <h3 data-i18n="pooja">Vaidya Pooja Gupta</h3>
+        <p data-i18n="docLineP">Diet, Nutrition &amp; Lifestyle Management (Ayurveda) · personal diet plans and daily routine.</p>
+        <span class="row"><span class="chip">📹 <span data-i18n="docC1">Video · 15 min</span></span><span class="chip">🗣️ <span data-i18n="docC2">Hindi · English</span></span></span>
+        <p class="go" style="margin-top:12px" data-i18n="docGo">View profile →</p>
+      </span>
+    </a>
+  </div>
+  <p class="note" style="text-align:center;margin-top:14px" data-i18n="docNote">Profiles are a demo. Verified qualifications and registration numbers will be added before consultations open.</p>
+</div></section>
+
+<section class="block" id="benefits"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="benSticker">🌱 Why Ayurveda?</span><h2 data-i18n="benTitle">Benefits of Ayurveda, in plain words</h2><p data-i18n="benSub">An old system with a very modern idea: care that fits you, your food and your day.</p></div>
+  <div class="bento">
+    <article class="card ben wide"><span class="tag">Prakriti</span><span class="e">🧬</span><h3 data-i18n="b1h">Made for you, not for everyone</h3><p data-i18n="b1p">Ayurveda looks at your prakriti – your natural body and mind type – so food and routine advice fits you, instead of one plan for all.</p></article>
+    <article class="card ben"><span class="tag">Agni</span><span class="e">🔥</span><h3 data-i18n="b2h">Happy digestion</h3><p data-i18n="b2p">Strong focus on agni (digestion): eating at the right time, in the right amount, food that suits you.</p></article>
+    <article class="card ben"><span class="tag">Dinacharya</span><span class="e">🌅</span><h3 data-i18n="b3h">A daily routine that works</h3><p data-i18n="b3p">Wake early, regular meals, sleep on time – small habits that add up to a big difference.</p></article>
+    <article class="card ben"><span class="tag">Ritucharya</span><span class="e">🍂</span><h3 data-i18n="b4h">Live with the seasons</h3><p data-i18n="b4p">Change food and routine as the season changes – summer, monsoon and winter each need something different.</p></article>
+    <article class="card ben"><span class="tag">Yoga</span><span class="e">🧘</span><h3 data-i18n="b5h">Mind + body together</h3><p data-i18n="b5p">Breathing, yoga, sleep and stress are part of care – not an extra.</p></article>
+    <article class="card ben full"><span class="tag">Swasthya</span><span class="e">🛡️</span><h3 data-i18n="b6h">Prevention first</h3><p data-i18n="b6p">The aim is to stay well, not only to treat illness – with food and lifestyle first, and medicine only when your doctor advises.</p></article>
+  </div>
+  <p style="text-align:center;margin-top:20px"><a class="btn" href="benefits.html" data-i18n="benMore">Read all benefits →</a></p>
+  <p class="disclaimer" data-i18n="benNote">Ayurveda works alongside modern medicine. Never stop or change a medicine without asking your doctor.</p>
+</div></section>
+
+<section class="block" id="eat"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="eatSticker">🥗 Eat right</span><h2 data-i18n="eatTitle">What should you eat? Keep it simple.</h2><p data-i18n="eatSub">General guidance for healthy adults in India. Your doctor can personalise it for you.</p></div>
+  <div class="eat-grid">
+    <article class="card">
+      <h3 style="font-size:26px;margin-bottom:14px" data-i18n="plateH">Your balanced thali</h3>
+      <div class="plate">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="96" fill="#fff" stroke="#e3ece6" stroke-width="4"/>
+          <path d="M100 100 L100 12 A88 88 0 0 1 100 188 Z" fill="#7fd6a6"/>
+          <path d="M100 100 L100 188 A88 88 0 0 1 12 100 Z" fill="#ffcf6b"/>
+          <path d="M100 100 L12 100 A88 88 0 0 1 100 12 Z" fill="#ff9f80"/>
+          <text x="140" y="104" font-size="30" text-anchor="middle">🥦</text><text x="60" y="150" font-size="26" text-anchor="middle">🫓</text><text x="60" y="70" font-size="26" text-anchor="middle">🫘</text>
+        </svg>
+        <ul class="legend">
+          <li><i style="background:#7fd6a6"></i><span><b data-i18n="pl1h">½ Vegetables &amp; salad</b><span data-i18n="pl1p">Sabzi, salad, leafy greens – different colours.</span></span></li>
+          <li><i style="background:#ffcf6b"></i><span><b data-i18n="pl2h">¼ Whole grains</b><span data-i18n="pl2p">Roti, millets (ragi, bajra, jowar), brown or regular rice in small portions.</span></span></li>
+          <li><i style="background:#ff9f80"></i><span><b data-i18n="pl3h">¼ Protein</b><span data-i18n="pl3p">Dal, rajma, chana, paneer, curd, sprouts – or egg and fish if you eat them.</span></span></li>
+          <li><i style="background:#9ad0ff"></i><span><b data-i18n="pl4h">+ Water, fruit, a little ghee</b><span data-i18n="pl4p">A seasonal fruit, chaas or curd, and enough water through the day.</span></span></li>
+        </ul>
+      </div>
+    </article>
+    <article class="card">
+      <div class="tabs" role="tablist" aria-label="Meals of the day">
+        <button type="button" role="tab" id="t-m" aria-controls="m-m" aria-selected="true" data-i18n="tabM">🌅 Morning</button>
+        <button type="button" role="tab" id="t-l" aria-controls="m-l" aria-selected="false" data-i18n="tabL">☀️ Lunch</button>
+        <button type="button" role="tab" id="t-e" aria-controls="m-e" aria-selected="false" data-i18n="tabE">🌇 Evening</button>
+        <button type="button" role="tab" id="t-d" aria-controls="m-d" aria-selected="false" data-i18n="tabD">🌙 Dinner</button>
+      </div>
+      <div class="meal" role="tabpanel" id="m-m" aria-labelledby="t-m"><h3 data-i18n="mmH">Start light and fresh</h3><p class="when" data-i18n="mmW">Within 1–2 hours of waking</p><ul><li data-i18n="mm1">A glass of warm water</li><li data-i18n="mm2">Poha or upma with vegetables</li><li data-i18n="mm3">Besan or moong chilla</li><li data-i18n="mm4">Idli-sambar or oats</li><li data-i18n="mm5">Sprouts with a seasonal fruit</li></ul></div>
+      <div class="meal" role="tabpanel" id="m-l" aria-labelledby="t-l" hidden><h3 data-i18n="mlH">The main meal of the day</h3><p class="when" data-i18n="mlW">Around 12:30–2 pm</p><ul><li data-i18n="ml1">Roti or rice with dal</li><li data-i18n="ml2">One seasonal sabzi</li><li data-i18n="ml3">Salad – cucumber, carrot, onion</li><li data-i18n="ml4">Curd or chaas</li><li data-i18n="ml5">Eat slowly and chew well</li></ul></div>
+      <div class="meal" role="tabpanel" id="m-e" aria-labelledby="t-e" hidden><h3 data-i18n="meH">A smart snack</h3><p class="when" data-i18n="meW">Around 4:30–6 pm</p><ul><li data-i18n="me1">Roasted chana or makhana</li><li data-i18n="me2">A fruit or a handful of nuts</li><li data-i18n="me3">Herbal or ginger tea, less sugar</li><li data-i18n="me4">Skip biscuits, chips and samosa most days</li></ul></div>
+      <div class="meal" role="tabpanel" id="m-d" aria-labelledby="t-d" hidden><h3 data-i18n="mdH">Early and light</h3><p class="when" data-i18n="mdW">By 8 pm, 2–3 hours before sleep</p><ul><li data-i18n="md1">Khichdi with a little ghee</li><li data-i18n="md2">Dal-roti with sabzi</li><li data-i18n="md3">Vegetable soup or daliya</li><li data-i18n="md4">A short walk after dinner</li></ul></div>
+    </article>
+  </div>
+  <div class="moreless">
+    <article class="card more-yes"><h3 data-i18n="moreH">✅ Eat more</h3><ul><li data-i18n="y1">Seasonal vegetables</li><li data-i18n="y2">Fresh fruits</li><li data-i18n="y3">Millets</li><li data-i18n="y4">Dal &amp; sprouts</li><li data-i18n="y5">Curd &amp; chaas</li><li data-i18n="y6">Nuts &amp; seeds</li><li data-i18n="y7">Haldi, jeera, ajwain, adrak</li><li data-i18n="y8">Home-cooked, warm food</li></ul></article>
+    <article class="card more-no"><h3 data-i18n="lessH">🚫 Eat less</h3><ul><li data-i18n="n1">Sugar &amp; sweets</li><li data-i18n="n2">Maida &amp; bakery</li><li data-i18n="n3">Deep-fried snacks</li><li data-i18n="n4">Packaged &amp; junk food</li><li data-i18n="n5">Cold drinks</li><li data-i18n="n6">Too much salt &amp; pickle</li><li data-i18n="n7">Late-night eating</li></ul></article>
+  </div>
+  <p class="disclaimer" data-i18n="eatNote">Diabetes, BP, kidney or thyroid problems, pregnancy or allergies? Your diet needs a doctor's advice – please don't follow general tips alone.</p>
+</div></section>
+
+<section class="block" id="bmi"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="bmiSticker">⚖️ BMI check</span><h2 data-i18n="bmiTitle">Is your weight in the healthy range?</h2><p data-i18n="bmiSub">BMI calculator with the cut-offs used for Indians (Asia-Pacific): normal is 18.5–22.9.</p></div>
+  <div class="bmi">
+    <form class="card" id="bmiForm" novalidate>
+      <div class="unit" role="group" aria-label="Height unit"><button type="button" data-unit="cm" aria-pressed="true">cm</button><button type="button" data-unit="ft" aria-pressed="false" data-i18n="ftIn">feet + inch</button></div>
+      <div class="field" id="cmBox"><label for="hCm" data-i18n="hLabel">Height (cm)</label><input id="hCm" type="number" inputmode="decimal" min="90" max="230" placeholder="165"></div>
+      <div class="two" id="ftBox" hidden>
+        <div class="field"><label for="hFt" data-i18n="ftLabel">Feet</label><input id="hFt" type="number" inputmode="numeric" min="3" max="7" placeholder="5"></div>
+        <div class="field"><label for="hIn" data-i18n="inLabel">Inches</label><input id="hIn" type="number" inputmode="decimal" min="0" max="11.9" placeholder="5"></div>
+      </div>
+      <div class="field"><label for="wKg" data-i18n="wLabel">Weight (kg)</label><input id="wKg" type="number" inputmode="decimal" min="20" max="250" placeholder="60"></div>
+      <p class="note" style="margin:0" data-i18n="bmiFor">For adults aged 18 and above. Not for pregnancy or children.</p>
+      <div class="ranges" aria-hidden="true">
+        <div style="border-color:#7cc4ff"><b>&lt; 18.5</b><span data-i18n="r1">Underweight</span></div>
+        <div style="border-color:#48c774"><b>18.5–22.9</b><span data-i18n="r2">Normal</span></div>
+        <div style="border-color:#ffcc33"><b>23–24.9</b><span data-i18n="r3">Overweight</span></div>
+        <div style="border-color:#ff7a59"><b>≥ 25</b><span data-i18n="r4">Obese</span></div>
+      </div>
+    </form>
+    <article class="card result" aria-live="polite">
+      <span class="note" data-i18n="yourBmi">Your BMI</span>
+      <span class="num" id="bmiNum">–</span>
+      <span class="cat" id="bmiCat" data-i18n="bmiEmpty">Enter height and weight</span>
+      <div><div class="gauge"><span class="mk" id="bmiMk" style="left:0" hidden></span></div><div class="scale"><span>15</span><span>18.5</span><span>23</span><span>25</span><span>35</span></div></div>
+      <p class="advice" id="bmiRange"></p>
+      <p class="advice" id="bmiAdvice"></p>
+      <p class="note" style="margin:0" data-i18n="waist">Also check your waist: above 90 cm (men) or 80 cm (women) means higher health risk for Indians, even with a normal BMI.</p>
+      <a class="btn primary" href="#book" style="align-self:center" data-i18n="bmiBook">Talk to a Vaidya about it</a>
+    </article>
+  </div>
+</div></section>
+
+<section class="block" id="book"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="bookSticker">📅 Book</span><h2 data-i18n="bookTitle">Choose a time that suits you.</h2><p data-i18n="bookSub">Send a booking request. The clinic will call or WhatsApp you to confirm the appointment and share the video link.</p></div>
+  <div class="book">
+    <aside class="card book-side">
+      <h3 data-i18n="bsH">How booking works</h3>
+      <ul>
+        <li data-i18n="bs1">15-minute online video consultation.</li>
+        <li data-i18n="bs2">Pick a doctor, a date and a time slot.</li>
+        <li data-i18n="bs3">You will get a call or WhatsApp to confirm.</li>
+        <li data-i18n="bs4">The fee will be told to you before confirmation.</li>
+        <li><span data-i18n="bsFee">Consultation fee:</span> <b><span class="blank-field">______</span></b></li>
+        <li data-i18n="bsPay">💳 Online payment (UPI / cards) – coming soon</li>
+        <li data-i18n="bs5">Timings shown here are a demo and may change.</li>
+      </ul>
+      <p class="disclaimer" data-i18n="bsEmerg">Not for emergencies. In an emergency, call 112.</p>
+    </aside>
+    <form class="card booking" id="bookingForm" novalidate>
+      <div class="field"><label for="bName" data-i18n="fName">Your name</label><input id="bName" name="name" required minlength="2" maxlength="60" autocomplete="name"></div>
+      <div class="field"><label for="bPhone" data-i18n="fPhone">Mobile number</label><input id="bPhone" name="phone" required inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="98XXXXXXXX"><small data-i18n="fPhoneHint">10-digit Indian mobile, for confirmation.</small></div>
+      <fieldset class="field full"><legend data-i18n="fDoctor">Doctor</legend>
+        <div class="docpick">
+          <label><input type="radio" name="doctor" value="any" checked> <span data-i18n="fAny">No preference</span></label>
+          <label><input type="radio" name="doctor" value="dolly"> <span data-i18n="dolly">Vaidya Dolly Gupta</span></label>
+          <label><input type="radio" name="doctor" value="pooja"> <span data-i18n="pooja">Vaidya Pooja Gupta</span></label>
+        </div>
+      </fieldset>
+      <div class="field"><label for="bDate" data-i18n="fDate">Date</label><input id="bDate" name="date" type="date" required></div>
+      <div class="field"><label for="bTime" data-i18n="fTime">Time slot</label><select id="bTime" name="time" required></select></div>
+      <div class="field"><label for="bLang" data-i18n="fLang">Language</label><select id="bLang" name="lang"><option value="hi" data-i18n="optHi">Hindi</option><option value="en" data-i18n="optEn">English</option></select></div>
+      <div class="field"><label for="bReason" data-i18n="fReason">What would you like to discuss? (optional)</label><textarea id="bReason" name="reason" maxlength="300"></textarea><small data-i18n="fReasonHint">A few words are enough. Share details with the doctor during the call.</small></div>
+      <label class="consent full"><input type="checkbox" name="consent" required> <span data-i18n="fConsent">I agree that the clinic may contact me on this number about my appointment, and I understand this is not an emergency service.</span></label>
+      <p class="note full" style="margin:-4px 0 0">🔒 <a href="policies.html#consent" data-i18n="consentLink">Read the teleconsultation consent &amp; privacy policy</a></p>
+      <div class="form-msg full" id="formMsg" role="status" aria-live="polite"></div>
+      <div id="msgs" hidden><span data-i18n="msgName">Please enter your name.</span><span data-i18n="msgPhone">Please enter a valid 10-digit mobile number.</span><span data-i18n="msgSlot">Please choose a date and time.</span><span data-i18n="msgConsent">Please tick the consent box to continue.</span><span data-i18n="msgOk">Thank you! Your request has been received. The clinic will call or WhatsApp you soon to confirm.</span><span data-i18n="msgTaken">This time may already be booked. Please choose another slot.</span><span data-i18n="msgFail">The request could not be sent. Check your internet and try again.</span><span data-i18n="msgSending">Sending…</span></div>
+      <div class="full"><button class="btn primary" type="submit" id="bSubmit" data-i18n="fSubmit">Request appointment</button></div>
+    </form>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="stepsSticker">🪄 Easy</span><h2 data-i18n="stepsTitle">From your home. At your pace.</h2></div>
+  <div class="steps">
+    <div class="card step"><b class="grad-text">01</b><h3 data-i18n="st1h">Find your time</h3><p data-i18n="st1p">Choose your doctor and an available 15-minute appointment.</p></div>
+    <div class="card step"><b class="grad-text">02</b><h3 data-i18n="st2h">Tell us a little about you</h3><p data-i18n="st2p">Share your concerns, current medicines and routine securely before the conversation.</p></div>
+    <div class="card step"><b class="grad-text">03</b><h3 data-i18n="st3h">Connect with your doctor</h3><p data-i18n="st3p">Meet online and discuss a considered path forward, together.</p></div>
+  </div>
+</div></section>
+
+<section class="block" id="plans"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="plansSticker">💚 Plans</span><h2 data-i18n="plansTitle">A little consistency. A little more care.</h2><p data-i18n="plansSub">One-time prepaid plans with follow-ups and diet reviews. Benefits, validity and limits will be shown clearly before you buy.</p></div>
+  <div class="plans">
+    <div class="card plan"><small data-i18n="pmK">Individual · per month</small><h3 data-i18n="pmH">Monthly Care</h3><p data-i18n="pmP">For one person, for one month.</p>
+      <ul><li data-i18n="pm1">Video consultations in the month</li><li data-i18n="pm2">One diet review</li><li data-i18n="pm3">Follow-up call if needed</li></ul>
+      <span class="price"><span data-i18n="priceL">Price:</span> <span class="blank-field">______</span></span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+    <div class="card plan pop"><span class="badge" data-i18n="popular">⭐ Best value</span><small data-i18n="pyK">Individual · per year</small><h3 data-i18n="pyH">Yearly Care</h3><p data-i18n="pyP">For one person, for 12 months – season by season.</p>
+      <ul><li data-i18n="py1">Consultations through the year</li><li data-i18n="py2">Diet review every season</li><li data-i18n="py3">Regular progress check-ins</li></ul>
+      <span class="price"><span data-i18n="priceL">Price:</span> <span class="blank-field">______</span></span><a class="btn primary" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+    <div class="card plan"><small data-i18n="pfK">Family · per year</small><h3 data-i18n="pfH">Family Yearly Care</h3><p data-i18n="pfP">One plan for your whole family, for 12 months.</p>
+      <ul><li data-i18n="pf1">Consultations for each family member</li><li data-i18n="pf2">Diet guidance for the family kitchen</li><li data-i18n="pf3">Seasonal check-ins for everyone</li></ul>
+      <span class="price"><span data-i18n="priceL">Price:</span> <span class="blank-field">______</span></span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+  </div>
+  <p class="note" style="text-align:center" data-i18n="plansNote">Plan details and pricing are awaiting approval. No automatic renewals.</p>
+</div></section>
+
+<section class="block" id="faq"><div class="wrap faq-grid">
+  <div class="head"><span class="sticker" data-i18n="faqSticker">❓ FAQ</span><h2 style="margin-top:12px" data-i18n="faqTitle">Let's make things clear.</h2><p data-i18n="faqSub">Have something else on your mind? Write to us.</p>
+    <div class="systems"><span class="chip">🧘 <span data-i18n="sys1">Yoga &amp; Naturopathy</span></span><span class="chip">🌺 <span data-i18n="sys2">Unani</span></span><span class="chip">🍃 <span data-i18n="sys3">Siddha</span></span><span class="chip">💧 <span data-i18n="sys4">Homoeopathy</span></span></div>
+    <p class="note" data-i18n="sysNote">More AYUSH systems will join later.</p>
+  </div>
+  <div>
+    <details><summary data-i18n="q1">Are all consultations online?</summary><p data-i18n="a1">Yes. Consultations take place online and are for patients located in India. Each standard video appointment is 15 minutes.</p></details>
+    <details><summary data-i18n="q2">Can I choose my doctor?</summary><p data-i18n="a2">You can choose Vaidya Dolly Gupta or Vaidya Pooja Gupta, or select no preference. With no preference, the doctor is assigned through the available appointment you choose.</p></details>
+    <details><summary data-i18n="q3">What is the consultation fee?</summary><p data-i18n="a3">Fees are awaiting approval. The approved fee will be shown before booking.</p></details>
+    <details><summary data-i18n="q4">Will I receive a personalised diet chart immediately?</summary><p data-i18n="a4">No. A doctor reviews your needs, routine and relevant health information before deciding on a personalised chart. Clinical plans are never generated automatically.</p></details>
+    <details><summary data-i18n="q5">Are care plans renewed automatically?</summary><p data-i18n="a5">No. Plans are one-time and prepaid. Benefits, validity and exclusions will be shared before purchase.</p></details>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="cta">
+    <article class="card" style="background:linear-gradient(140deg,#fff,#d9f6e5)"><span class="sticker" data-i18n="c1e">🔔 Opening soon</span><h3 data-i18n="c1h">Get notified at launch</h3><p data-i18n="c1p">Want to know when consultations open? Send us a short email and we will let you know first.</p><a class="btn primary" href="mailto:aiforsmart@gmail.com?subject=AYUSH%20Vaidya%20-%20Notify%20me" data-i18n="c1b">Notify me</a></article>
+    <article class="card" style="background:linear-gradient(140deg,#fff,#e9e1ff)"><span class="sticker" data-i18n="c2e">🩺 For practitioners</span><h3 data-i18n="c2h">Are you an AYUSH practitioner?</h3><p data-i18n="c2p">We are inviting registered Ayurveda, Yoga &amp; Naturopathy, Unani, Siddha and Homoeopathy practitioners. Write with your name, system of medicine and registration number.</p><a class="btn" href="mailto:aiforsmart@gmail.com?subject=AYUSH%20Vaidya%20-%20Practitioner%20interest" data-i18n="c2b">Join as a practitioner</a></article>
+  </div>
+</div></section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fcols">
+      <div><b data-i18n="brand">AYUSH Vaidya</b><p class="note" style="color:#a9c7b6;margin:6px 0 0" data-i18n="fAbout">Online Ayurveda care by Mitrojan.</p></div>
+      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
+      <div><a href="benefits.html" data-i18n="navBenefits">Benefits</a><a href="products.html" data-i18n="navProducts">Products</a><a href="history.html" data-i18n="navHistory">History</a><a href="prakriti.html" data-i18n="mQuiz">Prakriti quiz</a><a href="articles.html" data-i18n="mArticles">Health articles</a></div>
+      <div><a href="trust.html" data-i18n="mTrust">Doctors' credentials</a><a href="reviews.html" data-i18n="mReviews">Reviews</a><a href="contact.html" data-i18n="mContact">Contact</a><a href="policies.html" data-i18n="mPolicies">Policies</a><a href="admin.html" data-i18n="fAdmin">Clinic login</a><a href="https://mitrojan.in/" data-i18n="fHome">Mitrojan home</a></div>
+    </div>
+  </div>
+  <div class="wrap note" style="color:#a9c7b6;margin-top:16px"><span data-i18n="fNote">This website does not give medical advice. In an emergency, call 112.</span> · <span data-i18n="fRights">© 2026 Mitrojan · Ideal World</span></div>
+</footer>
+
+
+<script>
+window.AYUSH_PAGE = {
+  hi: {
+    consentLink: 'टेलीकंसल्टेशन सहमति और गोपनीयता नीति पढ़ें', bsFee: 'परामर्श शुल्क:', bsPay: '💳 ऑनलाइन भुगतान (UPI / कार्ड) – जल्द आ रहा है', priceL: 'शुल्क:',
+    heroSticker: '✨ आयुर्वेद, नए अंदाज़ में', h1a: 'अच्छा महसूस करें,', h1b: 'आयुर्वेद के साथ।',
+    heroLead: 'असली आयुर्वेद चिकित्सकों के साथ 15 मिनट का वीडियो परामर्श, आपकी दिनचर्या के हिसाब से भोजन, और आसान रोज़ की आदतें – अपने फ़ोन से, भारत में कहीं से भी।',
+    ctaBook: '15 मिनट का परामर्श बुक करें ↗', ctaBmi: 'अपना BMI जाँचें ⚖️', c1: '15 मिनट वीडियो कॉल', c2: 'पूरे भारत में', c3: 'हिंदी और अंग्रेज़ी', c4: 'निजी और सुरक्षित',
+    fl1: 'दिनचर्या', fl1s: 'रोज़ की आदतें', fl2s: 'स्वस्थ सीमा', fl3: '2 वैद्य', fl3s: 'ऑनलाइन',
+    docSticker: '👩‍⚕️ अपने वैद्य से मिलें', docTitle: 'दो चिकित्सक। बिना किसी झिझक के।', docSub: 'जिनसे बात करने में सहज लगे, उन्हें चुनें – पूरी प्रोफ़ाइल देखने के लिए कार्ड पर टैप करें।',
+    demo: 'डेमो प्रोफ़ाइल', dolly: 'वैद्य डॉली गुप्ता', pooja: 'वैद्य पूजा गुप्ता', docLineD: 'जनरल फ़िज़िशियन (आयुर्वेद) · रोज़ का स्वास्थ्य, पाचन और दिनचर्या।', docLineP: 'आहार, पोषण और जीवनशैली प्रबंधन (आयुर्वेद) · व्यक्तिगत डाइट प्लान और दिनचर्या।',
+    docC1: 'वीडियो · 15 मिनट', docC2: 'हिंदी · अंग्रेज़ी', docGo: 'प्रोफ़ाइल देखें →', docNote: 'प्रोफ़ाइल डेमो हैं। परामर्श शुरू होने से पहले सत्यापित योग्यता और पंजीकरण संख्या जोड़ी जाएगी।',
+    benSticker: '🌱 आयुर्वेद क्यों?', benTitle: 'आयुर्वेद के फ़ायदे, आसान शब्दों में', benSub: 'पुरानी पद्धति, आज का विचार: देखभाल जो आपके, आपके भोजन और आपके दिन के हिसाब से हो।',
+    b1h: 'सबके लिए नहीं, आपके लिए', b1p: 'आयुर्वेद आपकी प्रकृति – आपके शरीर और मन के स्वभाव – को देखता है, ताकि भोजन और दिनचर्या की सलाह आप पर फ़िट बैठे।',
+    b2h: 'अच्छा पाचन', b2p: 'अग्नि (पाचन) पर ख़ास ध्यान: सही समय पर, सही मात्रा में, आपके अनुकूल भोजन।',
+    b3h: 'काम करने वाली दिनचर्या', b3p: 'जल्दी उठना, नियमित भोजन, समय पर सोना – छोटी आदतें, बड़ा फ़र्क।',
+    b4h: 'ऋतु के साथ जीवन', b4p: 'मौसम बदलने के साथ भोजन और दिनचर्या बदलें – गर्मी, बरसात और सर्दी की अलग ज़रूरतें होती हैं।',
+    b5h: 'मन और शरीर साथ-साथ', b5p: 'साँस, योग, नींद और तनाव देखभाल का हिस्सा हैं – कोई अलग चीज़ नहीं।',
+    b6h: 'पहले बचाव', b6p: 'मकसद है स्वस्थ रहना, सिर्फ़ बीमारी का इलाज नहीं – पहले भोजन और जीवनशैली, और दवा तभी जब चिकित्सक कहें।',
+    benNote: 'आयुर्वेद आधुनिक चिकित्सा के साथ चलता है। अपने डॉक्टर से पूछे बिना कोई दवा कभी बंद या बदलें नहीं।',
+    eatSticker: '🥗 सही खाएँ', eatTitle: 'क्या खाएँ? आसान रखें।', eatSub: 'भारत के स्वस्थ वयस्कों के लिए सामान्य सलाह। आपके चिकित्सक इसे आपके हिसाब से बना सकते हैं।',
+    plateH: 'आपकी संतुलित थाली', pl1h: '½ सब्ज़ियाँ और सलाद', pl1p: 'सब्ज़ी, सलाद, हरी पत्तेदार सब्ज़ियाँ – अलग-अलग रंग।',
+    pl2h: '¼ साबुत अनाज', pl2p: 'रोटी, मोटा अनाज (रागी, बाजरा, ज्वार), थोड़ी मात्रा में चावल।',
+    pl3h: '¼ प्रोटीन', pl3p: 'दाल, राजमा, चना, पनीर, दही, अंकुरित अनाज – या अंडा और मछली अगर आप खाते हैं।',
+    pl4h: '+ पानी, फल, थोड़ा घी', pl4p: 'एक मौसमी फल, छाछ या दही, और दिन भर पर्याप्त पानी।',
+    tabM: '🌅 सुबह', tabL: '☀️ दोपहर', tabE: '🌇 शाम', tabD: '🌙 रात',
+    mmH: 'हल्की और ताज़ा शुरुआत', mmW: 'उठने के 1–2 घंटे के भीतर', mm1: 'एक गिलास गुनगुना पानी', mm2: 'सब्ज़ियों वाला पोहा या उपमा', mm3: 'बेसन या मूंग का चीला', mm4: 'इडली-सांभर या ओट्स', mm5: 'अंकुरित अनाज और एक मौसमी फल',
+    mlH: 'दिन का मुख्य भोजन', mlW: 'लगभग 12:30–2 बजे', ml1: 'रोटी या चावल के साथ दाल', ml2: 'एक मौसमी सब्ज़ी', ml3: 'सलाद – खीरा, गाजर, प्याज़', ml4: 'दही या छाछ', ml5: 'धीरे खाएँ, अच्छी तरह चबाएँ',
+    meH: 'समझदारी वाला नाश्ता', meW: 'लगभग 4:30–6 बजे', me1: 'भुना चना या मखाना', me2: 'एक फल या मुट्ठी भर मेवे', me3: 'हर्बल या अदरक वाली चाय, कम चीनी', me4: 'ज़्यादातर दिन बिस्किट, चिप्स और समोसा छोड़ें',
+    mdH: 'जल्दी और हल्का', mdW: 'रात 8 बजे तक, सोने से 2–3 घंटे पहले', md1: 'थोड़े घी के साथ खिचड़ी', md2: 'दाल-रोटी और सब्ज़ी', md3: 'सब्ज़ियों का सूप या दलिया', md4: 'खाने के बाद थोड़ी देर टहलें',
+    moreH: '✅ ज़्यादा खाएँ', y1: 'मौसमी सब्ज़ियाँ', y2: 'ताज़े फल', y3: 'मोटा अनाज (मिलेट)', y4: 'दाल और अंकुरित अनाज', y5: 'दही और छाछ', y6: 'मेवे और बीज', y7: 'हल्दी, जीरा, अजवाइन, अदरक', y8: 'घर का बना, गर्म खाना',
+    lessH: '🚫 कम खाएँ', n1: 'चीनी और मिठाई', n2: 'मैदा और बेकरी', n3: 'तली हुई चीज़ें', n4: 'पैकेट वाला और जंक फ़ूड', n5: 'कोल्ड ड्रिंक', n6: 'ज़्यादा नमक और अचार', n7: 'देर रात खाना',
+    eatNote: 'डायबिटीज़, बीपी, किडनी या थायरॉइड की समस्या, गर्भावस्था या एलर्जी है? आपके भोजन के लिए डॉक्टर की सलाह ज़रूरी है – केवल सामान्य सुझावों पर न चलें।',
+    bmiSticker: '⚖️ BMI जाँच', bmiTitle: 'क्या आपका वज़न स्वस्थ सीमा में है?', bmiSub: 'भारतीयों के लिए इस्तेमाल होने वाली सीमा (एशिया-पैसिफ़िक) वाला BMI कैलकुलेटर: सामान्य 18.5–22.9 है।',
+    ftIn: 'फ़ुट + इंच', hLabel: 'लंबाई (सेमी)', ftLabel: 'फ़ुट', inLabel: 'इंच', wLabel: 'वज़न (किलो)', bmiFor: '18 वर्ष और उससे अधिक उम्र के लिए। गर्भावस्था या बच्चों के लिए नहीं।',
+    r1: 'कम वज़न', r2: 'सामान्य', r3: 'ज़्यादा वज़न', r4: 'मोटापा', yourBmi: 'आपका BMI', bmiEmpty: 'लंबाई और वज़न डालें',
+    waist: 'कमर भी नापें: पुरुषों में 90 सेमी और महिलाओं में 80 सेमी से ज़्यादा कमर भारतीयों में ज़्यादा जोखिम दिखाती है, भले BMI सामान्य हो।', bmiBook: 'इस बारे में वैद्य से बात करें',
+    bookSticker: '📅 बुक करें', bookTitle: 'अपनी सुविधा का समय चुनें।', bookSub: 'बुकिंग का अनुरोध भेजें। क्लिनिक आपको कॉल या WhatsApp करके अपॉइंटमेंट पक्का करेगा और वीडियो लिंक भेजेगा।',
+    bsH: 'बुकिंग कैसे होती है', bs1: '15 मिनट का ऑनलाइन वीडियो परामर्श।', bs2: 'चिकित्सक, तारीख़ और समय चुनें।', bs3: 'पक्का करने के लिए आपको कॉल या WhatsApp आएगा।', bs4: 'पक्का करने से पहले शुल्क बताया जाएगा।', bs5: 'यहाँ दिखाया समय डेमो है और बदल सकता है।', bsEmerg: 'आपातकाल के लिए नहीं। आपात स्थिति में 112 पर कॉल करें।',
+    fName: 'आपका नाम', fPhone: 'मोबाइल नंबर', fPhoneHint: '10 अंकों का भारतीय मोबाइल नंबर, पुष्टि के लिए।', fDoctor: 'चिकित्सक', fAny: 'कोई भी', fDate: 'तारीख़', fTime: 'समय', fLang: 'भाषा', optHi: 'हिंदी', optEn: 'अंग्रेज़ी',
+    fReason: 'आप किस बारे में बात करना चाहते हैं? (वैकल्पिक)', fReasonHint: 'कुछ शब्द काफ़ी हैं। पूरी जानकारी कॉल पर चिकित्सक को बताएँ।',
+    fConsent: 'मैं सहमत हूँ कि क्लिनिक मेरे अपॉइंटमेंट के बारे में इस नंबर पर संपर्क कर सकता है, और यह आपातकालीन सेवा नहीं है।', fSubmit: 'अपॉइंटमेंट का अनुरोध भेजें',
+    msgName: 'कृपया अपना नाम लिखें।', msgPhone: 'कृपया 10 अंकों का सही मोबाइल नंबर लिखें।', msgSlot: 'कृपया तारीख़ और समय चुनें।', msgConsent: 'आगे बढ़ने के लिए सहमति पर टिक करें।',
+    msgOk: 'धन्यवाद! आपका अनुरोध मिल गया। क्लिनिक जल्द ही कॉल या WhatsApp करके पुष्टि करेगा।', msgTaken: 'यह समय शायद पहले से बुक है। कृपया दूसरा समय चुनें।', msgFail: 'अनुरोध नहीं भेजा जा सका। इंटरनेट जाँचकर फिर कोशिश करें।', msgSending: 'भेजा जा रहा है…',
+    stepsSticker: '🪄 आसान', stepsTitle: 'आपके घर से। आपकी गति से।',
+    st1h: 'अपना समय चुनें', st1p: 'अपना चिकित्सक और उपलब्ध 15 मिनट का समय चुनें।', st2h: 'अपने बारे में बताएँ', st2p: 'परामर्श से पहले अपनी चिंताएँ, वर्तमान दवाएँ और दिनचर्या सुरक्षित रूप से साझा करें।', st3h: 'चिकित्सक से जुड़ें', st3p: 'ऑनलाइन मिलें और आगे की दिशा साथ मिलकर तय करें।',
+    plansSticker: '💚 योजनाएँ', plansTitle: 'थोड़ी निरंतरता। थोड़ी और देखभाल।', plansSub: 'फ़ॉलो-अप और आहार समीक्षा वाली एकमुश्त प्रीपेड योजनाएँ। लाभ, अवधि और सीमाएँ खरीदने से पहले साफ़ दिखाई जाएँगी।',
+    p1k: 'परामर्श', p1h: 'एक विचारपूर्ण शुरुआत', p1p: 'एक बार का 15 मिनट का ऑनलाइन परामर्श।', p2k: 'व्यक्तिगत · 1 माह', p2h: 'मासिक देखभाल', p2p: 'एक महीने में परामर्श और आहार समीक्षा।',
+    p3k: 'व्यक्तिगत · 6 माह', p3h: 'छह माह की देखभाल', p3p: 'लंबे सफ़र के लिए नियमित फ़ॉलो-अप।', p4k: 'व्यक्तिगत · 12 माह', p4h: 'साल भर का स्वास्थ्य', p4p: 'हर ऋतु में, साल भर साथ।',
+    p5k: 'परिवार', p5h: 'आपके परिवार की देखभाल', p5p: 'एक योजना में परिवार के हर सदस्य पर व्यक्तिगत ध्यान।', price: 'शुल्क: जल्द आएगा', plansNote: 'योजना विवरण और शुल्क की स्वीकृति लंबित है। स्वतः नवीनीकरण नहीं।',
+    faqSticker: '❓ सवाल-जवाब', faqTitle: 'आइए, बातें स्पष्ट करें।', faqSub: 'मन में कोई और सवाल है? हमें लिखें।',
+    sys1: 'योग और प्राकृतिक चिकित्सा', sys2: 'यूनानी', sys3: 'सिद्ध', sys4: 'होम्योपैथी', sysNote: 'आगे चलकर और आयुष पद्धतियाँ भी जुड़ेंगी।',
+    q1: 'क्या सभी परामर्श ऑनलाइन हैं?', a1: 'हाँ। परामर्श ऑनलाइन होते हैं और भारत में स्थित रोगियों के लिए हैं। सामान्य वीडियो अपॉइंटमेंट 15 मिनट का है।',
+    q2: 'क्या मैं अपना चिकित्सक चुन सकता हूँ?', a2: 'आप वैद्य डॉली गुप्ता या वैद्य पूजा गुप्ता को चुन सकते हैं, या कोई प्राथमिकता नहीं चुन सकते। ऐसे में चुने गए उपलब्ध अपॉइंटमेंट के अनुसार चिकित्सक तय होगा।',
+    q3: 'परामर्श का शुल्क कितना है?', a3: 'शुल्क की स्वीकृति लंबित है। तय शुल्क बुकिंग से पहले दिखाया जाएगा।',
+    q4: 'क्या मुझे तुरंत व्यक्तिगत आहार चार्ट मिलेगा?', a4: 'नहीं। चिकित्सक आपकी ज़रूरतों, दिनचर्या और स्वास्थ्य जानकारी की समीक्षा के बाद चार्ट तय करेंगे। चिकित्सकीय योजना कभी स्वतः नहीं बनाई जाती।',
+    q5: 'क्या देखभाल योजनाएँ अपने आप नवीनीकृत होती हैं?', a5: 'नहीं। योजनाएँ एकमुश्त और प्रीपेड हैं। लाभ, अवधि और सीमाएँ खरीद से पहले बताई जाएँगी।',
+    c1e: '🔔 जल्द शुरू', c1h: 'शुरुआत पर सूचना पाएँ', c1p: 'जानना चाहते हैं कि परामर्श कब शुरू होंगे? हमें एक छोटा ईमेल भेजें, हम सबसे पहले आपको बताएँगे।', c1b: 'मुझे बताएँ',
+    c2e: '🩺 चिकित्सकों के लिए', c2h: 'क्या आप आयुष चिकित्सक हैं?', c2p: 'हम पंजीकृत आयुर्वेद, योग और प्राकृतिक चिकित्सा, यूनानी, सिद्ध और होम्योपैथी चिकित्सकों को आमंत्रित कर रहे हैं। अपना नाम, चिकित्सा पद्धति और पंजीकरण संख्या लिखकर भेजें।', c2b: 'चिकित्सक के रूप में जुड़ें',
+    bmiCat1: 'कम वज़न', bmiCat2: 'सामान्य ✅', bmiCat3: 'ज़्यादा वज़न', bmiCat4: 'मोटापा',
+    bmiAdv1: 'आपका वज़न कम है। पौष्टिक, नियमित भोजन लें; वज़न अपने आप घट रहा हो तो डॉक्टर से मिलें।',
+    bmiAdv2: 'बहुत बढ़िया! संतुलित थाली, रोज़ की सैर और अच्छी नींद से इसे बनाए रखें।',
+    bmiAdv3: 'वज़न थोड़ा ज़्यादा है। मीठा और तला कम करें, रोज़ 30–45 मिनट चलें।',
+    bmiAdv4: 'वज़न ज़्यादा है, जिससे डायबिटीज़ और बीपी का खतरा बढ़ता है। डॉक्टर से मिलकर सुरक्षित योजना बनाएँ।',
+    benMore: 'सारे फ़ायदे पढ़ें →', popular: '⭐ सबसे फ़ायदेमंद', planBtn: 'इस योजना के बारे में पूछें',
+    pmK: 'व्यक्तिगत · प्रति माह', pmH: 'मासिक देखभाल', pmP: 'एक व्यक्ति के लिए, एक महीने तक।', pm1: 'महीने में वीडियो परामर्श', pm2: 'एक आहार समीक्षा', pm3: 'ज़रूरत हो तो फ़ॉलो-अप कॉल',
+    pyK: 'व्यक्तिगत · प्रति वर्ष', pyH: 'वार्षिक देखभाल', pyP: 'एक व्यक्ति के लिए, 12 महीने – हर ऋतु के साथ।', py1: 'साल भर परामर्श', py2: 'हर ऋतु में आहार समीक्षा', py3: 'नियमित प्रगति जाँच',
+    pfK: 'परिवार · प्रति वर्ष', pfH: 'परिवार वार्षिक देखभाल', pfP: 'पूरे परिवार के लिए एक योजना, 12 महीने।', pf1: 'परिवार के हर सदस्य के लिए परामर्श', pf2: 'परिवार की रसोई के लिए आहार मार्गदर्शन', pf3: 'सबके लिए ऋतु के अनुसार जाँच',
+    bmiRangeTpl: 'आपकी लंबाई के लिए स्वस्थ वज़न: {a}–{b} किलो'
+  },
+  hinglish: {
+    consentLink: 'Teleconsultation consent aur privacy policy padhiye', bsFee: 'Consultation fees:', bsPay: '💳 Online payment (UPI / card) – jaldi aa raha hai', priceL: 'Daam:',
+    heroSticker: '✨ Ayurveda, naye andaaz mein', h1a: 'Achha feel karo,', h1b: 'Ayurveda ke saath.',
+    heroLead: 'Asli Ayurveda doctors ke saath 15 minute ka video consultation, aapki dincharya ke hisaab se khaana, aur aasaan roz ki aadatein – apne phone se, Bharat mein kahin se bhi.',
+    ctaBook: '15 min ka consult book karo ↗', ctaBmi: 'Apna BMI check karo ⚖️', c1: '15 min video call', c2: 'Poore Bharat mein', c3: 'Hindi aur English', c4: 'Private aur safe',
+    fl1: 'Dinacharya', fl1s: 'roz ki aadatein', fl2s: 'healthy range', fl3: '2 Vaidya', fl3s: 'online',
+    docSticker: '👩‍⚕️ Apne Vaidya se miliye', docTitle: 'Do doctor. Bina kisi judgement ke.', docSub: 'Jinse baat karne mein comfortable lage, unhe chuniye – poori profile ke liye card par tap kariye.',
+    demo: 'Demo profile', dolly: 'Vaidya Dolly Gupta', pooja: 'Vaidya Pooja Gupta', docLineD: 'General Physician (Ayurveda) · roz ki sehat, digestion aur dincharya.', docLineP: 'Diet, Nutrition aur Lifestyle Management (Ayurveda) · personal diet plan aur dincharya.',
+    docC1: 'Video · 15 min', docC2: 'Hindi · English', docGo: 'Profile dekhiye →', docNote: 'Profiles demo hain. Consultation shuru hone se pehle verified qualification aur registration number jode jayenge.',
+    benSticker: '🌱 Ayurveda kyun?', benTitle: 'Ayurveda ke fayde, aasaan shabdon mein', benSub: 'Purani paddhati, aaj ka idea: care jo aapke, aapke khaane aur aapke din ke hisaab se ho.',
+    b1h: 'Sabke liye nahi, aapke liye', b1p: 'Ayurveda aapki prakriti – aapke body aur mind ka nature – dekhta hai, taaki khaane aur dincharya ki advice aap par fit baithe.',
+    b2h: 'Happy digestion', b2p: 'Agni (digestion) par khaas dhyaan: sahi time par, sahi quantity mein, aapke suit karne wala khaana.',
+    b3h: 'Kaam karne wali dincharya', b3p: 'Jaldi uthna, regular khaana, time par sona – chhoti aadatein, bada farq.',
+    b4h: 'Mausam ke saath jeevan', b4p: 'Mausam badalne ke saath khaana aur routine badliye – garmi, barsaat aur sardi ki alag zarooratein hoti hain.',
+    b5h: 'Mind aur body saath-saath', b5p: 'Saans, yoga, neend aur stress care ka hissa hain – koi extra cheez nahi.',
+    b6h: 'Pehle bachaav', b6p: 'Maksad hai healthy rehna, sirf bimaari ka ilaaj nahi – pehle khaana aur lifestyle, aur dawai tabhi jab doctor kahein.',
+    benNote: 'Ayurveda modern medicine ke saath chalta hai. Apne doctor se poochhe bina koi dawai kabhi band ya change mat kariye.',
+    eatSticker: '🥗 Sahi khao', eatTitle: 'Kya khayein? Simple rakho.', eatSub: 'Bharat ke healthy adults ke liye general advice. Aapke doctor ise aapke hisaab se bana sakte hain.',
+    plateH: 'Aapki balanced thali', pl1h: '½ Sabzi aur salad', pl1p: 'Sabzi, salad, hari patte wali sabziyan – alag-alag rang.',
+    pl2h: '¼ Saabut anaaj', pl2p: 'Roti, millets (ragi, bajra, jowar), thodi quantity mein chawal.',
+    pl3h: '¼ Protein', pl3p: 'Dal, rajma, chana, paneer, dahi, sprouts – ya anda aur machhli agar aap khaate hain.',
+    pl4h: '+ Paani, phal, thoda ghee', pl4p: 'Ek mausami phal, chaas ya dahi, aur din bhar bharpoor paani.',
+    tabM: '🌅 Subah', tabL: '☀️ Dopahar', tabE: '🌇 Shaam', tabD: '🌙 Raat',
+    mmH: 'Halki aur fresh shuruaat', mmW: 'Uthne ke 1–2 ghante ke andar', mm1: 'Ek glass gunguna paani', mm2: 'Sabzi wala poha ya upma', mm3: 'Besan ya moong ka cheela', mm4: 'Idli-sambar ya oats', mm5: 'Sprouts aur ek mausami phal',
+    mlH: 'Din ka main khaana', mlW: 'Lagbhag 12:30–2 baje', ml1: 'Roti ya chawal ke saath dal', ml2: 'Ek mausami sabzi', ml3: 'Salad – kheera, gaajar, pyaaz', ml4: 'Dahi ya chaas', ml5: 'Dheere khao, achhe se chabao',
+    meH: 'Smart snack', meW: 'Lagbhag 4:30–6 baje', me1: 'Bhuna chana ya makhana', me2: 'Ek phal ya mutthi bhar nuts', me3: 'Herbal ya adrak wali chai, kam cheeni', me4: 'Zyaadatar din biscuit, chips aur samosa skip karo',
+    mdH: 'Jaldi aur halka', mdW: 'Raat 8 baje tak, sone se 2–3 ghante pehle', md1: 'Thode ghee ke saath khichdi', md2: 'Dal-roti aur sabzi', md3: 'Sabzi ka soup ya daliya', md4: 'Khaane ke baad thodi walk',
+    moreH: '✅ Zyaada khao', y1: 'Mausami sabziyan', y2: 'Fresh phal', y3: 'Millets', y4: 'Dal aur sprouts', y5: 'Dahi aur chaas', y6: 'Nuts aur seeds', y7: 'Haldi, jeera, ajwain, adrak', y8: 'Ghar ka bana, garam khaana',
+    lessH: '🚫 Kam khao', n1: 'Cheeni aur mithai', n2: 'Maida aur bakery', n3: 'Tali hui cheezein', n4: 'Packet wala aur junk food', n5: 'Cold drinks', n6: 'Zyaada namak aur achaar', n7: 'Der raat khaana',
+    eatNote: 'Diabetes, BP, kidney ya thyroid ki problem, pregnancy ya allergy hai? Aapke khaane ke liye doctor ki advice zaroori hai – sirf general tips par mat chaliye.',
+    bmiSticker: '⚖️ BMI check', bmiTitle: 'Kya aapka weight healthy range mein hai?', bmiSub: 'Indians ke liye use hone wali range (Asia-Pacific) ka BMI calculator: normal 18.5–22.9 hai.',
+    ftIn: 'feet + inch', hLabel: 'Height (cm)', ftLabel: 'Feet', inLabel: 'Inch', wLabel: 'Weight (kg)', bmiFor: '18 saal aur usse zyaada umar ke liye. Pregnancy ya bachchon ke liye nahi.',
+    r1: 'Kam weight', r2: 'Normal', r3: 'Zyaada weight', r4: 'Motapa', yourBmi: 'Aapka BMI', bmiEmpty: 'Height aur weight daaliye',
+    waist: 'Kamar bhi naapiye: aadmiyon mein 90 cm aur auraton mein 80 cm se zyaada kamar Indians mein zyaada risk dikhati hai, chahe BMI normal ho.', bmiBook: 'Is baare mein Vaidya se baat kariye',
+    bookSticker: '📅 Book', bookTitle: 'Apni suvidha ka time chuniye.', bookSub: 'Booking request bhejiye. Clinic aapko call ya WhatsApp karke appointment pakka karega aur video link bhejega.',
+    bsH: 'Booking kaise hoti hai', bs1: '15 minute ka online video consultation.', bs2: 'Doctor, date aur time slot chuniye.', bs3: 'Pakka karne ke liye aapko call ya WhatsApp aayega.', bs4: 'Pakka karne se pehle fees bata di jayegi.', bs5: 'Yahan dikhaya time demo hai aur badal sakta hai.', bsEmerg: 'Emergency ke liye nahi. Emergency mein 112 par call kariye.',
+    fName: 'Aapka naam', fPhone: 'Mobile number', fPhoneHint: '10 digit ka Indian mobile number, confirm karne ke liye.', fDoctor: 'Doctor', fAny: 'Koi bhi', fDate: 'Date', fTime: 'Time slot', fLang: 'Bhasha', optHi: 'Hindi', optEn: 'English',
+    fReason: 'Aap kis baare mein baat karna chahte hain? (optional)', fReasonHint: 'Kuch shabd kaafi hain. Poori baat call par doctor ko bataiye.',
+    fConsent: 'Main sehmat hoon ki clinic mere appointment ke baare mein is number par sampark kar sakta hai, aur yeh emergency service nahi hai.', fSubmit: 'Appointment request bhejiye',
+    msgName: 'Please apna naam likhiye.', msgPhone: 'Please 10 digit ka sahi mobile number likhiye.', msgSlot: 'Please date aur time chuniye.', msgConsent: 'Aage badhne ke liye consent box par tick kariye.',
+    msgOk: 'Dhanyavaad! Aapki request mil gayi. Clinic jaldi hi call ya WhatsApp karke confirm karega.', msgTaken: 'Yeh time shayad pehle se book hai. Please doosra time chuniye.', msgFail: 'Request nahi bheji ja saki. Internet check karke dobara try kariye.', msgSending: 'Bheja ja raha hai…',
+    stepsSticker: '🪄 Aasaan', stepsTitle: 'Aapke ghar se. Aapki raftaar se.',
+    st1h: 'Apna time chuniye', st1p: 'Apna doctor aur khaali 15 minute ka slot chuniye.', st2h: 'Apne baare mein bataiye', st2p: 'Consultation se pehle apni chinta, abhi ki dawaiyan aur dincharya safely share kariye.', st3h: 'Doctor se judiye', st3p: 'Online miliye aur aage ka raasta saath milkar tay kariye.',
+    plansSticker: '💚 Plans', plansTitle: 'Thodi niyamitta. Thodi aur care.', plansSub: 'Follow-up aur diet review wale ek-baar ke prepaid plans. Fayde, validity aur limits khareedne se pehle saaf dikhaye jayenge.',
+    p1k: 'Consultation', p1h: 'Ek achhi shuruaat', p1p: 'Ek baar ka 15 minute ka online consultation.', p2k: 'Individual · 1 mahina', p2h: 'Monthly care', p2p: 'Ek mahine mein consultation aur diet review.',
+    p3k: 'Individual · 6 mahine', p3h: '6 mahine ki care', p3p: 'Lambe safar ke liye regular follow-up.', p4k: 'Individual · 12 mahine', p4h: 'Saal bhar ki sehat', p4p: 'Har mausam mein, saal bhar saath.',
+    p5k: 'Family', p5h: 'Aapki family ki care', p5p: 'Ek plan mein family ke har member par personal dhyaan.', price: 'Daam: jaldi aayega', plansNote: 'Plan details aur daam ka approval baaki hai. Automatic renewal nahi.',
+    faqSticker: '❓ FAQ', faqTitle: 'Aaiye, baatein saaf karein.', faqSub: 'Man mein koi aur sawaal hai? Humein likhiye.',
+    sys1: 'Yoga aur Naturopathy', sys2: 'Unani', sys3: 'Siddha', sys4: 'Homoeopathy', sysNote: 'Aage chalkar aur AYUSH paddhatiyan bhi judengi.',
+    q1: 'Kya saare consultation online hain?', a1: 'Haan. Consultation online hote hain aur Bharat mein rehne wale patients ke liye hain. Normal video appointment 15 minute ka hai.',
+    q2: 'Kya main apna doctor chun sakta hoon?', a2: 'Aap Vaidya Dolly Gupta ya Vaidya Pooja Gupta ko chun sakte hain, ya "koi bhi" chun sakte hain. Tab chune gaye khaali slot ke hisaab se doctor tay hoga.',
+    q3: 'Consultation ki fees kitni hai?', a3: 'Fees ka approval baaki hai. Tay fees booking se pehle bata di jayegi.',
+    q4: 'Kya mujhe turant personal diet chart milega?', a4: 'Nahi. Doctor aapki zarooratein, dincharya aur sehat ki jaankari dekhne ke baad chart tay karenge. Koi bhi plan kabhi automatic nahi banta.',
+    q5: 'Kya care plans apne aap renew hote hain?', a5: 'Nahi. Plans ek-baar ke aur prepaid hain. Fayde, validity aur limits khareedne se pehle bataye jayenge.',
+    c1e: '🔔 Jaldi shuru', c1h: 'Shuru hone par khabar paaiye', c1p: 'Jaanna chahte hain consultation kab shuru honge? Humein ek chhota email bhejiye, sabse pehle aapko batayenge.', c1b: 'Mujhe bataiye',
+    c2e: '🩺 Doctors ke liye', c2h: 'Kya aap AYUSH doctor hain?', c2p: 'Hum registered Ayurveda, Yoga aur Naturopathy, Unani, Siddha aur Homoeopathy doctors ko bula rahe hain. Apna naam, paddhati aur registration number likh kar bhejiye.', c2b: 'Doctor ke roop mein judiye',
+    bmiCat1: 'Kam weight', bmiCat2: 'Normal ✅', bmiCat3: 'Zyaada weight', bmiCat4: 'Motapa',
+    bmiAdv1: 'Aapka weight kam hai. Poshtik, regular khaana khaiye; weight apne aap ghat raha ho to doctor se miliye.',
+    bmiAdv2: 'Bahut badhiya! Balanced thali, roz ki walk aur achhi neend se ise bana ke rakhiye.',
+    bmiAdv3: 'Weight thoda zyaada hai. Meetha aur tala kam kariye, roz 30–45 minute chaliye.',
+    bmiAdv4: 'Weight zyaada hai, jisse diabetes aur BP ka khatra badhta hai. Doctor se milkar safe plan banaiye.',
+    benMore: 'Saare fayde padhiye →', popular: '⭐ Best value', planBtn: 'Is plan ke baare mein poochhiye',
+    pmK: 'Individual · per month', pmH: 'Monthly Care', pmP: 'Ek insaan ke liye, ek mahine tak.', pm1: 'Mahine mein video consultation', pm2: 'Ek diet review', pm3: 'Zaroorat ho to follow-up call',
+    pyK: 'Individual · per year', pyH: 'Yearly Care', pyP: 'Ek insaan ke liye, 12 mahine – har mausam ke saath.', py1: 'Saal bhar consultation', py2: 'Har mausam mein diet review', py3: 'Regular progress check-in',
+    pfK: 'Family · per year', pfH: 'Family Yearly Care', pfP: 'Poori family ke liye ek plan, 12 mahine.', pf1: 'Family ke har member ke liye consultation', pf2: 'Family kitchen ke liye diet guidance', pf3: 'Sabke liye mausam ke hisaab se check-in',
+    bmiRangeTpl: 'Aapki height ke liye healthy weight: {a}–{b} kg'
+  }
+};
+</script>
+<div id="bmiEn" hidden><span data-i18n="bmiCat1">Underweight</span><span data-i18n="bmiCat2">Normal ✅</span><span data-i18n="bmiCat3">Overweight</span><span data-i18n="bmiCat4">Obese</span>
+  <span data-i18n="bmiAdv1">You are underweight. Eat nourishing, regular meals; see a doctor if you are losing weight without trying.</span>
+  <span data-i18n="bmiAdv2">Great! Keep it up with a balanced thali, a daily walk and good sleep.</span>
+  <span data-i18n="bmiAdv3">A little above the healthy range. Cut down on sweets and fried food and walk 30–45 minutes a day.</span>
+  <span data-i18n="bmiAdv4">Your weight raises the risk of diabetes and BP. Meet a doctor to make a safe plan.</span>
+  <span data-i18n="bmiRangeTpl">Healthy weight for your height: {a}–{b} kg</span></div>
+<script src="ayush.js?v=6"></script>
+<script>
+// Meal tabs
+(function () {
+  var tabs = document.querySelectorAll('[role="tab"]');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (x) {
+        var on = x === t;
+        x.setAttribute('aria-selected', String(on));
+        document.getElementById(x.getAttribute('aria-controls')).hidden = !on;
+      });
+    });
+  });
+})();
+
+// BMI calculator – Asia-Pacific cut-offs used for Indian adults.
+(function () {
+  var unit = 'cm';
+  var $ = function (id) { return document.getElementById(id); };
+  document.querySelectorAll('.unit button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      unit = b.dataset.unit;
+      document.querySelectorAll('.unit button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      $('cmBox').hidden = unit !== 'cm'; $('ftBox').hidden = unit === 'cm';
+      calc();
+    });
+  });
+  var COLORS = ['#7cc4ff', '#48c774', '#ffcc33', '#ff7a59'];
+  function calc() {
+    var cm = unit === 'cm' ? parseFloat($('hCm').value) : (parseFloat($('hFt').value) || 0) * 30.48 + (parseFloat($('hIn').value) || 0) * 2.54;
+    var kg = parseFloat($('wKg').value);
+    var cat = $('bmiCat');
+    if (!(cm >= 90 && cm <= 230 && kg >= 20 && kg <= 250)) {
+      $('bmiNum').textContent = '–'; cat.textContent = AYUSH.t('bmiEmpty'); cat.style.background = '#eee';
+      $('bmiMk').hidden = true; $('bmiRange').textContent = ''; $('bmiAdvice').textContent = '';
+      return;
+    }
+    var m = cm / 100, bmi = kg / (m * m);
+    var i = bmi < 18.5 ? 0 : bmi < 23 ? 1 : bmi < 25 ? 2 : 3;
+    $('bmiNum').textContent = bmi.toFixed(1);
+    cat.textContent = AYUSH.t('bmiCat' + (i + 1)); cat.style.background = COLORS[i];
+    $('bmiMk').hidden = false; $('bmiMk').style.left = Math.min(100, Math.max(0, (bmi - 15) / 20 * 100)) + '%';
+    $('bmiRange').textContent = AYUSH.t('bmiRangeTpl').replace('{a}', (18.5 * m * m).toFixed(1)).replace('{b}', (22.9 * m * m).toFixed(1));
+    $('bmiAdvice').textContent = AYUSH.t('bmiAdv' + (i + 1));
+  }
+  ['hCm', 'hFt', 'hIn', 'wKg'].forEach(function (id) { $(id).addEventListener('input', calc); });
+  document.addEventListener('ayush:lang', calc);
+  calc();
+})();
+</script>
+<script type="module">
+  import { setupBooking } from './booking.js';
+  const form = document.getElementById('bookingForm');
+  // Doctor pages link here with ?doctor=dolly|pooja to pre-select the doctor.
+  const pre = new URLSearchParams(location.search).get('doctor');
+  if (pre === 'dolly' || pre === 'pooja') form.elements.doctor.value = pre;
+  setupBooking(form);
+</script>
+</body>
+</html>

@@ -11,11 +11,28 @@
     // --------------------------------------------------- AYUSH Vaidya bookings
     // ayush_bookings/{YYYY-MM-DD_HHMM_doctor} from ayush.mitrojan.in. One document
     // per doctor + slot: anyone may request a free slot (create only, so a taken
-    // slot cannot be overwritten); only clinic admins (ayush.mitrojan.in/admin.html)
-    // can read, change the status or delete. Add the clinic's Google accounts below.
+    // slot cannot be overwritten). In ayush.mitrojan.in/admin.html the owner sees
+    // every booking; each doctor's account sees and manages only her own.
+    function ayushVerified() {
+      return signedIn() && request.auth.token.email_verified == true;
+    }
+
     function ayushAdmin() {
-      return signedIn() && request.auth.token.email_verified == true
-        && request.auth.token.email in ['aiforsmart@gmail.com'];
+      return ayushVerified() && request.auth.token.email in ['aiforsmart@gmail.com'];
+    }
+
+    // Google account -> the doctor whose bookings it may see.
+    function ayushDoctorLogins() {
+      return {
+        'tripti15d@gmail.com': 'dolly',
+        'pujagupta9813@gmail.com': 'pooja'
+      };
+    }
+
+    function ayushStaffFor(doctor) {
+      return ayushAdmin()
+        || (ayushVerified() && request.auth.token.email in ayushDoctorLogins()
+            && ayushDoctorLogins()[request.auth.token.email] == doctor);
     }
 
     function validAyushBooking(id, d) {
@@ -35,8 +52,9 @@
 
     match /ayush_bookings/{id} {
       allow create: if validAyushBooking(id, request.resource.data);
-      allow read, delete: if ayushAdmin();
-      allow update: if ayushAdmin()
+      // Doctors' lists must filter on doctor == their own, or the query is refused.
+      allow read, delete: if ayushStaffFor(resource.data.doctor);
+      allow update: if ayushStaffFor(resource.data.doctor)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
         && request.resource.data.status in ['requested', 'confirmed', 'done', 'cancelled'];
     }

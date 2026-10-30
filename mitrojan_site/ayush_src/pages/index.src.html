@@ -311,6 +311,8 @@
         <li data-i18n="bs2">Pick a doctor, a date and a time slot.</li>
         <li data-i18n="bs3">You will get a call or WhatsApp to confirm.</li>
         <li data-i18n="bs4">The fee will be told to you before confirmation.</li>
+        <li><span data-i18n="bsFee">Consultation fee:</span> <b>[[clinic.fee_consult]]</b></li>
+        <li data-i18n="bsPay">💳 Online payment (UPI / cards) – coming soon</li>
         <li data-i18n="bs5">Timings shown here are a demo and may change.</li>
       </ul>
       <p class="disclaimer" data-i18n="bsEmerg">Not for emergencies. In an emergency, call 112.</p>
@@ -330,6 +332,7 @@
       <div class="field"><label for="bLang" data-i18n="fLang">Language</label><select id="bLang" name="lang"><option value="hi" data-i18n="optHi">Hindi</option><option value="en" data-i18n="optEn">English</option></select></div>
       <div class="field"><label for="bReason" data-i18n="fReason">What would you like to discuss? (optional)</label><textarea id="bReason" name="reason" maxlength="300"></textarea><small data-i18n="fReasonHint">A few words are enough. Share details with the doctor during the call.</small></div>
       <label class="consent full"><input type="checkbox" name="consent" required> <span data-i18n="fConsent">I agree that the clinic may contact me on this number about my appointment, and I understand this is not an emergency service.</span></label>
+      <p class="note full" style="margin:-4px 0 0">🔒 <a href="policies.html#consent" data-i18n="consentLink">Read the teleconsultation consent &amp; privacy policy</a></p>
       <div class="form-msg full" id="formMsg" role="status" aria-live="polite"></div>
       <div id="msgs" hidden><span data-i18n="msgName">Please enter your name.</span><span data-i18n="msgPhone">Please enter a valid 10-digit mobile number.</span><span data-i18n="msgSlot">Please choose a date and time.</span><span data-i18n="msgConsent">Please tick the consent box to continue.</span><span data-i18n="msgOk">Thank you! Your request has been received. The clinic will call or WhatsApp you soon to confirm.</span><span data-i18n="msgTaken">This time may already be booked. Please choose another slot.</span><span data-i18n="msgFail">The request could not be sent. Check your internet and try again.</span><span data-i18n="msgSending">Sending…</span></div>
       <div class="full"><button class="btn primary" type="submit" id="bSubmit" data-i18n="fSubmit">Request appointment</button></div>
@@ -351,13 +354,13 @@
   <div class="plans">
     <div class="card plan"><small data-i18n="pmK">Individual · per month</small><h3 data-i18n="pmH">Monthly Care</h3><p data-i18n="pmP">For one person, for one month.</p>
       <ul><li data-i18n="pm1">Video consultations in the month</li><li data-i18n="pm2">One diet review</li><li data-i18n="pm3">Follow-up call if needed</li></ul>
-      <span class="price" data-i18n="price">Price: coming soon</span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+      <span class="price"><span data-i18n="priceL">Price:</span> [[clinic.fee_monthly]]</span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
     <div class="card plan pop"><span class="badge" data-i18n="popular">⭐ Best value</span><small data-i18n="pyK">Individual · per year</small><h3 data-i18n="pyH">Yearly Care</h3><p data-i18n="pyP">For one person, for 12 months – season by season.</p>
       <ul><li data-i18n="py1">Consultations through the year</li><li data-i18n="py2">Diet review every season</li><li data-i18n="py3">Regular progress check-ins</li></ul>
-      <span class="price" data-i18n="price">Price: coming soon</span><a class="btn primary" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+      <span class="price"><span data-i18n="priceL">Price:</span> [[clinic.fee_yearly]]</span><a class="btn primary" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
     <div class="card plan"><small data-i18n="pfK">Family · per year</small><h3 data-i18n="pfH">Family Yearly Care</h3><p data-i18n="pfP">One plan for your whole family, for 12 months.</p>
       <ul><li data-i18n="pf1">Consultations for each family member</li><li data-i18n="pf2">Diet guidance for the family kitchen</li><li data-i18n="pf3">Seasonal check-ins for everyone</li></ul>
-      <span class="price" data-i18n="price">Price: coming soon</span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+      <span class="price"><span data-i18n="priceL">Price:</span> [[clinic.fee_family]]</span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
   </div>
   <p class="note" style="text-align:center" data-i18n="plansNote">Plan details and pricing are awaiting approval. No automatic renewals.</p>
 </div></section>
@@ -387,6 +390,7 @@
 <script>
 window.AYUSH_PAGE = {
   hi: {
+    consentLink: 'टेलीकंसल्टेशन सहमति और गोपनीयता नीति पढ़ें', bsFee: 'परामर्श शुल्क:', bsPay: '💳 ऑनलाइन भुगतान (UPI / कार्ड) – जल्द आ रहा है', priceL: 'शुल्क:',
     heroSticker: '✨ आयुर्वेद, नए अंदाज़ में', h1a: 'अच्छा महसूस करें,', h1b: 'आयुर्वेद के साथ।',
     heroLead: 'असली आयुर्वेद चिकित्सकों के साथ 15 मिनट का वीडियो परामर्श, आपकी दिनचर्या के हिसाब से भोजन, और आसान रोज़ की आदतें – अपने फ़ोन से, भारत में कहीं से भी।',
     ctaBook: '15 मिनट का परामर्श बुक करें ↗', ctaBmi: 'अपना BMI जाँचें ⚖️', c1: '15 मिनट वीडियो कॉल', c2: 'पूरे भारत में', c3: 'हिंदी और अंग्रेज़ी', c4: 'निजी और सुरक्षित',
@@ -453,6 +457,7 @@ window.AYUSH_PAGE = {
     bmiRangeTpl: 'आपकी लंबाई के लिए स्वस्थ वज़न: {a}–{b} किलो'
   },
   hinglish: {
+    consentLink: 'Teleconsultation consent aur privacy policy padhiye', bsFee: 'Consultation fees:', bsPay: '💳 Online payment (UPI / card) – jaldi aa raha hai', priceL: 'Daam:',
     heroSticker: '✨ Ayurveda, naye andaaz mein', h1a: 'Achha feel karo,', h1b: 'Ayurveda ke saath.',
     heroLead: 'Asli Ayurveda doctors ke saath 15 minute ka video consultation, aapki dincharya ke hisaab se khaana, aur aasaan roz ki aadatein – apne phone se, Bharat mein kahin se bhi.',
     ctaBook: '15 min ka consult book karo ↗', ctaBmi: 'Apna BMI check karo ⚖️', c1: '15 min video call', c2: 'Poore Bharat mein', c3: 'Hindi aur English', c4: 'Private aur safe',

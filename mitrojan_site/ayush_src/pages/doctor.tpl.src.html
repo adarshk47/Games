@@ -9,6 +9,7 @@
   .avatar { width: 170px; height: 170px; border-radius: 50%; display: grid; place-items: center; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 60px; position: relative; background: {{BG}}; }
   .avatar::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; background: conic-gradient(var(--coral), var(--sun), var(--leaf), var(--teal), var(--coral)); z-index: -1; animation: spin 8s linear infinite; }
   .avatar::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 5px solid var(--bg); }
+  .avatar .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .avatar .leaf { position: absolute; right: -6px; bottom: 6px; font-size: 40px; animation: bob 4s ease-in-out infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .who h1 { font-size: clamp(38px, 5.4vw, 64px); margin: 8px 0 4px; }
@@ -76,7 +77,7 @@
   <section class="prof">
     <div class="card">
       <div class="who">
-        <span class="avatar" aria-hidden="true">{{INI}}<span class="leaf">🌿</span></span>
+        <span class="avatar" aria-hidden="true">{{INI}}<!--if:{{ID}}.photo--><img class="photo" src="[[raw:{{ID}}.photo]]" alt=""><!--/if:{{ID}}.photo--><span class="leaf">🌿</span></span>
         <div>
           <span class="pill demo" data-i18n="demo">Demo profile</span>
           <h1 data-i18n="name">{{NAME_EN}}</h1>
@@ -95,10 +96,10 @@
         <div><dt data-i18n="dtRole">Speciality</dt><dd data-i18n="role">{{ROLE_EN}}</dd></div>
         <div><dt data-i18n="dtCons">Consultation</dt><dd data-i18n="ddCons">Online video · 15 minutes</dd></div>
         <div><dt data-i18n="dtLoc">Patients from</dt><dd data-i18n="ddLoc">Anywhere in India</dd></div>
-        <div><dt data-i18n="dtQual">Qualification &amp; registration</dt><dd class="demo">{{QUAL}}</dd></div>
-        <div><dt data-i18n="dtExp">Experience</dt><dd class="demo">2+ years (demo)</dd></div>
-        <div><dt data-i18n="dtLang">Languages</dt><dd class="demo" data-i18n="ddLang">Demo – Hindi, English (to be confirmed)</dd></div>
-        <div><dt data-i18n="dtFee">Fee</dt><dd data-i18n="ddFee">Told to you before confirmation</dd></div>
+        <div><dt data-i18n="dtQual">Qualification &amp; registration</dt><dd>[[{{ID}}.degree]] · Reg. [[{{ID}}.reg_no]]</dd></div>
+        <div><dt data-i18n="dtExp">Experience</dt><dd>[[{{ID}}.experience]]</dd></div>
+        <div><dt data-i18n="dtLang">Languages</dt><dd>[[{{ID}}.languages]]</dd></div>
+        <div><dt data-i18n="dtFee">Fee</dt><dd>[[clinic.fee_consult]] <small class="note" data-i18n="feeNote">(15-min consultation)</small></dd></div>
       </dl>
     </aside>
   </section>
@@ -183,7 +184,7 @@ window.AYUSH_PAGE = {
     name: '{{NAME_HI}}', demo: 'डेमो प्रोफ़ाइल', org: 'मित्रोजन का आयुष वैद्य',
     ch1: 'वीडियो · 15 मिनट', ch2: 'हिंदी · अंग्रेज़ी', ch3: 'पूरे भारत में', bookWith: '{{FIRST_HI}} जी के साथ बुक करें ↗',
     factsH: 'मुख्य जानकारी', dtRole: 'विशेषता', dtCons: 'परामर्श', ddCons: 'ऑनलाइन वीडियो · 15 मिनट', dtLoc: 'मरीज़', ddLoc: 'भारत में कहीं से भी',
-    dtQual: 'योग्यता और पंजीकरण', dtExp: 'अनुभव', ddSoon: 'डेमो – विवरण जल्द आएगा', dtLang: 'भाषाएँ', ddLang: 'डेमो – हिंदी, अंग्रेज़ी (पुष्टि बाकी)', dtFee: 'शुल्क', ddFee: 'पक्का करने से पहले बताया जाएगा',
+    dtQual: 'योग्यता और पंजीकरण', dtExp: 'अनुभव', ddSoon: 'डेमो – विवरण जल्द आएगा', dtLang: 'भाषाएँ', ddLang: 'डेमो – हिंदी, अंग्रेज़ी (पुष्टि बाकी)', dtFee: 'शुल्क', feeNote: '(15 मिनट का परामर्श)', ddFee: 'पक्का करने से पहले बताया जाएगा',
     aboutH: '{{FIRST_HI}} जी के बारे में', demoText: 'डेमो टेक्स्ट',
     about3: 'यह टेक्स्ट नमूना है। परामर्श शुरू होने से पहले चिकित्सक के अपने शब्द, सत्यापित योग्यता और फ़ोटो लगाई जाएगी।',
     slotsH: 'कब मिल सकते हैं?', demoTime: 'डेमो समय', sDays: 'सोमवार – शनिवार', sSun: 'रविवार', sClosed: 'बंद',
@@ -206,7 +207,7 @@ window.AYUSH_PAGE = {
     name: '{{NAME_EN}}', demo: 'Demo profile', org: 'Mitrojan ka AYUSH Vaidya',
     ch1: 'Video · 15 min', ch2: 'Hindi · English', ch3: 'Poore Bharat mein', bookWith: '{{FIRST_EN}} ji ke saath book karo ↗',
     factsH: 'Quick jaankari', dtRole: 'Speciality', dtCons: 'Consultation', ddCons: 'Online video · 15 minute', dtLoc: 'Patients', ddLoc: 'Bharat mein kahin se bhi',
-    dtQual: 'Qualification aur registration', dtExp: 'Experience', ddSoon: 'Demo – details jaldi aayengi', dtLang: 'Bhasha', ddLang: 'Demo – Hindi, English (confirm hona baaki)', dtFee: 'Fees', ddFee: 'Pakka karne se pehle bata di jayegi',
+    dtQual: 'Qualification aur registration', dtExp: 'Experience', ddSoon: 'Demo – details jaldi aayengi', dtLang: 'Bhasha', ddLang: 'Demo – Hindi, English (confirm hona baaki)', dtFee: 'Fees', feeNote: '(15 min ka consultation)', ddFee: 'Pakka karne se pehle bata di jayegi',
     aboutH: '{{FIRST_EN}} ji ke baare mein', demoText: 'Demo text',
     about3: 'Yeh text sample hai. Consultation shuru hone se pehle doctor ke apne shabd, verified qualification aur photo lagayi jayegi.',
     slotsH: 'Kab mil sakte hain?', demoTime: 'Demo timings', sDays: 'Monday – Saturday', sSun: 'Sunday', sClosed: 'Band',

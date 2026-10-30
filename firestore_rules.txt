@@ -393,6 +393,57 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // --------------------------------------------------- AYUSH Vaidya bookings
+    // ayush_bookings/{YYYY-MM-DD_HHMM_doctor} from ayush.mitrojan.in. One document
+    // per doctor + slot: anyone may request a free slot (create only, so a taken
+    // slot cannot be overwritten). In ayush.mitrojan.in/admin.html the owner sees
+    // every booking; each doctor's account sees and manages only her own.
+    function ayushVerified() {
+      return signedIn() && request.auth.token.email_verified == true;
+    }
+
+    function ayushAdmin() {
+      return ayushVerified() && request.auth.token.email in ['aiforsmart@gmail.com'];
+    }
+
+    // Google account -> the doctor whose bookings it may see.
+    function ayushDoctorLogins() {
+      return {
+        'tripti15d@gmail.com': 'dolly',
+        'pujagupta9813@gmail.com': 'pooja'
+      };
+    }
+
+    function ayushStaffFor(doctor) {
+      return ayushAdmin()
+        || (ayushVerified() && request.auth.token.email in ayushDoctorLogins()
+            && ayushDoctorLogins()[request.auth.token.email] == doctor);
+    }
+
+    function validAyushBooking(id, d) {
+      return d.keys().hasOnly(['name', 'phone', 'doctor', 'date', 'time', 'lang', 'reason', 'status', 'consent', 'createdAt'])
+        && d.name is string && d.name.size() >= 2 && d.name.size() <= 60
+        && d.phone is string && d.phone.matches('^[6-9][0-9]{9}$')
+        && d.doctor in ['dolly', 'pooja']
+        && d.date is string && d.date.matches('^20[0-9]{2}-[01][0-9]-[0-3][0-9]$')
+        && d.time is string && d.time.matches('^[0-2][0-9]:[0-5][0-9]$')
+        && id == d.date + '_' + d.time.replace(':', '') + '_' + d.doctor
+        && d.lang in ['hi', 'en']
+        && (!('reason' in d) || (d.reason is string && d.reason.size() <= 300))
+        && d.status == 'requested'
+        && d.consent == true
+        && d.createdAt == request.time;
+    }
+
+    match /ayush_bookings/{id} {
+      allow create: if validAyushBooking(id, request.resource.data);
+      // Doctors' lists must filter on doctor == their own, or the query is refused.
+      allow read, delete: if ayushStaffFor(resource.data.doctor);
+      allow update: if ayushStaffFor(resource.data.doctor)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['requested', 'confirmed', 'done', 'cancelled'];
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -10,7 +10,9 @@ once. Page sources are in pages/*.src.html, split by markers:
     <!--scripts-->  page scripts that run after ayush.js
 
 doctor.tpl.html is filled once per doctor from DOCTORS below.
-Run:  python build.py        (then deploy mitrojan_site with firebase)
+Daily articles are plain .md files in articles/ (see articles/_TEMPLATE.md).
+Clinic and doctor details to fill in later: CLINIC and DOCTOR_INFO below.
+Run:  python build.py        (then deploy – see ../HOW_TO_UPDATE.md)
 """
 import html
 import json
@@ -21,7 +23,47 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.normpath(os.path.join(HERE, '..', 'ayush'))
-VERSION = '4'  # bump when ayush.css / ayush.js change, so browsers fetch the new files
+VERSION = '7'  # bump when ayush.css / ayush.js change, so browsers fetch the new files
+SITE_URL = 'https://ayush.mitrojan.in/'
+
+# ---------------------------------------------------------------------------
+# FILL THESE IN LATER. While a value is '' the page shows ______ in its place,
+# and buttons that need it (WhatsApp, call, map, Google profile, photo) stay hidden.
+# Then run `python build.py` and deploy.
+CLINIC = {
+    'phone': '',            # shown as text, e.g. '+91 98765 43210'
+    'whatsapp': '',         # digits with country code, e.g. '919876543210'
+    'address': '',
+    'hours': 'Mon – Sat · 10 AM – 1 PM, 5 – 7 PM',
+    'reply_time': '',       # e.g. 'Within 24 hours'
+    'map_embed': '',        # Google Maps > Share > Embed a map > the src="..." URL
+    'google_profile': '',   # Google Business Profile link (for reviews)
+    'fee_consult': '',      # 15-minute consultation, e.g. '₹300'
+    'fee_monthly': '',      # Monthly Care plan
+    'fee_yearly': '',       # Yearly Care plan
+    'fee_family': '',       # Family Yearly Care plan
+}
+DOCTOR_INFO = {
+    'dolly': {'degree': '', 'college': '', 'reg_no': '', 'since': '', 'experience': '', 'languages': '', 'photo': ''},
+    'pooja': {'degree': '', 'college': '', 'reg_no': '', 'since': '', 'experience': '', 'languages': '', 'photo': ''},
+}  # photo: an image file put in ../ayush/ (e.g. 'dolly.jpg') or a full https:// URL
+BLANK = '<span class="blank-field">______</span>'
+
+
+def lookup(key):
+    group, field = key.split('.', 1)
+    return (CLINIC if group == 'clinic' else DOCTOR_INFO[group])[field].strip()
+
+
+def fill_details(text):
+    """<!--if:k-->…<!--/if:k--> kept only when k has a value; [[k]] text (or ______);
+    [[raw:k]] value as-is (for links); [[tel:k]] digits and + only."""
+    text = re.sub(r'<!--if:([\w.]+)-->(.*?)<!--/if:\1-->', lambda m: m.group(2) if lookup(m.group(1)) else '', text, flags=re.S)
+    text = re.sub(r'<!--ifnot:([\w.]+)-->(.*?)<!--/ifnot:\1-->', lambda m: '' if lookup(m.group(1)) else m.group(2), text, flags=re.S)
+    text = re.sub(r'\[\[raw:([\w.]+)\]\]', lambda m: html.escape(lookup(m.group(1))), text)
+    text = re.sub(r'\[\[tel:([\w.]+)\]\]', lambda m: re.sub(r'[^\d+]', '', lookup(m.group(1))), text)
+    text = re.sub(r'\[\[([\w.]+)\]\]', lambda m: html.escape(lookup(m.group(1)), quote=False) or BLANK, text)
+    return text
 
 HEAD = """<!doctype html>
 <html lang="en">
@@ -31,6 +73,12 @@ HEAD = """<!doctype html>
 <title>{title}</title>
 <meta name="description" content="{description}">
 <meta name="theme-color" content="#2f8f5b">
+<link rel="canonical" href="{url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AYUSH Vaidya by Mitrojan">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="{url}">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='14' fill='%232f8f5b'/><path d='M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z' fill='%23c9f2dc'/><path d='M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z' fill='%23fff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,6 +110,7 @@ TOP = """
       </div>
     </div>
     <a href="benefits.html"{cur_benefits} data-i18n="navBenefits">Benefits</a>
+    <a href="consult.html"{cur_consult} data-i18n="navConsult">General Physician</a>
     <a href="diet.html"{cur_diet} data-i18n="navDiet">Diet plan</a>
     <a href="products.html"{cur_products} data-i18n="navProducts">Products</a>
     <a href="history.html"{cur_history} data-i18n="navHistory">History</a>
@@ -87,16 +136,17 @@ FOOT = """
   <div class="wrap">
     <div class="fcols">
       <div><b data-i18n="brand">AYUSH Vaidya</b><p class="note" style="color:#a9c7b6;margin:6px 0 0" data-i18n="fAbout">Online Ayurveda care by Mitrojan.</p></div>
-      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
+      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="consult.html" data-i18n="navConsult">General Physician</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
       <div><a href="benefits.html" data-i18n="navBenefits">Benefits</a><a href="products.html" data-i18n="navProducts">Products</a><a href="history.html" data-i18n="navHistory">History</a><a href="prakriti.html" data-i18n="mQuiz">Prakriti quiz</a><a href="articles.html" data-i18n="mArticles">Health articles</a></div>
       <div><a href="trust.html" data-i18n="mTrust">Doctors' credentials</a><a href="reviews.html" data-i18n="mReviews">Reviews</a><a href="contact.html" data-i18n="mContact">Contact</a><a href="policies.html" data-i18n="mPolicies">Policies</a><a href="admin.html" data-i18n="fAdmin">Clinic login</a><a href="https://mitrojan.in/" data-i18n="fHome">Mitrojan home</a></div>
     </div>
   </div>
   <div class="wrap note" style="color:#a9c7b6;margin-top:16px"><span data-i18n="fNote">This website does not give medical advice. In an emergency, call 112.</span> · <span data-i18n="fRights">© 2026 Mitrojan · Ideal World</span></div>
 </footer>
+<!--if:clinic.whatsapp--><a class="wa-float" href="https://wa.me/[[raw:clinic.whatsapp]]" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a><!--/if:clinic.whatsapp-->
 """
 
-NAV_KEYS = ['dolly', 'pooja', 'benefits', 'diet', 'products', 'history', 'prakriti', 'trust', 'reviews', 'articles', 'contact', 'policies']
+NAV_KEYS = ['dolly', 'pooja', 'benefits', 'consult', 'diet', 'products', 'history', 'prakriti', 'trust', 'reviews', 'articles', 'contact', 'policies']
 
 # Per-doctor content for doctor.tpl.src.html. Text marked "demo" on the page until the doctors confirm it.
 # Each language: (en, hi, hinglish).
@@ -105,7 +155,6 @@ DOCTORS = {
         'INI': 'DG', 'BG': 'var(--peach)', 'FIRST': ('Dolly', 'डॉली', 'Dolly'),
         'NAME': ('Vaidya Dolly Gupta', 'वैद्य डॉली गुप्ता', 'Vaidya Dolly Gupta'),
         'ROLE': ('General Physician (Ayurveda)', 'जनरल फ़िज़िशियन (आयुर्वेद)', 'General Physician (Ayurveda)'),
-        'QUAL': 'BAMS (demo) · Reg. DEMO-AYU-0001',
         'ART': ('winter-health.html', '🧣', ('Winter health: stay well when it is cold', 'सर्दियों में सेहत: ठंड में कैसे रहें स्वस्थ', 'Sardi mein sehat: thand mein kaise rahein healthy')),
         'ABOUT1': ('Dolly is a General Physician in Ayurveda – your first stop for everyday health worries. In a short video call she listens to your symptoms, food, sleep and routine before suggesting anything.',
                    'डॉली जी आयुर्वेद में जनरल फ़िज़िशियन हैं – रोज़ की सेहत की चिंताओं के लिए आपका पहला पड़ाव। छोटी-सी वीडियो कॉल में वे पहले आपके लक्षण, भोजन, नींद और दिनचर्या सुनती हैं, फिर कोई सलाह देती हैं।',
@@ -113,7 +162,7 @@ DOCTORS = {
         'ABOUT2': ('Her approach is practical: simple changes to food and routine, Ayurvedic guidance where it fits, and a clear word on when you should see a doctor in person or get tests done.',
                    'उनका तरीका व्यावहारिक है: भोजन और दिनचर्या में आसान बदलाव, जहाँ ठीक हो वहाँ आयुर्वेदिक सलाह, और साफ़ बताना कि कब आमने-सामने डॉक्टर को दिखाना या जाँच कराना ज़रूरी है।',
                    'Unka tareeka practical hai: khaane aur dincharya mein aasaan badlaav, jahan theek ho wahan Ayurvedic advice, aur saaf batana ki kab aamne-saamne doctor ko dikhana ya test karana zaroori hai.'),
-        'CTA2': ('mailto:aiforsmart@gmail.com?subject=Question%20for%20Vaidya%20Dolly%20Gupta', ('Ask a question', 'सवाल पूछें', 'Sawaal poochhiye')),
+        'CTA2': ('consult.html', ('General Physician consultation 🩺', 'जनरल फ़िज़िशियन परामर्श 🩺', 'General Physician consultation 🩺')),
         'HELPS': [
             ('🤧', ('Everyday health problems', 'रोज़ की सेहत की परेशानियाँ', 'Roz ki sehat ki pareshaniyan'), ('Cold, cough, body ache, tiredness – first advice and when to see a doctor.', 'सर्दी, खाँसी, बदन दर्द, थकान – पहली सलाह और कब डॉक्टर को दिखाएँ।', 'Sardi, khaansi, badan dard, thakaan – pehli advice aur kab doctor ko dikhayein.')),
             ('🔥', ('Digestion', 'पाचन', 'Digestion'), ('Gas, acidity, constipation and heaviness after meals.', 'गैस, एसिडिटी, कब्ज़ और खाने के बाद भारीपन।', 'Gas, acidity, kabz aur khaane ke baad bhaaripan.')),
@@ -127,7 +176,6 @@ DOCTORS = {
         'INI': 'PG', 'BG': 'var(--mint)', 'FIRST': ('Pooja', 'पूजा', 'Pooja'),
         'NAME': ('Vaidya Pooja Gupta', 'वैद्य पूजा गुप्ता', 'Vaidya Pooja Gupta'),
         'ROLE': ('Diet, Nutrition & Lifestyle Management (Ayurveda)', 'आहार, पोषण और जीवनशैली प्रबंधन (आयुर्वेद)', 'Diet, Nutrition aur Lifestyle Management (Ayurveda)'),
-        'QUAL': 'BAMS (demo) · Reg. DEMO-AYU-0002',
         'ART': ('winter-diet.html', '🥣', ('Your winter diet plan', 'सर्दियों का डाइट प्लान', 'Sardiyon ka diet plan')),
         'ABOUT1': ('Pooja focuses on diet and nutrition in Ayurveda. She looks at your body type, routine, region and taste to plan meals you can actually follow at home.',
                    'पूजा जी आयुर्वेद में आहार और पोषण पर ध्यान देती हैं। वे आपकी प्रकृति, दिनचर्या, इलाके और स्वाद को देखकर ऐसा भोजन तय करती हैं जिसे आप घर पर सच में अपना सकें।',
@@ -169,9 +217,139 @@ def doctor_values(key):
         'CTA2_HREF': d['CTA2'][0], 'CTA2_EN': esc(d['CTA2'][1][0]), 'HELPS': '\n'.join(helps),
         'OTHER_ID': other, 'OTHER_INI': o['INI'], 'OTHER_EN': esc(o['NAME'][0]), 'OTHER_HI': o['NAME'][1],
         'OTHER_BG': o['BG'], 'OTHER_ROLE_EN': esc(o['ROLE'][0]),
-        'QUAL': esc(d['QUAL']), 'ART_HREF': d['ART'][0], 'ART_EMOJI': d['ART'][1], 'ART_EN': esc(d['ART'][2][0]),
+        'ART_HREF': d['ART'][0], 'ART_EMOJI': d['ART'][1], 'ART_EN': esc(d['ART'][2][0]),
         'HI_EXTRA': json.dumps(hi, ensure_ascii=False), 'HL_EXTRA': json.dumps(hl, ensure_ascii=False),
     }
+
+
+# ---------------------------------------------------------------------------
+# Daily articles: one .md file per article in articles/ (copy articles/_TEMPLATE.md).
+# Files starting with "_" are not published. Each becomes article-<file name>.html and
+# is listed, newest first, under "Latest from our Vaidyas" on articles.html.
+ARTICLES_DIR = os.path.join(HERE, 'articles')
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+ARTICLE_STYLE = """  .art-wrap { max-width: 820px; margin: 0 auto; padding: 34px 0 0; }
+  .crumbs { font-size: 15px; color: var(--ink-2); margin: 0 0 14px; }
+  .crumbs a { color: var(--leaf-d); font-weight: 600; text-decoration: none; }
+  .cover { border-radius: 30px; padding: 34px 28px; background: linear-gradient(140deg, #d9f6e5, #e9e1ff 55%, #ffe1d9); position: relative; overflow: hidden; }
+  .cover .cover-e { position: absolute; right: 24px; top: 18px; font-size: 64px; animation: bob 5s ease-in-out infinite; }
+  .cover h1 { font-size: clamp(34px, 5.4vw, 58px); margin: 0 0 10px; max-width: 640px; }
+  .cover p { color: var(--ink-2); font-size: 19px; margin: 0; max-width: 640px; }
+  .by { display: flex; gap: 12px; align-items: center; margin: 18px 0 0; text-decoration: none; }
+  .by .av { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-family: "Baloo 2", sans-serif; box-shadow: 0 0 0 3px #fff; }
+  .by b { display: block; }
+  .by small { color: var(--ink-2); }
+  .art-body h2 { font-size: clamp(26px, 3.4vw, 34px); margin: 32px 0 10px; }
+  .art-body h3 { font-size: 22px; margin: 24px 0 8px; }
+  .art-body p, .art-body li { color: var(--ink-2); font-size: 18px; }
+  .art-body ul { padding-left: 22px; }
+  .art-body img { max-width: 100%; border-radius: 20px; }
+  .art-body a { color: var(--leaf-d); font-weight: 600; }
+  .end { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  @media (max-width: 640px) { .cover { padding: 26px 18px; } .cover .cover-e { font-size: 44px; } }"""
+
+
+def md_inline(text):
+    text = re.sub(r'!\[([^\]]*)\]\(([^)\s]+)\)', r'<img src="\2" alt="\1" loading="lazy">', text)
+    text = re.sub(r'\[([^\]]+)\]\(([^)\s]+)\)', r'<a href="\2">\1</a>', text)
+    return re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+
+
+def md_to_html(md):
+    """The small Markdown subset in _TEMPLATE.md: paragraphs, ## / ### headings, - lists, **bold**, links, images."""
+    out, para, items = [], [], []
+
+    def flush():
+        if para:
+            out.append('<p>' + md_inline(' '.join(para)) + '</p>')
+            para.clear()
+        if items:
+            out.append('<ul>' + ''.join(f'<li>{md_inline(i)}</li>' for i in items) + '</ul>')
+            items.clear()
+
+    for raw in md.splitlines():
+        line = html.escape(raw.strip())
+        if not line:
+            flush()
+        elif line.startswith('### '):
+            flush(); out.append(f'<h3>{md_inline(line[4:])}</h3>')
+        elif line.startswith('## '):
+            flush(); out.append(f'<h2>{md_inline(line[3:])}</h2>')
+        elif line.startswith('- '):
+            if para:
+                flush()
+            items.append(line[2:])
+        else:
+            if items:
+                flush()
+            para.append(line)
+    flush()
+    return '\n    '.join(out)
+
+
+def read_articles():
+    arts = []
+    if not os.path.isdir(ARTICLES_DIR):
+        return arts
+    for name in sorted(os.listdir(ARTICLES_DIR)):
+        if not name.endswith('.md') or name.startswith('_'):
+            continue
+        text = open(os.path.join(ARTICLES_DIR, name), encoding='utf-8').read().replace('\r\n', '\n')
+        head, sep, body = text.partition('\n---\n')
+        assert sep, f'{name}: missing the --- line between the details and the article'
+        meta = dict(line.split(':', 1) for line in head.splitlines() if ':' in line)
+        meta = {k.strip(): v.strip() for k, v in meta.items()}
+        for key in ('title', 'author', 'date', 'summary'):
+            assert meta.get(key), f'{name}: "{key}:" is empty'
+        assert meta['author'] in DOCTORS, f'{name}: author must be one of {list(DOCTORS)}'
+        y, m, d = (int(x) for x in meta['date'].split('-'))
+        arts.append(dict(meta, emoji=meta.get('emoji') or '🌿', file=f"article-{name[:-3]}.html",
+                         pretty=f'{d} {MONTHS[m - 1]} {y}', body=md_to_html(body)))
+    return sorted(arts, key=lambda a: a['date'], reverse=True)
+
+
+def article_source(a):
+    d = DOCTORS[a['author']]
+    esc = lambda t: html.escape(t, quote=False)
+    hi = {'auth': d['NAME'][1], 'authRole': d['ROLE'][1], 'bookWith': f"{d['NAME'][1]} के साथ बुक करें ↗", 'allArts': '← सभी लेख',
+          'note': 'यह सामान्य जानकारी है, व्यक्तिगत चिकित्सकीय सलाह नहीं। डॉक्टर से पूछे बिना कोई दवा बंद या न बदलें।'}
+    hl = {'auth': d['NAME'][2], 'authRole': d['ROLE'][2], 'bookWith': f"{d['NAME'][2]} ke saath book karo ↗", 'allArts': '← Saare articles',
+          'note': 'Yeh general jaankari hai, personal medical advice nahi. Doctor se poochhe bina koi dawai band ya change mat karo.'}
+    return f"""<!--title: {esc(a['title'])} – {esc(d['NAME'][0])} · AYUSH Vaidya-->
+<!--description: {esc(a['summary'])}-->
+<!--nav: articles-->
+<!--style-->
+{ARTICLE_STYLE}
+<!--body-->
+<main class="wrap"><article class="art-wrap">
+  <p class="crumbs"><a href="index.html" data-i18n="navHome">Home</a> › <a href="articles.html" data-i18n="mArticles">Health articles</a></p>
+  <header class="cover">
+    <span class="cover-e" aria-hidden="true">{a['emoji']}</span>
+    <h1>{esc(a['title'])}</h1>
+    <p>{esc(a['summary'])}</p>
+    <a class="by" href="{a['author']}.html"><span class="av" style="background:{d['BG']}">{d['INI']}</span><span><b data-i18n="auth">{esc(d['NAME'][0])}</b><small><span data-i18n="authRole">{esc(d['ROLE'][0])}</span> · {a['pretty']}</small></span></a>
+  </header>
+  <div class="art-body">
+    {a['body']}
+    <p class="note" style="margin-top:22px" data-i18n="note">This is general information, not personal medical advice. Never stop or change a medicine without asking your doctor.</p>
+    <div class="end"><a class="btn primary" href="index.html?doctor={a['author']}#book" data-i18n="bookWith">Book with {esc(d['NAME'][0])} ↗</a><a class="btn" href="articles.html" data-i18n="allArts">← All articles</a></div>
+  </div>
+</article></main>
+<!--i18n-->
+<script>window.AYUSH_PAGE = {{ hi: {json.dumps(hi, ensure_ascii=False)}, hinglish: {json.dumps(hl, ensure_ascii=False)} }};</script>
+"""
+
+
+def latest_section(arts):
+    if not arts:
+        return ''
+    cards = []
+    for a in arts:
+        d = DOCTORS[a['author']]
+        cards.append(f"""    <a class="card fa" href="{a['file']}"><span class="fe">{a['emoji']}</span><span><span class="pill live">{a['pretty']}</span><h3>{html.escape(a['title'], quote=False)}</h3><p>{html.escape(a['summary'], quote=False)}</p><span class="fby"><span class="av" style="background:{d['BG']}">{d['INI']}</span><span>{html.escape(d['NAME'][0], quote=False)}</span></span></span></a>""")
+    return ('<section class="block"><div class="wrap">\n  <div class="head"><span class="sticker" data-i18n="latestSticker">🆕 Latest</span><h2 data-i18n="latestH">Latest from our Vaidyas</h2></div>\n'
+            '  <div class="feat">\n' + '\n'.join(cards) + '\n  </div>\n</div></section>\n')
 
 
 def split(src):
@@ -183,11 +361,12 @@ def split(src):
     return meta, parts
 
 
-def page(meta, parts):
+def page(meta, parts, name):
     nav = meta.get('nav', '')
     cur = {f'cur_{k}': (' aria-current="page"' if k == nav else '') for k in NAV_KEYS}
     book = f'index.html?doctor={nav}#book' if nav in DOCTORS else ('#book' if nav == 'home' else 'index.html#book')
-    html = HEAD.format(title=meta['title'], description=meta['description'], v=VERSION, style=parts['style'])
+    url = SITE_URL + ('' if name == 'index.html' else name)
+    html = HEAD.format(title=meta['title'], description=meta['description'], url=url, v=VERSION, style=parts['style'])
     html += TOP.format(book=book, **cur)
     html += '\n' + parts['body'] + '\n' + FOOT + '\n'
     html += parts['i18n'] + '\n' + f'<script src="ayush.js?v={VERSION}"></script>\n'
@@ -222,34 +401,51 @@ def main():
         for static in ('ayush.css', 'ayush.js', 'booking.js', 'firebase-config.js', 'admin.html'):
             shutil.copy(os.path.join(live, static), OUT)
         dirs.append(os.path.join(HERE, 'pages_suggest'))
+    arts = read_articles()
     built = []
     for pages_dir in dirs:
-        built += build_dir(pages_dir, suggest)
+        built += build_dir(pages_dir, suggest, arts)
+    for a in arts:
+        write(a['file'], page(*split(article_source(a)), a['file']), suggest)
+        built.append(a['file'])
+    if not suggest:
+        write_seo_files(built)
     print('built into', OUT + ':', ', '.join(built))
 
 
-def build_dir(pages_dir, suggest):
+def write_seo_files(pages):
+    # sitemap.xml + robots.txt so search engines find every public page; admin.html stays out.
+    urls = ''.join(f'  <url><loc>{SITE_URL}{"" if p == "index.html" else p}</loc></url>\n' for p in sorted(pages))
+    open(os.path.join(OUT, 'sitemap.xml'), 'w', encoding='utf-8').write(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '</urlset>\n')
+    open(os.path.join(OUT, 'robots.txt'), 'w', encoding='utf-8').write(
+        f'User-agent: *\nDisallow: /admin.html\nSitemap: {SITE_URL}sitemap.xml\n')
+
+
+def build_dir(pages_dir, suggest, arts):
     built = []
     for name in sorted(os.listdir(pages_dir)):
         if not name.endswith('.src.html'):
             continue
         src = open(os.path.join(pages_dir, name), encoding='utf-8').read()
+        src = src.replace('<!--latest-articles-->\n', latest_section(arts))
         if name == 'doctor.tpl.src.html':
             for key in DOCTORS:
                 filled = src
                 for k, v in doctor_values(key).items():
                     filled = filled.replace('{{' + k + '}}', v)
                 assert '{{' not in filled, key
-                write(f'{key}.html', page(*split(filled)), suggest)
+                write(f'{key}.html', page(*split(filled), f'{key}.html'), suggest)
                 built.append(f'{key}.html')
             continue
         out = name.replace('.src.html', '.html')
-        write(out, page(*split(src)), suggest)
+        write(out, page(*split(src), out), suggest)
         built.append(out)
     return built
 
 
 def write(name, html_text, suggest):
+    html_text = fill_details(html_text)
     if suggest:
         html_text = html_text.replace('<body>\n', '<body>\n' + SUGGEST_BAR, 1)
     open(os.path.join(OUT, name), 'w', encoding='utf-8').write(html_text)

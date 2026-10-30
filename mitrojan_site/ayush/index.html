@@ -6,11 +6,17 @@
 <title>AYUSH Vaidya – Ayurveda for real life · Mitrojan</title>
 <meta name="description" content="AYUSH Vaidya by Mitrojan: 15-minute online Ayurveda consultations with Vaidya Dolly Gupta and Vaidya Pooja Gupta, benefits of Ayurveda, what to eat, and a BMI calculator for Indians.">
 <meta name="theme-color" content="#2f8f5b">
+<link rel="canonical" href="https://ayush.mitrojan.in/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AYUSH Vaidya by Mitrojan">
+<meta property="og:title" content="AYUSH Vaidya – Ayurveda for real life · Mitrojan">
+<meta property="og:description" content="AYUSH Vaidya by Mitrojan: 15-minute online Ayurveda consultations with Vaidya Dolly Gupta and Vaidya Pooja Gupta, benefits of Ayurveda, what to eat, and a BMI calculator for Indians.">
+<meta property="og:url" content="https://ayush.mitrojan.in/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='14' fill='%232f8f5b'/><path d='M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z' fill='%23c9f2dc'/><path d='M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z' fill='%23fff'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="ayush.css?v=4">
+<link rel="stylesheet" href="ayush.css?v=7">
 <style>
   /* Hero */
   .hero { padding: 46px 0 10px; }
@@ -197,6 +203,7 @@
       </div>
     </div>
     <a href="benefits.html" data-i18n="navBenefits">Benefits</a>
+    <a href="consult.html" data-i18n="navConsult">General Physician</a>
     <a href="diet.html" data-i18n="navDiet">Diet plan</a>
     <a href="products.html" data-i18n="navProducts">Products</a>
     <a href="history.html" data-i18n="navHistory">History</a>
@@ -361,6 +368,8 @@
         <li data-i18n="bs2">Pick a doctor, a date and a time slot.</li>
         <li data-i18n="bs3">You will get a call or WhatsApp to confirm.</li>
         <li data-i18n="bs4">The fee will be told to you before confirmation.</li>
+        <li><span data-i18n="bsFee">Consultation fee:</span> <b><span class="blank-field">______</span></b></li>
+        <li data-i18n="bsPay">💳 Online payment (UPI / cards) – coming soon</li>
         <li data-i18n="bs5">Timings shown here are a demo and may change.</li>
       </ul>
       <p class="disclaimer" data-i18n="bsEmerg">Not for emergencies. In an emergency, call 112.</p>
@@ -380,6 +389,7 @@
       <div class="field"><label for="bLang" data-i18n="fLang">Language</label><select id="bLang" name="lang"><option value="hi" data-i18n="optHi">Hindi</option><option value="en" data-i18n="optEn">English</option></select></div>
       <div class="field"><label for="bReason" data-i18n="fReason">What would you like to discuss? (optional)</label><textarea id="bReason" name="reason" maxlength="300"></textarea><small data-i18n="fReasonHint">A few words are enough. Share details with the doctor during the call.</small></div>
       <label class="consent full"><input type="checkbox" name="consent" required> <span data-i18n="fConsent">I agree that the clinic may contact me on this number about my appointment, and I understand this is not an emergency service.</span></label>
+      <p class="note full" style="margin:-4px 0 0">🔒 <a href="policies.html#consent" data-i18n="consentLink">Read the teleconsultation consent &amp; privacy policy</a></p>
       <div class="form-msg full" id="formMsg" role="status" aria-live="polite"></div>
       <div id="msgs" hidden><span data-i18n="msgName">Please enter your name.</span><span data-i18n="msgPhone">Please enter a valid 10-digit mobile number.</span><span data-i18n="msgSlot">Please choose a date and time.</span><span data-i18n="msgConsent">Please tick the consent box to continue.</span><span data-i18n="msgOk">Thank you! Your request has been received. The clinic will call or WhatsApp you soon to confirm.</span><span data-i18n="msgTaken">This time may already be booked. Please choose another slot.</span><span data-i18n="msgFail">The request could not be sent. Check your internet and try again.</span><span data-i18n="msgSending">Sending…</span></div>
       <div class="full"><button class="btn primary" type="submit" id="bSubmit" data-i18n="fSubmit">Request appointment</button></div>
@@ -401,13 +411,13 @@
   <div class="plans">
     <div class="card plan"><small data-i18n="pmK">Individual · per month</small><h3 data-i18n="pmH">Monthly Care</h3><p data-i18n="pmP">For one person, for one month.</p>
       <ul><li data-i18n="pm1">Video consultations in the month</li><li data-i18n="pm2">One diet review</li><li data-i18n="pm3">Follow-up call if needed</li></ul>
-      <span class="price" data-i18n="price">Price: coming soon</span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+      <span class="price"><span data-i18n="priceL">Price:</span> <span class="blank-field">______</span></span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
     <div class="card plan pop"><span class="badge" data-i18n="popular">⭐ Best value</span><small data-i18n="pyK">Individual · per year</small><h3 data-i18n="pyH">Yearly Care</h3><p data-i18n="pyP">For one person, for 12 months – season by season.</p>
       <ul><li data-i18n="py1">Consultations through the year</li><li data-i18n="py2">Diet review every season</li><li data-i18n="py3">Regular progress check-ins</li></ul>
-      <span class="price" data-i18n="price">Price: coming soon</span><a class="btn primary" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+      <span class="price"><span data-i18n="priceL">Price:</span> <span class="blank-field">______</span></span><a class="btn primary" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
     <div class="card plan"><small data-i18n="pfK">Family · per year</small><h3 data-i18n="pfH">Family Yearly Care</h3><p data-i18n="pfP">One plan for your whole family, for 12 months.</p>
       <ul><li data-i18n="pf1">Consultations for each family member</li><li data-i18n="pf2">Diet guidance for the family kitchen</li><li data-i18n="pf3">Seasonal check-ins for everyone</li></ul>
-      <span class="price" data-i18n="price">Price: coming soon</span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
+      <span class="price"><span data-i18n="priceL">Price:</span> <span class="blank-field">______</span></span><a class="btn" href="#book" data-i18n="planBtn">Ask about this plan</a></div>
   </div>
   <p class="note" style="text-align:center" data-i18n="plansNote">Plan details and pricing are awaiting approval. No automatic renewals.</p>
 </div></section>
@@ -438,7 +448,7 @@
   <div class="wrap">
     <div class="fcols">
       <div><b data-i18n="brand">AYUSH Vaidya</b><p class="note" style="color:#a9c7b6;margin:6px 0 0" data-i18n="fAbout">Online Ayurveda care by Mitrojan.</p></div>
-      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
+      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="consult.html" data-i18n="navConsult">General Physician</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
       <div><a href="benefits.html" data-i18n="navBenefits">Benefits</a><a href="products.html" data-i18n="navProducts">Products</a><a href="history.html" data-i18n="navHistory">History</a><a href="prakriti.html" data-i18n="mQuiz">Prakriti quiz</a><a href="articles.html" data-i18n="mArticles">Health articles</a></div>
       <div><a href="trust.html" data-i18n="mTrust">Doctors' credentials</a><a href="reviews.html" data-i18n="mReviews">Reviews</a><a href="contact.html" data-i18n="mContact">Contact</a><a href="policies.html" data-i18n="mPolicies">Policies</a><a href="admin.html" data-i18n="fAdmin">Clinic login</a><a href="https://mitrojan.in/" data-i18n="fHome">Mitrojan home</a></div>
     </div>
@@ -446,9 +456,11 @@
   <div class="wrap note" style="color:#a9c7b6;margin-top:16px"><span data-i18n="fNote">This website does not give medical advice. In an emergency, call 112.</span> · <span data-i18n="fRights">© 2026 Mitrojan · Ideal World</span></div>
 </footer>
 
+
 <script>
 window.AYUSH_PAGE = {
   hi: {
+    consentLink: 'टेलीकंसल्टेशन सहमति और गोपनीयता नीति पढ़ें', bsFee: 'परामर्श शुल्क:', bsPay: '💳 ऑनलाइन भुगतान (UPI / कार्ड) – जल्द आ रहा है', priceL: 'शुल्क:',
     heroSticker: '✨ आयुर्वेद, नए अंदाज़ में', h1a: 'अच्छा महसूस करें,', h1b: 'आयुर्वेद के साथ।',
     heroLead: 'असली आयुर्वेद चिकित्सकों के साथ 15 मिनट का वीडियो परामर्श, आपकी दिनचर्या के हिसाब से भोजन, और आसान रोज़ की आदतें – अपने फ़ोन से, भारत में कहीं से भी।',
     ctaBook: '15 मिनट का परामर्श बुक करें ↗', ctaBmi: 'अपना BMI जाँचें ⚖️', c1: '15 मिनट वीडियो कॉल', c2: 'पूरे भारत में', c3: 'हिंदी और अंग्रेज़ी', c4: 'निजी और सुरक्षित',
@@ -515,6 +527,7 @@ window.AYUSH_PAGE = {
     bmiRangeTpl: 'आपकी लंबाई के लिए स्वस्थ वज़न: {a}–{b} किलो'
   },
   hinglish: {
+    consentLink: 'Teleconsultation consent aur privacy policy padhiye', bsFee: 'Consultation fees:', bsPay: '💳 Online payment (UPI / card) – jaldi aa raha hai', priceL: 'Daam:',
     heroSticker: '✨ Ayurveda, naye andaaz mein', h1a: 'Achha feel karo,', h1b: 'Ayurveda ke saath.',
     heroLead: 'Asli Ayurveda doctors ke saath 15 minute ka video consultation, aapki dincharya ke hisaab se khaana, aur aasaan roz ki aadatein – apne phone se, Bharat mein kahin se bhi.',
     ctaBook: '15 min ka consult book karo ↗', ctaBmi: 'Apna BMI check karo ⚖️', c1: '15 min video call', c2: 'Poore Bharat mein', c3: 'Hindi aur English', c4: 'Private aur safe',
@@ -588,7 +601,7 @@ window.AYUSH_PAGE = {
   <span data-i18n="bmiAdv3">A little above the healthy range. Cut down on sweets and fried food and walk 30–45 minutes a day.</span>
   <span data-i18n="bmiAdv4">Your weight raises the risk of diabetes and BP. Meet a doctor to make a safe plan.</span>
   <span data-i18n="bmiRangeTpl">Healthy weight for your height: {a}–{b} kg</span></div>
-<script src="ayush.js?v=4"></script>
+<script src="ayush.js?v=7"></script>
 <script>
 // Meal tabs
 (function () {

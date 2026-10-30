@@ -33,6 +33,15 @@
             "value": "no-cache"
           }
         ]
+      },
+      {
+        "source": "/schedule.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ],
     "site": "masterg-games"

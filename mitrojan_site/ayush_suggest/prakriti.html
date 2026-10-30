@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prakriti quiz – Vata, Pitta or Kapha? · AYUSH Vaidya</title>
+<meta name="description" content="A quick, fun quiz to learn about your Ayurvedic body type (prakriti): Vata, Pitta or Kapha. For learning only – a Vaidya gives the real assessment.">
+<meta name="theme-color" content="#2f8f5b">
+<link rel="canonical" href="https://ayush.mitrojan.in/prakriti.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AYUSH Vaidya by Mitrojan">
+<meta property="og:title" content="Prakriti quiz – Vata, Pitta or Kapha? · AYUSH Vaidya">
+<meta property="og:description" content="A quick, fun quiz to learn about your Ayurvedic body type (prakriti): Vata, Pitta or Kapha. For learning only – a Vaidya gives the real assessment.">
+<meta property="og:url" content="https://ayush.mitrojan.in/prakriti.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='14' fill='%232f8f5b'/><path d='M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z' fill='%23c9f2dc'/><path d='M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z' fill='%23fff'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ayush.css?v=6">
+<style>
+  .hero { padding: 40px 0 0; text-align: center; }
+  .hero h1 { font-size: clamp(38px, 5.6vw, 68px); margin: 12px auto; }
+  .hero p { color: var(--ink-2); font-size: 19px; max-width: 680px; margin: 0 auto; }
+  .quiz { max-width: 760px; margin: 0 auto; }
+  .bar { height: 10px; border-radius: 999px; background: #e3ece6; overflow: hidden; margin-bottom: 16px; }
+  .bar span { display: block; height: 100%; width: 0; background: var(--grad); transition: width .3s; }
+  .q h2 { font-size: clamp(24px, 3.4vw, 34px); margin: 4px 0 16px; }
+  .opts { display: grid; gap: 10px; }
+  .opts button { font: inherit; font-size: 18px; font-weight: 600; text-align: left; background: #fff; border: 2px solid #dfe9e2; border-radius: 16px; padding: 14px 18px; cursor: pointer; transition: transform .15s, border-color .15s; }
+  .opts button:hover { transform: translateX(4px); border-color: var(--leaf); }
+  .count { color: var(--ink-2); font-weight: 700; }
+  .res { text-align: center; }
+  .res .big { font-size: 80px; }
+  .res h2 { font-size: clamp(32px, 5vw, 52px); margin: 6px 0; }
+  .mix { display: grid; gap: 10px; margin: 18px 0; text-align: left; }
+  .mix div { display: grid; grid-template-columns: 80px 1fr 50px; gap: 10px; align-items: center; font-weight: 700; }
+  .mix i { display: block; height: 14px; border-radius: 999px; background: var(--grad); }
+  .acts { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+</style>
+</head>
+<body>
+<div style="background:#1b1b3a;color:#ffd84d;font-weight:700;font-size:14px;padding:8px 16px;text-align:center;line-height:1.7">
+  💡 Suggestion preview (local only) ·
+  <a style="color:#fff" href="suggestions.html">Checklist</a> ·
+  <a style="color:#fff" href="trust.html">Credentials</a> ·
+  <a style="color:#fff" href="prakriti.html">Prakriti quiz</a> ·
+  <a style="color:#fff" href="contact.html">Contact &amp; clinic</a> ·
+  <a style="color:#fff" href="reviews.html">Reviews</a> ·
+  <a style="color:#fff" href="articles.html">Articles</a> ·
+  <a style="color:#fff" href="policies.html">Policies</a>
+</div>
+
+<div class="topbar" aria-hidden="true"><div class="track">
+  <span data-i18n="tk1">🌿 Ayurveda for today's life</span><span data-i18n="tk2">📹 15-minute online consultation</span><span data-i18n="tk3">🥗 Diet plans by Vaidya Pooja Gupta</span><span data-i18n="tk4">⚖️ Free BMI calculator</span><span data-i18n="tk5">🇮🇳 Across India, from home</span>
+  <span data-i18n="tk1">🌿 Ayurveda for today's life</span><span data-i18n="tk2">📹 15-minute online consultation</span><span data-i18n="tk3">🥗 Diet plans by Vaidya Pooja Gupta</span><span data-i18n="tk4">⚖️ Free BMI calculator</span><span data-i18n="tk5">🇮🇳 Across India, from home</span>
+</div></div>
+
+<header class="site"><div class="wrap">
+  <a class="logo" href="index.html" aria-label="AYUSH Vaidya home">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f8f5b"/><stop offset="1" stop-color="#1fa39a"/></linearGradient></defs><rect width="48" height="48" rx="15" fill="url(#lg)"/><path d="M24 38 C24 26 16 20 10 18 C12 28 18 34 24 38Z" fill="#c9f2dc"/><path d="M24 38 C24 24 30 14 38 10 C38 24 32 32 24 38Z" fill="#fff"/><circle cx="36" cy="36" r="5" fill="#ffd84d"/></svg>
+    <span><b data-i18n="brand">AYUSH Vaidya</b><small data-i18n="brandSub">by Mitrojan</small></span>
+  </a>
+  <nav class="main" id="mainNav" aria-label="Main">
+    <div class="dd"><button type="button" aria-expanded="false"><span data-i18n="navDoctors">Doctors</span> ▾</button>
+      <div class="dd-menu">
+        <a href="dolly.html"><span class="av">DG</span><span><span data-i18n="ddDolly">Vaidya Dolly Gupta</span><small data-i18n="ddDollyRole">General Physician</small></span></a>
+        <a href="pooja.html"><span class="av">PG</span><span><span data-i18n="ddPooja">Vaidya Pooja Gupta</span><small data-i18n="ddPoojaRole">Diet, Nutrition &amp; Lifestyle</small></span></a>
+      </div>
+    </div>
+    <a href="benefits.html" data-i18n="navBenefits">Benefits</a>
+    <a href="diet.html" data-i18n="navDiet">Diet plan</a>
+    <a href="products.html" data-i18n="navProducts">Products</a>
+    <a href="history.html" data-i18n="navHistory">History</a>
+    <div class="dd"><button type="button" aria-expanded="false"><span data-i18n="navMore">More</span> ▾</button>
+      <div class="dd-menu">
+        <a href="prakriti.html" aria-current="page"><span class="av">🧬</span><span data-i18n="mQuiz">Prakriti quiz</span></a>
+        <a href="trust.html"><span class="av">🛡️</span><span data-i18n="mTrust">Doctors' credentials</span></a>
+        <a href="reviews.html"><span class="av">⭐</span><span data-i18n="mReviews">Reviews</span></a>
+        <a href="articles.html"><span class="av">📰</span><span data-i18n="mArticles">Health articles</span></a>
+        <a href="contact.html"><span class="av">📞</span><span data-i18n="mContact">Contact</span></a>
+        <a href="policies.html"><span class="av">⚖️</span><span data-i18n="mPolicies">Policies</span></a>
+      </div>
+    </div>
+    <a class="cta" href="index.html#book" data-i18n="navBook">Book now</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button><button type="button" data-lang="hinglish" aria-pressed="false">Hinglish</button></div>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mainNav" aria-label="Menu">☰</button>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap">
+  <span class="sticker" data-i18n="sticker">🧬 Prakriti quiz</span>
+  <h1><span data-i18n="h1a">Vata, Pitta or Kapha –</span> <span class="grad-text" data-i18n="h1b">what's your vibe?</span></h1>
+  <p data-i18n="lead">8 quick questions. Pick what fits you most of your life, not just today.</p>
+</div></section>
+<section class="block"><div class="wrap">
+  <div class="card quiz" id="quiz" aria-live="polite"></div>
+  <p class="disclaimer" style="max-width:760px;margin:20px auto 0" data-i18n="note">This quiz is for learning and fun, not a diagnosis. Your real prakriti is assessed by a Vaidya.</p>
+  <div hidden id="qtext"><span data-i18n="qOf">Question {n} of {t}</span><span data-i18n="resTitle">You are mostly</span><span data-i18n="again">Take it again</span><span data-i18n="book">Talk to a Vaidya ↗</span><span data-i18n="rV">Light, quick and creative. Keep warm, eat warm cooked food on time, and protect your sleep.</span><span data-i18n="rP">Sharp, focused and driven. Stay cool, don't skip meals, and go easy on spicy and fried food.</span><span data-i18n="rK">Calm, steady and strong. Keep moving every day, eat light and warm, and avoid heavy late dinners.</span></div>
+</div></section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fcols">
+      <div><b data-i18n="brand">AYUSH Vaidya</b><p class="note" style="color:#a9c7b6;margin:6px 0 0" data-i18n="fAbout">Online Ayurveda care by Mitrojan.</p></div>
+      <div><a href="dolly.html" data-i18n="ddDolly">Vaidya Dolly Gupta</a><a href="pooja.html" data-i18n="ddPooja">Vaidya Pooja Gupta</a><a href="diet.html" data-i18n="navDiet">Diet plan</a></div>
+      <div><a href="benefits.html" data-i18n="navBenefits">Benefits</a><a href="products.html" data-i18n="navProducts">Products</a><a href="history.html" data-i18n="navHistory">History</a><a href="prakriti.html" data-i18n="mQuiz">Prakriti quiz</a><a href="articles.html" data-i18n="mArticles">Health articles</a></div>
+      <div><a href="trust.html" data-i18n="mTrust">Doctors' credentials</a><a href="reviews.html" data-i18n="mReviews">Reviews</a><a href="contact.html" data-i18n="mContact">Contact</a><a href="policies.html" data-i18n="mPolicies">Policies</a><a href="admin.html" data-i18n="fAdmin">Clinic login</a><a href="https://mitrojan.in/" data-i18n="fHome">Mitrojan home</a></div>
+    </div>
+  </div>
+  <div class="wrap note" style="color:#a9c7b6;margin-top:16px"><span data-i18n="fNote">This website does not give medical advice. In an emergency, call 112.</span> · <span data-i18n="fRights">© 2026 Mitrojan · Ideal World</span></div>
+</footer>
+
+
+<script>
+window.AYUSH_PAGE = {
+  hi: { sticker: '🧬 प्रकृति क्विज़', h1a: 'वात, पित्त या कफ –', h1b: 'आपका स्वभाव क्या है?', lead: '8 छोटे सवाल। वह चुनें जो आप पर ज़्यादातर ज़िंदगी में लागू होता है, सिर्फ़ आज नहीं।',
+    note: 'यह क्विज़ सीखने और मज़े के लिए है, निदान नहीं। आपकी असली प्रकृति वैद्य बताते हैं।', qOf: 'सवाल {n} / {t}', resTitle: 'आप ज़्यादातर हैं', again: 'फिर से करें', book: 'वैद्य से बात करें ↗',
+    rV: 'हल्के, तेज़ और रचनात्मक। गर्म रहें, समय पर गर्म पका खाना खाएँ, और अपनी नींद का ध्यान रखें।', rP: 'तेज़, एकाग्र और लगनशील। ठंडे रहें, खाना न छोड़ें, और तीखा-तला कम खाएँ।', rK: 'शांत, स्थिर और मज़बूत। रोज़ चलें-फिरें, हल्का और गर्म खाएँ, और देर रात भारी खाने से बचें।' },
+  hinglish: { sticker: '🧬 Prakriti quiz', h1a: 'Vata, Pitta ya Kapha –', h1b: 'aapka vibe kya hai?', lead: '8 chhote sawaal. Woh chuno jo aap par zyaadatar life mein lagu hota hai, sirf aaj nahi.',
+    note: 'Yeh quiz seekhne aur mazze ke liye hai, diagnosis nahi. Aapki asli prakriti Vaidya batate hain.', qOf: 'Sawaal {n} / {t}', resTitle: 'Aap zyaadatar hain', again: 'Phir se karo', book: 'Vaidya se baat karo ↗',
+    rV: 'Halke, tez aur creative. Garam raho, time par garam paka khaana khao, aur neend ka dhyaan rakho.', rP: 'Tez, focused aur mehnati. Thande raho, khaana mat chhodo, aur teekha-tala kam khao.', rK: 'Shaant, stable aur mazboot. Roz move karo, halka aur garam khao, aur der raat bhaari khaane se bacho.' }
+};
+</script>
+<script src="ayush.js?v=6"></script>
+<script>
+(function () {
+  // Each answer is [vata, pitta, kapha] in en / hi / hinglish.
+  var Q = [
+    { q: ['My body frame is…', 'मेरा शरीर…', 'Meri body…'], a: [['Thin and light', 'पतला और हल्का', 'Patli aur halki'], ['Medium and muscular', 'मध्यम और गठीला', 'Medium aur muscular'], ['Broad and solid', 'चौड़ा और भारी', 'Chaudi aur solid']] },
+    { q: ['My skin is usually…', 'मेरी त्वचा आमतौर पर…', 'Meri skin aamtaur par…'], a: [['Dry and rough', 'रूखी', 'Rukhi'], ['Warm, sensitive, gets red easily', 'गर्म, संवेदनशील, जल्दी लाल', 'Garam, sensitive, jaldi laal'], ['Soft, smooth, a bit oily', 'मुलायम, चिकनी, थोड़ी तैलीय', 'Soft, smooth, thodi oily']] },
+    { q: ['My hunger is…', 'मेरी भूख…', 'Meri bhookh…'], a: [['Irregular – sometimes yes, sometimes no', 'अनियमित – कभी लगती है, कभी नहीं', 'Irregular – kabhi lagti hai, kabhi nahi'], ['Strong – I get cranky if I miss a meal', 'तेज़ – खाना छूटे तो चिढ़ जाता/जाती हूँ', 'Tez – khaana chhoote to chidh jaata/jaati hoon'], ['Steady – I can easily skip a meal', 'स्थिर – आराम से एक भोजन छोड़ सकता/सकती हूँ', 'Steady – aaram se ek meal skip kar sakta/sakti hoon']] },
+    { q: ['My sleep is…', 'मेरी नींद…', 'Meri neend…'], a: [['Light, I wake up easily', 'हल्की, जल्दी खुल जाती है', 'Halki, jaldi khul jaati hai'], ['Moderate and sound', 'ठीक-ठाक और गहरी', 'Theek-thaak aur gehri'], ['Deep and long – hard to wake up', 'गहरी और लंबी – उठना मुश्किल', 'Gehri aur lambi – uthna mushkil']] },
+    { q: ['The weather I dislike most…', 'मुझे सबसे कम पसंद मौसम…', 'Mujhe sabse kam pasand mausam…'], a: [['Cold and windy', 'ठंडा और हवादार', 'Thanda aur hawadaar'], ['Hot', 'गर्म', 'Garam'], ['Cold and damp', 'ठंडा और नम', 'Thanda aur nam']] },
+    { q: ['Under stress I…', 'तनाव में मैं…', 'Stress mein main…'], a: [['Worry and overthink', 'चिंता करता/करती हूँ, ज़्यादा सोचता/सोचती हूँ', 'Chinta aur overthink karta/karti hoon'], ['Get irritated or angry', 'चिढ़ जाता/जाती हूँ या गुस्सा आता है', 'Chidh jaata/jaati hoon ya gussa aata hai'], ['Go quiet and withdraw', 'चुप हो जाता/जाती हूँ', 'Chup ho jaata/jaati hoon']] },
+    { q: ['I talk and walk…', 'मैं बोलता/बोलती और चलता/चलती हूँ…', 'Main bolta/bolti aur chalta/chalti hoon…'], a: [['Fast – lots of words', 'तेज़ – बहुत सारी बातें', 'Tez – bahut saari baatein'], ['Sharp and to the point', 'तेज़ और सीधी बात', 'Sharp aur seedhi baat'], ['Slow and steady', 'धीरे और स्थिर', 'Dheere aur steady']] },
+    { q: ['My weight…', 'मेरा वज़न…', 'Mera weight…'], a: [['Is hard to gain', 'मुश्किल से बढ़ता है', 'Mushkil se badhta hai'], ['Goes up and down easily', 'आसानी से घटता-बढ़ता है', 'Aasaani se ghatta-badhta hai'], ['Goes up easily, is hard to lose', 'आसानी से बढ़ता है, मुश्किल से घटता है', 'Aasaani se badhta hai, mushkil se ghatta hai']] }
+  ];
+  var NAMES = { en: ['Vata', 'Pitta', 'Kapha'], hi: ['वात', 'पित्त', 'कफ'], hinglish: ['Vata', 'Pitta', 'Kapha'] };
+  var ICON = ['🌬️', '🔥', '🌍'];
+  var box = document.getElementById('quiz');
+  var step = 0, score = [0, 0, 0];
+  var li = function () { return AYUSH.lang === 'hi' ? 1 : AYUSH.lang === 'hinglish' ? 2 : 0; };
+  var t = function (k) { return document.querySelector('#qtext [data-i18n="' + k + '"]').textContent; };
+
+  function render() {
+    box.replaceChildren();
+    if (step < Q.length) {
+      var bar = document.createElement('div'); bar.className = 'bar'; bar.innerHTML = '<span></span>';
+      bar.firstChild.style.width = (step / Q.length * 100) + '%';
+      var c = document.createElement('p'); c.className = 'count'; c.textContent = t('qOf').replace('{n}', step + 1).replace('{t}', Q.length);
+      var h = document.createElement('h2'); h.textContent = Q[step].q[li()];
+      var opts = document.createElement('div'); opts.className = 'opts';
+      Q[step].a.forEach(function (a, i) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = ICON[i] + '  ' + a[li()];
+        b.onclick = function () { score[i]++; step++; render(); };
+        opts.append(b);
+      });
+      var q = document.createElement('div'); q.className = 'q'; q.append(c, h, opts);
+      box.append(bar, q);
+      return;
+    }
+    var best = score.indexOf(Math.max.apply(null, score));
+    var res = document.createElement('div'); res.className = 'res';
+    res.innerHTML = '<div class="big"></div><p class="count"></p><h2 class="grad-text"></h2><p></p><div class="mix"></div><div class="acts"></div>';
+    res.children[0].textContent = ICON[best];
+    res.children[1].textContent = t('resTitle');
+    res.children[2].textContent = NAMES[AYUSH.lang] ? NAMES[AYUSH.lang][best] : NAMES.en[best];
+    res.children[3].textContent = t(['rV', 'rP', 'rK'][best]);
+    score.forEach(function (s, i) {
+      var pct = Math.round(s / Q.length * 100);
+      var row = document.createElement('div');
+      row.innerHTML = '<span></span><i></i><span></span>';
+      row.children[0].textContent = (NAMES[AYUSH.lang] || NAMES.en)[i];
+      row.children[1].style.width = Math.max(pct, 4) + '%';
+      row.children[2].textContent = pct + '%';
+      res.children[4].append(row);
+    });
+    var again = document.createElement('button'); again.type = 'button'; again.className = 'btn'; again.textContent = t('again');
+    again.onclick = function () { step = 0; score = [0, 0, 0]; render(); };
+    var book = document.createElement('a'); book.className = 'btn primary'; book.href = 'index.html#book'; book.textContent = t('book');
+    res.children[5].append(again, book);
+    box.append(res);
+  }
+  document.addEventListener('ayush:lang', render);
+  render();
+})();
+</script>
+</body>
+</html>

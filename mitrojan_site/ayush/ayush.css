@@ -2,7 +2,7 @@
 :root {
   --bg: #f4faf3; --ink: #14302a; --ink-2: #4b645d; --leaf: #2f8f5b; --leaf-d: #1f6b43; --teal: #1fa39a;
   --mint: #c9f2dc; --peach: #ffdcc7; --lilac: #e7ddff; --sun: #ffd84d; --sky: #d4ecff; --coral: #ff7a59; --rose: #ffd6e4;
-  --glass: rgba(255, 255, 255, .74); --line: rgba(20, 48, 42, .12); --radius: 26px;
+  --glass: rgba(255, 255, 255, .92); --line: rgba(20, 48, 42, .12); --radius: 26px;
   --shadow: 0 12px 34px rgba(20, 48, 42, .09); --grad: linear-gradient(120deg, #2f8f5b, #1fa39a 55%, #6c63ff);
 }
 * { box-sizing: border-box; }
@@ -20,16 +20,17 @@ img, svg { max-width: 100%; }
 
 /* ---------- Background: drifting blobs + floating health tips ---------- */
 .bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.blob { position: absolute; width: 46vmax; height: 46vmax; border-radius: 50%; filter: blur(60px); opacity: .55; animation: blob 26s ease-in-out infinite alternate; }
-.blob.b1 { background: #bdf0d2; left: -14vmax; top: -12vmax; }
-.blob.b2 { background: #ffe0cc; right: -16vmax; top: 20vh; animation-delay: -9s; }
-.blob.b3 { background: #e3d9ff; left: 20vw; bottom: -22vmax; animation-delay: -16s; }
+.blob { position: absolute; width: 46vmax; height: 46vmax; border-radius: 50%; filter: blur(70px); opacity: .3; animation: blob 26s ease-in-out infinite alternate; }
+.blob.b1 { background: #cdeedb; left: -14vmax; top: -12vmax; }
+.blob.b2 { background: #fbe6d8; right: -16vmax; top: 20vh; animation-delay: -9s; }
+.blob.b3 { background: #e8e2f7; left: 20vw; bottom: -22vmax; animation-delay: -16s; }
 @keyframes blob { to { transform: translate(6vmax, 4vmax) scale(1.12); } }
-.tip { position: absolute; left: var(--x); bottom: -60px; white-space: nowrap; font-weight: 600; font-size: 15px; color: var(--ink-2);
-  background: rgba(255, 255, 255, .62); border: 1px solid rgba(255, 255, 255, .9); border-radius: 999px; padding: 4px 14px;
-  box-shadow: 0 6px 18px rgba(20, 48, 42, .06); opacity: 0; animation: rise var(--d) linear infinite; animation-delay: var(--delay); }
-@keyframes rise { 0% { transform: translateY(0) rotate(-2deg); opacity: 0; } 8% { opacity: .75; } 85% { opacity: .75; } 100% { transform: translateY(-112vh) rotate(3deg); opacity: 0; } }
-.bg .icon { position: absolute; font-size: 34px; opacity: .16; animation: bob 7s ease-in-out infinite; }
+/* Tips stay faint so they never compete with the page text. */
+.tip { position: absolute; left: var(--x); bottom: -60px; white-space: nowrap; font-weight: 500; font-size: 13px; color: #7d918a;
+  background: rgba(255, 255, 255, .4); border-radius: 999px; padding: 3px 12px;
+  opacity: 0; animation: rise var(--d) linear infinite; animation-delay: var(--delay); }
+@keyframes rise { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: .38; } 85% { opacity: .38; } 100% { transform: translateY(-112vh); opacity: 0; } }
+.bg .icon { position: absolute; font-size: 30px; opacity: .07; animation: bob 7s ease-in-out infinite; }
 @keyframes bob { 50% { transform: translateY(-14px) rotate(6deg); } }
 
 /* ---------- Header ---------- */
@@ -79,6 +80,11 @@ section.block { padding: 70px 0 0; scroll-margin-top: 80px; }
 .head h2 { font-size: clamp(32px, 4.6vw, 52px); }
 .head p { color: var(--ink-2); margin: 10px 0 0; font-size: 18px; }
 .note { font-size: 14px; color: var(--ink-2); }
+/* Details still to be filled in (see CLINIC / DOCTOR_INFO in ayush_src/build.py). */
+.blank-field { color: #9aa8a2; letter-spacing: 2px; font-weight: 600; }
+.wa-float { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 30; width: 58px; height: 58px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 28px; text-decoration: none; background: #25d366; box-shadow: 0 10px 24px rgba(20, 48, 42, .25); animation: bob 4s ease-in-out infinite; }
+@media (max-width: 640px) { .wa-float { bottom: calc(84px + env(safe-area-inset-bottom)); } }
 .disclaimer { margin: 22px 0 0; padding: 12px 16px; border-radius: 16px; background: #fdecea; color: #7a2a20; font-size: 15px; }
 
 /* ---------- Footer ---------- */
@@ -91,7 +97,7 @@ footer.site .fcols b { font-family: "Baloo 2", sans-serif; font-size: 22px; }
 .dd-menu small { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.2; }
 @media (max-width: 680px) { footer.site .fcols { grid-template-columns: 1fr 1fr; } }
 
-@media (max-width: 1140px) {
+@media (max-width: 1240px) {
   .menu-btn { display: grid; place-items: center; }
   nav.main { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 16px 16px; box-shadow: var(--shadow); display: none; max-height: calc(100vh - 80px); overflow-y: auto; }
   header.site.open nav.main { display: flex; }
