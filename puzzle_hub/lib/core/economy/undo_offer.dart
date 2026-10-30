@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../ads/ads_service.dart';
 import '../i18n/i18n.dart';
 
-/// "Go back one step" used by every game's Undo button: one rewarded ad (no
-/// dialog, no coins) pays for [stepsPerAd] steps back on that game screen, so
-/// only every third tap plays an ad. At most [maxSteps] steps in a row. Ad-free players go back for free; if no
+/// "Go back one step" used by every game's Undo button: the first undo on a
+/// game screen is free, after that each step back costs one rewarded ad (no
+/// dialog, no coins). At most [maxSteps] steps in a row. Ad-free players go back for free; if no
 /// ad can be shown at all (no network / no fill) the step is given anyway so
 /// the button never feels broken. Closing the ad early gives nothing.
 class UndoOffer {
@@ -14,7 +14,10 @@ class UndoOffer {
   static const maxSteps = 3;
 
   /// Steps back that one watched ad pays for.
-  static const stepsPerAd = 3;
+  static const stepsPerAd = 1;
+
+  /// Screen that already used its free first undo.
+  static int _freeUsedOwner = 0;
 
   static bool _busy = false;
   static int _owner = 0;
@@ -33,6 +36,7 @@ class UndoOffer {
     _expectNext = -1;
     _paid = 0;
     _paidOwner = 0;
+    _freeUsedOwner = 0;
   }
 
   /// Returns the number of steps the game should undo now: 1, or 0.
@@ -50,6 +54,11 @@ class UndoOffer {
     _busy = true;
     try {
       var ok = AdsService.adFree;
+      if (!ok && _freeUsedOwner != owner) {
+        // First undo on this game screen: free.
+        _freeUsedOwner = owner;
+        ok = true;
+      }
       if (!ok && _paidOwner == owner && _paid > 0) {
         _paid--;
         ok = true;

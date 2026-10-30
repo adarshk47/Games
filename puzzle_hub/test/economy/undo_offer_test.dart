@@ -36,7 +36,7 @@ void main() {
     AdsService.rewardedOverride = null;
   });
 
-  testWidgets('one ad pays for 3 steps back; max 3 in a row', (t) async {
+  testWidgets('first undo free, then one ad per step; max 3 in a row', (t) async {
     var ads = 0;
     AdsService.rewardedOverride = (_) async {
       ads++;
@@ -45,24 +45,28 @@ void main() {
     await host(t);
     await tapUndo(t, 10);
     expect(result, 1);
-    expect(ads, 1);
+    expect(ads, 0, reason: 'first undo on this screen is free');
     await tapUndo(t, 9);
+    expect(result, 1);
+    expect(ads, 1);
     await tapUndo(t, 8);
     expect(result, 1);
-    expect(ads, 1, reason: '2nd and 3rd step are already paid');
+    expect(ads, 2, reason: 'every later step costs one ad');
     await tapUndo(t, 7);
     expect(result, 0, reason: '4th step in a row is refused');
-    expect(ads, 1);
-    // A new move in between starts a fresh chain, and a new ad.
+    expect(ads, 2);
+    // A new move in between starts a fresh chain (still one ad per step).
     await tapUndo(t, 8);
     expect(result, 1);
-    expect(ads, 2);
+    expect(ads, 3);
   });
 
   testWidgets('closing the ad early gives nothing', (t) async {
     AdsService.rewardedOverride = (_) async => false;
     await host(t);
     await tapUndo(t, 2);
+    expect(result, 1, reason: 'the free first undo');
+    await tapUndo(t, 1);
     expect(result, 0);
   });
 

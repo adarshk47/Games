@@ -136,13 +136,13 @@ void main() {
     expect(find.text('${lv.tiles.length} tiles left'), findsOneWidget); // tray tiles still count
     final undo = find.byKey(const ValueKey('tm_undo'));
     final shuffle = find.byKey(const ValueKey('tm_shuffle'));
-    // Undo plays an ad straight away and takes the move back.
+    // The first undo is free and takes the move back.
     var ads = 0;
     AdsService.rewardedOverride = (_) async => ++ads > 0;
     addTearDown(() => AdsService.rewardedOverride = null);
     await t.tap(undo);
     await _settle(t, 2);
-    expect(ads, 1);
+    expect(ads, 0);
     await t.tap(shuffle);
     await _settle(t, 2);
     expect(find.text('Tiles shuffled!'), findsOneWidget);
@@ -151,7 +151,7 @@ void main() {
     expect(find.text('Need a hint?'), findsOneWidget);
     await t.tap(find.text('Cancel'));
     await _settle(t, 2);
-    // One ad pays for 3 steps back: the next undo on this screen is free.
+    // After the free one, every undo plays an ad.
     final g = TmGame(lv);
     final free = g.freeTiles.first;
     await _tapTile(t, free);

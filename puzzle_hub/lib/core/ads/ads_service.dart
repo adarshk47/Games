@@ -49,9 +49,8 @@ class AdsService {
   // ---- Tunables --------------------------------------------------------------
   static const adFreePrice = 3333; // 24-hour pass (see AdFreePlan)
   static const adFreeDuration = Duration(hours: 24);
-  static const levelsPerInterstitial =
-      2; // one after every 2 games (win or lose)
-  static const minInterstitialGap = Duration(seconds: 45); // never back-to-back
+  static const levelsPerInterstitial = 1; // one after every game (win or lose)
+  static const minInterstitialGap = Duration(seconds: 30); // never back-to-back
   static const sessionGrace = Duration(seconds: 30);
   static const interstitialDelay = Duration(milliseconds: 1200);
 
