@@ -97,7 +97,7 @@ footer.site .fcols b { font-family: "Baloo 2", sans-serif; font-size: 22px; }
 .dd-menu small { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.2; }
 @media (max-width: 680px) { footer.site .fcols { grid-template-columns: 1fr 1fr; } }
 
-@media (max-width: 1140px) {
+@media (max-width: 1240px) {
   .menu-btn { display: grid; place-items: center; }
   nav.main { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; align-items: stretch; background: #fff; border-bottom: 1px solid var(--line); padding: 10px 16px 16px; box-shadow: var(--shadow); display: none; max-height: calc(100vh - 80px); overflow-y: auto; }
   header.site.open nav.main { display: flex; }

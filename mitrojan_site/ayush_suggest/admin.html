@@ -117,7 +117,8 @@
         <button class="btn" id="next" data-t-label="nextM" aria-label="अगला महीना">›</button>
         <button class="btn" id="todayBtn" data-t="today">आज</button>
       </div>
-      <div class="filters" role="group" data-t-label="doctor" aria-label="चिकित्सक">
+      <p class="stat" id="roleNote" hidden></p>
+      <div class="filters" id="filters" role="group" data-t-label="doctor" aria-label="चिकित्सक">
         <button data-doc="all" aria-pressed="true" data-t="all">सभी</button>
         <button data-doc="dolly" aria-pressed="false" data-t="dolly">वैद्य डॉली गुप्ता</button>
         <button data-doc="pooja" aria-pressed="false" data-t="pooja">वैद्य पूजा गुप्ता</button>
@@ -155,7 +156,8 @@
       bookings: 'बुकिंग', more: 'और', none: 'इस दिन कोई बुकिंग नहीं।',
       call: '📞 कॉल', aConfirm: '✔ पक्का करें', aDone: '✓ हो गया', aCancel: '✕ रद्द', aDelete: '🗑 हटाएँ (समय खाली करें)',
       delAsk: 'यह रद्द बुकिंग हमेशा के लिए हटाएँ? इससे यह समय फिर से बुक हो सकेगा।',
-      eLogin: 'लॉग इन नहीं हो पाया: ', eDenied: 'इस खाते को बुकिंग देखने की अनुमति नहीं है। Firestore rules में इस ईमेल को admin सूची में जोड़ें।',
+      onlyFor: 'आप सिर्फ़ इनकी बुकिंग देख रहे हैं: ',
+      eLogin: 'लॉग इन नहीं हो पाया: ', eDenied: 'इस खाते को बुकिंग देखने की अनुमति नहीं है। Firestore rules में इस ईमेल को admin या डॉक्टर सूची में जोड़ें।',
       eLoad: 'बुकिंग लोड नहीं हो पाईं: ', eSave: 'बदलाव सेव नहीं हुआ: ',
     },
     en: {
@@ -171,7 +173,8 @@
       bookings: 'bookings', more: 'more', none: 'No bookings on this day.',
       call: '📞 Call', aConfirm: '✔ Confirm', aDone: '✓ Done', aCancel: '✕ Cancel', aDelete: '🗑 Delete (free the slot)',
       delAsk: 'Delete this cancelled booking for good? The slot can then be booked again.',
-      eLogin: 'Could not log in: ', eDenied: 'This account is not allowed to see bookings. Add this email to the admin list in the Firestore rules.',
+      onlyFor: 'You are seeing bookings only for: ',
+      eLogin: 'Could not log in: ', eDenied: 'This account is not allowed to see bookings. Add this email to the admin or doctor list in the Firestore rules.',
       eLoad: 'Could not load bookings: ', eSave: 'Change not saved: ',
     },
   };
@@ -193,6 +196,9 @@
   let bookings = [];
   let unsub = null;
   let lastError = null;
+  // 'all' for the owner, 'dolly' / 'pooja' for a doctor's own account, null if not allowed.
+  // Worked out by asking Firestore, so the doctors' emails never appear in this page.
+  let role = null;
 
   function applyLang() {
     document.documentElement.lang = L;
@@ -201,7 +207,26 @@
     document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === L)));
     $('dow').replaceChildren(...t('dow').map((d) => Object.assign(document.createElement('div'), { textContent: d })));
     if (lastError) { $('appErr').textContent = lastError(); }
+    showRole();
     render();
+  }
+
+  function showRole() {
+    const doctorOnly = role === 'dolly' || role === 'pooja';
+    $('filters').hidden = doctorOnly;
+    $('roleNote').hidden = !doctorOnly;
+    if (doctorOnly) $('roleNote').textContent = t('onlyFor') + t(role);
+  }
+
+  async function detectRole() {
+    const col = fs.collection(db, 'ayush_bookings');
+    const allowed = async (q) => {
+      try { await fs.getDocs(fs.query(q, fs.limit(1))); return true; }
+      catch (e) { if (e.code === 'permission-denied') return false; throw e; }
+    };
+    if (await allowed(fs.query(col, fs.where('date', '>=', '2000-01-01')))) return 'all';
+    for (const d of ['dolly', 'pooja']) if (await allowed(fs.query(col, fs.where('doctor', '==', d)))) return d;
+    return null;
   }
   document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
     L = b.dataset.lang;
@@ -219,14 +244,31 @@
   auth.onAuthStateChanged(A, (user) => {
     $('gate').hidden = !!user; $('app').hidden = !user; $('userBox').hidden = !user;
     $('userEmail').textContent = user ? user.email : '';
-    if (user) listen(); else if (unsub) { unsub(); unsub = null; }
+    if (unsub) { unsub(); unsub = null; }
+    role = null; bookings = []; docFilter = 'all';
+    if (!user) { showRole(); return; }
+    detectRole().then((r) => {
+      role = r;
+      if (role === 'dolly' || role === 'pooja') docFilter = role;
+      showRole();
+      listen();
+    }).catch((e) => { $('appErr').textContent = t('eLoad') + (e.code || e.message); $('appErr').hidden = false; });
   });
 
-  // Live listener on the visible month (plus the spill-over days shown in the grid).
+  // Live listener. The owner loads the visible month (plus spill-over days); a doctor
+  // loads all of her own bookings, because the rules only allow doctor == her own.
   function listen() {
     if (unsub) unsub();
+    if (!role) {
+      lastError = () => t('eDenied');
+      $('appErr').textContent = lastError(); $('appErr').hidden = false; render();
+      return;
+    }
     const { start, end } = range();
-    const q = fs.query(fs.collection(db, 'ayush_bookings'), fs.where('date', '>=', isoDate(start)), fs.where('date', '<=', isoDate(end)));
+    const col = fs.collection(db, 'ayush_bookings');
+    const q = role === 'all'
+      ? fs.query(col, fs.where('date', '>=', isoDate(start)), fs.where('date', '<=', isoDate(end)))
+      : fs.query(col, fs.where('doctor', '==', role));
     unsub = fs.onSnapshot(q, (snap) => {
       $('appErr').hidden = true; lastError = null;
       bookings = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));

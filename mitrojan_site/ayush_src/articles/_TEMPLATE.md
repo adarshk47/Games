@@ -3,6 +3,7 @@ author: dolly
 emoji: 🌿
 date: 2026-11-05
 summary: Ek line jo Articles page par card mein dikhegi.
+image:
 ---
 Yahan se article likhna shuru kariye. Ek khaali line chhodne par naya paragraph banta hai.
 
@@ -18,5 +19,5 @@ Heading ke neeche apni baat likhiye. **Bold** karna ho to shabd ke dono taraf do
 
 Kisi page ka link dena ho to aise likhiye: [diet plan dekhiye](diet.html)
 
-Photo lagani ho to photo ko ayush folder mein rakhiye aur aise likhiye:
+Article ke beech mein photo lagani ho to photo ko ayush\images folder mein rakhiye aur aise likhiye:
 ![photo ka chhota sa vivaran](meri-photo.jpg)

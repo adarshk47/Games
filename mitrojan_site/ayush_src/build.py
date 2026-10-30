@@ -32,7 +32,7 @@ SITE_URL = 'https://ayush.mitrojan.in/'
 # Then run `python build.py` and deploy.
 CLINIC = {
     'phone': '',            # shown as text, e.g. '+91 98765 43210'
-    'whatsapp': '',         # digits with country code, e.g. '919876543210'
+    'whatsapp': '919310335795',  # digits with country code, e.g. '919876543210'
     'address': '',
     'hours': 'Mon – Sat · 10 AM – 1 PM, 5 – 7 PM',
     'reply_time': '',       # e.g. 'Within 24 hours'
@@ -55,6 +55,12 @@ def lookup(key):
     return (CLINIC if group == 'clinic' else DOCTOR_INFO[group])[field].strip()
 
 
+def pretty_phone(digits):
+    """'919310335795' -> '+91 93103 35795' for display."""
+    d = re.sub(r'\D', '', digits)
+    return f'+91 {d[2:7]} {d[7:]}' if len(d) == 12 and d.startswith('91') else digits
+
+
 def fill_details(text):
     """<!--if:k-->…<!--/if:k--> kept only when k has a value; [[k]] text (or ______);
     [[raw:k]] value as-is (for links); [[tel:k]] digits and + only."""
@@ -62,6 +68,7 @@ def fill_details(text):
     text = re.sub(r'<!--ifnot:([\w.]+)-->(.*?)<!--/ifnot:\1-->', lambda m: '' if lookup(m.group(1)) else m.group(2), text, flags=re.S)
     text = re.sub(r'\[\[raw:([\w.]+)\]\]', lambda m: html.escape(lookup(m.group(1))), text)
     text = re.sub(r'\[\[tel:([\w.]+)\]\]', lambda m: re.sub(r'[^\d+]', '', lookup(m.group(1))), text)
+    text = re.sub(r'\[\[wa:([\w.]+)\]\]', lambda m: pretty_phone(lookup(m.group(1))) or BLANK, text)
     text = re.sub(r'\[\[([\w.]+)\]\]', lambda m: html.escape(lookup(m.group(1)), quote=False) or BLANK, text)
     return text
 
@@ -227,7 +234,35 @@ def doctor_values(key):
 # Files starting with "_" are not published. Each becomes article-<file name>.html and
 # is listed, newest first, under "Latest from our Vaidyas" on articles.html.
 ARTICLES_DIR = os.path.join(HERE, 'articles')
+IMAGES_DIR = os.path.normpath(os.path.join(HERE, '..', 'ayush', 'images'))  # article photos go here
+MAX_IMAGE_KB = 300
 MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+LATEST_CARDS = 3  # newest articles shown as big cards; the rest go in the collapsed list below
+
+# Hand-made article pages (pages/*.src.html) that also belong in the articles list.
+STATIC_ARTICLES = [
+    {'file': 'winter-health.html', 'author': 'dolly', 'emoji': '🧣', 'date': '2026-10-30', 'i18n': ('f1h', 'f1p'),
+     'title': 'Winter health: stay well when it is cold', 'summary': 'Daily routine, what to eat, what to avoid, and when to see a doctor.'},
+    {'file': 'winter-diet.html', 'author': 'pooja', 'emoji': '🥣', 'date': '2026-10-30', 'i18n': ('f2h', 'f2p'),
+     'title': 'Your winter diet plan', 'summary': 'A sample day of Indian winter meals, easy swaps and lifestyle tips.'},
+]
+
+
+def pretty_date(iso):
+    y, m, d = (int(x) for x in iso.split('-'))
+    return f'{d} {MONTHS[m - 1]} {y}'
+
+
+def image_src(name, where):
+    """Photos are kept in ayush/images/; warn when one is missing or too big for phones."""
+    if name.startswith(('http://', 'https://', '/')) or '/' in name:
+        return name
+    path = os.path.join(IMAGES_DIR, name)
+    if not os.path.exists(path):
+        print(f'  ! {where}: photo "{name}" is not in {IMAGES_DIR}')
+    elif os.path.getsize(path) > MAX_IMAGE_KB * 1024:
+        print(f'  ! {where}: photo "{name}" is {os.path.getsize(path) // 1024} KB – please make it smaller than {MAX_IMAGE_KB} KB')
+    return 'images/' + name
 
 ARTICLE_STYLE = """  .art-wrap { max-width: 820px; margin: 0 auto; padding: 34px 0 0; }
   .crumbs { font-size: 15px; color: var(--ink-2); margin: 0 0 14px; }
@@ -244,28 +279,34 @@ ARTICLE_STYLE = """  .art-wrap { max-width: 820px; margin: 0 auto; padding: 34px
   .art-body h3 { font-size: 22px; margin: 24px 0 8px; }
   .art-body p, .art-body li { color: var(--ink-2); font-size: 18px; }
   .art-body ul { padding-left: 22px; }
-  .art-body img { max-width: 100%; border-radius: 20px; }
+  .art-body img { display: block; max-width: min(100%, 520px); max-height: 380px; object-fit: cover; border-radius: 20px; margin: 10px 0; box-shadow: var(--shadow); }
   .art-body a { color: var(--leaf-d); font-weight: 600; }
+  .cover.has-img { display: grid; grid-template-columns: 1fr 210px; gap: 22px; align-items: center; }
+  .cover .cover-img { width: 210px; height: 210px; object-fit: cover; border-radius: 24px; border: 5px solid #fff; box-shadow: var(--shadow); }
   .end { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
-  @media (max-width: 640px) { .cover { padding: 26px 18px; } .cover .cover-e { font-size: 44px; } }"""
+  @media (max-width: 640px) {
+    .cover { padding: 26px 18px; } .cover .cover-e { font-size: 44px; }
+    .cover.has-img { grid-template-columns: 1fr; } .cover .cover-img { width: 100%; height: 190px; order: -1; }
+  }"""
 
 
-def md_inline(text):
-    text = re.sub(r'!\[([^\]]*)\]\(([^)\s]+)\)', r'<img src="\2" alt="\1" loading="lazy">', text)
+def md_inline(text, where=''):
+    text = re.sub(r'!\[([^\]]*)\]\(([^)\s]+)\)', lambda m: f'<img src="{image_src(m.group(2), where)}" alt="{m.group(1)}" loading="lazy">', text)
     text = re.sub(r'\[([^\]]+)\]\(([^)\s]+)\)', r'<a href="\2">\1</a>', text)
     return re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
 
 
-def md_to_html(md):
+def md_to_html(md, where=''):
     """The small Markdown subset in _TEMPLATE.md: paragraphs, ## / ### headings, - lists, **bold**, links, images."""
     out, para, items = [], [], []
+    inline = lambda t: md_inline(t, where)
 
     def flush():
         if para:
-            out.append('<p>' + md_inline(' '.join(para)) + '</p>')
+            out.append('<p>' + inline(' '.join(para)) + '</p>')
             para.clear()
         if items:
-            out.append('<ul>' + ''.join(f'<li>{md_inline(i)}</li>' for i in items) + '</ul>')
+            out.append('<ul>' + ''.join(f'<li>{inline(i)}</li>' for i in items) + '</ul>')
             items.clear()
 
     for raw in md.splitlines():
@@ -273,9 +314,9 @@ def md_to_html(md):
         if not line:
             flush()
         elif line.startswith('### '):
-            flush(); out.append(f'<h3>{md_inline(line[4:])}</h3>')
+            flush(); out.append(f'<h3>{inline(line[4:])}</h3>')
         elif line.startswith('## '):
-            flush(); out.append(f'<h2>{md_inline(line[3:])}</h2>')
+            flush(); out.append(f'<h2>{inline(line[3:])}</h2>')
         elif line.startswith('- '):
             if para:
                 flush()
@@ -303,9 +344,10 @@ def read_articles():
         for key in ('title', 'author', 'date', 'summary'):
             assert meta.get(key), f'{name}: "{key}:" is empty'
         assert meta['author'] in DOCTORS, f'{name}: author must be one of {list(DOCTORS)}'
-        y, m, d = (int(x) for x in meta['date'].split('-'))
-        arts.append(dict(meta, emoji=meta.get('emoji') or '🌿', file=f"article-{name[:-3]}.html",
-                         pretty=f'{d} {MONTHS[m - 1]} {y}', body=md_to_html(body)))
+        assert re.fullmatch(r'20\d\d-\d\d-\d\d', meta['date']), f'{name}: date must look like 2026-11-05'
+        image = image_src(meta['image'], name) if meta.get('image') else ''
+        arts.append(dict(meta, emoji=meta.get('emoji') or '🌿', file=f"article-{name[:-3]}.html", image=image,
+                         pretty=pretty_date(meta['date']), body=md_to_html(body, name)))
     return sorted(arts, key=lambda a: a['date'], reverse=True)
 
 
@@ -324,11 +366,14 @@ def article_source(a):
 <!--body-->
 <main class="wrap"><article class="art-wrap">
   <p class="crumbs"><a href="index.html" data-i18n="navHome">Home</a> › <a href="articles.html" data-i18n="mArticles">Health articles</a></p>
-  <header class="cover">
-    <span class="cover-e" aria-hidden="true">{a['emoji']}</span>
+  <header class="cover{' has-img' if a['image'] else ''}">
+    {'' if a['image'] else f'<span class="cover-e" aria-hidden="true">{a["emoji"]}</span>'}
+    <div>
     <h1>{esc(a['title'])}</h1>
     <p>{esc(a['summary'])}</p>
     <a class="by" href="{a['author']}.html"><span class="av" style="background:{d['BG']}">{d['INI']}</span><span><b data-i18n="auth">{esc(d['NAME'][0])}</b><small><span data-i18n="authRole">{esc(d['ROLE'][0])}</span> · {a['pretty']}</small></span></a>
+    </div>
+    {f'<img class="cover-img" src="{a["image"]}" alt="">' if a['image'] else ''}
   </header>
   <div class="art-body">
     {a['body']}
@@ -342,14 +387,27 @@ def article_source(a):
 
 
 def latest_section(arts):
-    if not arts:
+    """Newest articles as cards, then every older one in a collapsed list (date + headline)."""
+    entries = sorted([dict(s, image='', pretty=pretty_date(s['date'])) for s in STATIC_ARTICLES] + arts,
+                     key=lambda a: a['date'], reverse=True)
+    if not entries:
         return ''
+    esc = lambda t: html.escape(t, quote=False)
+    keys = lambda a, i: f' data-i18n="{a["i18n"][i]}"' if a.get('i18n') else ''
     cards = []
-    for a in arts:
+    for a in entries[:LATEST_CARDS]:
         d = DOCTORS[a['author']]
-        cards.append(f"""    <a class="card fa" href="{a['file']}"><span class="fe">{a['emoji']}</span><span><span class="pill live">{a['pretty']}</span><h3>{html.escape(a['title'], quote=False)}</h3><p>{html.escape(a['summary'], quote=False)}</p><span class="fby"><span class="av" style="background:{d['BG']}">{d['INI']}</span><span>{html.escape(d['NAME'][0], quote=False)}</span></span></span></a>""")
-    return ('<section class="block"><div class="wrap">\n  <div class="head"><span class="sticker" data-i18n="latestSticker">🆕 Latest</span><h2 data-i18n="latestH">Latest from our Vaidyas</h2></div>\n'
-            '  <div class="feat">\n' + '\n'.join(cards) + '\n  </div>\n</div></section>\n')
+        pic = f'<img class="fthumb" src="{a["image"]}" alt="">' if a['image'] else f'<span class="fe">{a["emoji"]}</span>'
+        cards.append(f"""    <a class="card fa" href="{a['file']}">{pic}<span><span class="pill live">{a['pretty']}</span><h3{keys(a, 0)}>{esc(a['title'])}</h3><p{keys(a, 1)}>{esc(a['summary'])}</p><span class="fby"><span class="av" style="background:{d['BG']}">{d['INI']}</span><span>{esc(d['NAME'][0])}</span></span></span></a>""")
+    html_out = ('<section class="block"><div class="wrap">\n  <div class="head"><span class="sticker" data-i18n="latestSticker">🆕 Latest</span><h2 data-i18n="latestH">Latest from our Vaidyas</h2></div>\n'
+                '  <div class="feat">\n' + '\n'.join(cards) + '\n  </div>\n')
+    older = entries[LATEST_CARDS:]
+    if older:
+        rows = '\n'.join(f"""      <li><a href="{a['file']}"><time datetime="{a['date']}">{a['pretty']}</time><span class="t"{keys(a, 0)}>{esc(a['title'])}</span><span class="who" style="background:{DOCTORS[a['author']]['BG']}">{DOCTORS[a['author']]['INI']}</span></a></li>"""
+                         for a in older)
+        html_out += (f'  <details class="card archive"><summary><span data-i18n="olderH">Older articles</span> ({len(older)})</summary>\n'
+                     f'    <ul class="arch">\n{rows}\n    </ul>\n  </details>\n')
+    return html_out + '</div></section>\n'
 
 
 def split(src):
@@ -400,6 +458,8 @@ def main():
         live = os.path.normpath(os.path.join(HERE, '..', 'ayush'))
         for static in ('ayush.css', 'ayush.js', 'booking.js', 'firebase-config.js', 'admin.html'):
             shutil.copy(os.path.join(live, static), OUT)
+        if os.path.isdir(IMAGES_DIR):
+            shutil.copytree(IMAGES_DIR, os.path.join(OUT, 'images'), dirs_exist_ok=True)
         dirs.append(os.path.join(HERE, 'pages_suggest'))
     arts = read_articles()
     built = []

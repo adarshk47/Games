@@ -20,7 +20,21 @@
   .fa p { margin: 0 0 10px; color: var(--ink-2); }
   .fby { display: flex; gap: 8px; align-items: center; font-weight: 700; font-size: 14px; color: var(--ink-2); }
   .fby .av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: var(--ink); }
-  @media (max-width: 860px) { .arts, .feat { grid-template-columns: 1fr; } }
+  .fa .fthumb { width: 96px; height: 96px; object-fit: cover; border-radius: 20px; flex: none; border: 3px solid #fff; box-shadow: var(--shadow); }
+  .feat { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .archive { margin-top: 20px; padding: 6px 22px; }
+  .archive summary { cursor: pointer; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 22px; padding: 12px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  .archive summary::-webkit-details-marker { display: none; }
+  .archive summary::after { content: "▾"; color: var(--leaf); transition: transform .2s; }
+  .archive[open] summary::after { transform: rotate(180deg); }
+  .arch { list-style: none; margin: 0 0 14px; padding: 0; }
+  .arch li a { display: grid; grid-template-columns: 130px 1fr auto; gap: 14px; align-items: center; padding: 11px 6px; border-top: 1px solid var(--line); text-decoration: none; border-radius: 10px; }
+  .arch li a:hover { background: rgba(47, 143, 91, .07); }
+  .arch time { color: var(--leaf-d); font-weight: 700; font-size: 14px; }
+  .arch .t { font-weight: 600; }
+  .arch .who { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+  @media (max-width: 1000px) { .feat { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 860px) { .arts, .feat { grid-template-columns: 1fr; } .arch li a { grid-template-columns: 1fr auto; } .arch time { grid-column: 1 / -1; } }
 <!--body-->
 <main>
 <section class="hero"><div class="wrap">
@@ -28,14 +42,7 @@
   <h1 data-i18n="h1">Ritucharya: live with the seasons</h1>
   <p data-i18n="lead">Short, practical tips for each season. General information – ask a Vaidya what suits you.</p>
 </div></section>
-<section class="block"><div class="wrap">
-  <div class="head"><span class="sticker" data-i18n="featSticker">✍️ From our Vaidyas</span><h2 data-i18n="featH">This winter, read these first</h2></div>
-  <div class="feat">
-    <a class="card fa" href="winter-health.html"><span class="fe">🧣</span><span><span class="pill demo" data-i18n="demoA">Sample (demo)</span><h3 data-i18n="f1h">Winter health: stay well when it is cold</h3><p data-i18n="f1p">Daily routine, what to eat, what to avoid, and when to see a doctor.</p><span class="fby"><span class="av" style="background:var(--peach)">DG</span><span data-i18n="f1by">Vaidya Dolly Gupta · General Physician</span></span></span></a>
-    <a class="card fa" href="winter-diet.html"><span class="fe">🥣</span><span><span class="pill demo" data-i18n="demoA">Sample (demo)</span><h3 data-i18n="f2h">Your winter diet plan</h3><p data-i18n="f2p">A sample day of Indian winter meals, easy swaps and lifestyle tips.</p><span class="fby"><span class="av" style="background:var(--mint)">PG</span><span data-i18n="f2by">Vaidya Pooja Gupta · Diet, Nutrition &amp; Lifestyle</span></span></span></a>
-  </div>
-</div></section>
-
+<!--latest-articles-->
 <section class="block"><div class="wrap">
   <div class="head"><span class="sticker" data-i18n="tipsSticker">🍂 Season by season</span></div>
 </div><div class="wrap arts">
@@ -47,11 +54,11 @@
 <!--i18n-->
 <script>
 window.AYUSH_PAGE = {
-  hi: { featSticker: '✍️ हमारे वैद्यों से', featH: 'इस सर्दी, पहले ये पढ़ें', demoA: 'नमूना (डेमो)', f1h: 'सर्दियों में सेहत: ठंड में कैसे रहें स्वस्थ', f1p: 'दिनचर्या, क्या खाएँ, किससे बचें, और कब डॉक्टर को दिखाएँ।', f1by: 'वैद्य डॉली गुप्ता · जनरल फ़िज़िशियन', f2h: 'सर्दियों का डाइट प्लान', f2p: 'सर्दी के भारतीय भोजन का एक नमूना दिन, आसान बदलाव और जीवनशैली के सुझाव।', f2by: 'वैद्य पूजा गुप्ता · आहार, पोषण और जीवनशैली', tipsSticker: '🍂 हर मौसम के लिए', sticker: '📰 लेख', h1: 'ऋतुचर्या: मौसम के साथ जीवन', lead: 'हर मौसम के लिए छोटे, काम के सुझाव। सामान्य जानकारी – आपके लिए क्या ठीक है, वैद्य से पूछें।', draft: 'सामान्य सुझाव',
+  hi: { olderH: 'पुराने लेख', latestSticker: '🆕 नया', latestH: 'हमारे वैद्यों के नए लेख', featSticker: '✍️ हमारे वैद्यों से', featH: 'इस सर्दी, पहले ये पढ़ें', demoA: 'नमूना (डेमो)', f1h: 'सर्दियों में सेहत: ठंड में कैसे रहें स्वस्थ', f1p: 'दिनचर्या, क्या खाएँ, किससे बचें, और कब डॉक्टर को दिखाएँ।', f1by: 'वैद्य डॉली गुप्ता · जनरल फ़िज़िशियन', f2h: 'सर्दियों का डाइट प्लान', f2p: 'सर्दी के भारतीय भोजन का एक नमूना दिन, आसान बदलाव और जीवनशैली के सुझाव।', f2by: 'वैद्य पूजा गुप्ता · आहार, पोषण और जीवनशैली', tipsSticker: '🍂 हर मौसम के लिए', sticker: '📰 लेख', h1: 'ऋतुचर्या: मौसम के साथ जीवन', lead: 'हर मौसम के लिए छोटे, काम के सुझाव। सामान्य जानकारी – आपके लिए क्या ठीक है, वैद्य से पूछें।', draft: 'सामान्य सुझाव',
     a1h: 'गर्मी: ठंडे रहें', a1a: 'दिन भर पानी, छाछ, नींबू-पानी पिएँ', a1b: 'हल्का खाएँ – फल, सलाद, दही-चावल', a1c: 'दोपहर की धूप और बहुत तीखे खाने से बचें',
     a2h: 'बरसात: पाचन का ध्यान', a2a: 'उबला या फ़िल्टर किया गुनगुना पानी पिएँ', a2b: 'ताज़ा पका, गर्म खाना खाएँ; बाहर का खाना छोड़ें', a2c: 'खाने में अदरक और जीरा डालें',
     a3h: 'सर्दी: गर्माहट और ताक़त', a3a: 'मौसमी सब्ज़ियाँ, थोड़ा तिल और गुड़ खाएँ', a3b: 'सक्रिय रहें – धूप में सुबह की सैर', a3c: 'गुनगुने स्नान से पहले तेल मालिश' },
-  hinglish: { featSticker: '✍️ Hamare Vaidyas se', featH: 'Is sardi, pehle yeh padhiye', demoA: 'Sample (demo)', f1h: 'Sardi mein sehat: thand mein kaise rahein healthy', f1p: 'Dincharya, kya khayein, kisse bachein, aur kab doctor ko dikhayein.', f1by: 'Vaidya Dolly Gupta · General Physician', f2h: 'Sardiyon ka diet plan', f2p: 'Sardi ke Indian khaane ka ek sample din, easy swaps aur lifestyle tips.', f2by: 'Vaidya Pooja Gupta · Diet, Nutrition aur Lifestyle', tipsSticker: '🍂 Har mausam ke liye', sticker: '📰 Articles', h1: 'Ritucharya: mausam ke saath jeevan', lead: 'Har mausam ke liye chhote, kaam ke tips. General jaankari – aapke liye kya theek hai, Vaidya se poochhiye.', draft: 'General tips',
+  hinglish: { olderH: 'Purane articles', latestSticker: '🆕 Naya', latestH: 'Hamare Vaidyas ke naye articles', featSticker: '✍️ Hamare Vaidyas se', featH: 'Is sardi, pehle yeh padhiye', demoA: 'Sample (demo)', f1h: 'Sardi mein sehat: thand mein kaise rahein healthy', f1p: 'Dincharya, kya khayein, kisse bachein, aur kab doctor ko dikhayein.', f1by: 'Vaidya Dolly Gupta · General Physician', f2h: 'Sardiyon ka diet plan', f2p: 'Sardi ke Indian khaane ka ek sample din, easy swaps aur lifestyle tips.', f2by: 'Vaidya Pooja Gupta · Diet, Nutrition aur Lifestyle', tipsSticker: '🍂 Har mausam ke liye', sticker: '📰 Articles', h1: 'Ritucharya: mausam ke saath jeevan', lead: 'Har mausam ke liye chhote, kaam ke tips. General jaankari – aapke liye kya theek hai, Vaidya se poochhiye.', draft: 'General tips',
     a1h: 'Garmi: thande raho', a1a: 'Din bhar paani, chaas, nimbu-paani piyo', a1b: 'Halka khao – phal, salad, dahi-chawal', a1c: 'Dopahar ki dhoop aur bahut teekhe khaane se bacho',
     a2h: 'Barsaat: digestion ka dhyaan', a2a: 'Ubla ya filtered gunguna paani piyo', a2b: 'Fresh paka, garam khaana khao; street food skip karo', a2c: 'Khaane mein adrak aur jeera daalo',
     a3h: 'Sardi: garmahat aur taakat', a3a: 'Mausami sabziyan, thoda til aur gud khao', a3b: 'Active raho – dhoop mein subah ki walk', a3c: 'Gunguna nahane se pehle tel maalish' }
