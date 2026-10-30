@@ -3,7 +3,7 @@
 class AppInfo {
   AppInfo._();
   static const name = 'Master G';
-  static const version = '3.0.0';
+  static const version = '3.1.1';
   static const copyrightYear = 2026;
   static const brandUrl = 'https://mitrojan.in';
 
