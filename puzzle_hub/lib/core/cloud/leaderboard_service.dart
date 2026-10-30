@@ -415,9 +415,10 @@ class LeaderboardService {
   };
 
   /// Submits [score] if it beats what we already have on the board (or the
-  /// name / country changed).
+  /// name / country changed). A score of 0 is sent too, so a new login shows
+  /// up on every board (with 0) right away.
   Future<void> submit(Board b, int score) async {
-    if (!canSubmit || score <= 0) return;
+    if (!canSubmit || score < 0) return;
     final uid = CloudAuth.I.user.value!.uid;
     final name = _name();
     final country = normalizeCountry(AccountService.I.country) ?? '';
