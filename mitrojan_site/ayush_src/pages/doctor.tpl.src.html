@@ -1,0 +1,231 @@
+<!--title: {{NAME_EN}} – {{ROLE_EN}} · AYUSH Vaidya-->
+<!--description: {{NAME_EN}}, {{ROLE_EN}} at AYUSH Vaidya by Mitrojan. 15-minute online video consultations in Hindi and English, across India.-->
+<!--nav: {{ID}}-->
+<!--style-->
+  .crumbs { padding: 18px 0 0; font-size: 15px; color: var(--ink-2); }
+  .crumbs a { color: var(--leaf-d); font-weight: 600; text-decoration: none; }
+  .prof { display: grid; grid-template-columns: 1.15fr .85fr; gap: 26px; align-items: start; padding-top: 18px; }
+  .who { display: grid; grid-template-columns: auto 1fr; gap: 26px; align-items: center; }
+  .avatar { width: 170px; height: 170px; border-radius: 50%; display: grid; place-items: center; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 60px; position: relative; background: {{BG}}; }
+  .avatar::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; background: conic-gradient(var(--coral), var(--sun), var(--leaf), var(--teal), var(--coral)); z-index: -1; animation: spin 8s linear infinite; }
+  .avatar::after { content: ""; position: absolute; inset: -2px; border-radius: 50%; border: 5px solid var(--bg); }
+  .avatar .leaf { position: absolute; right: -6px; bottom: 6px; font-size: 40px; animation: bob 4s ease-in-out infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .who h1 { font-size: clamp(38px, 5.4vw, 64px); margin: 8px 0 4px; }
+  .who .role { font-size: 19px; color: var(--ink-2); margin: 0 0 12px; }
+  .role b { color: var(--leaf-d); }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .facts h3 { font-size: 24px; margin-bottom: 8px; }
+  .facts dl { margin: 0; }
+  .facts dl div { display: grid; grid-template-columns: 150px 1fr; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .facts dt { color: var(--ink-2); font-size: 15px; }
+  .facts dd { margin: 0; font-weight: 700; }
+  .facts dd.demo { color: #9a3f1a; font-weight: 600; font-style: italic; }
+  .two { display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; align-items: start; }
+  .about p { color: var(--ink-2); margin: 0 0 12px; }
+  .about h3, .slots h3, .prep h3 { font-size: 26px; margin-bottom: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .helps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .help { display: flex; gap: 12px; align-items: flex-start; transition: transform .2s; }
+  .help:hover { transform: translateY(-3px); }
+  .help .e { font-size: 30px; width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: #fff; flex: none; }
+  .help h4 { margin: 2px 0 2px; font-family: "Baloo 2", sans-serif; font-size: 19px; }
+  .help p { margin: 0; font-size: 15px; color: var(--ink-2); }
+  .slots table { width: 100%; border-collapse: collapse; }
+  .slots td { padding: 10px 0; border-top: 1px solid var(--line); }
+  .slots td:last-child { text-align: right; font-weight: 700; }
+  .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; counter-reset: f; }
+  .flow .card { position: relative; padding-top: 30px; }
+  .flow .card::before { counter-increment: f; content: counter(f); position: absolute; top: -16px; left: 20px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--grad); color: #fff; font-weight: 800; font-family: "Baloo 2", sans-serif; font-size: 20px; }
+  .flow h4 { margin: 0 0 4px; font-family: "Baloo 2", sans-serif; font-size: 20px; }
+  .flow p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  .prep ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .prep li { background: #fff; border-radius: 14px; padding: 8px 14px; border: 1px solid var(--line); }
+  .prep li::before { content: "☑️ "; }
+  details { background: #fff; border-radius: 18px; padding: 14px 18px; margin-bottom: 10px; border: 1px solid var(--line); }
+  summary { cursor: pointer; font-weight: 700; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 24px; line-height: 1; color: var(--leaf); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin: 10px 0 0; color: var(--ink-2); }
+  .other { display: flex; gap: 18px; align-items: center; justify-content: space-between; flex-wrap: wrap; text-decoration: none; }
+  .other .mini { width: 70px; height: 70px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 24px; font-family: "Baloo 2", sans-serif; background: {{OTHER_BG}}; }
+  .other .l { display: flex; gap: 16px; align-items: center; }
+  .other h3 { font-size: 24px; }
+  .article-card { display: flex; gap: 22px; align-items: center; text-decoration: none; background: linear-gradient(140deg, #fff, #e3eeff 60%, #fde8f0); transition: transform .2s; }
+  .article-card:hover { transform: translateY(-4px); }
+  .article-card .art-e { font-size: 70px; flex: none; }
+  .article-card h3 { font-size: clamp(24px, 3vw, 32px); margin: 10px 0 4px; }
+  .article-card .note { font-weight: 700; color: var(--leaf-d); }
+  .sticky-book { position: fixed; left: 16px; right: 16px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 15; display: none; }
+  @media (max-width: 960px) { .prof, .two { grid-template-columns: 1fr; } .helps { grid-template-columns: 1fr 1fr; } .flow { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) {
+    .who { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .who .chips, .who .actions { justify-content: center; }
+    .avatar { width: 140px; height: 140px; font-size: 50px; }
+    .helps, .flow { grid-template-columns: 1fr; }
+    .flow { gap: 26px; }
+    .facts dl div { grid-template-columns: 1fr; gap: 0; }
+    .sticky-book { display: flex; }
+    footer.site { padding-bottom: 90px; }
+  }
+<!--body-->
+<main class="wrap">
+  <p class="crumbs"><a href="index.html" data-i18n="navHome">Home</a> › <a href="index.html#doctors" data-i18n="navDoctors">Doctors</a> › <span data-i18n="name">{{NAME_EN}}</span></p>
+
+  <section class="prof">
+    <div class="card">
+      <div class="who">
+        <span class="avatar" aria-hidden="true">{{INI}}<span class="leaf">🌿</span></span>
+        <div>
+          <span class="pill demo" data-i18n="demo">Demo profile</span>
+          <h1 data-i18n="name">{{NAME_EN}}</h1>
+          <p class="role"><b data-i18n="role">{{ROLE_EN}}</b> · <span data-i18n="org">AYUSH Vaidya by Mitrojan</span></p>
+          <div class="chips"><span class="chip">📹 <span data-i18n="ch1">Video · 15 min</span></span><span class="chip">🗣️ <span data-i18n="ch2">Hindi · English</span></span><span class="chip">🇮🇳 <span data-i18n="ch3">Across India</span></span></div>
+          <div class="actions">
+            <a class="btn primary" href="index.html?doctor={{ID}}#book" data-i18n="bookWith">Book with {{FIRST_EN}} ↗</a>
+            <a class="btn" href="{{CTA2_HREF}}" data-i18n="cta2">{{CTA2_EN}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="card facts">
+      <h3 data-i18n="factsH">Quick facts</h3>
+      <dl>
+        <div><dt data-i18n="dtRole">Speciality</dt><dd data-i18n="role">{{ROLE_EN}}</dd></div>
+        <div><dt data-i18n="dtCons">Consultation</dt><dd data-i18n="ddCons">Online video · 15 minutes</dd></div>
+        <div><dt data-i18n="dtLoc">Patients from</dt><dd data-i18n="ddLoc">Anywhere in India</dd></div>
+        <div><dt data-i18n="dtQual">Qualification &amp; registration</dt><dd class="demo">{{QUAL}}</dd></div>
+        <div><dt data-i18n="dtExp">Experience</dt><dd class="demo">2+ years (demo)</dd></div>
+        <div><dt data-i18n="dtLang">Languages</dt><dd class="demo" data-i18n="ddLang">Demo – Hindi, English (to be confirmed)</dd></div>
+        <div><dt data-i18n="dtFee">Fee</dt><dd data-i18n="ddFee">Told to you before confirmation</dd></div>
+      </dl>
+    </aside>
+  </section>
+
+  <section class="block two">
+    <article class="card about">
+      <h3><span data-i18n="aboutH">About {{FIRST_EN}}</span> <span class="pill demo" data-i18n="demoText">Demo text</span></h3>
+      <p data-i18n="about1">{{ABOUT1_EN}}</p>
+      <p data-i18n="about2">{{ABOUT2_EN}}</p>
+      <p data-i18n="about3">This text is a sample. The doctor's own words, verified qualifications and photo will replace it before consultations open.</p>
+    </article>
+    <article class="card slots">
+      <h3><span data-i18n="slotsH">When can you meet?</span> <span class="pill demo" data-i18n="demoTime">Demo timings</span></h3>
+      <table>
+        <tr><td data-i18n="sDays">Monday – Saturday</td><td>10:00 AM – 1:00 PM</td></tr>
+        <tr><td data-i18n="sDays">Monday – Saturday</td><td>5:00 PM – 7:00 PM</td></tr>
+        <tr><td data-i18n="sSun">Sunday</td><td data-i18n="sClosed">Closed</td></tr>
+      </table>
+      <p class="note" data-i18n="slotsNote">Each appointment is 15 minutes. Pick an open slot in the booking form – the clinic confirms by call or WhatsApp.</p>
+      <a class="btn dark" href="index.html?doctor={{ID}}#book" data-i18n="pickSlot">Pick a slot 📅</a>
+    </article>
+  </section>
+
+  <section class="block">
+    <div class="head"><span class="sticker" data-i18n="helpSticker">💬 Talk about</span><h2 data-i18n="helpH">What you can talk to {{FIRST_EN}} about</h2><p data-i18n="helpSub">Demo list – the doctor will confirm her areas of work.</p></div>
+    <div class="helps">
+{{HELPS}}
+    </div>
+  </section>
+
+  <section class="block">
+    <a class="card article-card" href="{{ART_HREF}}">
+      <span class="art-e" aria-hidden="true">{{ART_EMOJI}}</span>
+      <span><span class="sticker" data-i18n="artSticker">📰 From {{FIRST_EN}}'s desk</span><h3 data-i18n="artTitle">{{ART_EN}}</h3><span class="note" data-i18n="artRead">Read the article →</span></span>
+    </a>
+  </section>
+
+  <section class="block">
+    <div class="head"><span class="sticker" data-i18n="flowSticker">🪄 How it goes</span><h2 data-i18n="flowH">Your consultation, step by step</h2></div>
+    <div class="flow">
+      <div class="card"><h4 data-i18n="f1h">Book a slot</h4><p data-i18n="f1p">Choose {{FIRST_EN}}, a date and a 15-minute time.</p></div>
+      <div class="card"><h4 data-i18n="f2h">Get confirmation</h4><p data-i18n="f2p">The clinic calls or WhatsApps you with the fee and video link.</p></div>
+      <div class="card"><h4 data-i18n="f3h">Video call</h4><p data-i18n="f3p">15 minutes to talk about your concerns, food and routine.</p></div>
+      <div class="card"><h4 data-i18n="f4h">Next steps</h4><p data-i18n="f4p">Simple guidance and, if needed, a follow-up or diet review.</p></div>
+    </div>
+  </section>
+
+  <section class="block two">
+    <article class="card prep">
+      <h3 data-i18n="prepH">Before your call ✔️</h3>
+      <ul>
+        <li data-i18n="pr1">List of medicines you take now</li>
+        <li data-i18n="pr2">Recent reports or prescriptions (if any)</li>
+        <li data-i18n="pr3">Your height and weight – check your BMI on the home page</li>
+        <li data-i18n="pr4">A quiet place and a working internet connection</li>
+        <li data-i18n="pr5">Your questions, written down</li>
+      </ul>
+      <a class="btn" style="margin-top:14px" href="index.html#bmi" data-i18n="bmiLink">Check BMI ⚖️</a>
+    </article>
+    <div>
+      <details><summary data-i18n="q1">Can I talk in Hindi?</summary><p data-i18n="a1">Yes. You can choose Hindi or English when you book.</p></details>
+      <details><summary data-i18n="q2">Will I always get medicine?</summary><p data-i18n="a2">Not always. Advice depends on the doctor's assessment – often food and routine come first. The doctor may also suggest an in-person check-up.</p></details>
+      <details><summary data-i18n="q3">Can I book a follow-up?</summary><p data-i18n="a3">Yes. Book another slot, or ask about care plans that include follow-ups.</p></details>
+      <details><summary data-i18n="q4">Is my information private?</summary><p data-i18n="a4">Only the clinic team can see your booking. Please share detailed health information with the doctor during the call.</p></details>
+    </div>
+  </section>
+
+  <section class="block">
+    <a class="card other" href="{{OTHER_ID}}.html">
+      <span class="l"><span class="mini" aria-hidden="true">{{OTHER_INI}}</span><span><span class="note" data-i18n="alsoMeet">Also meet</span><h3 data-i18n="otherName">{{OTHER_EN}}</h3><span class="note" data-i18n="otherRole">{{OTHER_ROLE_EN}}</span></span></span>
+      <span class="btn" data-i18n="viewProfile">View profile →</span>
+    </a>
+    <p class="disclaimer" data-i18n="disclaimer">This website does not give medical advice and is not an emergency service. In an emergency, call 112 or go to the nearest hospital.</p>
+  </section>
+</main>
+
+<a class="btn primary sticky-book" href="index.html?doctor={{ID}}#book" data-i18n="bookWith">Book with {{FIRST_EN}} ↗</a>
+<!--i18n-->
+<script>
+window.AYUSH_PAGE = {
+  hi: {
+    name: '{{NAME_HI}}', demo: 'डेमो प्रोफ़ाइल', org: 'मित्रोजन का आयुष वैद्य',
+    ch1: 'वीडियो · 15 मिनट', ch2: 'हिंदी · अंग्रेज़ी', ch3: 'पूरे भारत में', bookWith: '{{FIRST_HI}} जी के साथ बुक करें ↗',
+    factsH: 'मुख्य जानकारी', dtRole: 'विशेषता', dtCons: 'परामर्श', ddCons: 'ऑनलाइन वीडियो · 15 मिनट', dtLoc: 'मरीज़', ddLoc: 'भारत में कहीं से भी',
+    dtQual: 'योग्यता और पंजीकरण', dtExp: 'अनुभव', ddSoon: 'डेमो – विवरण जल्द आएगा', dtLang: 'भाषाएँ', ddLang: 'डेमो – हिंदी, अंग्रेज़ी (पुष्टि बाकी)', dtFee: 'शुल्क', ddFee: 'पक्का करने से पहले बताया जाएगा',
+    aboutH: '{{FIRST_HI}} जी के बारे में', demoText: 'डेमो टेक्स्ट',
+    about3: 'यह टेक्स्ट नमूना है। परामर्श शुरू होने से पहले चिकित्सक के अपने शब्द, सत्यापित योग्यता और फ़ोटो लगाई जाएगी।',
+    slotsH: 'कब मिल सकते हैं?', demoTime: 'डेमो समय', sDays: 'सोमवार – शनिवार', sSun: 'रविवार', sClosed: 'बंद',
+    slotsNote: 'हर अपॉइंटमेंट 15 मिनट का है। बुकिंग फ़ॉर्म में खाली समय चुनें – क्लिनिक कॉल या WhatsApp पर पक्का करेगा।', pickSlot: 'समय चुनें 📅',
+    helpSticker: '💬 बात करें', helpH: '{{FIRST_HI}} जी से किन बातों पर बात करें', helpSub: 'डेमो सूची – चिकित्सक अपने काम के क्षेत्र की पुष्टि करेंगी।',
+    flowSticker: '🪄 कैसे होता है', flowH: 'आपका परामर्श, कदम-दर-कदम',
+    f1h: 'समय बुक करें', f1p: '{{FIRST_HI}} जी, तारीख़ और 15 मिनट का समय चुनें।', f2h: 'पुष्टि पाएँ', f2p: 'क्लिनिक शुल्क और वीडियो लिंक के साथ कॉल या WhatsApp करेगा।',
+    f3h: 'वीडियो कॉल', f3p: 'अपनी चिंताओं, भोजन और दिनचर्या पर 15 मिनट बात।', f4h: 'अगले कदम', f4p: 'आसान सलाह और, ज़रूरत हो तो, फ़ॉलो-अप या आहार समीक्षा।',
+    prepH: 'कॉल से पहले ✔️', pr1: 'अभी ली जा रही दवाओं की सूची', pr2: 'हाल की रिपोर्ट या पर्चे (अगर हों)', pr3: 'आपकी लंबाई और वज़न – होम पेज पर BMI जाँचें', pr4: 'शांत जगह और चालू इंटरनेट', pr5: 'आपके सवाल, लिखकर',
+    bmiLink: 'BMI जाँचें ⚖️',
+    q1: 'क्या मैं हिंदी में बात कर सकता हूँ?', a1: 'हाँ। बुकिंग के समय हिंदी या अंग्रेज़ी चुन सकते हैं।',
+    q2: 'क्या हमेशा दवा मिलेगी?', a2: 'हमेशा नहीं। सलाह चिकित्सक के आकलन पर निर्भर है – अक्सर पहले भोजन और दिनचर्या। चिकित्सक आमने-सामने जाँच की सलाह भी दे सकती हैं।',
+    q3: 'क्या फ़ॉलो-अप बुक कर सकते हैं?', a3: 'हाँ। दूसरा समय बुक करें, या फ़ॉलो-अप वाली देखभाल योजनाओं के बारे में पूछें।',
+    q4: 'क्या मेरी जानकारी निजी है?', a4: 'आपकी बुकिंग सिर्फ़ क्लिनिक टीम देख सकती है। अपनी पूरी स्वास्थ्य जानकारी कॉल पर चिकित्सक को बताएँ।',
+    artSticker: '📰 {{FIRST_HI}} जी की कलम से', artRead: 'लेख पढ़ें →',
+    alsoMeet: 'इनसे भी मिलें', otherName: '{{OTHER_HI}}', viewProfile: 'प्रोफ़ाइल देखें →',
+    disclaimer: 'यह वेबसाइट चिकित्सकीय सलाह नहीं देती और आपातकालीन सेवा नहीं है। आपात स्थिति में 112 पर कॉल करें या नज़दीकी अस्पताल जाएँ।'
+  },
+  hinglish: {
+    name: '{{NAME_EN}}', demo: 'Demo profile', org: 'Mitrojan ka AYUSH Vaidya',
+    ch1: 'Video · 15 min', ch2: 'Hindi · English', ch3: 'Poore Bharat mein', bookWith: '{{FIRST_EN}} ji ke saath book karo ↗',
+    factsH: 'Quick jaankari', dtRole: 'Speciality', dtCons: 'Consultation', ddCons: 'Online video · 15 minute', dtLoc: 'Patients', ddLoc: 'Bharat mein kahin se bhi',
+    dtQual: 'Qualification aur registration', dtExp: 'Experience', ddSoon: 'Demo – details jaldi aayengi', dtLang: 'Bhasha', ddLang: 'Demo – Hindi, English (confirm hona baaki)', dtFee: 'Fees', ddFee: 'Pakka karne se pehle bata di jayegi',
+    aboutH: '{{FIRST_EN}} ji ke baare mein', demoText: 'Demo text',
+    about3: 'Yeh text sample hai. Consultation shuru hone se pehle doctor ke apne shabd, verified qualification aur photo lagayi jayegi.',
+    slotsH: 'Kab mil sakte hain?', demoTime: 'Demo timings', sDays: 'Monday – Saturday', sSun: 'Sunday', sClosed: 'Band',
+    slotsNote: 'Har appointment 15 minute ka hai. Booking form mein khaali slot chuniye – clinic call ya WhatsApp par pakka karega.', pickSlot: 'Slot chuniye 📅',
+    helpSticker: '💬 Baat kariye', helpH: '{{FIRST_EN}} ji se kin baaton par baat karein', helpSub: 'Demo list – doctor apne kaam ke area confirm karengi.',
+    flowSticker: '🪄 Kaise hota hai', flowH: 'Aapka consultation, step by step',
+    f1h: 'Slot book kariye', f1p: '{{FIRST_EN}} ji, date aur 15 minute ka time chuniye.', f2h: 'Confirmation paaiye', f2p: 'Clinic fees aur video link ke saath call ya WhatsApp karega.',
+    f3h: 'Video call', f3p: 'Apni chinta, khaane aur dincharya par 15 minute baat.', f4h: 'Aage ke kadam', f4p: 'Aasaan advice aur, zaroorat ho to, follow-up ya diet review.',
+    prepH: 'Call se pehle ✔️', pr1: 'Abhi li ja rahi dawaiyon ki list', pr2: 'Haal ki reports ya parche (agar hon)', pr3: 'Aapki height aur weight – home page par BMI check kariye', pr4: 'Shaant jagah aur chaalu internet', pr5: 'Aapke sawaal, likh kar',
+    bmiLink: 'BMI check kariye ⚖️',
+    q1: 'Kya main Hindi mein baat kar sakta hoon?', a1: 'Haan. Booking ke time Hindi ya English chun sakte hain.',
+    q2: 'Kya hamesha dawai milegi?', a2: 'Hamesha nahi. Advice doctor ke assessment par depend karti hai – aksar pehle khaana aur dincharya. Doctor aamne-saamne check-up ki salah bhi de sakti hain.',
+    q3: 'Kya follow-up book kar sakte hain?', a3: 'Haan. Doosra slot book kariye, ya follow-up wale care plans ke baare mein poochhiye.',
+    q4: 'Kya meri jaankari private hai?', a4: 'Aapki booking sirf clinic team dekh sakti hai. Apni poori health jaankari call par doctor ko bataiye.',
+    artSticker: '📰 {{FIRST_EN}} ji ki kalam se', artRead: 'Article padhiye →',
+    alsoMeet: 'Inse bhi miliye', otherName: '{{OTHER_EN}}', viewProfile: 'Profile dekhiye →',
+    disclaimer: 'Yeh website medical advice nahi deti aur emergency service nahi hai. Emergency mein 112 par call kariye ya paas ke hospital jaiye.'
+  }
+};
+Object.assign(window.AYUSH_PAGE.hi, {{HI_EXTRA}});
+Object.assign(window.AYUSH_PAGE.hinglish, {{HL_EXTRA}});
+</script>

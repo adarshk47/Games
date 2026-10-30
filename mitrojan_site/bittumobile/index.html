@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bittu Mobile – Phones, Repair, Electronics &amp; Recharge</title>
+<meta name="description" content="Bittu Mobile: new phones, mobile repair, recharge and new SIM, plus TVs, fridges, washing machines and more. Visit the shop for the latest offers.">
+<meta name="theme-color" content="#5b2bd6">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='11' y='3' width='26' height='42' rx='7' fill='%238a5cff' stroke='%231b1b3a' stroke-width='3'/><rect x='15' y='9' width='18' height='26' rx='3' fill='%23fff'/><text x='24' y='29' text-anchor='middle' font-family='Arial' font-weight='900' font-size='17' fill='%231b1b3a'>B</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1b1b3a; --ink-2: #4a4a6a; --paper: #fffdf8; --violet: #6a3df0; --violet-d: #4a22c2; --lilac: #ece4ff;
+    --sun: #ffd23f; --orange: #ff7a3d; --mint: #c8f5e1; --sky: #d6ecff; --pink: #ffd9e6; --red: #e8203a;
+    --radius: 24px; --shadow: 5px 5px 0 var(--ink);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; }
+  body { font-family: "Baloo 2", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif; color: var(--ink); background: #f6f1ff; line-height: 1.45; overflow-x: hidden; }
+  a { color: inherit; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
+  :focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+
+  /* Offer ticker */
+  .ticker { background: var(--ink); color: var(--sun); overflow: hidden; white-space: nowrap; font-weight: 700; font-size: 15px; }
+  .ticker .track { display: inline-flex; gap: 48px; padding: 7px 0; animation: tick 30s linear infinite; }
+  @keyframes tick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo svg { width: 50px; height: 50px; filter: drop-shadow(3px 3px 0 var(--ink)); }
+  .logo b { font-size: 28px; font-weight: 800; letter-spacing: -.5px; line-height: 1; display: block; }
+  .logo b span { color: var(--violet); }
+  .logo small { display: block; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+  .right { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  nav a { text-decoration: none; font-weight: 700; margin-left: 12px; }
+  .lang { display: inline-flex; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 999px; padding: 3px; box-shadow: 3px 3px 0 var(--ink); }
+  .lang button { font: inherit; font-weight: 700; font-size: 14px; border: 0; background: none; color: var(--ink); padding: 2px 12px; border-radius: 999px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sun); }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font: inherit; font-weight: 800; font-size: 17px; padding: 10px 20px; border-radius: 14px;
+    border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn.primary { background: var(--violet); color: #fff; }
+  .btn.hot { background: linear-gradient(135deg, var(--sun), var(--orange)); }
+
+  /* Hero */
+  .hero { position: relative; overflow: hidden; padding: 30px 0 50px; }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(600px 400px at 85% 20%, #d9caff, transparent 70%), radial-gradient(500px 360px at 5% 90%, #ffe9a8, transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: center; }
+  .tag-open { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 2.5px solid var(--ink); border-radius: 999px; padding: 3px 14px; font-weight: 700; box-shadow: 3px 3px 0 var(--ink); }
+  .tag-open::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #18b14b; animation: blink 1.4s infinite; }
+  @keyframes blink { 50% { opacity: .3; } }
+  .hero h1 { font-size: clamp(40px, 6.6vw, 74px); line-height: 1.02; margin: 18px 0 12px; letter-spacing: -1.5px; }
+  .hero h1 span { background: linear-gradient(90deg, var(--violet), #e8366b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { font-size: 19px; color: var(--ink-2); margin: 0 0 22px; max-width: 560px; font-weight: 500; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; padding: 0; list-style: none; }
+  .chips li { background: #fff; border: 2px solid var(--ink); border-radius: 12px; padding: 1px 12px; font-weight: 700; font-size: 15px; }
+
+  .stage { position: relative; height: 380px; }
+  .phone { position: absolute; width: 170px; height: 330px; border-radius: 34px; background: var(--ink); padding: 12px; box-shadow: 10px 12px 0 rgba(27,27,58,.18); animation: bob 5s ease-in-out infinite; }
+  .phone .screen { width: 100%; height: 100%; border-radius: 24px; background: linear-gradient(160deg, #8a5cff, #ff6fa1 60%, #ffd23f); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 54px; position: relative; overflow: hidden; }
+  .phone .screen::after { content: ""; position: absolute; inset: -40%; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.45) 50%, transparent 60%); animation: shine 4s ease-in-out infinite; }
+  .phone.p1 { left: 18%; top: 10px; transform: rotate(-8deg); }
+  .phone.p2 { left: 46%; top: 30px; animation-delay: -2.5s; }
+  .phone.p2 .screen { background: linear-gradient(160deg, #18b1a0, #5ea8ff 60%, #c3f5dd); }
+  @keyframes bob { 0%,100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+  @keyframes shine { 0%,60% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+  .sticker { position: absolute; background: var(--sun); border: 2.5px solid var(--ink); border-radius: 50%; width: 110px; height: 110px; display: grid; place-items: center; text-align: center; font-weight: 800; line-height: 1.05; font-size: 18px; right: 2%; top: 0; transform: rotate(12deg); box-shadow: 4px 4px 0 var(--ink); animation: wobble 3s ease-in-out infinite; }
+  @keyframes wobble { 0%,100% { transform: rotate(12deg) scale(1); } 50% { transform: rotate(4deg) scale(1.06); } }
+  .float { position: absolute; font-size: 34px; animation: bob 4s ease-in-out infinite; }
+
+  section.block { padding: 50px 0 0; }
+  .head { text-align: center; margin-bottom: 24px; }
+  .head h2 { font-size: clamp(30px, 4.4vw, 46px); margin: 0; letter-spacing: -.8px; line-height: 1.1; }
+  .head p { margin: 6px auto 0; color: var(--ink-2); font-size: 18px; max-width: 640px; font-weight: 500; }
+
+  .services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .svc { background: var(--bg, #fff); border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; display: flex; gap: 14px; align-items: flex-start; transition: transform .2s, box-shadow .2s; }
+  .svc:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+  .svc .ico { width: 56px; height: 56px; border-radius: 16px; background: #fff; border: 2.5px solid var(--ink); display: grid; place-items: center; font-size: 30px; flex: none; }
+  .svc h3 { margin: 0 0 2px; font-size: 22px; line-height: 1.15; }
+  .svc p { margin: 0; color: var(--ink-2); font-size: 16px; font-weight: 500; }
+
+  .offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .offer { position: relative; border: 3px dashed var(--ink); border-radius: var(--radius); padding: 22px; background: #fff; overflow: hidden; }
+  .offer::before { content: ""; position: absolute; width: 26px; height: 26px; border-radius: 50%; background: #f6f1ff; border: 3px dashed var(--ink); left: -16px; top: 50%; transform: translateY(-50%); }
+  .offer b { display: block; font-size: 26px; line-height: 1.1; }
+  .offer p { margin: 6px 0 0; color: var(--ink-2); font-weight: 500; }
+  .offer .pct { position: absolute; right: 14px; top: 10px; font-size: 40px; transform: rotate(10deg); }
+
+  .filters { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filters button { font: inherit; font-weight: 700; font-size: 16px; padding: 4px 16px; border-radius: 999px; border: 2.5px solid var(--ink); background: #fff; cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--sun); }
+  .products { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .prod { background: #fff; border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+  .prod:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+  .prod[hidden] { display: none; }
+  .prod .pic { height: 150px; display: grid; place-items: center; font-size: 70px; background: var(--bg, var(--lilac)); border-bottom: 3px solid var(--ink); position: relative; }
+  .prod .pic .badge { position: absolute; top: 10px; left: 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; background: var(--red); color: #fff; padding: 2px 10px; border-radius: 999px; border: 2px solid var(--ink); }
+  .prod .info { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .prod h3 { margin: 0; font-size: 19px; line-height: 1.15; }
+  .prod .spec { color: var(--ink-2); font-size: 15px; font-weight: 500; flex: 1; }
+  .price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .price b { font-size: 26px; color: var(--violet-d); position: relative; }
+  .price s { color: #8a8aa6; font-size: 16px; }
+  .price .off { font-size: 13px; font-weight: 800; color: #0d8a3a; }
+  .demo-note { text-align: center; margin: 18px auto 0; max-width: 700px; font-size: 15px; color: var(--ink-2); background: #fff7d6; border: 2px dashed #d9a650; border-radius: 14px; padding: 8px 14px; }
+
+  .visit { display: grid; grid-template-columns: 1.1fr .9fr; gap: 20px; }
+  .card { background: #fff; border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
+  .card h3 { margin: 0 0 10px; font-size: 26px; }
+  .card dl { margin: 0; }
+  .card dl div { display: grid; grid-template-columns: 130px 1fr; gap: 8px; padding: 8px 0; border-top: 2px dashed #e2dcf3; }
+  .card dt { color: var(--ink-2); font-weight: 600; }
+  .card dd { margin: 0; font-weight: 700; }
+  .card dd.tbd { color: #a24a1a; font-style: italic; font-weight: 600; }
+  .why { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .why li { background: var(--lilac); border: 2px solid var(--ink); border-radius: 14px; padding: 8px 14px; font-weight: 600; }
+
+  footer { margin-top: 60px; background: var(--ink); color: #eee8ff; padding: 26px 0 34px; text-align: center; font-size: 15px; }
+  footer a { color: var(--sun); margin: 0 10px; }
+  footer div { margin-top: 8px; opacity: .85; }
+
+  @media (max-width: 1000px) { .products { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 860px) {
+    .hero-grid, .visit { grid-template-columns: 1fr; }
+    .stage { height: 300px; }
+    .phone { width: 130px; height: 256px; }
+    .services, .offers { grid-template-columns: 1fr 1fr; }
+    .products { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    header .wrap, .right { justify-content: center; }
+    nav { display: none; }
+    .services, .offers { grid-template-columns: 1fr; }
+    .products { gap: 12px; }
+    .prod .pic { height: 110px; font-size: 52px; }
+    .prod .info { padding: 10px 12px 12px; }
+    .prod h3 { font-size: 17px; }
+    .price b { font-size: 22px; }
+    .card dl div { grid-template-columns: 1fr; gap: 0; }
+    .sticker { width: 90px; height: 90px; font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true"><div class="track">
+  <span data-i18n="tk1">🔥 Offers on new phones</span><span data-i18n="tk2">🔧 Mobile repair</span><span data-i18n="tk3">📶 Recharge &amp; new SIM</span><span data-i18n="tk4">📺 TV · Fridge · Washing machine</span><span data-i18n="tk5">🎧 Accessories</span>
+  <span data-i18n="tk1">🔥 Offers on new phones</span><span data-i18n="tk2">🔧 Mobile repair</span><span data-i18n="tk3">📶 Recharge &amp; new SIM</span><span data-i18n="tk4">📺 TV · Fridge · Washing machine</span><span data-i18n="tk5">🎧 Accessories</span>
+</div></div>
+
+<header><div class="wrap">
+  <a class="logo" href="#top" id="top" aria-label="Bittu Mobile home">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="11" y="3" width="26" height="42" rx="7" fill="#8a5cff" stroke="#1b1b3a" stroke-width="3"/><rect x="15" y="9" width="18" height="26" rx="3" fill="#fff"/><text x="24" y="29" text-anchor="middle" font-family="Baloo 2, Arial, sans-serif" font-weight="800" font-size="17" fill="#1b1b3a">B</text><circle cx="24" cy="40" r="2" fill="#fff"/><path d="M42 4l1.6 3.8L47 9.4l-3.4 1.6L42 15l-1.6-4L37 9.4l3.4-1.6z" fill="#ffd23f" stroke="#1b1b3a" stroke-width="1.5"/></svg>
+    <span><b>Bittu <span>Mobile</span></b><small data-i18n="tagline">Phones · Repair · Electronics</small></span>
+  </a>
+  <div class="right">
+    <nav><a href="#services" data-i18n="navServices">Services</a><a href="#products" data-i18n="navProducts">Products</a><a href="#visit" data-i18n="navVisit">Visit us</a></nav>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button>
+      <button type="button" data-lang="hinglish" aria-pressed="false">Hinglish</button>
+    </div>
+  </div>
+</div></header>
+
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="tag-open" data-i18n="open">Shop open · Visit today</span>
+    <h1><span data-i18n="h1a">Your trusted</span> <span data-i18n="h1b">mobile shop</span></h1>
+    <p data-i18n="lead">New phones, quick mobile repair, recharge and new SIM – plus TVs, fridges, washing machines and more. Come in and check today's offers.</p>
+    <div class="actions">
+      <a class="btn primary" href="#products" data-i18n="ctaProducts">See products 📱</a>
+      <a class="btn hot" href="#visit" data-i18n="ctaVisit">Visit the shop 📍</a>
+    </div>
+    <ul class="chips" aria-hidden="true"><li>📱 <span data-i18n="c1">New phones</span></li><li>🔧 <span data-i18n="c2">Repair</span></li><li>📶 <span data-i18n="c3">Recharge</span></li><li>💳 <span data-i18n="c4">New SIM</span></li><li>📺 <span data-i18n="c5">Electronics</span></li></ul>
+  </div>
+  <div class="stage" aria-hidden="true">
+    <div class="phone p1"><div class="screen">B</div></div>
+    <div class="phone p2"><div class="screen">📶</div></div>
+    <div class="sticker" data-i18n="sticker">Best offers inside!</div>
+    <span class="float" style="left:4%; top:56%">🎧</span>
+    <span class="float" style="right:6%; bottom:6%; animation-delay:-2s">🔋</span>
+    <span class="float" style="left:40%; bottom:-4px; animation-delay:-1s">⚡</span>
+  </div>
+</div></section>
+
+<section class="block" id="services"><div class="wrap">
+  <div class="head"><h2 data-i18n="svcTitle">Everything in one shop</h2><p data-i18n="svcSub">From a new phone to a quick repair – we've got you.</p></div>
+  <div class="services">
+    <article class="svc" style="--bg: var(--lilac)"><div class="ico">📱</div><div><h3 data-i18n="s1h">New phones</h3><p data-i18n="s1p">Smartphones and keypad phones for every budget.</p></div></article>
+    <article class="svc" style="--bg: var(--mint)"><div class="ico">🔧</div><div><h3 data-i18n="s2h">Mobile repair</h3><p data-i18n="s2p">Screen, battery, charging port, speaker and software problems.</p></div></article>
+    <article class="svc" style="--bg: var(--sky)"><div class="ico">📶</div><div><h3 data-i18n="s3h">Recharge</h3><p data-i18n="s3p">Mobile recharge for all major networks.</p></div></article>
+    <article class="svc" style="--bg: #fff3c4"><div class="ico">💳</div><div><h3 data-i18n="s4h">New SIM</h3><p data-i18n="s4p">Get a new SIM card – bring a valid ID proof.</p></div></article>
+    <article class="svc" style="--bg: var(--pink)"><div class="ico">📺</div><div><h3 data-i18n="s5h">Electronics</h3><p data-i18n="s5p">TVs, fridges, washing machines and other home appliances.</p></div></article>
+    <article class="svc" style="--bg: #e2f7d4"><div class="ico">🪑</div><div><h3 data-i18n="s6h">Home items &amp; accessories</h3><p data-i18n="s6p">Chairs, chargers, earphones, covers, tempered glass and more.</p></div></article>
+  </div>
+</div></section>
+
+<section class="block" id="offers"><div class="wrap">
+  <div class="head"><h2 data-i18n="offTitle">Offers 🔥</h2><p data-i18n="offSub">There's always an offer running – ask in the shop for today's deals.</p></div>
+  <div class="offers">
+    <div class="offer"><span class="pct" aria-hidden="true">🎁</span><b data-i18n="o1h">Free gift with a new phone</b><p data-i18n="o1p">Ask about the free cover or tempered glass offer.</p></div>
+    <div class="offer"><span class="pct" aria-hidden="true">💸</span><b data-i18n="o2h">Special festival prices</b><p data-i18n="o2p">Extra savings on phones and electronics during festivals.</p></div>
+    <div class="offer"><span class="pct" aria-hidden="true">⚡</span><b data-i18n="o3h">Quick repair</b><p data-i18n="o3p">Many common repairs are done the same day.</p></div>
+  </div>
+</div></section>
+
+<section class="block" id="products"><div class="wrap">
+  <div class="head"><h2 data-i18n="prodTitle">Available in the shop</h2><p data-i18n="prodSub">A few of the products you can see in the shop.</p></div>
+  <div class="filters" role="group" aria-label="Filter products">
+    <button type="button" data-filter="all" aria-pressed="true" data-i18n="fAll">All</button>
+    <button type="button" data-filter="phone" aria-pressed="false" data-i18n="fPhone">Phones</button>
+    <button type="button" data-filter="home" aria-pressed="false" data-i18n="fHome">Electronics</button>
+    <button type="button" data-filter="acc" aria-pressed="false" data-i18n="fAcc">Accessories</button>
+  </div>
+  <div class="products">
+    <article class="prod" data-cat="phone" style="--bg: var(--lilac)"><div class="pic"><span class="badge" data-i18n="offer">Offer</span>📱</div><div class="info"><h3 data-i18n="pr1">5G Smartphone</h3><span class="spec" data-i18n="pr1s">6 GB RAM · 128 GB · 50 MP camera</span><div class="price"><b>₹13,999</b><s>₹15,999</s><span class="off">₹2,000 off</span></div></div></article>
+    <article class="prod" data-cat="phone" style="--bg: #ffe3ef"><div class="pic">📱</div><div class="info"><h3 data-i18n="pr2">Budget Smartphone</h3><span class="spec" data-i18n="pr2s">4 GB RAM · 64 GB · 5000 mAh battery</span><div class="price"><b>₹7,499</b><s>₹8,499</s></div></div></article>
+    <article class="prod" data-cat="phone" style="--bg: #e2f7d4"><div class="pic">☎️</div><div class="info"><h3 data-i18n="pr3">Keypad Phone</h3><span class="spec" data-i18n="pr3s">Dual SIM · Torch · Long battery</span><div class="price"><b>₹1,199</b></div></div></article>
+    <article class="prod" data-cat="home" style="--bg: var(--sky)"><div class="pic"><span class="badge" data-i18n="offer">Offer</span>📺</div><div class="info"><h3 data-i18n="pr4">32" Smart LED TV</h3><span class="spec" data-i18n="pr4s">HD Ready · Wi-Fi · YouTube &amp; apps</span><div class="price"><b>₹11,990</b><s>₹13,500</s></div></div></article>
+    <article class="prod" data-cat="home" style="--bg: #e6f3ff"><div class="pic">🧊</div><div class="info"><h3 data-i18n="pr5">Single-door Fridge</h3><span class="spec" data-i18n="pr5s">190 litre · Low power use</span><div class="price"><b>₹14,490</b></div></div></article>
+    <article class="prod" data-cat="home" style="--bg: var(--mint)"><div class="pic">🧺</div><div class="info"><h3 data-i18n="pr6">Washing Machine</h3><span class="spec" data-i18n="pr6s">7 kg · Semi-automatic</span><div class="price"><b>₹9,990</b></div></div></article>
+    <article class="prod" data-cat="home" style="--bg: #fff3c4"><div class="pic">🪑</div><div class="info"><h3 data-i18n="pr7">Office Chair</h3><span class="spec" data-i18n="pr7s">Cushioned · Adjustable height</span><div class="price"><b>₹2,499</b></div></div></article>
+    <article class="prod" data-cat="acc" style="--bg: var(--pink)"><div class="pic">🎧</div><div class="info"><h3 data-i18n="pr8">Wireless Earbuds</h3><span class="spec" data-i18n="pr8s">Bluetooth · Charging case</span><div class="price"><b>₹999</b><s>₹1,499</s></div></div></article>
+  </div>
+  <p class="demo-note" data-i18n="demoNote">These products and prices are a sample for display. Stock and prices change – please confirm the current price in the shop.</p>
+</div></section>
+
+<section class="block" id="visit"><div class="wrap visit">
+  <article class="card">
+    <h3 data-i18n="visitTitle">Visit Bittu Mobile 📍</h3>
+    <dl>
+      <div><dt data-i18n="dAddr">Address</dt><dd class="tbd" data-i18n="tbd">Coming soon</dd></div>
+      <div><dt data-i18n="dPhone">Phone</dt><dd class="tbd" data-i18n="tbd">Coming soon</dd></div>
+      <div><dt data-i18n="dTime">Shop timings</dt><dd class="tbd" data-i18n="tbd">Coming soon</dd></div>
+      <div><dt data-i18n="dMail">Email</dt><dd><a href="mailto:aiforsmart@gmail.com?subject=Bittu%20Mobile">aiforsmart@gmail.com</a></dd></div>
+    </dl>
+  </article>
+  <article class="card" style="background: #fff7d6">
+    <h3 data-i18n="whyTitle">Why Bittu Mobile?</h3>
+    <ul class="why">
+      <li data-i18n="w1">✅ Phones, repair and electronics under one roof</li>
+      <li data-i18n="w2">✅ Recharge and new SIM in minutes</li>
+      <li data-i18n="w3">✅ New offers every season</li>
+      <li data-i18n="w4">✅ Friendly help in Hindi and English</li>
+    </ul>
+  </article>
+</div></section>
+
+<footer>
+  <a href="https://mitrojan.in/" data-i18n="fMitro">A Mitrojan page</a>
+  <a href="mailto:aiforsmart@gmail.com?subject=Bittu%20Mobile">aiforsmart@gmail.com</a>
+  <div data-i18n="fRights">© 2026 Bittu Mobile · Mitrojan</div>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    hi: {
+      tk1: '🔥 नए फ़ोन पर ऑफ़र', tk2: '🔧 मोबाइल रिपेयर', tk3: '📶 रिचार्ज और नई सिम', tk4: '📺 टीवी · फ्रिज · वॉशिंग मशीन', tk5: '🎧 एक्सेसरीज़',
+      tagline: 'फ़ोन · रिपेयर · इलेक्ट्रॉनिक्स', navServices: 'सेवाएँ', navProducts: 'प्रोडक्ट', navVisit: 'दुकान पर आएँ',
+      open: 'दुकान खुली है · आज ही आएँ', h1a: 'आपकी भरोसेमंद', h1b: 'मोबाइल दुकान',
+      lead: 'नए फ़ोन, जल्दी मोबाइल रिपेयर, रिचार्ज और नई सिम – साथ में टीवी, फ्रिज, वॉशिंग मशीन और बहुत कुछ। दुकान पर आइए और आज के ऑफ़र देखिए।',
+      ctaProducts: 'प्रोडक्ट देखें 📱', ctaVisit: 'दुकान पर आएँ 📍',
+      c1: 'नए फ़ोन', c2: 'रिपेयर', c3: 'रिचार्ज', c4: 'नई सिम', c5: 'इलेक्ट्रॉनिक्स', sticker: 'शानदार ऑफ़र!',
+      svcTitle: 'सब कुछ एक ही दुकान में', svcSub: 'नए फ़ोन से लेकर जल्दी रिपेयर तक – सब यहाँ।',
+      s1h: 'नए फ़ोन', s1p: 'हर बजट के स्मार्टफ़ोन और कीपैड फ़ोन।',
+      s2h: 'मोबाइल रिपेयर', s2p: 'स्क्रीन, बैटरी, चार्जिंग पोर्ट, स्पीकर और सॉफ़्टवेयर की समस्या।',
+      s3h: 'रिचार्ज', s3p: 'सभी बड़े नेटवर्क का मोबाइल रिचार्ज।',
+      s4h: 'नई सिम', s4p: 'नई सिम लीजिए – मान्य पहचान पत्र साथ लाएँ।',
+      s5h: 'इलेक्ट्रॉनिक्स', s5p: 'टीवी, फ्रिज, वॉशिंग मशीन और घर के दूसरे उपकरण।',
+      s6h: 'घर का सामान और एक्सेसरीज़', s6p: 'कुर्सी, चार्जर, ईयरफ़ोन, कवर, टेम्पर्ड ग्लास और बहुत कुछ।',
+      offTitle: 'ऑफ़र 🔥', offSub: 'कोई न कोई ऑफ़र हमेशा चलता है – आज के ऑफ़र दुकान पर पूछें।',
+      o1h: 'नए फ़ोन के साथ गिफ़्ट', o1p: 'फ़्री कवर या टेम्पर्ड ग्लास ऑफ़र के बारे में पूछें।',
+      o2h: 'त्योहार पर ख़ास दाम', o2p: 'त्योहारों पर फ़ोन और इलेक्ट्रॉनिक्स पर ज़्यादा बचत।',
+      o3h: 'जल्दी रिपेयर', o3p: 'कई आम रिपेयर उसी दिन हो जाते हैं।',
+      prodTitle: 'दुकान में उपलब्ध', prodSub: 'दुकान में मिलने वाले कुछ प्रोडक्ट।',
+      fAll: 'सभी', fPhone: 'फ़ोन', fHome: 'इलेक्ट्रॉनिक्स', fAcc: 'एक्सेसरीज़', offer: 'ऑफ़र',
+      pr1: '5G स्मार्टफ़ोन', pr1s: '6 GB RAM · 128 GB · 50 MP कैमरा', pr2: 'बजट स्मार्टफ़ोन', pr2s: '4 GB RAM · 64 GB · 5000 mAh बैटरी',
+      pr3: 'कीपैड फ़ोन', pr3s: 'डुअल सिम · टॉर्च · लंबी बैटरी', pr4: '32" स्मार्ट LED टीवी', pr4s: 'HD Ready · Wi-Fi · YouTube और ऐप्स',
+      pr5: 'सिंगल-डोर फ्रिज', pr5s: '190 लीटर · कम बिजली', pr6: 'वॉशिंग मशीन', pr6s: '7 kg · सेमी-ऑटोमैटिक',
+      pr7: 'ऑफ़िस कुर्सी', pr7s: 'गद्देदार · ऊँचाई बदलने वाली', pr8: 'वायरलेस ईयरबड्स', pr8s: 'ब्लूटूथ · चार्जिंग केस',
+      demoNote: 'ये प्रोडक्ट और दाम सिर्फ़ दिखाने के लिए नमूना हैं। स्टॉक और दाम बदलते रहते हैं – कृपया आज का दाम दुकान पर पक्का करें।',
+      visitTitle: 'बिट्टू मोबाइल पर आएँ 📍', dAddr: 'पता', dPhone: 'फ़ोन', dTime: 'दुकान का समय', dMail: 'ईमेल', tbd: 'जल्द आएगा',
+      whyTitle: 'बिट्टू मोबाइल क्यों?', w1: '✅ फ़ोन, रिपेयर और इलेक्ट्रॉनिक्स एक ही जगह', w2: '✅ मिनटों में रिचार्ज और नई सिम', w3: '✅ हर सीज़न नए ऑफ़र', w4: '✅ हिंदी और अंग्रेज़ी में दोस्ताना मदद',
+      fMitro: 'मित्रोजन का एक पेज', fRights: '© 2026 बिट्टू मोबाइल · मित्रोजन'
+    },
+    hinglish: {
+      tk1: '🔥 Naye phone pe offer', tk2: '🔧 Mobile repair', tk3: '📶 Recharge aur nayi SIM', tk4: '📺 TV · Fridge · Washing machine', tk5: '🎧 Accessories',
+      tagline: 'Phone · Repair · Electronics', navServices: 'Services', navProducts: 'Products', navVisit: 'Shop pe aaiye',
+      open: 'Shop khuli hai · Aaj hi aaiye', h1a: 'Aapki bharosemand', h1b: 'mobile shop',
+      lead: 'Naye phone, jaldi mobile repair, recharge aur nayi SIM – saath mein TV, fridge, washing machine aur bahut kuch. Shop pe aaiye aur aaj ke offer dekhiye.',
+      ctaProducts: 'Products dekhiye 📱', ctaVisit: 'Shop pe aaiye 📍',
+      c1: 'Naye phone', c2: 'Repair', c3: 'Recharge', c4: 'Nayi SIM', c5: 'Electronics', sticker: 'Best offers!',
+      svcTitle: 'Sab kuch ek hi shop mein', svcSub: 'Naye phone se lekar jaldi repair tak – sab yahan.',
+      s1h: 'Naye phone', s1p: 'Har budget ke smartphone aur keypad phone.',
+      s2h: 'Mobile repair', s2p: 'Screen, battery, charging port, speaker aur software ki problem.',
+      s3h: 'Recharge', s3p: 'Sabhi bade network ka mobile recharge.',
+      s4h: 'Nayi SIM', s4p: 'Nayi SIM lijiye – valid ID proof saath laayein.',
+      s5h: 'Electronics', s5p: 'TV, fridge, washing machine aur ghar ke dusre appliances.',
+      s6h: 'Ghar ka saamaan aur accessories', s6p: 'Chair, charger, earphone, cover, tempered glass aur bahut kuch.',
+      offTitle: 'Offers 🔥', offSub: 'Koi na koi offer hamesha chalta hai – aaj ke offer shop pe poochhiye.',
+      o1h: 'Naye phone ke saath gift', o1p: 'Free cover ya tempered glass offer ke baare mein poochhiye.',
+      o2h: 'Tyohaar pe special daam', o2p: 'Tyohaaron pe phone aur electronics pe zyada bachat.',
+      o3h: 'Jaldi repair', o3p: 'Kai common repair usi din ho jaate hain.',
+      prodTitle: 'Shop mein available', prodSub: 'Shop mein milne wale kuch products.',
+      fAll: 'Sab', fPhone: 'Phone', fHome: 'Electronics', fAcc: 'Accessories', offer: 'Offer',
+      pr1: '5G Smartphone', pr1s: '6 GB RAM · 128 GB · 50 MP camera', pr2: 'Budget Smartphone', pr2s: '4 GB RAM · 64 GB · 5000 mAh battery',
+      pr3: 'Keypad Phone', pr3s: 'Dual SIM · Torch · Lambi battery', pr4: '32" Smart LED TV', pr4s: 'HD Ready · Wi-Fi · YouTube aur apps',
+      pr5: 'Single-door Fridge', pr5s: '190 litre · Kam bijli', pr6: 'Washing Machine', pr6s: '7 kg · Semi-automatic',
+      pr7: 'Office Chair', pr7s: 'Gaddedaar · Height adjust hoti hai', pr8: 'Wireless Earbuds', pr8s: 'Bluetooth · Charging case',
+      demoNote: 'Ye products aur daam sirf dikhane ke liye sample hain. Stock aur daam badalte rehte hain – please aaj ka daam shop pe confirm kariye.',
+      visitTitle: 'Bittu Mobile pe aaiye 📍', dAddr: 'Pata', dPhone: 'Phone', dTime: 'Shop ka time', dMail: 'Email', tbd: 'Jaldi aayega',
+      whyTitle: 'Bittu Mobile kyun?', w1: '✅ Phone, repair aur electronics ek hi jagah', w2: '✅ Minutes mein recharge aur nayi SIM', w3: '✅ Har season naye offer', w4: '✅ Hindi aur English mein friendly help',
+      fMitro: 'Mitrojan ka ek page', fRights: '© 2026 Bittu Mobile · Mitrojan'
+    }
+  };
+  var nodes = document.querySelectorAll('[data-i18n]');
+  I18N.en = {};
+  nodes.forEach(function (el) { I18N.en[el.dataset.i18n] = el.textContent; });
+  var buttons = document.querySelectorAll('.lang button');
+  function setLang(lang) {
+    if (!I18N[lang]) lang = 'en';
+    var dict = I18N[lang];
+    nodes.forEach(function (el) { var t = dict[el.dataset.i18n]; if (t != null) el.textContent = t; });
+    document.documentElement.lang = lang === 'hi' ? 'hi' : lang === 'hinglish' ? 'hi-Latn' : 'en';
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
+    // Links to the other Mitrojan pages carry ?lang=, so the choice follows the visitor across sites.
+    document.querySelectorAll('a[href^="http"]').forEach(function (a) {
+      var u = new URL(a.href);
+      if (!/^(mitrojan\.in|ayush\.mitrojan\.in|bittumobile\.mitrojan\.in)$/.test(u.hostname)) return;
+      if (lang === 'en') u.searchParams.delete('lang'); else u.searchParams.set('lang', lang);
+      a.href = u.toString();
+    });
+    try { localStorage.setItem('mitrojan.lang', lang); } catch (e) {}
+  }
+  buttons.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
+  var saved = new URLSearchParams(location.search).get('lang');
+  if (!I18N[saved]) {
+    try { saved = localStorage.getItem('mitrojan.lang'); } catch (e) { saved = null; }
+  }
+  setLang(saved || 'en');
+
+  var filters = document.querySelectorAll('.filters button');
+  var prods = document.querySelectorAll('.prod');
+  filters.forEach(function (f) {
+    f.addEventListener('click', function () {
+      filters.forEach(function (x) { x.setAttribute('aria-pressed', String(x === f)); });
+      prods.forEach(function (p) { p.hidden = f.dataset.filter !== 'all' && p.dataset.cat !== f.dataset.filter; });
+    });
+  });
+})();
+</script>
+</body>
+</html>

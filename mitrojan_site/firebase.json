@@ -1,6 +1,7 @@
 {
   "hosting": [
     { "site": "mitrojan", "public": "home", "ignore": ["firebase.json", "**/.*"] },
-    { "site": "ayush-mitrojan", "public": "ayush", "ignore": ["firebase.json", "**/.*"] }
+    { "site": "ayush-mitrojan", "public": "ayush", "ignore": ["firebase.json", "**/.*"] },
+    { "site": "bittumobile-mitrojan", "public": "bittumobile", "ignore": ["firebase.json", "**/.*"] }
   ]
 }

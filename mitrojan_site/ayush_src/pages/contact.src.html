@@ -1,0 +1,60 @@
+<!--title: Contact & clinic · AYUSH Vaidya-->
+<!--description: Contact AYUSH Vaidya: phone, WhatsApp, email, clinic address and timings.-->
+<!--nav: contact-->
+<!--style-->
+  .hero { padding: 40px 0 0; text-align: center; }
+  .hero h1 { font-size: clamp(38px, 5.6vw, 68px); margin: 12px auto; }
+  .hero p { color: var(--ink-2); font-size: 19px; max-width: 680px; margin: 0 auto; }
+  .ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .way { text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .way .e { font-size: 44px; }
+  .way h3 { font-size: 22px; }
+  .way p { margin: 0; color: var(--ink-2); }
+  .blank { color: #9a3f1a; font-style: italic; font-weight: 600; }
+  .clinic { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .clinic dl { margin: 0; }
+  .clinic dl div { display: grid; grid-template-columns: 130px 1fr; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .clinic dt { color: var(--ink-2); }
+  .clinic dd { margin: 0; font-weight: 700; }
+  .map { min-height: 260px; border-radius: 22px; background: repeating-linear-gradient(45deg, #e8f3ec 0 14px, #f4faf3 14px 28px); display: grid; place-items: center; text-align: center; color: var(--ink-2); font-weight: 700; padding: 20px; }
+  @media (max-width: 760px) { .ways, .clinic { grid-template-columns: 1fr; } }
+<!--body-->
+<main>
+<section class="hero"><div class="wrap">
+  <span class="sticker" data-i18n="sticker">📞 Contact</span>
+  <h1 data-i18n="h1">We're here to help</h1>
+  <p data-i18n="lead">Questions about booking, fees or plans? Reach the clinic team the way you like.</p>
+</div></section>
+
+<section class="block"><div class="wrap ways">
+  <div class="card way"><span class="e">💬</span><h3>WhatsApp</h3><p class="blank">+91 00000 00000 (demo)</p></div>
+  <div class="card way"><span class="e">📞</span><h3 data-i18n="phoneH">Phone</h3><p class="blank">+91 00000 00000 (demo)</p></div>
+  <div class="card way"><span class="e">✉️</span><h3 data-i18n="mailH">Email</h3><p>aiforsmart@gmail.com</p><a class="btn" href="mailto:aiforsmart@gmail.com?subject=AYUSH%20Vaidya" data-i18n="mailBtn">Send an email</a></div>
+</div></section>
+
+<section class="block"><div class="wrap clinic">
+  <article class="card">
+    <h2 style="font-size:28px;margin-bottom:10px" data-i18n="clinicH">Clinic details</h2>
+    <dl>
+      <div><dt data-i18n="dAddr">Address</dt><dd class="blank">Demo Clinic, Main Road, India (demo)</dd></div>
+      <div><dt data-i18n="dHours">Hours</dt><dd data-i18n="hours">Mon – Sat · 10 AM – 1 PM, 5 – 7 PM (demo)</dd></div>
+      <div><dt data-i18n="dMode">Consultations</dt><dd data-i18n="mode">Online video, across India</dd></div>
+      <div><dt data-i18n="dReply">Reply time</dt><dd class="blank" data-i18n="replyTime">Within 24 hours (demo)</dd></div>
+    </dl>
+  </article>
+  <div class="map" data-i18n="mapNote">📍 Google Map of the clinic will appear here once the address is added.</div>
+</div>
+<div class="wrap"><p class="disclaimer" data-i18n="emerg">Not for emergencies. In an emergency, call 112 or go to the nearest hospital.</p></div>
+</section>
+</main>
+<!--i18n-->
+<script>
+window.AYUSH_PAGE = {
+  hi: { replyTime: '24 घंटे के अंदर (डेमो)', soonTxt: 'जल्द आएगा', sticker: '📞 संपर्क', h1: 'हम मदद के लिए यहाँ हैं', lead: 'बुकिंग, शुल्क या योजनाओं के बारे में सवाल? जैसे चाहें, क्लिनिक टीम से जुड़ें।', waBtn: 'WhatsApp पर बात करें', phoneH: 'फ़ोन', callBtn: 'क्लिनिक को कॉल करें', mailH: 'ईमेल', mailBtn: 'ईमेल भेजें',
+    clinicH: 'क्लिनिक की जानकारी', dAddr: 'पता', dHours: 'समय', hours: 'सोम – शनि · सुबह 10 – दोपहर 1, शाम 5 – 7 (डेमो)', dMode: 'परामर्श', mode: 'ऑनलाइन वीडियो, पूरे भारत में', dReply: 'जवाब का समय',
+    mapNote: '📍 पता जुड़ते ही यहाँ क्लिनिक का Google Map दिखेगा।', emerg: 'आपातकाल के लिए नहीं। आपात स्थिति में 112 पर कॉल करें या नज़दीकी अस्पताल जाएँ।' },
+  hinglish: { replyTime: '24 ghante ke andar (demo)', soonTxt: 'Jaldi aayega', sticker: '📞 Contact', h1: 'Hum madad ke liye yahan hain', lead: 'Booking, fees ya plans ke baare mein sawaal? Jaise chahein, clinic team se judiye.', waBtn: 'WhatsApp par baat karo', phoneH: 'Phone', callBtn: 'Clinic ko call karo', mailH: 'Email', mailBtn: 'Email bhejo',
+    clinicH: 'Clinic ki jaankari', dAddr: 'Pata', dHours: 'Time', hours: 'Mon – Sat · 10 AM – 1 PM, 5 – 7 PM (demo)', dMode: 'Consultation', mode: 'Online video, poore Bharat mein', dReply: 'Jawaab ka time',
+    mapNote: '📍 Pata judte hi yahan clinic ka Google Map dikhega.', emerg: 'Emergency ke liye nahi. Emergency mein 112 par call karo ya paas ke hospital jao.' }
+};
+</script>

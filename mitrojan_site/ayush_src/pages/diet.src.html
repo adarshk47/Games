@@ -1,0 +1,202 @@
+<!--title: Diet plan by Vaidya Pooja Gupta · AYUSH Vaidya-->
+<!--description: Personal Indian diet plans by Vaidya Pooja Gupta (Diet & Nutrition, Ayurveda): a 15-minute video call and a diet chart planned around your body, routine and taste.-->
+<!--nav: diet-->
+<!--style-->
+  .hero { padding: 40px 0 0; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: center; }
+  .hero h1 { font-size: clamp(42px, 6.2vw, 78px); margin: 14px 0; }
+  .hero .lead { font-size: 20px; color: var(--ink-2); margin: 0 0 22px; max-width: 560px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .by { display: flex; flex-direction: column; gap: 14px; background: linear-gradient(150deg, #fff, #d9f6e5); }
+  .by .top { display: flex; gap: 14px; align-items: center; }
+  .by .av { width: 74px; height: 74px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 26px; box-shadow: 0 0 0 4px #fff, 0 0 0 7px var(--leaf); flex: none; }
+  .by h3 { font-size: 24px; }
+  .by .plate { font-size: 64px; text-align: center; letter-spacing: 6px; animation: bob 5s ease-in-out infinite; }
+  .get { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .get .e { font-size: 38px; }
+  .get h3 { font-size: 21px; margin: 6px 0 4px; }
+  .get p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  .for { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .for .chip { font-size: 16px; padding: 6px 16px; }
+  .req { display: grid; grid-template-columns: .8fr 1.2fr; gap: 22px; align-items: start; }
+  .req aside { background: linear-gradient(150deg, #fff3c4, #ffe1d9); }
+  .req aside h3 { font-size: 26px; margin-bottom: 8px; }
+  .req aside ol { margin: 0; padding-left: 22px; }
+  .req aside li { margin: 6px 0; }
+  form.booking { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .full { grid-column: 1 / -1; }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .field label { font-weight: 700; font-size: 15px; }
+  .field input, .field select { font: inherit; font-size: 17px; color: var(--ink); padding: 11px 14px; border: 1.5px solid #cfe0d6; border-radius: 14px; background: #fff; width: 100%; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--leaf); box-shadow: 0 0 0 4px rgba(47, 143, 91, .15); }
+  .field small { color: var(--ink-2); font-size: 13px; }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: var(--ink-2); }
+  .consent input { margin-top: 5px; accent-color: var(--leaf); width: 18px; height: 18px; flex: none; }
+  .form-msg { border-radius: 14px; padding: 12px 14px; font-weight: 600; display: none; }
+  .form-msg.ok { display: block; background: #e3f4e6; color: #1f5a2e; }
+  .form-msg.err { display: block; background: #fdecea; color: #7a2a20; }
+  .with { display: flex; gap: 10px; align-items: center; background: #d9f6e5; border-radius: 14px; padding: 8px 12px; font-weight: 700; }
+  details { background: #fff; border-radius: 18px; padding: 14px 18px; margin-bottom: 10px; border: 1px solid var(--line); }
+  summary { cursor: pointer; font-weight: 700; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 24px; line-height: 1; color: var(--leaf); }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 10px 0 0; color: var(--ink-2); }
+  .faq { max-width: 820px; margin: 0 auto; }
+  @media (max-width: 960px) { .hero-grid, .req { grid-template-columns: 1fr; } .get { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .get, form.booking { grid-template-columns: 1fr; } }
+<!--body-->
+<main>
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="sticker" data-i18n="sticker">🥗 Diet plan</span>
+    <h1><span data-i18n="h1a">Your diet plan,</span> <span class="grad-text" data-i18n="h1b">made by a Vaidya.</span></h1>
+    <p class="lead" data-i18n="lead">Personal Indian diet plans by Vaidya Pooja Gupta – planned around your body, routine and taste. No crash diets, no one-size-fits-all charts.</p>
+    <div class="actions"><a class="btn primary" href="#request" data-i18n="ctaReq">Request my diet plan ↓</a><a class="btn" href="pooja.html" data-i18n="ctaMeet">Meet Vaidya Pooja Gupta</a></div>
+  </div>
+  <a class="card by" href="pooja.html" style="text-decoration:none">
+    <span class="top"><span class="av">PG</span><span><span class="pill demo" data-i18n="demo">Demo profile</span><h3 data-i18n="pooja">Vaidya Pooja Gupta</h3><span class="note" data-i18n="poojaRole">Diet, Nutrition &amp; Lifestyle Management (Ayurveda)</span></span></span>
+    <span class="plate" aria-hidden="true">🥗🍲🫓</span>
+    <span class="note" data-i18n="byNote">All diet requests on this page go to Vaidya Pooja Gupta.</span>
+  </a>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="getSticker">🎁 What you get</span><h2 data-i18n="getH">A plan you can actually follow</h2></div>
+  <div class="get">
+    <div class="card"><span class="e">📹</span><h3 data-i18n="g1h">15-min diet call</h3><p data-i18n="g1p">Talk about your goal, routine, food habits and health.</p></div>
+    <div class="card"><span class="e">📝</span><h3 data-i18n="g2h">Personal diet chart</h3><p data-i18n="g2p">Indian meals – veg, egg, non-veg or Jain – with sensible portions.</p></div>
+    <div class="card"><span class="e">🔁</span><h3 data-i18n="g3h">Review &amp; changes</h3><p data-i18n="g3p">Tell us what worked and what did not – the plan changes with you.</p></div>
+    <div class="card"><span class="e">🍲</span><h3 data-i18n="g4h">Easy swaps</h3><p data-i18n="g4p">Simple swaps for your favourite foods, so it never feels like a punishment.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="forSticker">🙋 Who is it for?</span><h2 data-i18n="forH">For anyone who wants to eat better</h2></div>
+  <div class="for">
+    <span class="chip">⚖️ <span data-i18n="w1">Weight loss or gain</span></span><span class="chip">🔥 <span data-i18n="w2">Better digestion</span></span>
+    <span class="chip">🩸 <span data-i18n="w3">Sugar &amp; BP-friendly eating</span></span><span class="chip">💼 <span data-i18n="w4">Busy work life</span></span>
+    <span class="chip">🎒 <span data-i18n="w5">Students &amp; hostel food</span></span><span class="chip">👨‍👩‍👧 <span data-i18n="w6">Family meals</span></span><span class="chip">🍂 <span data-i18n="w7">Seasonal eating</span></span>
+  </div>
+</div></section>
+
+<section class="block" id="request"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="reqSticker">📝 Diet request</span><h2 data-i18n="reqH">Request your diet plan</h2><p data-i18n="reqSub">Fill this in and pick a time for a 15-minute call with Vaidya Pooja Gupta. The clinic will confirm by call or WhatsApp.</p></div>
+  <div class="req">
+    <aside class="card">
+      <h3 data-i18n="howH">How it works</h3>
+      <ol><li data-i18n="hw1">Send this request with a time slot.</li><li data-i18n="hw2">The clinic confirms and tells you the fee.</li><li data-i18n="hw3">15-minute video call with Vaidya Pooja Gupta.</li><li data-i18n="hw4">You get your personal diet chart after the call.</li></ol>
+      <p class="disclaimer" data-i18n="medNote">Diabetes, BP, kidney, thyroid, pregnancy or a food allergy? Mention it in the call – your plan will be made with it in mind, alongside your regular treatment.</p>
+    </aside>
+    <form class="card booking" id="dietForm" novalidate>
+      <div class="with full">🥗 <span data-i18n="withPooja">Diet call with Vaidya Pooja Gupta</span></div>
+      <div class="field"><label for="dName" data-i18n="fName">Your name</label><input id="dName" name="name" required minlength="2" maxlength="60" autocomplete="name"></div>
+      <div class="field"><label for="dPhone" data-i18n="fPhone">Mobile number</label><input id="dPhone" name="phone" required inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="98XXXXXXXX"></div>
+      <div class="field"><label for="dGoal" data-i18n="fGoal">Your main goal</label>
+        <select id="dGoal" name="goal">
+          <option value="Weight loss" data-i18n="og1">Weight loss</option><option value="Weight gain" data-i18n="og2">Weight gain</option>
+          <option value="Better digestion" data-i18n="og3">Better digestion</option><option value="Sugar/BP-friendly diet" data-i18n="og4">Sugar or BP-friendly diet</option>
+          <option value="General healthy eating" data-i18n="og5">General healthy eating</option><option value="Family diet" data-i18n="og6">Diet for my family</option>
+        </select></div>
+      <div class="field"><label for="dType" data-i18n="fType">You eat</label>
+        <select id="dType" name="food">
+          <option value="Veg" data-i18n="ot1">Vegetarian</option><option value="Egg + veg" data-i18n="ot2">Eggetarian</option>
+          <option value="Non-veg" data-i18n="ot3">Non-vegetarian</option><option value="Jain" data-i18n="ot4">Jain</option><option value="Vegan" data-i18n="ot5">Vegan</option>
+        </select></div>
+      <div class="field full"><label for="dAvoid" data-i18n="fAvoid">Foods you avoid or are allergic to (optional)</label><input id="dAvoid" name="avoid" maxlength="120" data-i18n-ph="avoidPh" placeholder="e.g. peanuts, milk"><small data-i18n="avoidHint">Share health details with the doctor during the call.</small></div>
+      <div class="field"><label for="dDate" data-i18n="fDate">Date</label><input id="dDate" name="date" type="date" required></div>
+      <div class="field"><label for="dTime" data-i18n="fTime">Time slot</label><select id="dTime" name="time" required></select></div>
+      <div class="field"><label for="dLang" data-i18n="fLang">Language</label><select id="dLang" name="lang"><option value="hi" data-i18n="optHi">Hindi</option><option value="en" data-i18n="optEn">English</option></select></div>
+      <label class="consent full"><input type="checkbox" name="consent" required> <span data-i18n="fConsent">I agree that the clinic may contact me on this number about my diet consultation, and I understand this is not an emergency service.</span></label>
+      <div class="form-msg full" role="status" aria-live="polite"></div>
+      <div id="msgs" hidden><span data-i18n="msgName">Please enter your name.</span><span data-i18n="msgPhone">Please enter a valid 10-digit mobile number.</span><span data-i18n="msgSlot">Please choose a date and time.</span><span data-i18n="msgConsent">Please tick the consent box to continue.</span><span data-i18n="msgOk">Thank you! Your diet request has been received. The clinic will call or WhatsApp you soon to confirm.</span><span data-i18n="msgTaken">This time may already be booked. Please choose another slot.</span><span data-i18n="msgFail">The request could not be sent. Check your internet and try again.</span><span data-i18n="msgSending">Sending…</span></div>
+      <div class="full"><button class="btn primary" type="submit" data-i18n="fSubmit">Request diet plan 🥗</button></div>
+    </form>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap faq">
+  <div class="head"><span class="sticker" data-i18n="faqSticker">❓ FAQ</span></div>
+  <details><summary data-i18n="q1">Is it only for vegetarians?</summary><p data-i18n="a1">No. Plans are made for vegetarian, eggetarian, non-vegetarian, Jain and vegan food.</p></details>
+  <details><summary data-i18n="q2">When will I get my diet chart?</summary><p data-i18n="a2">After your call. The clinic will tell you the exact timeline when it confirms your booking.</p></details>
+  <details><summary data-i18n="q3">Can my whole family use it?</summary><p data-i18n="a3">Ask about the Family Yearly Care plan – it includes diet guidance for the family kitchen.</p></details>
+  <details><summary data-i18n="q4">Do I have to stop my medicines?</summary><p data-i18n="a4">No. Never stop or change a medicine without your doctor. The diet works alongside your treatment.</p></details>
+  <p style="text-align:center;margin-top:20px"><a class="btn" href="index.html#eat" data-i18n="eatLink">See general eating tips →</a> <a class="btn" href="index.html#bmi" data-i18n="bmiLink">Check BMI ⚖️</a></p>
+</div></section>
+</main>
+<!--i18n-->
+<script>
+window.AYUSH_PAGE = {
+  hi: {
+    sticker: '🥗 डाइट प्लान', h1a: 'आपका डाइट प्लान,', h1b: 'वैद्य के हाथों बना।',
+    lead: 'वैद्य पूजा गुप्ता के व्यक्तिगत भारतीय डाइट प्लान – आपके शरीर, दिनचर्या और स्वाद के हिसाब से। न क्रैश डाइट, न सबके लिए एक जैसा चार्ट।',
+    ctaReq: 'मेरा डाइट प्लान माँगें ↓', ctaMeet: 'वैद्य पूजा गुप्ता से मिलें', demo: 'डेमो प्रोफ़ाइल', pooja: 'वैद्य पूजा गुप्ता', poojaRole: 'आहार, पोषण और जीवनशैली प्रबंधन (आयुर्वेद)',
+    byNote: 'इस पेज के सभी डाइट अनुरोध वैद्य पूजा गुप्ता के पास जाते हैं।',
+    getSticker: '🎁 आपको क्या मिलेगा', getH: 'ऐसा प्लान जिसे आप सच में निभा सकें',
+    g1h: '15 मिनट की डाइट कॉल', g1p: 'अपने लक्ष्य, दिनचर्या, खाने की आदतों और सेहत पर बात करें।',
+    g2h: 'व्यक्तिगत डाइट चार्ट', g2p: 'भारतीय भोजन – शाकाहारी, अंडा, मांसाहारी या जैन – सही मात्रा के साथ।',
+    g3h: 'समीक्षा और बदलाव', g3p: 'बताइए क्या काम किया और क्या नहीं – प्लान आपके साथ बदलता है।',
+    g4h: 'आसान बदलाव', g4p: 'आपके पसंदीदा खाने के आसान विकल्प, ताकि यह सज़ा जैसा न लगे।',
+    forSticker: '🙋 किसके लिए?', forH: 'हर उस व्यक्ति के लिए जो बेहतर खाना चाहता है',
+    w1: 'वज़न घटाना या बढ़ाना', w2: 'बेहतर पाचन', w3: 'शुगर और बीपी के अनुकूल भोजन', w4: 'व्यस्त कामकाजी ज़िंदगी', w5: 'छात्र और हॉस्टल का खाना', w6: 'परिवार का भोजन', w7: 'ऋतु के अनुसार भोजन',
+    reqSticker: '📝 डाइट अनुरोध', reqH: 'अपना डाइट प्लान माँगें', reqSub: 'यह भरें और वैद्य पूजा गुप्ता के साथ 15 मिनट की कॉल का समय चुनें। क्लिनिक कॉल या WhatsApp पर पुष्टि करेगा।',
+    howH: 'कैसे होता है', hw1: 'समय के साथ यह अनुरोध भेजें।', hw2: 'क्लिनिक पुष्टि करेगा और शुल्क बताएगा।', hw3: 'वैद्य पूजा गुप्ता के साथ 15 मिनट की वीडियो कॉल।', hw4: 'कॉल के बाद आपको अपना डाइट चार्ट मिलेगा।',
+    medNote: 'डायबिटीज़, बीपी, किडनी, थायरॉइड, गर्भावस्था या खाने से एलर्जी है? कॉल पर ज़रूर बताएँ – आपका प्लान आपके चल रहे इलाज को ध्यान में रखकर बनेगा।',
+    withPooja: 'वैद्य पूजा गुप्ता के साथ डाइट कॉल', fName: 'आपका नाम', fPhone: 'मोबाइल नंबर', fGoal: 'आपका मुख्य लक्ष्य',
+    og1: 'वज़न घटाना', og2: 'वज़न बढ़ाना', og3: 'बेहतर पाचन', og4: 'शुगर या बीपी के अनुकूल डाइट', og5: 'सामान्य सेहतमंद भोजन', og6: 'मेरे परिवार के लिए डाइट',
+    fType: 'आप खाते हैं', ot1: 'शाकाहारी', ot2: 'अंडा + शाकाहारी', ot3: 'मांसाहारी', ot4: 'जैन', ot5: 'वीगन',
+    fAvoid: 'जो खाना नहीं खाते या जिससे एलर्जी है (वैकल्पिक)', avoidPh: 'जैसे: मूंगफली, दूध', avoidHint: 'सेहत की पूरी जानकारी कॉल पर चिकित्सक को बताएँ।',
+    fDate: 'तारीख़', fTime: 'समय', fLang: 'भाषा', optHi: 'हिंदी', optEn: 'अंग्रेज़ी',
+    fConsent: 'मैं सहमत हूँ कि क्लिनिक मेरे डाइट परामर्श के बारे में इस नंबर पर संपर्क कर सकता है, और यह आपातकालीन सेवा नहीं है।', fSubmit: 'डाइट प्लान माँगें 🥗',
+    msgName: 'कृपया अपना नाम लिखें।', msgPhone: 'कृपया 10 अंकों का सही मोबाइल नंबर लिखें।', msgSlot: 'कृपया तारीख़ और समय चुनें।', msgConsent: 'आगे बढ़ने के लिए सहमति पर टिक करें।',
+    msgOk: 'धन्यवाद! आपका डाइट अनुरोध मिल गया। क्लिनिक जल्द ही कॉल या WhatsApp करके पुष्टि करेगा।', msgTaken: 'यह समय शायद पहले से बुक है। कृपया दूसरा समय चुनें।', msgFail: 'अनुरोध नहीं भेजा जा सका। इंटरनेट जाँचकर फिर कोशिश करें।', msgSending: 'भेजा जा रहा है…',
+    faqSticker: '❓ सवाल-जवाब', q1: 'क्या यह सिर्फ़ शाकाहारियों के लिए है?', a1: 'नहीं। शाकाहारी, अंडा, मांसाहारी, जैन और वीगन – सबके लिए प्लान बनते हैं।',
+    q2: 'डाइट चार्ट कब मिलेगा?', a2: 'आपकी कॉल के बाद। बुकिंग पक्की करते समय क्लिनिक सही समय बताएगा।',
+    q3: 'क्या पूरा परिवार इसका इस्तेमाल कर सकता है?', a3: 'परिवार वार्षिक देखभाल योजना के बारे में पूछें – उसमें परिवार की रसोई के लिए आहार मार्गदर्शन शामिल है।',
+    q4: 'क्या मुझे दवाएँ बंद करनी होंगी?', a4: 'नहीं। डॉक्टर से पूछे बिना कभी कोई दवा बंद या न बदलें। डाइट आपके इलाज के साथ चलती है।',
+    eatLink: 'खाने की आम सलाह देखें →', bmiLink: 'BMI जाँचें ⚖️'
+  },
+  hinglish: {
+    sticker: '🥗 Diet plan', h1a: 'Aapka diet plan,', h1b: 'Vaidya ke haathon bana.',
+    lead: 'Vaidya Pooja Gupta ke personal Indian diet plans – aapke body, dincharya aur swaad ke hisaab se. Na crash diet, na sabke liye ek jaisa chart.',
+    ctaReq: 'Mera diet plan maango ↓', ctaMeet: 'Vaidya Pooja Gupta se miliye', demo: 'Demo profile', pooja: 'Vaidya Pooja Gupta', poojaRole: 'Diet, Nutrition aur Lifestyle Management (Ayurveda)',
+    byNote: 'Is page ki saari diet requests Vaidya Pooja Gupta ke paas jaati hain.',
+    getSticker: '🎁 Aapko kya milega', getH: 'Aisa plan jo aap sach mein follow kar sakein',
+    g1h: '15 min ki diet call', g1p: 'Apne goal, dincharya, khaane ki aadaton aur sehat par baat kariye.',
+    g2h: 'Personal diet chart', g2p: 'Indian khaana – veg, egg, non-veg ya Jain – sahi quantity ke saath.',
+    g3h: 'Review aur badlaav', g3p: 'Bataiye kya kaam kiya aur kya nahi – plan aapke saath badalta hai.',
+    g4h: 'Easy swaps', g4p: 'Aapke favourite khaane ke aasaan options, taaki yeh saza jaisa na lage.',
+    forSticker: '🙋 Kiske liye?', forH: 'Har us insaan ke liye jo behtar khaana chahta hai',
+    w1: 'Weight kam ya zyaada karna', w2: 'Behtar digestion', w3: 'Sugar aur BP-friendly khaana', w4: 'Busy work life', w5: 'Students aur hostel ka khaana', w6: 'Family ka khaana', w7: 'Mausam ke hisaab se khaana',
+    reqSticker: '📝 Diet request', reqH: 'Apna diet plan maangiye', reqSub: 'Yeh bhariye aur Vaidya Pooja Gupta ke saath 15 minute ki call ka time chuniye. Clinic call ya WhatsApp par confirm karega.',
+    howH: 'Kaise hota hai', hw1: 'Time slot ke saath yeh request bhejiye.', hw2: 'Clinic confirm karega aur fees batayega.', hw3: 'Vaidya Pooja Gupta ke saath 15 minute ki video call.', hw4: 'Call ke baad aapko apna diet chart milega.',
+    medNote: 'Diabetes, BP, kidney, thyroid, pregnancy ya food allergy hai? Call par zaroor bataiye – aapka plan aapke chal rahe ilaaj ko dhyaan mein rakh kar banega.',
+    withPooja: 'Vaidya Pooja Gupta ke saath diet call', fName: 'Aapka naam', fPhone: 'Mobile number', fGoal: 'Aapka main goal',
+    og1: 'Weight kam karna', og2: 'Weight badhana', og3: 'Behtar digestion', og4: 'Sugar ya BP-friendly diet', og5: 'General healthy khaana', og6: 'Meri family ke liye diet',
+    fType: 'Aap khaate hain', ot1: 'Vegetarian', ot2: 'Egg + veg', ot3: 'Non-veg', ot4: 'Jain', ot5: 'Vegan',
+    fAvoid: 'Jo khaana nahi khaate ya jisse allergy hai (optional)', avoidPh: 'jaise: moongphali, doodh', avoidHint: 'Sehat ki poori jaankari call par doctor ko bataiye.',
+    fDate: 'Date', fTime: 'Time slot', fLang: 'Bhasha', optHi: 'Hindi', optEn: 'English',
+    fConsent: 'Main sehmat hoon ki clinic mere diet consultation ke baare mein is number par sampark kar sakta hai, aur yeh emergency service nahi hai.', fSubmit: 'Diet plan maangiye 🥗',
+    msgName: 'Please apna naam likhiye.', msgPhone: 'Please 10 digit ka sahi mobile number likhiye.', msgSlot: 'Please date aur time chuniye.', msgConsent: 'Aage badhne ke liye consent box par tick kariye.',
+    msgOk: 'Dhanyavaad! Aapki diet request mil gayi. Clinic jaldi hi call ya WhatsApp karke confirm karega.', msgTaken: 'Yeh time shayad pehle se book hai. Please doosra time chuniye.', msgFail: 'Request nahi bheji ja saki. Internet check karke dobara try kariye.', msgSending: 'Bheja ja raha hai…',
+    faqSticker: '❓ FAQ', q1: 'Kya yeh sirf vegetarians ke liye hai?', a1: 'Nahi. Veg, egg, non-veg, Jain aur vegan – sabke liye plan bante hain.',
+    q2: 'Diet chart kab milega?', a2: 'Aapki call ke baad. Booking confirm karte time clinic sahi time batayega.',
+    q3: 'Kya poori family ise use kar sakti hai?', a3: 'Family Yearly Care plan ke baare mein poochhiye – usmein family kitchen ke liye diet guidance hai.',
+    q4: 'Kya mujhe dawaiyan band karni hongi?', a4: 'Nahi. Doctor se poochhe bina kabhi koi dawai band ya change mat kariye. Diet aapke ilaaj ke saath chalti hai.',
+    eatLink: 'Khaane ki general tips dekhiye →', bmiLink: 'BMI check kariye ⚖️'
+  }
+};
+</script>
+<!--scripts-->
+<script type="module">
+  import { setupBooking } from './booking.js';
+  // Diet requests always go to Vaidya Pooja Gupta; the clinic sees the details in the booking note.
+  setupBooking(document.getElementById('dietForm'), {
+    doctor: 'pooja',
+    reason: (form) => {
+      const f = form.elements;
+      const avoid = f.avoid.value.trim();
+      return `Diet plan | Goal: ${f.goal.value} | Food: ${f.food.value}` + (avoid ? ` | Avoid: ${avoid}` : '');
+    },
+  });
+</script>

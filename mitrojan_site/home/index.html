@@ -3,110 +3,914 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mitrojan – Games, Wellness &amp; More</title>
-<meta name="description" content="Mitrojan: one friendly home for games, AYUSH wellness consultation and more. Play Master G games free – Ludo, Chess, Brain Age and 20 games.">
-<meta name="theme-color" content="#140E38">
-<meta property="og:title" content="Mitrojan – Games, Wellness &amp; More">
-<meta property="og:description" content="Play Master G games free, and soon consult AYUSH experts online.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>">
+<title>Mitrojan – Do work for Sita Ram</title>
+<meta name="description" content="Mitrojan: Shri Ramcharitmanas and the Bhagavad Gita – write what is on your mind and receive a chaupai or shloka. Also Master G games, AYUSH care and Bittu Mobile.">
+<meta name="theme-color" content="#9fd4f7">
+<meta property="og:title" content="Mitrojan – Do work for Sita Ram">
+<meta property="og:description" content="सीता राम जी के कार्य में सहयोग करें, उनके दिखाए पथ पर चलें। Ramcharitmanas, Gita, games, AYUSH and more.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ffd23f'/><stop offset='1' stop-color='%23ff7a3d'/></linearGradient></defs><rect width='48' height='48' rx='14' fill='url(%23g)'/><circle cx='24' cy='19' r='7' fill='%23fff7d6'/><circle cx='15' cy='30' r='4' fill='%231b1b3a'/><circle cx='33' cy='30' r='4' fill='%231b1b3a'/><path d='M8 42 Q15 33 24 38 Q33 33 40 42' fill='none' stroke='%231b1b3a' stroke-width='3.5' stroke-linecap='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg0: #0d0926; --bg1: #1d1450; --gold: #ffd369; --violet: #b794ff; --mint: #5eead4;
-    --text: #f6f3ff; --dim: #c9c2e8; --card: rgba(255,255,255,.06); --border: rgba(255,255,255,.14);
+    --ink: #1b1b3a; --ink-2: #47476b; --paper: #fffdf7;
+    --sun: #ffd23f; --orange: #ff7a3d; --pink: #ff5d8f; --saffron: #ff9933;
+    --c-manas: #ffe1c2; --c-gita: #d9ebff; --c-games: #ffe066; --c-ayush: #c3f5dd; --c-shop: #e5dbff; --c-more: #ffffff;
+    --radius: 26px; --shadow: 6px 6px 0 var(--ink);
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   html, body { margin: 0; }
   body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
-    color: var(--text); min-height: 100vh; line-height: 1.5;
-    background: radial-gradient(900px 500px at 10% -10%, #3b2a8f 0%, transparent 60%),
-                radial-gradient(800px 500px at 110% 20%, #0f5d57 0%, transparent 55%),
-                linear-gradient(180deg, var(--bg1), var(--bg0) 70%);
+    font-family: "Baloo 2", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif;
+    color: var(--ink); min-height: 100vh; line-height: 1.45; overflow-x: hidden;
+    background: linear-gradient(180deg, #8ccbf5 0%, #b9e0fa 34%, #fde9cc 66%, #fbd7a4 100%);
   }
   a { color: inherit; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
-  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; gap: 12px; }
-  .logo { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 22px; letter-spacing: .3px; }
-  .logo .mark { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px;
-    background: linear-gradient(135deg, var(--gold), #ff9f1c); box-shadow: 0 6px 20px rgba(255,211,105,.35); }
-  nav a { text-decoration: none; color: var(--dim); margin-left: 16px; font-weight: 600; font-size: 15px; }
-  nav a:hover { color: var(--text); }
-  .hero { text-align: center; padding: 56px 0 40px; }
-  .hero h1 { font-size: clamp(32px, 6vw, 56px); line-height: 1.1; margin: 0 0 14px; font-weight: 900; }
-  .hero h1 span { background: linear-gradient(90deg, var(--gold), var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero p { color: var(--dim); font-size: 18px; max-width: 640px; margin: 0 auto; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; padding: 24px 0 56px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 10px;
-    backdrop-filter: blur(8px); transition: transform .2s, border-color .2s; }
-  .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.3); }
-  .card .e { font-size: 44px; }
-  .card h2 { margin: 0; font-size: 24px; }
-  .card p { margin: 0; color: var(--dim); flex: 1; }
-  .tag { align-self: flex-start; font-size: 12px; font-weight: 800; letter-spacing: .6px; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; }
-  .live { background: rgba(94,234,212,.15); color: var(--mint); }
-  .soon { background: rgba(183,148,255,.15); color: var(--violet); }
-  .btn { display: inline-block; text-decoration: none; font-weight: 800; padding: 12px 20px; border-radius: 14px; text-align: center; margin-top: 8px; }
-  .btn.primary { background: linear-gradient(135deg, var(--gold), #ff9f1c); color: #2a1600; }
-  .btn.ghost { border: 1px solid var(--border); color: var(--text); }
-  .about { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 28px; margin-bottom: 48px; }
-  .about h2 { margin-top: 0; }
-  .about p { color: var(--dim); margin-bottom: 0; }
-  footer { border-top: 1px solid var(--border); padding: 24px 0 36px; color: var(--dim); font-size: 14px; text-align: center; }
-  footer a { margin: 0 10px; }
-  @media (max-width: 560px) { nav a.hide-sm { display: none; } .hero { padding-top: 32px; } }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; position: relative; }
+
+  /* ---------- Morning landscape (fixed background) ---------- */
+  .sky { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .sun { position: absolute; top: 10vh; right: 10vw; width: 110px; height: 110px; border-radius: 50%;
+    background: radial-gradient(circle at 45% 42%, #fffef2 0 35%, #fff1a8 55%, #ffd65c 78%, #ffc23d 100%);
+    box-shadow: 0 0 40px 18px rgba(255, 236, 160, .75), 0 0 140px 70px rgba(255, 214, 120, .45);
+    animation: rise 2.6s cubic-bezier(.2,.8,.2,1) both; }
+  .sun::before { content: ""; position: absolute; inset: -160px; border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, rgba(255,240,190,.22) 0 3deg, transparent 3deg 14deg);
+    -webkit-mask: radial-gradient(circle, #000 20%, transparent 70%); mask: radial-gradient(circle, #000 20%, transparent 70%);
+    animation: spin 120s linear infinite; }
+  @keyframes rise { from { transform: translateY(40vh); opacity: .6; } to { transform: none; opacity: 1; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .cloud { position: absolute; left: 0; width: 220px; height: 60px; transform: translateX(var(--x)); animation: drift var(--d) linear infinite; animation-delay: var(--delay);
+    background: radial-gradient(ellipse at 50% 70%, #fff 0 45%, rgba(255,255,255,0) 70%); filter: blur(1.5px); }
+  .cloud::before, .cloud::after { content: ""; position: absolute; border-radius: 50%; background: radial-gradient(circle at 50% 60%, #fff 0 50%, rgba(255,255,255,0) 72%); }
+  .cloud::before { width: 110px; height: 90px; left: 40px; top: -42px; }
+  .cloud::after { width: 90px; height: 72px; left: 110px; top: -26px; }
+  .c1 { top: 9vh; --x: 6vw; --d: 110s; --delay: -40s; opacity: .95; }
+  .c2 { top: 24vh; --x: 48vw; --d: 150s; --delay: -90s; scale: .75; opacity: .85; }
+  .c3 { top: 4vh; --x: 66vw; --d: 170s; --delay: -20s; scale: .6; opacity: .8; }
+  .c4 { top: 32vh; --x: 20vw; --d: 130s; --delay: -60s; scale: .5; opacity: .7; }
+  @keyframes drift { from { transform: translateX(-260px); } to { transform: translateX(110vw); } }
+
+  .bird { position: absolute; left: 0; width: 30px; height: 14px; transform: translateX(var(--x)); animation: fly var(--d) linear infinite; animation-delay: var(--delay); }
+  .bird path { fill: #2d2d40; transform-box: fill-box; transform-origin: center; animation: flap .45s ease-in-out infinite alternate; }
+  .b1 { top: 15vh; --x: 30vw; --d: 34s; --delay: -6s; }
+  .b2 { top: 18vh; --x: 34vw; --d: 34s; --delay: -5.3s; scale: .75; }
+  .b3 { top: 12vh; --x: 37vw; --d: 34s; --delay: -4.7s; scale: .6; }
+  .b4 { top: 30vh; --x: 66vw; --d: 46s; --delay: -22s; scale: .85; }
+  .b5 { top: 27vh; --x: 70vw; --d: 46s; --delay: -21.2s; scale: .6; }
+  .b2 path { animation-delay: -.2s; } .b3 path { animation-delay: -.35s; } .b4 path { animation-delay: -.1s; } .b5 path { animation-delay: -.28s; }
+  @keyframes fly { 0% { transform: translate(-60px, 0); } 50% { transform: translate(55vw, -20px); } 100% { transform: translate(110vw, 8px); } }
+  @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(-.4); } }
+
+  .land { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 46vh; min-height: 260px; }
+  .sway { transform-box: fill-box; transform-origin: 50% 100%; animation: sway var(--d, 5s) ease-in-out infinite alternate; }
+  @keyframes sway { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+  .leaf { position: absolute; top: -20px; width: 14px; height: 8px; border-radius: 0 100% 0 100%; background: #5aa84b; opacity: .85;
+    left: var(--x); animation: fall var(--d) linear infinite; animation-delay: var(--delay); }
+  @keyframes fall { 0% { transform: translate(0, -5vh) rotate(0); } 50% { transform: translate(40px, 50vh) rotate(200deg); } 100% { transform: translate(-20px, 105vh) rotate(420deg); } }
+
+  /* ---------- Header ---------- */
+  header { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 12px; flex-wrap: wrap; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 26px; letter-spacing: -.3px; text-decoration: none; }
+  .logo svg { width: 46px; height: 46px; filter: drop-shadow(3px 3px 0 var(--ink)); transition: transform .3s; }
+  .logo:hover svg { transform: rotate(-8deg) scale(1.05); }
+  .logo b { color: var(--orange); }
+  .nav-right { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  nav a { text-decoration: none; font-weight: 700; font-size: 16px; padding: 4px 6px; border-radius: 8px; }
+  nav a:hover { background: rgba(255,255,255,.6); }
+  nav a.granth { font-family: "Yatra One", "Baloo 2", serif; font-weight: 400; font-size: 19px; letter-spacing: .3px; color: #7a1e00;
+    background: linear-gradient(135deg, #fff3c4, #ffd08a); border: 2.5px solid var(--ink); border-radius: 14px; padding: 4px 14px; box-shadow: 3px 3px 0 var(--ink); }
+  nav a.granth:hover { background: linear-gradient(135deg, #ffe08a, #ffb35c); }
+  nav a.granth b { font-weight: 400; color: #c2410c; }
+  nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .lang { display: inline-flex; background: var(--paper); border: 2.5px solid var(--ink); border-radius: 999px; padding: 3px; box-shadow: 3px 3px 0 var(--ink); }
+  .lang button { font: inherit; font-weight: 700; font-size: 14px; border: 0; background: none; color: var(--ink); padding: 3px 12px; border-radius: 999px; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--sun); }
+  :focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; padding: 34px 0 30px; }
+  .kicker { display: inline-block; font-weight: 800; background: var(--saffron); color: #fff; border: 2.5px solid var(--ink); border-radius: 999px; padding: 3px 16px; box-shadow: 3px 3px 0 var(--ink); transform: rotate(-2deg); letter-spacing: .3px; }
+  .hero h1 { font-size: clamp(40px, 7.5vw, 82px); line-height: 1.02; margin: 20px auto 8px; font-weight: 800; letter-spacing: -1.5px; max-width: 940px; }
+  .hero h1 .hl { background: linear-gradient(90deg, #ff7a00, #e8366b 55%, #7b3fe4); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(2px 2px 0 rgba(27,27,58,.15)); }
+  .hero .hi-line { font-size: clamp(21px, 3.2vw, 32px); font-weight: 700; margin: 0 auto 10px; max-width: 820px; line-height: 1.3; color: #8a2c0d; }
+  .hero p { font-size: clamp(16px, 2vw, 19px); color: var(--ink-2); max-width: 680px; margin: 0 auto; font-weight: 500; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font: inherit; font-weight: 800; font-size: 17px; cursor: pointer;
+    padding: 10px 20px; border-radius: 16px; border: 2.5px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); background: var(--paper); color: var(--ink);
+    transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+  .btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn.primary { background: var(--ink); color: var(--sun); }
+  .btn.hot { background: linear-gradient(135deg, var(--sun), var(--orange)); }
+
+  /* ---------- Cards ---------- */
+  .card { position: relative; background: var(--bg, var(--paper)); border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: transform .2s, box-shadow .2s; }
+  @media (hover: hover) { .card:hover { transform: translate(-3px, -3px); box-shadow: 10px 10px 0 var(--ink); } }
+  .card h3 { margin: 4px 0 0; font-size: 28px; line-height: 1.1; letter-spacing: -.4px; }
+  .card p { margin: 0; color: var(--ink-2); font-size: 17px; font-weight: 500; }
+  .card .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .icon { width: 64px; height: 64px; border-radius: 18px; background: #fff; border: 2.5px solid var(--ink); display: grid; place-items: center; font-size: 34px; flex: none; }
+  .icon svg { width: 46px; height: 46px; }
+  .badge { font-size: 13px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 3px 12px; border-radius: 999px; border: 2px solid var(--ink); white-space: nowrap; }
+  .badge.live { background: #b6f7c1; display: inline-flex; align-items: center; gap: 6px; }
+  .badge.live::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #10a33a; animation: blink 1.4s ease-in-out infinite; }
+  .badge.soon { background: #fff; border-style: dashed; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .soon-card { background-image: repeating-linear-gradient(-45deg, rgba(255,255,255,.35) 0 14px, transparent 14px 28px); }
+
+  /* Scripture cards with scenes */
+  .scripture { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .scene-card { padding: 0; overflow: hidden; }
+  .scene-card .scene { display: block; width: 100%; height: auto; border-bottom: 3px solid var(--ink); background: #ffe7c2; }
+  .scene-card .body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .scene-card h3 { font-family: "Yatra One", "Baloo 2", serif; font-weight: 400; font-size: 36px; color: #7a1e00; letter-spacing: .2px; }
+  .scene-card .sub { font-weight: 700; color: #8a2c0d; font-size: 16px; margin-top: -4px; }
+  .ask { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .ask input { flex: 1 1 220px; min-width: 0; font: inherit; font-size: 17px; font-weight: 500; color: var(--ink); background: #fff; border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 14px; box-shadow: inset 2px 2px 0 rgba(27,27,58,.08); }
+  .ask input::placeholder { color: #8b8ba6; }
+  .open-link { font-weight: 700; font-size: 15px; text-underline-offset: 3px; align-self: flex-start; }
+
+  /* Scene animation */
+  .halo { transform-box: fill-box; transform-origin: center; animation: glow 4s ease-in-out infinite; }
+  .rays { transform-box: fill-box; transform-origin: center; animation: spin 40s linear infinite; }
+  @keyframes glow { 0%,100% { opacity: .75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+  .breathe { transform-box: fill-box; transform-origin: 50% 100%; animation: breathe 4.5s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.015); } }
+  .bless { transform-box: fill-box; transform-origin: 0% 100%; animation: bless 3.5s ease-in-out infinite; }
+  @keyframes bless { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-6deg); } }
+  .tail { transform-box: fill-box; transform-origin: 0% 100%; animation: tail 2.6s ease-in-out infinite alternate; }
+  @keyframes tail { from { transform: rotate(-6deg); } to { transform: rotate(8deg); } }
+  .petal { animation: petal var(--d) linear infinite; animation-delay: var(--delay); }
+  @keyframes petal { from { transform: translate(0, -30px) rotate(0); } to { transform: translate(-30px, 330px) rotate(360deg); } }
+  .flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flame .9s ease-in-out infinite alternate; }
+  @keyframes flame { from { transform: scale(1, 1); } to { transform: scale(.85, 1.18); } }
+  .flag { transform-box: fill-box; transform-origin: 0% 50%; animation: flag 1.6s ease-in-out infinite alternate; }
+  @keyframes flag { from { transform: skewY(-6deg) scaleX(1); } to { transform: skewY(5deg) scaleX(.92); } }
+  .nod { transform-box: fill-box; transform-origin: 80% 90%; animation: nod 2.2s ease-in-out infinite; }
+  .nod2 { animation-delay: -.8s; }
+  @keyframes nod { 0%,100% { transform: rotate(0); } 50% { transform: rotate(5deg); } }
+  .feather { transform-box: fill-box; transform-origin: 50% 100%; animation: feather 3s ease-in-out infinite alternate; }
+  @keyframes feather { from { transform: rotate(-8deg); } to { transform: rotate(6deg); } }
+  .dust { animation: dust var(--d) linear infinite; animation-delay: var(--delay); }
+  @keyframes dust { from { transform: translate(0, 0); opacity: 0; } 20% { opacity: .8; } to { transform: translate(-160px, -40px); opacity: 0; } }
+  .wisdom { animation: wisdom 3s ease-in-out infinite; }
+  .trot { animation: trot 1.4s ease-in-out infinite; }
+  @keyframes trot { 50% { transform: translateY(-2px); } }
+  @keyframes wisdom { 0%,100% { opacity: .25; } 50% { opacity: .8; } }
+
+  /* ---------- Other services ---------- */
+  .sec-head { text-align: center; margin: 50px 0 22px; }
+  .sec-head h2 { font-size: clamp(30px, 4.5vw, 44px); margin: 0; letter-spacing: -.8px; line-height: 1.1; }
+  .sec-head p { margin: 6px 0 0; color: var(--ink-2); font-size: 18px; font-weight: 500; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding-bottom: 30px; }
+  .grid .card p { flex: 1; }
+  .span3 { grid-column: span 3; }
+  .span2 { grid-column: span 2; }
+  .yt { --bg: #ffe3e3; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 16px 22px; }
+  .yt .txt { flex: 1 1 340px; display: flex; flex-direction: column; gap: 6px; }
+  .yt-icon { width: 84px; height: 84px; border-radius: 22px; background: #fff; border: 2.5px solid var(--ink); display: grid; place-items: center; flex: none; animation: pop 2.4s ease-in-out infinite; }
+  .yt-icon svg { width: 60px; height: 60px; }
+  @keyframes pop { 0%,100% { transform: rotate(-4deg) scale(1); } 50% { transform: rotate(3deg) scale(1.06); } }
+  .yt-handle { font-size: 17px; font-weight: 700; color: #c4002b; margin-left: 4px; }
+  .yt-asks { display: flex; gap: 8px; flex-wrap: wrap; }
+  .yt-asks span { background: #fff; border: 2px solid var(--ink); border-radius: 12px; padding: 1px 10px; font-size: 15px; }
+  .yt-btn { background: #ff0033; color: #fff; }
+  .full-row { flex: 1 1 100%; }
+  .videos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .vid { position: relative; padding: 0; border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; background: #000; cursor: pointer; aspect-ratio: 16 / 10; box-shadow: 4px 4px 0 var(--ink); transition: transform .15s; }
+  .vid:hover { transform: translate(-2px, -2px); }
+  .vid img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .9; }
+  .vid .play { position: absolute; left: 50%; top: 42%; translate: -50% -50%; width: 58px; height: 40px; border-radius: 12px; background: #ff0033; color: #fff; display: grid; place-items: center; font-size: 20px; border: 2px solid #fff; }
+  .vid .vt { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px; background: linear-gradient(transparent, rgba(0,0,0,.85)); color: #fff; font-weight: 700; font-size: 14px; line-height: 1.25; text-align: left; }
+  .vid .vt em { font-style: normal; background: #ff0033; border-radius: 6px; padding: 0 6px; margin-left: 4px; font-size: 12px; }
+  .vid iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .vid.playing { cursor: default; }
+  .vid-links { display: flex; gap: 8px 18px; flex-wrap: wrap; font-weight: 700; font-size: 15px; }
+  .vid-links a { color: #c4002b; }
+  .more { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 16px 20px; }
+  .more .txt { flex: 1 1 320px; display: flex; flex-direction: column; gap: 6px; }
+
+  .about { background: rgba(255,253,247,.94); border: 3px solid var(--ink); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin: 20px 0 0; }
+  .about h2 { margin: 0 0 8px; font-size: 30px; }
+  .about p { margin: 0; color: var(--ink-2); font-size: 18px; font-weight: 500; }
+  .meadow { height: 40vh; min-height: 220px; }
+  footer { background: var(--ink); color: #f3f0ff; padding: 22px 16px 30px; text-align: center; font-size: 15px; }
+  footer a { margin: 0 10px; color: var(--sun); }
+  footer div { margin-top: 8px; opacity: .85; }
+
+  @media (max-width: 900px) {
+    .scripture { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .span3 { grid-column: span 2; }
+    .videos { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .grid { grid-template-columns: 1fr; gap: 18px; }
+    .span3, .span2 { grid-column: auto; }
+    .videos { grid-template-columns: 1fr; }
+    nav a.hide-sm { display: none; }
+    header, .nav-right { justify-content: center; }
+    .hero { padding-top: 22px; }
+    .sun { width: 76px; height: 76px; top: 5vh; right: 5vw; }
+    .card { padding: 20px; }
+    .scene-card { padding: 0; }
+    .scene-card h3 { font-size: 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+    .leaf, .dust, .petal { display: none; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Background: sunrise, clouds, birds, hills and forest -->
+<div class="sky" aria-hidden="true">
+  <div class="sun"></div>
+  <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="cloud c4"></div>
+  <svg class="bird b1" viewBox="0 0 30 14"><path d="M0 6 Q7 0 15 8 Q23 0 30 6 Q22 4 15 11 Q8 4 0 6Z"/></svg>
+  <svg class="bird b2" viewBox="0 0 30 14"><path d="M0 6 Q7 0 15 8 Q23 0 30 6 Q22 4 15 11 Q8 4 0 6Z"/></svg>
+  <svg class="bird b3" viewBox="0 0 30 14"><path d="M0 6 Q7 0 15 8 Q23 0 30 6 Q22 4 15 11 Q8 4 0 6Z"/></svg>
+  <svg class="bird b4" viewBox="0 0 30 14"><path d="M0 6 Q7 0 15 8 Q23 0 30 6 Q22 4 15 11 Q8 4 0 6Z"/></svg>
+  <svg class="bird b5" viewBox="0 0 30 14"><path d="M0 6 Q7 0 15 8 Q23 0 30 6 Q22 4 15 11 Q8 4 0 6Z"/></svg>
+  <span class="leaf" style="--x:12vw; --d:16s; --delay:-3s"></span>
+  <span class="leaf" style="--x:58vw; --d:20s; --delay:-11s; background:#8cc43f"></span>
+  <span class="leaf" style="--x:84vw; --d:18s; --delay:-7s; background:#e0a33a"></span>
+
+  <svg class="land" viewBox="0 0 1440 420" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="mtn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fa9cc"/><stop offset="1" stop-color="#c9d7e6"/></linearGradient>
+      <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdf1dc" stop-opacity="0"/><stop offset="1" stop-color="#fdf1dc" stop-opacity=".65"/></linearGradient>
+      <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6d495"/><stop offset="1" stop-color="#8fc47e"/></linearGradient>
+      <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#78bb63"/><stop offset="1" stop-color="#5ea44d"/></linearGradient>
+      <linearGradient id="hill3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#559c45"/><stop offset="1" stop-color="#3f8236"/></linearGradient>
+      <symbol id="t-round" viewBox="0 0 100 150">
+        <path d="M45 150 L47 92 Q40 80 30 76 L34 72 Q44 78 48 86 L50 60 L54 60 L55 88 Q62 76 72 72 L74 76 Q62 84 57 94 L59 150Z" fill="#6b4226"/>
+        <circle cx="50" cy="48" r="34" fill="#3f8f3f"/><circle cx="26" cy="64" r="22" fill="#3a8538"/><circle cx="76" cy="62" r="23" fill="#3a8538"/>
+        <circle cx="40" cy="36" r="18" fill="#5cae4f"/><circle cx="64" cy="30" r="14" fill="#6dbd5a"/><circle cx="30" cy="58" r="10" fill="#4f9f45"/>
+      </symbol>
+      <symbol id="t-pine" viewBox="0 0 80 160">
+        <rect x="35" y="118" width="10" height="42" fill="#5b3a22"/>
+        <path d="M40 0 L66 52 H52 L74 92 H56 L80 128 H0 L24 92 H6 L28 52 H14Z" fill="#2f7a42"/>
+        <path d="M40 0 L52 52 H40 L56 92 H40 L60 128 H40Z" fill="#3e9154"/>
+      </symbol>
+      <symbol id="t-neem" viewBox="0 0 140 150">
+        <path d="M64 150 L66 96 Q50 84 34 82 L36 77 Q54 80 67 90 L68 70 L74 70 L74 90 Q88 78 106 76 L107 81 Q90 86 76 98 L78 150Z" fill="#70472a"/>
+        <ellipse cx="70" cy="56" rx="62" ry="36" fill="#3b8a3a"/><ellipse cx="38" cy="66" rx="30" ry="20" fill="#357d34"/><ellipse cx="104" cy="64" rx="32" ry="20" fill="#357d34"/>
+        <ellipse cx="60" cy="40" rx="30" ry="18" fill="#58aa4c"/><ellipse cx="92" cy="40" rx="20" ry="13" fill="#68b958"/>
+      </symbol>
+      <symbol id="t-mango" viewBox="0 0 110 150">
+        <rect x="50" y="80" width="11" height="70" rx="4" fill="#6b4226"/>
+        <path d="M55 6 C95 6 108 40 100 70 C94 92 70 96 55 94 C38 96 14 92 8 70 C0 40 14 6 55 6Z" fill="#2f7d37"/>
+        <path d="M50 14 C72 12 88 30 84 52 C70 44 54 44 34 54 C26 34 34 16 50 14Z" fill="#4fa04a"/>
+        <circle cx="36" cy="66" r="4" fill="#f2b632"/><circle cx="74" cy="60" r="4" fill="#f2b632"/><circle cx="60" cy="78" r="4" fill="#e89a25"/>
+      </symbol>
+    </defs>
+
+    <path d="M0 236 L110 160 L190 205 L320 120 L450 214 L560 150 L690 200 L820 112 L960 204 L1080 146 L1210 206 L1330 140 L1440 190 V420 H0Z" fill="url(#mtn)"/>
+    <path d="M320 120 L346 142 L332 140 L320 150 L306 138 L296 140Z M820 112 L846 136 L830 133 L818 144 L806 132 L796 134Z" fill="#f4f7fb" opacity=".9"/>
+    <rect y="120" width="1440" height="200" fill="url(#haze)"/>
+
+    <path d="M0 270 Q240 214 480 254 T960 244 T1440 232 V420 H0Z" fill="url(#hill1)"/>
+    <g opacity=".7">
+      <use href="#t-pine" x="40" y="214" width="26" height="52"/><use href="#t-round" x="90" y="222" width="34" height="50"/><use href="#t-pine" x="150" y="210" width="24" height="48"/>
+      <use href="#t-round" x="300" y="220" width="30" height="44"/><use href="#t-pine" x="360" y="214" width="24" height="48"/><use href="#t-round" x="420" y="222" width="32" height="46"/>
+      <use href="#t-pine" x="540" y="222" width="22" height="44"/><use href="#t-round" x="600" y="228" width="30" height="44"/><use href="#t-pine" x="700" y="226" width="24" height="46"/>
+      <use href="#t-round" x="790" y="222" width="32" height="46"/><use href="#t-pine" x="880" y="218" width="24" height="48"/><use href="#t-round" x="980" y="214" width="32" height="46"/>
+      <use href="#t-pine" x="1060" y="210" width="24" height="48"/><use href="#t-round" x="1150" y="206" width="34" height="48"/><use href="#t-pine" x="1250" y="204" width="24" height="48"/><use href="#t-round" x="1350" y="200" width="34" height="50"/>
+    </g>
+    <rect y="200" width="1440" height="120" fill="url(#haze)" opacity=".6"/>
+
+    <path d="M0 318 Q300 262 640 304 T1200 292 T1440 298 V420 H0Z" fill="url(#hill2)"/>
+    <use class="sway" style="--d:6s" href="#t-neem" x="20" y="226" width="112" height="120"/>
+    <use class="sway" style="--d:5.4s" href="#t-pine" x="170" y="232" width="48" height="96"/>
+    <use class="sway" style="--d:6.6s" href="#t-mango" x="260" y="236" width="80" height="108"/>
+    <use class="sway" style="--d:5.8s" href="#t-round" x="420" y="244" width="66" height="98"/>
+    <use class="sway" style="--d:6.2s" href="#t-pine" x="520" y="250" width="44" height="88"/>
+    <use class="sway" style="--d:5.2s" href="#t-round" x="1040" y="236" width="70" height="104"/>
+    <use class="sway" style="--d:6.8s" href="#t-mango" x="1140" y="226" width="84" height="112"/>
+    <use class="sway" style="--d:5.6s" href="#t-pine" x="1250" y="228" width="48" height="96"/>
+    <use class="sway" style="--d:6.4s" href="#t-neem" x="1300" y="220" width="120" height="124"/>
+
+    <text x="790" y="346" text-anchor="middle" font-family="Baloo 2, Noto Sans Devanagari, sans-serif" font-weight="800" font-size="72" fill="#ffffff" opacity=".5">पेड़ लगाओ</text>
+    <path d="M0 372 Q360 336 720 360 T1440 352 V420 H0Z" fill="url(#hill3)"/>
+    <!-- "Plant trees" signboard -->
+    <g transform="translate(470 290)">
+      <rect x="8" y="40" width="9" height="74" fill="#6b4226"/><rect x="103" y="40" width="9" height="74" fill="#6b4226"/>
+      <rect x="0" y="0" width="120" height="58" rx="8" fill="#c98b4a" stroke="#6b4226" stroke-width="4"/>
+      <path d="M6 18 H114 M6 38 H114" stroke="#b07636" stroke-width="2"/>
+      <text x="60" y="29" text-anchor="middle" font-family="Baloo 2, Noto Sans Devanagari, sans-serif" font-weight="800" font-size="22" fill="#3a2410">पेड़ लगाओ</text>
+      <text x="60" y="49" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="700" font-size="13" fill="#3a2410">Plant a tree 🌱</text>
+    </g>
+    <g transform="translate(612 352)"><path d="M0 18 Q4 4 10 0 Q8 10 4 18Z M8 18 Q14 6 22 4 Q16 12 12 18Z" fill="#3f8236"/><rect x="2" y="16" width="16" height="10" rx="2" fill="#a0522d"/></g>
+    <use class="sway" style="--d:4.8s" href="#t-round" x="-30" y="236" width="150" height="190"/>
+    <use class="sway" style="--d:5.3s" href="#t-mango" x="300" y="300" width="80" height="110"/>
+    <use class="sway" style="--d:5.1s" href="#t-neem" x="960" y="296" width="120" height="124"/>
+    <use class="sway" style="--d:4.6s" href="#t-round" x="1320" y="230" width="150" height="190"/>
+    <path d="M60 410 l6 -16 l4 16 M300 412 l5 -14 l4 14 M560 414 l6 -18 l4 18 M980 410 l5 -15 l4 15 M1200 412 l6 -16 l4 16" stroke="#2f6e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>
+</div>
+
 <div class="wrap">
   <header>
-    <div class="logo"><div class="mark">🤝</div>Mitrojan</div>
-    <nav>
-      <a href="#services">Services</a>
-      <a class="hide-sm" href="#about">About</a>
-      <a href="mailto:aiforsmart@gmail.com">Contact</a>
-    </nav>
+    <a class="logo" href="#top" id="top" aria-label="Mitrojan home">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff7a3d"/></linearGradient></defs>
+        <rect x="1.5" y="1.5" width="45" height="45" rx="14" fill="url(#lg)" stroke="#1b1b3a" stroke-width="3"/>
+        <g stroke="#fff7d6" stroke-width="2.4" stroke-linecap="round"><path d="M24 5v4M12 10l2.6 2.6M36 10l-2.6 2.6M7 20h4M37 20h4"/></g>
+        <circle cx="24" cy="20" r="7" fill="#fff7d6"/>
+        <circle cx="15" cy="30" r="4" fill="#1b1b3a"/><circle cx="33" cy="30" r="4" fill="#1b1b3a"/>
+        <path d="M8 42 Q15 33 24 38 Q33 33 40 42" fill="none" stroke="#1b1b3a" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span>Mitro<b>jan</b></span>
+    </a>
+    <div class="nav-right">
+      <nav>
+        <a class="granth" href="#granth" data-i18n="navGranth">🕉️ Ramcharitmanas &amp; Shrimad Bhagavad Gita</a>
+        <a class="hide-sm" href="#services" data-i18n="navServices">Explore More ✨</a>
+        <a href="mailto:aiforsmart@gmail.com" data-i18n="navContact">Contact</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="hi" aria-pressed="false" lang="hi">हिं</button>
+        <button type="button" data-lang="hinglish" aria-pressed="false">Hinglish</button>
+      </div>
+    </div>
   </header>
 
   <section class="hero">
-    <h1>Your <span>friendly</span> place for play and wellness</h1>
-    <p>Mitrojan brings together fun brain games and trusted AYUSH wellness – simple, safe and made for everyone in India and beyond.</p>
+    <span class="kicker" data-i18n="kicker">🙏 Jai Siya Ram</span>
+    <h1><span data-i18n="h1a">Do work for</span> <span class="hl" data-i18n="h1b">Sita Ram</span></h1>
+    <div class="hi-line" lang="hi" data-i18n="hiLine">सीता राम जी के कार्य में सहयोग करें, उनके दिखाए पथ पर चलें।</div>
+    <p data-i18n="sub">Begin with a chaupai or a shloka for whatever is on your mind – then play, care for your health and more, all on Mitrojan.</p>
   </section>
 
-  <section id="services" class="cards">
-    <div class="card">
-      <span class="tag live">Live</span>
-      <div class="e">🎲</div>
-      <h2>Master G Games</h2>
-      <p>Ludo and Snakes &amp; Ladders with friends online, Chess, the Brain Age test, Sudoku and 20 games in 9 languages. Free on web and Android.</p>
-      <a class="btn primary" href="https://games.mitrojan.in/">Play now</a>
-      <a class="btn ghost" href="https://play.google.com/store/apps/details?id=com.memorypuzzle.app">Get it on Google Play</a>
+  <section id="granth" class="scripture">
+    <!-- Left: Shri Ramcharitmanas with Ram darbar -->
+    <article class="card scene-card" style="--bg: var(--c-manas)">
+      <svg class="scene" viewBox="0 0 480 300" role="img" aria-label="Shri Ram seated on the throne giving blessings, with Sita ji and Lakshman ji seated with folded hands and Hanuman ji kneeling in devotion">
+        <defs>
+          <linearGradient id="mWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3dc"/><stop offset="1" stop-color="#ffd59a"/></linearGradient>
+          <radialGradient id="mHalo"><stop offset="0" stop-color="#fffbe0"/><stop offset=".55" stop-color="#ffe07a" stop-opacity=".9"/><stop offset="1" stop-color="#ffb43a" stop-opacity="0"/></radialGradient>
+          <radialGradient id="skB" cx=".4" cy=".35"><stop offset="0" stop-color="#7aa6ee"/><stop offset="1" stop-color="#3d68b8"/></radialGradient>
+          <radialGradient id="skF" cx=".4" cy=".35"><stop offset="0" stop-color="#ffe2c6"/><stop offset="1" stop-color="#eeb48a"/></radialGradient>
+          <radialGradient id="skL" cx=".4" cy=".35"><stop offset="0" stop-color="#ffe6b8"/><stop offset="1" stop-color="#e9b77c"/></radialGradient>
+          <radialGradient id="skH" cx=".4" cy=".35"><stop offset="0" stop-color="#f8a24a"/><stop offset="1" stop-color="#cf6516"/></radialGradient>
+          <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a0"/><stop offset=".5" stop-color="#f5c431"/><stop offset="1" stop-color="#c98a00"/></linearGradient>
+          <linearGradient id="silk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#f2a900"/></linearGradient>
+          <linearGradient id="sari" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef3b55"/><stop offset="1" stop-color="#b3172f"/></linearGradient>
+          <linearGradient id="throne" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4473a"/><stop offset="1" stop-color="#8e2219"/></linearGradient>
+        </defs>
+        <rect width="480" height="300" fill="url(#mWall)"/>
+        <!-- floor -->
+        <rect y="248" width="480" height="52" fill="#e8b578"/>
+        <path d="M0 262 H480 M0 280 H480 M60 248 L40 300 M160 248 L150 300 M240 248 V300 M320 248 L330 300 M420 248 L440 300" stroke="#d29a5c" stroke-width="1.5"/>
+        <!-- pillars -->
+        <g fill="#f8d48c" stroke="#b9772d" stroke-width="2.5">
+          <rect x="16" y="60" width="30" height="190"/><rect x="434" y="60" width="30" height="190"/>
+          <rect x="10" y="50" width="42" height="14" rx="3"/><rect x="428" y="50" width="42" height="14" rx="3"/>
+          <rect x="10" y="240" width="42" height="12" rx="3"/><rect x="428" y="240" width="42" height="12" rx="3"/>
+        </g>
+        <path d="M24 80 V230 M38 80 V230 M442 80 V230 M456 80 V230" stroke="#e0aa58" stroke-width="2"/>
+        <!-- arch with scallops -->
+        <path d="M52 250 V120 Q52 34 240 28 Q428 34 428 120 V250" fill="none" stroke="url(#gold)" stroke-width="7"/>
+        <path d="M66 250 V124 Q66 50 240 44 Q414 50 414 124 V250" fill="none" stroke="#f3c47e" stroke-width="3" stroke-dasharray="1 9" stroke-linecap="round"/>
+        <!-- marigold strings -->
+        <g stroke-linecap="round" stroke-width="7" stroke-dasharray="0.1 9">
+          <path d="M80 60 V150 M400 60 V150" stroke="#ff9f1c"/><path d="M92 54 V120 M388 54 V120" stroke="#ffcf3a"/>
+        </g>
+        <path d="M70 66 Q155 112 240 72 Q325 112 410 66" fill="none" stroke="#ff8a1c" stroke-width="8" stroke-linecap="round" stroke-dasharray="0.1 10"/>
+        <path d="M70 66 Q155 112 240 72 Q325 112 410 66" fill="none" stroke="#2f9e4f" stroke-width="2" opacity=".6"/>
+
+        <!-- halo and rays behind Ram and Sita -->
+        <g class="rays" opacity=".5"><g stroke="#ffc94a" stroke-width="4" stroke-linecap="round">
+          <path d="M238 34v-16M238 246v16M132 140h-16M344 140h16M163 65l-12-12M313 215l12 12M313 65l12-12M163 215l-12 12M196 40l-5-15M280 40l5-15M196 240l-5 15M280 240l5 15"/></g></g>
+        <circle class="halo" cx="238" cy="140" r="96" fill="url(#mHalo)"/>
+
+        <!-- throne -->
+        <path d="M160 222 V146 Q160 84 240 80 Q320 84 320 146 V222Z" fill="url(#throne)" stroke="url(#gold)" stroke-width="5"/>
+        <path d="M174 222 V150 Q174 98 240 94 Q306 98 306 150 V222" fill="none" stroke="#f5c431" stroke-width="2" stroke-dasharray="4 5"/>
+        <circle cx="240" cy="80" r="9" fill="url(#gold)" stroke="#a86f00" stroke-width="1.5"/>
+        <rect x="126" y="208" width="228" height="32" rx="9" fill="url(#throne)" stroke="#6e1810" stroke-width="2.5"/>
+        <path d="M134 216 H346" stroke="#f5c431" stroke-width="3" stroke-dasharray="7 5"/>
+        <path d="M170 232 q8 -10 16 0 q8 -10 16 0 M278 232 q8 -10 16 0 q8 -10 16 0" stroke="#f5c431" stroke-width="2" fill="none"/>
+        <rect x="112" y="238" width="256" height="14" rx="6" fill="#7a1d14"/>
+
+        <!-- Lakshman ji: seated, folded hands, bow -->
+        <g class="breathe">
+          <path d="M116 88 Q94 152 116 218" fill="none" stroke="#8a4b14" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M116 88 L116 218" stroke="#e7d3b0" stroke-width="1"/>
+          <path d="M120 206 Q148 196 176 206 Q186 216 177 228 Q148 236 119 228 Q110 216 120 206Z" fill="#f29b2e" stroke="#b5641c" stroke-width="1.5"/>
+          <path d="M122 226 Q148 232 174 226" stroke="#f7d038" stroke-width="2.5" fill="none"/>
+          <path d="M132 166 Q148 158 164 166 L166 210 L130 210Z" fill="url(#skL)" stroke="#b9824f" stroke-width="1.2"/>
+          <path d="M162 164 Q146 184 132 206 L138 208 Q150 188 166 170Z" fill="#ffcf3a"/>
+          <path d="M137 168 Q148 180 159 168" stroke="url(#gold)" stroke-width="3" fill="none"/>
+          <path d="M136 172 Q141 190 147 190 M160 172 Q155 190 149 190" stroke="#efbd88" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+          <path d="M144 192 Q147 172 148 170 Q149 172 152 192Z" fill="#ffe0bf" stroke="#c98d5f" stroke-width="1.2"/>
+          <rect x="144" y="146" width="8" height="10" fill="#efbd88"/>
+          <circle cx="148" cy="138" r="16" fill="url(#skL)" stroke="#b9824f" stroke-width="1.2"/>
+          <path d="M132 138 Q132 120 148 120 Q164 120 164 138 Q160 128 148 128 Q136 128 132 138Z M132 138 Q128 152 134 160 L136 142Z M164 138 Q168 152 162 160 L160 142Z" fill="#1b130d"/>
+          <path d="M134 122 L137 104 L142 113 L148 96 L154 113 L159 104 L162 122Z" fill="url(#gold)" stroke="#a86f00" stroke-width="1.3"/>
+          <rect x="133" y="119" width="30" height="5" rx="2" fill="url(#gold)" stroke="#a86f00" stroke-width="1"/>
+          <circle cx="148" cy="110" r="2.4" fill="#e8203a"/><circle cx="148" cy="121.5" r="1.6" fill="#2bb673"/>
+          <circle cx="132" cy="144" r="2.6" fill="url(#gold)"/><circle cx="164" cy="144" r="2.6" fill="url(#gold)"/>
+          <path d="M140 134 q3 -2 6 0 M150 134 q3 -2 6 0" stroke="#3a2416" stroke-width="1.2" fill="none"/>
+          <path d="M140 139 q3 2.4 6 0 M150 139 q3 2.4 6 0" stroke="#1b1b3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M144 147 q4 3 8 0" stroke="#b5452e" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M146 125 Q148 133 150 125" stroke="#fff" stroke-width="1.4" fill="none"/><path d="M148 126 v5" stroke="#e8203a" stroke-width="1.3"/>
+        </g>
+
+        <!-- Shri Ram: seated, blessing hand, Kodanda bow -->
+        <g class="breathe">
+          <path d="M192 62 Q160 140 192 214" fill="none" stroke="#8a4b14" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M192 62 L192 214" stroke="#e7d3b0" stroke-width="1.2"/>
+          <g transform="translate(250 100) rotate(18)"><rect x="-6" y="0" width="12" height="44" rx="4" fill="#9a5a24" stroke="#5e3410" stroke-width="1.5"/><path d="M-4 0 l-3 -10 l5 4Z M2 0 l0 -12 l3 8Z M6 0 l4 -10 l-1 9Z" fill="#fff4dc" stroke="#9a5a24" stroke-width=".8"/></g>
+          <path d="M176 198 Q214 186 252 198 Q266 212 254 226 Q214 238 174 226 Q162 212 176 198Z" fill="url(#silk)" stroke="#b27800" stroke-width="1.5"/>
+          <path d="M178 224 Q214 234 250 224" stroke="#e8203a" stroke-width="2.5" fill="none"/>
+          <ellipse cx="238" cy="222" rx="9" ry="5" fill="url(#skB)"/>
+          <path d="M190 150 Q214 138 238 150 L242 204 L186 204Z" fill="url(#skB)" stroke="#2a4a8a" stroke-width="1.3"/>
+          <path d="M236 148 Q206 172 190 204 L198 206 Q212 180 240 156Z" fill="#ff8a1c" stroke="#c8600c" stroke-width="1"/>
+          <path d="M197 152 Q214 168 231 152" stroke="url(#gold)" stroke-width="3.5" fill="none"/>
+          <path d="M194 154 Q214 180 234 154" stroke="url(#gold)" stroke-width="2" fill="none"/>
+          <path d="M193 152 Q186 190 214 200 Q242 190 235 152" stroke="#e8445a" stroke-width="5" fill="none" stroke-dasharray="0.1 6" stroke-linecap="round"/>
+          <path d="M193 152 Q186 190 214 200 Q242 190 235 152" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="0.1 6" stroke-dashoffset="3" stroke-linecap="round"/>
+          <path d="M192 156 Q178 182 190 208" stroke="#4a7fd0" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <rect x="181" y="166" width="10" height="4" rx="2" fill="url(#gold)" transform="rotate(-20 186 168)"/>
+          <circle cx="192" cy="210" r="5.5" fill="url(#skB)"/>
+          <g class="bless">
+            <path d="M236 156 Q252 160 254 136" stroke="#4a7fd0" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <path d="M247 134 q0 -15 7 -17 q7 2 7 17 q0 7 -7 8 q-7 -1 -7 -8Z" fill="url(#skB)" stroke="#2a4a8a" stroke-width="1.2"/>
+            <circle cx="254" cy="132" r="2" fill="#e8203a"/>
+            <rect x="248" y="141" width="12" height="3" rx="1.5" fill="url(#gold)"/>
+          </g>
+          <rect x="209" y="134" width="10" height="12" fill="#4a7fd0"/>
+          <circle cx="214" cy="124" r="20" fill="url(#skB)" stroke="#2a4a8a" stroke-width="1.3"/>
+          <path d="M194 122 Q194 100 214 100 Q234 100 234 122 Q230 108 214 108 Q198 108 194 122Z M194 122 Q188 146 197 160 L200 126Z M234 122 Q240 146 231 160 L228 126Z" fill="#14100c"/>
+          <path d="M197 98 L201 70 Q214 52 227 70 L231 98Z" fill="url(#gold)" stroke="#a86f00" stroke-width="1.6"/>
+          <path d="M205 96 L207 72 M214 96 V62 M223 96 L221 72" stroke="#c98a00" stroke-width="1.2"/>
+          <path d="M209 58 Q214 44 219 58Z" fill="url(#gold)" stroke="#a86f00" stroke-width="1.2"/>
+          <rect x="195" y="94" width="38" height="8" rx="3" fill="url(#gold)" stroke="#a86f00" stroke-width="1.2"/>
+          <circle cx="214" cy="84" r="4" fill="#e8203a" stroke="#fff" stroke-width="1"/><circle cx="204" cy="98" r="2" fill="#2bb673"/><circle cx="214" cy="98" r="2" fill="#fff"/><circle cx="224" cy="98" r="2" fill="#2bb673"/>
+          <path d="M193 92 Q186 84 190 76 Q196 84 198 92Z M235 92 Q242 84 238 76 Q232 84 230 92Z" fill="url(#gold)" stroke="#a86f00" stroke-width="1"/>
+          <circle cx="195" cy="130" r="3.5" fill="url(#gold)"/><path d="M195 133 l-2 6 h4Z" fill="url(#gold)"/>
+          <circle cx="233" cy="130" r="3.5" fill="url(#gold)"/><path d="M233 133 l-2 6 h4Z" fill="url(#gold)"/>
+          <path d="M204 117 q4 -3 8 0 M216 117 q4 -3 8 0" stroke="#0f1b3a" stroke-width="1.4" fill="none"/>
+          <path d="M204 123 q4 3 8 0 M216 123 q4 3 8 0" stroke="#0f1b3a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M204 123 l-2 1 M224 123 l2 1" stroke="#0f1b3a" stroke-width="1.2"/>
+          <path d="M214 125 q-1.5 4 1 5" stroke="#2a4a8a" stroke-width="1.2" fill="none"/>
+          <path d="M209 134 q5 4 10 0" stroke="#c0304a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M210 104 Q214 117 218 104" stroke="#fff" stroke-width="2" fill="none"/><path d="M214 106 v9" stroke="#e8203a" stroke-width="1.8"/>
+        </g>
+
+        <!-- Sita ji: seated, folded hands -->
+        <g class="breathe">
+          <path d="M248 202 Q278 194 308 202 Q318 214 308 228 Q278 236 247 228 Q238 214 248 202Z" fill="url(#sari)" stroke="#8e1426" stroke-width="1.4"/>
+          <path d="M249 226 Q278 234 307 226" stroke="#f7c531" stroke-width="3" fill="none"/>
+          <path d="M260 160 Q278 152 296 160 L298 206 L258 206Z" fill="url(#sari)" stroke="#8e1426" stroke-width="1.2"/>
+          <path d="M262 132 Q264 108 278 106 Q294 108 296 134 L302 184 Q290 170 294 146 Q290 118 278 117 Q264 118 262 146 L256 182Z" fill="#e8445a" stroke="#f7c531" stroke-width="2"/>
+          <path d="M266 166 Q278 176 290 166" stroke="url(#gold)" stroke-width="3" fill="none"/>
+          <path d="M264 170 Q268 188 275 188 M292 170 Q288 188 281 188" stroke="#f3c29a" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+          <path d="M274 190 Q277 170 278 168 Q279 170 282 190Z" fill="#ffe0bf" stroke="#c98d5f" stroke-width="1.2"/>
+          <path d="M268 184 h6 M282 184 h6" stroke="#f5c431" stroke-width="2.5"/><path d="M268 181 h6 M282 181 h6" stroke="#e8203a" stroke-width="1.5"/>
+          <rect x="274" y="148" width="8" height="10" fill="#f3c29a"/>
+          <circle cx="278" cy="138" r="16" fill="url(#skF)" stroke="#c98d5f" stroke-width="1.2"/>
+          <path d="M262 138 Q263 122 278 122 Q293 122 294 138 Q289 128 278 128 Q267 128 262 138Z" fill="#1b130d"/>
+          <path d="M266 120 L269 106 L273 113 L278 100 L283 113 L287 106 L290 120Z" fill="url(#gold)" stroke="#a86f00" stroke-width="1.2"/>
+          <circle cx="278" cy="111" r="2" fill="#e8203a"/>
+          <circle cx="278" cy="129.5" r="2.2" fill="#e8203a"/>
+          <path d="M270 134 q3 -2 6 0 M280 134 q3 -2 6 0" stroke="#3a2416" stroke-width="1.1" fill="none"/>
+          <path d="M270 139 q3 2.4 6 0 M280 139 q3 2.4 6 0" stroke="#1b1b3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M269 139 l-2 .8 M287 139 l2 .8" stroke="#1b1b3a" stroke-width="1"/>
+          <path d="M274 147 q4 3 8 0" stroke="#c0304a" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+          <circle cx="282" cy="143" r="2.2" fill="none" stroke="url(#gold)" stroke-width="1.2"/>
+          <circle cx="262" cy="144" r="2.6" fill="url(#gold)"/><circle cx="294" cy="144" r="2.6" fill="url(#gold)"/>
+        </g>
+
+        <!-- Hanuman ji: kneeling in devotion, gada beside -->
+        <g>
+          <g class="tail"><path d="M404 262 Q448 256 446 222 Q444 196 462 186 Q472 182 468 172" fill="none" stroke="#d96d1a" stroke-width="7" stroke-linecap="round"/><circle cx="468" cy="172" r="4" fill="#b85410"/></g>
+          <g transform="translate(446 220) rotate(-14)">
+            <rect x="-3.5" y="0" width="7" height="64" rx="3" fill="#8a4b14" stroke="#5e3410" stroke-width="1"/>
+            <ellipse cx="0" cy="-10" rx="16" ry="18" fill="url(#gold)" stroke="#a86f00" stroke-width="1.6"/>
+            <path d="M-14 -16 Q0 -10 14 -16 M-16 -8 Q0 -2 16 -8 M-14 0 Q0 6 14 0" stroke="#c98a00" stroke-width="1.6" fill="none"/>
+            <path d="M-3 -28 Q0 -38 3 -28Z" fill="url(#gold)" stroke="#a86f00"/>
+          </g>
+          <path d="M346 258 Q382 248 418 258 L422 278 Q382 288 342 278Z" fill="#c0392b" stroke="#7a1f16" stroke-width="1.5"/>
+          <path d="M350 274 Q382 282 414 274" stroke="#f7c531" stroke-width="2.5" fill="none"/>
+          <ellipse cx="356" cy="270" rx="12" ry="9" fill="url(#skH)"/>
+          <path d="M362 222 Q382 212 402 222 L406 262 L358 262Z" fill="url(#skH)" stroke="#8a3a0a" stroke-width="1.3"/>
+          <ellipse cx="382" cy="240" rx="13" ry="15" fill="#fbb36a" opacity=".7"/>
+          <path d="M366 226 Q382 238 398 226" stroke="url(#gold)" stroke-width="3" fill="none"/>
+          <path d="M366 230 Q370 248 378 248 M398 230 Q394 248 386 248" stroke="#e57f26" stroke-width="7.5" fill="none" stroke-linecap="round"/>
+          <path d="M366 236 h8 M390 236 h8" stroke="url(#gold)" stroke-width="3"/>
+          <path d="M378 250 Q381 228 382 226 Q383 228 386 250Z" fill="#ffc98e" stroke="#b9602a" stroke-width="1.2"/>
+          <circle cx="361" cy="190" r="7" fill="url(#skH)" stroke="#8a3a0a" stroke-width="1"/><circle cx="361" cy="190" r="3.5" fill="#ffc98e"/>
+          <circle cx="403" cy="190" r="7" fill="url(#skH)" stroke="#8a3a0a" stroke-width="1"/><circle cx="403" cy="190" r="3.5" fill="#ffc98e"/>
+          <circle cx="382" cy="190" r="20" fill="url(#skH)" stroke="#8a3a0a" stroke-width="1.3"/>
+          <path d="M366 186 Q374 180 382 184 Q390 180 398 186" stroke="#8a3a0a" stroke-width="2" fill="none"/>
+          <ellipse cx="380" cy="199" rx="13" ry="10" fill="#ffd2a1" stroke="#c98d5f" stroke-width="1"/>
+          <path d="M370 189 q3 2.5 6 0 M384 189 q3 2.5 6 0" stroke="#1b1b3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <ellipse cx="380" cy="195" rx="3" ry="1.8" fill="#8a3a0a"/>
+          <path d="M373 202 q7 6 14 0" stroke="#8a3a0a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M369 172 L372 156 L377 164 L382 152 L387 164 L392 156 L395 172Z" fill="url(#gold)" stroke="#a86f00" stroke-width="1.2"/>
+          <rect x="368" y="170" width="28" height="5" rx="2" fill="url(#gold)" stroke="#a86f00" stroke-width="1"/>
+          <circle cx="382" cy="162" r="2" fill="#e8203a"/>
+          <path d="M382 177 v7" stroke="#e8203a" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <!-- lotus flowers and diyas -->
+        <g transform="translate(96 262)"><path d="M0 0 Q-14 -6 -18 -16 Q-6 -14 0 -4 Q6 -14 18 -16 Q14 -6 0 0Z M0 -2 Q-6 -14 0 -24 Q6 -14 0 -2Z" fill="#ff7aa2" stroke="#c2406b" stroke-width="1"/><ellipse cx="0" cy="2" rx="16" ry="3" fill="#3f8f4f"/></g>
+        <g transform="translate(330 274)"><path d="M0 0 Q-12 -5 -15 -13 Q-5 -12 0 -3 Q5 -12 15 -13 Q12 -5 0 0Z M0 -2 Q-5 -12 0 -20 Q5 -12 0 -2Z" fill="#ff9ab8" stroke="#c2406b" stroke-width="1"/><ellipse cx="0" cy="2" rx="13" ry="2.5" fill="#3f8f4f"/></g>
+        <g transform="translate(66 286)"><path d="M-16 0 Q0 14 16 0Z" fill="#b5541c" stroke="#7a3410"/><path class="flame" d="M0 -2 Q-5 -10 0 -20 Q5 -10 0 -2Z" fill="#ffb627"/><path class="flame" d="M0 -4 Q-2 -9 0 -14 Q2 -9 0 -4Z" fill="#fff3a0"/></g>
+        <g transform="translate(296 292)"><path d="M-14 0 Q0 12 14 0Z" fill="#b5541c" stroke="#7a3410"/><path class="flame" d="M0 -2 Q-4 -9 0 -18 Q4 -9 0 -2Z" fill="#ffb627"/><path class="flame" d="M0 -4 Q-2 -8 0 -12 Q2 -8 0 -4Z" fill="#fff3a0"/></g>
+        <!-- falling petals -->
+        <g fill="#ff7aa2"><ellipse class="petal" style="--d:7s;--delay:-1s" cx="120" cy="0" rx="4" ry="2.5"/><ellipse class="petal" style="--d:9s;--delay:-4s" cx="250" cy="0" rx="4" ry="2.5"/><ellipse class="petal" style="--d:8s;--delay:-6s" cx="400" cy="0" rx="4" ry="2.5"/></g>
+        <g fill="#ff9f1c"><circle class="petal" style="--d:8.5s;--delay:-2.5s" cx="180" cy="0" r="3"/><circle class="petal" style="--d:7.5s;--delay:-5s" cx="330" cy="0" r="3"/></g>
+      </svg>
+      <div class="body">
+        <div class="card-top"><h3 data-i18n="manasTitle">Ramcharitmanas</h3><span class="badge live" data-i18n="live">Live</span></div>
+        <div class="sub" lang="hi">श्रीरामचरितमानस · गोस्वामी तुलसीदास</div>
+        <p data-i18n="manasDesc">Come, sit here a while. Write whatever is on your mind – a worry, a joy or a question – and you will receive a chaupai from the Manas for it.</p>
+        <form class="ask" data-base="https://ramcharitmanas.mitrojan.in/" data-search="#/manas/search?q=">
+          <input name="q" type="text" maxlength="200" autocomplete="off" data-i18n-ph="manasPh" data-i18n-label="manasLabel" placeholder="What's on your mind? e.g. I feel alone" aria-label="Write what is on your mind for a Manas chaupai">
+          <button class="btn primary" type="submit" data-i18n="manasBtn">Get chaupai 🙏</button>
+        </form>
+        <a class="open-link" href="https://ramcharitmanas.mitrojan.in/" data-i18n="manasOpen">Or read the Ramcharitmanas from the beginning →</a>
+      </div>
+    </article>
+
+    <!-- Right: Shrimad Bhagavad Gita with Krishna and Arjun at Kurukshetra -->
+    <article class="card scene-card" style="--bg: var(--c-gita)">
+      <svg class="scene" viewBox="0 0 480 300" role="img" aria-label="Shri Krishna on the chariot at Kurukshetra, teaching Arjun, who listens with folded hands">
+        <defs>
+          <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9b8"/><stop offset=".6" stop-color="#ffbf7e"/><stop offset="1" stop-color="#f39a58"/></linearGradient>
+          <radialGradient id="gHalo"><stop offset="0" stop-color="#fffbe0"/><stop offset=".5" stop-color="#ffe27a" stop-opacity=".9"/><stop offset="1" stop-color="#ffc24a" stop-opacity="0"/></radialGradient>
+          <radialGradient id="gSkB" cx=".4" cy=".35"><stop offset="0" stop-color="#6f9be6"/><stop offset="1" stop-color="#2f5bb0"/></radialGradient>
+          <radialGradient id="gSkA" cx=".4" cy=".35"><stop offset="0" stop-color="#ffdcb8"/><stop offset="1" stop-color="#e2a675"/></radialGradient>
+          <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a0"/><stop offset=".5" stop-color="#f5c431"/><stop offset="1" stop-color="#c98a00"/></linearGradient>
+          <linearGradient id="gPita" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe066"/><stop offset="1" stop-color="#f0a400"/></linearGradient>
+          <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4a64a"/><stop offset="1" stop-color="#9c5a18"/></linearGradient>
+          <linearGradient id="gGround" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8bb84"/><stop offset="1" stop-color="#d49a5c"/></linearGradient>
+          <g id="horse">
+            <path d="M44 -12 Q62 0 56 28" stroke="#d9cfc0" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <path d="M-30 10 L-32 50 M-18 12 L-16 50 M24 12 L22 50 M36 10 L38 50" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+            <path d="M-36 48 h8 M-20 48 h8 M18 48 h8 M34 48 h8" stroke="#6b4a2a" stroke-width="4" stroke-linecap="round"/>
+            <path d="M-40 -6 Q-38 -26 -10 -26 L30 -24 Q50 -22 48 -2 Q46 14 28 14 L-26 14 Q-42 12 -40 -6Z" fill="currentColor" stroke="#a89a85" stroke-width="1.6"/>
+            <path d="M-36 -12 Q-50 -40 -46 -62 L-30 -66 Q-28 -40 -16 -24Z" fill="currentColor" stroke="#a89a85" stroke-width="1.6"/>
+            <path d="M-46 -62 Q-58 -66 -72 -54 Q-78 -46 -70 -41 Q-60 -42 -52 -46 Q-40 -48 -30 -66Z" fill="currentColor" stroke="#a89a85" stroke-width="1.6"/>
+            <path d="M-42 -66 l1 -11 l6 9Z" fill="currentColor" stroke="#a89a85" stroke-width="1.2"/>
+            <path d="M-30 -66 Q-24 -48 -14 -28" stroke="#d9cfc0" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="-56" cy="-54" r="1.8" fill="#1b1b3a"/>
+            <path d="M-46 -64 Q-52 -80 -44 -88" stroke="#e8203a" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M-66 -46 Q-50 -52 -40 -58 M-38 -20 Q-28 -8 -14 -14" stroke="#f5c431" stroke-width="3" fill="none"/>
+            <path d="M-6 -26 Q10 -14 30 -24" stroke="#e8203a" stroke-width="3" fill="none"/>
+          </g>
+        </defs>
+        <rect width="480" height="300" fill="url(#gSky)"/>
+        <circle cx="404" cy="70" r="30" fill="#fff4c8"/><circle cx="404" cy="70" r="46" fill="#fff4c8" opacity=".35"/>
+        <!-- distant armies -->
+        <g fill="#b07a52" opacity=".8">
+          <path d="M0 194 Q120 184 240 190 T480 186 V208 H0Z"/>
+          <path d="M30 192 q-2 -14 10 -16 q12 0 14 6 l6 0 q4 2 0 6 v6Z M420 188 q2 -14 -10 -16 q-12 0 -14 6 l-6 0 q-4 2 0 6 v6Z"/>
+        </g>
+        <path d="M14 190 v-24 l11 5 -11 5 M74 190 v-20 l9 4 -9 4 M108 190 v-26 l11 5 -11 5 M364 186 v-24 l-11 5 11 5 M394 186 v-20 l-9 4 9 4 M460 186 v-26 l-11 5 11 5" stroke="#9a6440" stroke-width="2" fill="#c98a5a"/>
+        <path d="M0 202 Q240 192 480 202 V300 H0Z" fill="url(#gGround)"/>
+        <path d="M0 252 Q120 242 240 254 T480 250 M0 276 Q160 268 320 280 T480 274" stroke="#c98f55" stroke-width="2.5" fill="none"/>
+        <g fill="#fff3dc"><circle class="dust" style="--d:5s;--delay:-1s" cx="300" cy="276" r="3"/><circle class="dust" style="--d:6s;--delay:-3s" cx="360" cy="284" r="2.5"/><circle class="dust" style="--d:7s;--delay:-5s" cx="430" cy="270" r="3.5"/><circle class="dust" style="--d:6.5s;--delay:-2s" cx="210" cy="286" r="2.5"/></g>
+
+        <!-- divine rays from Krishna -->
+        <g class="wisdom" opacity=".35"><path d="M252 108 L200 -20 L230 -20Z M252 108 L290 -20 L320 -20Z M252 108 L120 20 L130 0Z M252 108 L390 10 L400 30Z" fill="#fff2b0"/></g>
+
+        <!-- four white horses (back to front) -->
+        <use href="#horse" transform="translate(178 192) scale(.92)" style="color:#e9e2d6"/>
+        <use href="#horse" transform="translate(162 198) scale(.95)" style="color:#f1ebe2"/>
+        <use href="#horse" transform="translate(146 205) scale(.98)" style="color:#f8f4ee"/>
+        <g class="trot"><use href="#horse" transform="translate(128 212)" style="color:#ffffff"/></g>
+        <!-- yoke and reins -->
+        <path d="M150 194 L222 196" stroke="#7a4a12" stroke-width="4" stroke-linecap="round"/>
+        <path d="M72 158 Q150 118 232 150 M88 150 Q160 118 232 150" stroke="#7a4a12" stroke-width="1.5" fill="none"/>
+
+        <!-- chariot -->
+        <path d="M236 168 V76 M362 168 V76" stroke="#7a4a12" stroke-width="4"/>
+        <path d="M224 80 Q298 30 374 80Z" fill="#c0392b" stroke="url(#gGold)" stroke-width="3"/>
+        <path d="M224 80 H374" stroke="url(#gGold)" stroke-width="4"/>
+        <path d="M228 84 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0" stroke="#f5c431" stroke-width="2" fill="none"/>
+        <path d="M292 40 Q298 24 304 40Z" fill="url(#gGold)" stroke="#a86f00"/><circle cx="298" cy="26" r="4" fill="url(#gGold)"/>
+        <path d="M376 170 V22" stroke="#7a4a12" stroke-width="3.5"/>
+        <path class="flag" d="M378 24 L432 32 L420 46 L432 60 L378 56Z" fill="#ff8a1c" stroke="#b5541c" stroke-width="2"/>
+        <circle cx="398" cy="40" r="8" fill="#d96d1a" stroke="#8a3a0a"/><ellipse cx="397" cy="43" rx="5" ry="3.6" fill="#ffd2a1"/><circle cx="395" cy="38" r="1" fill="#1b1b3a"/><circle cx="400" cy="38" r="1" fill="#1b1b3a"/>
+        <path d="M218 172 H372 Q384 172 382 186 L372 234 H228 Q216 232 216 220Z" fill="url(#gWood)" stroke="#6b3a10" stroke-width="3"/>
+        <path d="M222 186 H376" stroke="url(#gGold)" stroke-width="5"/>
+        <path d="M230 186 v40 M260 186 v44 M290 186 v44 M320 186 v44 M350 186 v44" stroke="#8a4b14" stroke-width="1.5" opacity=".6"/>
+        <g fill="#f5c431"><circle cx="245" cy="210" r="3"/><circle cx="275" cy="210" r="3"/><circle cx="305" cy="210" r="3"/><circle cx="335" cy="210" r="3"/><circle cx="362" cy="210" r="3"/></g>
+        <path d="M218 172 Q206 146 226 140" stroke="#6b3a10" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+        <!-- Shri Krishna: halo, peacock feather, teaching -->
+        <circle class="halo" cx="252" cy="104" r="58" fill="url(#gHalo)"/>
+        <g class="breathe">
+          <path d="M232 128 Q252 118 272 128 L276 176 L228 176Z" fill="url(#gSkB)" stroke="#203f80" stroke-width="1.3"/>
+          <path d="M228 160 Q252 152 276 160 L276 176 L228 176Z" fill="url(#gPita)" stroke="#b27800" stroke-width="1"/>
+          <path d="M270 126 Q242 148 230 172 L238 174 Q250 152 274 134Z" fill="url(#gPita)" stroke="#b27800" stroke-width="1"/>
+          <path d="M238 130 Q252 144 266 130" stroke="url(#gGold)" stroke-width="3" fill="none"/>
+          <path d="M234 132 Q228 164 252 172 Q276 164 270 132" stroke="#ff5d8f" stroke-width="5" fill="none" stroke-dasharray="0.1 6" stroke-linecap="round"/>
+          <path d="M234 132 Q228 164 252 172 Q276 164 270 132" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="0.1 6" stroke-dashoffset="3" stroke-linecap="round"/>
+          <path d="M240 168 L262 146" stroke="#6b3a10" stroke-width="3.5" stroke-linecap="round"/><circle cx="246" cy="162" r="1" fill="#f5c431"/><circle cx="252" cy="156" r="1" fill="#f5c431"/>
+          <path d="M234 136 Q214 150 206 148" stroke="#3f6fc4" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <circle cx="204" cy="148" r="5" fill="url(#gSkB)"/>
+          <g class="bless">
+            <path d="M270 136 Q288 134 294 116" stroke="#3f6fc4" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <path d="M289 114 q0 -13 6 -15 q6 2 6 15 q0 6 -6 7 q-6 -1 -6 -7Z" fill="url(#gSkB)" stroke="#203f80" stroke-width="1.2"/>
+            <circle cx="292" cy="108" r="3" fill="none" stroke="#fff" stroke-width="1.4"/>
+            <rect x="289" y="121" width="12" height="3" rx="1.5" fill="url(#gGold)"/>
+          </g>
+          <rect x="247" y="110" width="10" height="12" fill="#3f6fc4"/>
+          <circle cx="252" cy="100" r="20" fill="url(#gSkB)" stroke="#203f80" stroke-width="1.3"/>
+          <path d="M232 98 Q232 76 252 76 Q272 76 272 98 Q268 84 252 84 Q236 84 232 98Z M232 98 Q226 122 235 134 L238 102Z M272 98 Q278 122 269 134 L266 102Z" fill="#14100c"/>
+          <path d="M235 76 L239 54 Q252 40 265 54 L269 76Z" fill="url(#gGold)" stroke="#a86f00" stroke-width="1.6"/>
+          <rect x="233" y="72" width="38" height="8" rx="3" fill="url(#gGold)" stroke="#a86f00" stroke-width="1.2"/>
+          <circle cx="252" cy="62" r="4" fill="#2bb673" stroke="#fff" stroke-width="1"/><circle cx="242" cy="76" r="2" fill="#e8203a"/><circle cx="252" cy="76" r="2" fill="#fff"/><circle cx="262" cy="76" r="2" fill="#e8203a"/>
+          <g class="feather">
+            <path d="M262 58 Q264 30 280 14" stroke="#2e7d4f" stroke-width="2" fill="none"/>
+            <path d="M262 58 Q258 32 272 16 Q290 22 278 44 Q272 54 262 58Z" fill="#2e9e5b" stroke="#1f6e3f" stroke-width="1"/>
+            <ellipse cx="275" cy="26" rx="7" ry="9" fill="#1f5fbf"/><ellipse cx="275" cy="26" rx="4" ry="5.5" fill="#0d2b5c"/><ellipse cx="274" cy="25" rx="1.6" ry="2.2" fill="#3fd0c9"/>
+          </g>
+          <circle cx="233" cy="106" r="3.5" fill="url(#gGold)"/><path d="M233 109 l-2 6 h4Z" fill="url(#gGold)"/>
+          <circle cx="271" cy="106" r="3.5" fill="url(#gGold)"/><path d="M271 109 l-2 6 h4Z" fill="url(#gGold)"/>
+          <path d="M242 93 q4 -3 8 0 M254 93 q4 -3 8 0" stroke="#0f1b3a" stroke-width="1.4" fill="none"/>
+          <path d="M242 99 q4 3 8 0 M254 99 q4 3 8 0" stroke="#0f1b3a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M252 101 q-1.5 4 1 5" stroke="#203f80" stroke-width="1.2" fill="none"/>
+          <path d="M246 110 q6 5 12 0" stroke="#c0304a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M248 81 Q252 93 256 81" stroke="#fff" stroke-width="2" fill="none"/><path d="M252 83 v8" stroke="#e8203a" stroke-width="1.8"/>
+        </g>
+        <!-- wisdom sparkles towards Arjun -->
+        <g fill="#fff6c8"><circle class="wisdom" cx="306" cy="112" r="4"/><circle class="wisdom" style="animation-delay:-1s" cx="314" cy="102" r="3"/><circle class="wisdom" style="animation-delay:-2s" cx="310" cy="124" r="2.5"/></g>
+
+        <!-- Arjun: kneeling in the chariot, folded hands, Gandiva -->
+        <g class="breathe">
+          <path d="M360 84 Q392 136 360 188" fill="none" stroke="#7a4a12" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M360 84 L360 188" stroke="#e7d3b0" stroke-width="1.2"/>
+          <path d="M318 136 Q338 128 358 136 L360 176 L316 176Z" fill="#8e2a2a" stroke="#5a1414" stroke-width="1.3"/>
+          <path d="M320 146 H356 M320 158 H358" stroke="url(#gGold)" stroke-width="2.5"/>
+          <path d="M324 136 Q338 146 352 136" stroke="url(#gGold)" stroke-width="3" fill="none"/>
+          <path d="M322 140 Q326 160 334 160 M354 140 Q350 160 342 160" stroke="#eab48a" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M334 162 Q337 142 338 140 Q339 142 342 162Z" fill="#ffdcb8" stroke="#c48a5c" stroke-width="1.2"/>
+          <path d="M327 156 h7 M342 156 h7" stroke="url(#gGold)" stroke-width="3"/>
+          <rect x="333" y="114" width="10" height="12" fill="#eab48a"/>
+          <circle cx="338" cy="106" r="18" fill="url(#gSkA)" stroke="#b07a4c" stroke-width="1.3"/>
+          <path d="M320 104 Q320 84 338 84 Q356 84 356 104 Q352 92 338 92 Q324 92 320 104Z M356 102 Q362 120 354 130 L352 106Z" fill="#1b130d"/>
+          <path d="M323 86 L326 66 L332 76 L338 60 L344 76 L350 66 L353 86Z" fill="url(#gGold)" stroke="#a86f00" stroke-width="1.4"/>
+          <rect x="322" y="83" width="32" height="6" rx="2.5" fill="url(#gGold)" stroke="#a86f00" stroke-width="1"/>
+          <circle cx="338" cy="74" r="2.8" fill="#2bb673" stroke="#fff" stroke-width=".8"/>
+          <circle cx="321" cy="112" r="3" fill="url(#gGold)"/>
+          <path d="M328 101 q3 -2.5 6 0 M340 101 q3 -2.5 6 0" stroke="#3a2416" stroke-width="1.2" fill="none"/>
+          <path d="M328 106 q3 2.4 6 0 M340 106 q3 2.4 6 0" stroke="#1b1b3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M333 115 q4 3 8 0" stroke="#8a3a20" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M335 90 Q338 98 341 90" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M338 91 v6" stroke="#e8203a" stroke-width="1.5"/>
+        </g>
+        <!-- big wheel in front -->
+        <circle cx="270" cy="242" r="38" fill="none" stroke="#6b3a10" stroke-width="8"/>
+        <circle cx="270" cy="242" r="32" fill="none" stroke="url(#gGold)" stroke-width="2"/>
+        <path d="M270 204 V280 M232 242 H308 M243 215 L297 269 M297 215 L243 269" stroke="#6b3a10" stroke-width="3.5"/>
+        <circle cx="270" cy="242" r="8" fill="url(#gGold)" stroke="#6b3a10" stroke-width="2"/>
+      </svg>
+      <div class="body">
+        <div class="card-top"><h3 data-i18n="gitaTitle">Shrimad Bhagavad Gita</h3><span class="badge live" data-i18n="live">Live</span></div>
+        <div class="sub" lang="hi">श्रीमद्भगवद्गीता · कुरुक्षेत्र</div>
+        <p data-i18n="gitaDesc">Come, ask Krishna. Write whatever is on your mind, and you will receive a verified shloka from the Gita for it – just as Shri Krishna guided Arjun at Kurukshetra.</p>
+        <form class="ask" data-base="https://gita.mitrojan.in/" data-search="#/search?q=">
+          <input name="q" type="text" maxlength="200" autocomplete="off" data-i18n-ph="gitaPh" data-i18n-label="gitaLabel" placeholder="What's on your mind? e.g. I can't decide" aria-label="Write what is on your mind for a Gita shloka">
+          <button class="btn primary" type="submit" data-i18n="gitaBtn">Get shloka 🙏</button>
+        </form>
+        <a class="open-link" href="https://gita.mitrojan.in/" data-i18n="gitaOpen">Or read the Shrimad Bhagavad Gita from the beginning →</a>
+      </div>
+    </article>
+  </section>
+
+  <section id="services">
+    <div class="sec-head">
+      <h2 data-i18n="secTitle">Explore More ✨</h2>
+      <p data-i18n="secSub">AYUSH care, Bittu Mobile and Master G Games – all together, plus videos and apps 👀</p>
     </div>
-    <div class="card">
-      <span class="tag soon">Coming soon</span>
-      <div class="e">🌿</div>
-      <h2>AYUSH Vaidya</h2>
-      <p>Consult registered Ayurveda, Yoga, Unani, Siddha and Homoeopathy practitioners online – from home, in your language.</p>
-      <a class="btn ghost" href="https://ayush.mitrojan.in/">Learn more</a>
-    </div>
-    <div class="card">
-      <span class="tag soon">Coming soon</span>
-      <div class="e">✨</div>
-      <h2>More from Mitrojan</h2>
-      <p>New tools and services for families are on the way. Write to us with what you would like to see next.</p>
-      <a class="btn ghost" href="mailto:aiforsmart@gmail.com">Suggest an idea</a>
+    <div class="grid">
+      <article class="card" style="--bg: var(--c-ayush)">
+        <div class="card-top"><div class="icon">🌿</div><span class="badge live" data-i18n="live">Live</span></div>
+        <h3 data-i18n="ayushTitle">AYUSH Vaidya</h3>
+        <p data-i18n="ayushDesc">15-minute online Ayurveda consultations and personalised diet guidance – from home, in Hindi or English.</p>
+        <div class="btns"><a class="btn" href="https://ayush.mitrojan.in/#book" data-i18n="learnMore">Book consultation</a></div>
+      </article>
+
+      <article class="card" style="--bg: var(--c-shop)">
+        <div class="card-top">
+          <div class="icon">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <rect x="13" y="4" width="22" height="40" rx="6" fill="#8a5cff" stroke="#1b1b3a" stroke-width="3"/>
+              <rect x="17" y="10" width="14" height="24" rx="2" fill="#fff"/>
+              <text x="24" y="28" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="16" fill="#1b1b3a">B</text>
+              <circle cx="24" cy="39" r="2" fill="#fff"/>
+              <path d="M40 6l1.5 3.5L45 11l-3.5 1.5L40 16l-1.5-3.5L35 11l3.5-1.5z" fill="#ffd23f" stroke="#1b1b3a" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="badge live" data-i18n="live">Live</span>
+        </div>
+        <h3 data-i18n="shopTitle">Bittu Mobile</h3>
+        <p data-i18n="shopDesc">New phones, mobile repair, recharge, new SIM, and electronics like TVs, fridges and washing machines – with offers.</p>
+        <div class="btns"><a class="btn" href="https://bittumobile.mitrojan.in/" data-i18n="notify">Visit shop page</a></div>
+      </article>
+
+      <article class="card" style="--bg: var(--c-games)">
+        <div class="card-top"><div class="icon">🎲</div><span class="badge live" data-i18n="live">Live</span></div>
+        <h3>Master G Games</h3>
+        <p data-i18n="gamesDesc">Ludo and Snakes &amp; Ladders with friends online, Chess, the Brain Age test, Sudoku and 20 games in 9 languages. Free on web and Android.</p>
+        <div class="btns">
+          <a class="btn primary" href="https://games.mitrojan.in/" data-i18n="playNow">Play now</a>
+          <a class="btn" href="https://play.google.com/store/apps/details?id=com.memorypuzzle.app" data-i18n="getPlay">Google Play</a>
+        </div>
+      </article>
+
+      <article class="card yt span3">
+        <div class="yt-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="3" y="9" width="42" height="30" rx="10" fill="#ff0033" stroke="#1b1b3a" stroke-width="3"/><path d="M20 17 L32 24 L20 31Z" fill="#fff"/></svg></div>
+        <div class="txt">
+          <div><span class="badge live" data-i18n="live">Live</span></div>
+          <h3>Adarsh Path · आदर्श पथ <span class="yt-handle">@Adarsh_Vani</span></h3>
+          <p data-i18n="ytDesc">Our YouTube channel. If you like the videos, please Subscribe 🔔, Like 👍 and Comment 💬 – it really helps the channel grow.</p>
+          <div class="yt-asks" aria-hidden="true"><span>🔔 <b data-i18n="ytSub2">Subscribe</b></span><span>👍 <b data-i18n="ytLike">Like</b></span><span>💬 <b data-i18n="ytComment">Comment</b></span></div>
+        </div>
+        <div class="btns">
+          <a class="btn yt-btn" href="https://www.youtube.com/@Adarsh_Vani?sub_confirmation=1" target="_blank" rel="noopener" data-i18n="ytSubscribe">Subscribe 🔔</a>
+          <a class="btn" href="https://www.youtube.com/@Adarsh_Vani/videos" target="_blank" rel="noopener" data-i18n="ytWatch">Watch videos ▶</a>
+        </div>
+      <div class="videos full-row">
+          <button type="button" class="vid" data-id="MKvxTOvSxCc" data-short="1" aria-label="Play: आपके जन्म का उद्देश्य क्या है?"><img src="https://i.ytimg.com/vi/MKvxTOvSxCc/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="play" aria-hidden="true">▶</span><span class="vt">आपके जन्म का उद्देश्य क्या है? <em>Short</em></span></button>
+          <button type="button" class="vid" data-id="XgJU0OTkvVU" aria-label="Play: EP 2 Mahadev ji se bachcha puch raha hai"><img src="https://i.ytimg.com/vi/XgJU0OTkvVU/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="play" aria-hidden="true">▶</span><span class="vt">EP 2 · Mahadev ji se bachcha puch raha hai – Mere jivan ka uddeshya kya hai prabhu?</span></button>
+          <button type="button" class="vid" data-id="LzIJ44JPefA" aria-label="Play: Master G Gameplay Trailer"><img src="https://i.ytimg.com/vi/LzIJ44JPefA/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="play" aria-hidden="true">▶</span><span class="vt">🎮 Master G Gameplay Trailer – Scroll Chhodo, Challenge Lo!</span></button>
+        </div>
+        <div class="vid-links full-row">
+          <a href="https://www.youtube.com/shorts/MKvxTOvSxCc" target="_blank" rel="noopener" data-i18n="yt1">Watch the Short on YouTube ↗</a>
+          <a href="https://www.youtube.com/watch?v=XgJU0OTkvVU" target="_blank" rel="noopener" data-i18n="yt2">Watch EP 2 on YouTube ↗</a>
+          <a href="https://youtu.be/LzIJ44JPefA" target="_blank" rel="noopener" data-i18n="yt3">Watch the game trailer ↗</a>
+        </div>
+      </article>
+
+      <article class="card" style="--bg: #ffe9f7">
+        <div class="card-top"><div class="icon">🔮</div><span class="badge live" data-i18n="live">Live</span></div>
+        <h3>Know Your Aura</h3>
+        <p data-i18n="auraDesc">Fun readings from traditional books – face, palm, numerology, zodiac, Lo Shu grid and a live aura scan – plus a full Bhagavad Gita library. For entertainment.</p>
+        <div class="btns"><a class="btn primary" href="https://play.google.com/store/apps/details?id=com.auravision.app" target="_blank" rel="noopener" data-i18n="auraBtn">Get it on Google Play</a></div>
+      </article>
+
+      <article class="card soon-card more span2" style="--bg: var(--c-more)">
+        <div class="icon">✨</div>
+        <div class="txt">
+          <div><span class="badge soon" data-i18n="soon">Coming soon</span></div>
+          <h3 data-i18n="moreTitle">New pages on the way</h3>
+          <p data-i18n="moreDesc">New tools and services for families are being built. Write to us with what you would like to see next.</p>
+        </div>
+        <a class="btn hot" href="mailto:aiforsmart@gmail.com" data-i18n="suggest">Suggest an idea</a>
+      </article>
     </div>
   </section>
 
   <section id="about" class="about">
-    <h2>About Mitrojan</h2>
-    <p>"Mitro" means friends and "jan" means people. Mitrojan is built by Adarsh Kumar (Ideal World) to give people one friendly home online – for relaxing with games that keep the mind sharp, and soon for caring for health the traditional AYUSH way.</p>
+    <h2 data-i18n="aboutTitle">About Mitrojan</h2>
+    <p data-i18n="aboutText">"Mitro" means friends and "jan" means people. Mitrojan is built by Adarsh Kumar (Ideal World) as one friendly home online – the Ramcharitmanas and the Gita every day, games that keep the mind sharp, and soon care the traditional AYUSH way.</p>
   </section>
-
-  <footer>
-    <a href="https://games.mitrojan.in/privacy.html">Privacy Policy</a>
-    <a href="mailto:aiforsmart@gmail.com">aiforsmart@gmail.com</a>
-    <div style="margin-top:10px">© 2026 Mitrojan · Ideal World. All rights reserved.</div>
-  </footer>
 </div>
+
+<!-- Open space so the forest and the "पेड़ लगाओ" board stay visible -->
+<div class="meadow" aria-hidden="true"></div>
+
+<footer>
+  <a href="https://games.mitrojan.in/privacy.html" data-i18n="privacy">Privacy Policy</a>
+  <a href="mailto:aiforsmart@gmail.com">aiforsmart@gmail.com</a>
+  <div data-i18n="rights">© 2026 Mitrojan · Ideal World. All rights reserved.</div>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    hi: {
+      navGranth: '🕉️ रामचरितमानस और श्रीमद्भगवद्गीता', navServices: 'और भी खोजें ✨', navContact: 'संपर्क',
+      kicker: '🙏 जय सिया राम',
+      h1a: 'सीता राम जी के', h1b: 'कार्य में सहयोग करें',
+      hiLine: 'उनके दिखाए पथ पर चलें।',
+      sub: 'मन में जो भी है, उसके लिए एक चौपाई या श्लोक से शुरुआत करें – फिर खेल, सेहत की देखभाल और बहुत कुछ, सब मित्रोजन पर।',
+      live: 'लाइव', soon: 'जल्द आ रहा है',
+      manasTitle: 'श्रीरामचरितमानस',
+      manasDesc: 'आइए, यहाँ थोड़ी देर बैठिए। मन में जो भी है – कोई चिंता, कोई खुशी या कोई सवाल – लिखिए, और उसी के अनुसार आपको मानस की चौपाई मिलेगी।',
+      manasPh: 'मन की बात लिखिए… जैसे: अकेलापन लगता है', manasLabel: 'मानस की चौपाई के लिए अपने मन की बात लिखिए',
+      manasBtn: 'चौपाई पाएँ 🙏', manasOpen: 'या रामचरितमानस शुरू से पढ़ें →',
+      gitaTitle: 'श्रीमद्भगवद्गीता',
+      gitaDesc: 'आइए, श्रीकृष्ण से पूछिए। मन में जो भी है लिखिए, और उसी के अनुसार आपको गीता का सत्यापित श्लोक मिलेगा – जैसे कुरुक्षेत्र में श्रीकृष्ण ने अर्जुन को राह दिखाई।',
+      gitaPh: 'मन की बात लिखिए… जैसे: फ़ैसला नहीं कर पा रहा', gitaLabel: 'गीता के श्लोक के लिए अपने मन की बात लिखिए',
+      gitaBtn: 'श्लोक पाएँ 🙏', gitaOpen: 'या श्रीमद्भगवद्गीता शुरू से पढ़ें →',
+      secTitle: 'और भी खोजें ✨', secSub: 'आयुष देखभाल, बिट्टू मोबाइल और मास्टर G गेम्स – सब एक साथ, साथ में वीडियो और ऐप्स 👀',
+      ytDesc: 'हमारा YouTube चैनल। वीडियो अच्छे लगें तो Subscribe 🔔, Like 👍 और Comment 💬 ज़रूर करें – इससे चैनल को आगे बढ़ने में बहुत मदद मिलती है।',
+      ytSub2: 'सब्सक्राइब', ytLike: 'लाइक', ytComment: 'कमेंट', ytSubscribe: 'सब्सक्राइब करें 🔔', ytWatch: 'वीडियो देखें ▶',
+      yt1: 'YouTube पर Short देखें ↗', yt2: 'YouTube पर EP 2 देखें ↗', yt3: 'गेम का ट्रेलर देखें ↗',
+      auraDesc: 'पारंपरिक ग्रंथों पर आधारित मज़ेदार रीडिंग – चेहरा, हस्तरेखा, अंक ज्योतिष, राशि, लो शू ग्रिड और लाइव ऑरा स्कैन – साथ में पूरी भगवद्गीता लाइब्रेरी। मनोरंजन के लिए।', auraBtn: 'Google Play पर पाएँ',
+      ayushTitle: 'आयुष वैद्य', ayushDesc: '15 मिनट का ऑनलाइन आयुर्वेद परामर्श और व्यक्तिगत आहार मार्गदर्शन – घर बैठे, हिंदी या अंग्रेज़ी में।', learnMore: 'परामर्श बुक करें',
+      gamesDesc: 'दोस्तों के साथ ऑनलाइन लूडो और साँप-सीढ़ी, शतरंज, ब्रेन एज टेस्ट, सुडोकू और 9 भाषाओं में 20 गेम। वेब और Android पर मुफ़्त।',
+      playNow: 'अभी खेलें', getPlay: 'Google Play',
+      shopTitle: 'बिट्टू मोबाइल', shopDesc: 'नए फ़ोन, मोबाइल रिपेयर, रिचार्ज, नई सिम, और टीवी, फ्रिज, वॉशिंग मशीन जैसे इलेक्ट्रॉनिक्स – साथ में ऑफ़र।', notify: 'दुकान का पेज देखें',
+      moreTitle: 'नए पेज आ रहे हैं', moreDesc: 'परिवारों के लिए नए टूल और सेवाएँ बन रही हैं। हमें लिखें कि आप आगे क्या देखना चाहेंगे।', suggest: 'सुझाव दें',
+      aboutTitle: 'मित्रोजन के बारे में',
+      aboutText: '"मित्रो" यानी दोस्त और "जन" यानी लोग। मित्रोजन को आदर्श कुमार (Ideal World) ने सबके लिए एक अपने-से ऑनलाइन घर की तरह बनाया है – रोज़ रामचरितमानस और गीता, दिमाग़ तेज़ रखने वाले खेल, और जल्द ही आयुष के पारंपरिक तरीक़े से सेहत की देखभाल।',
+      privacy: 'गोपनीयता नीति', rights: '© 2026 मित्रोजन · Ideal World. सर्वाधिकार सुरक्षित।'
+    },
+    hinglish: {
+      navGranth: '🕉️ Ramcharitmanas aur Shrimad Bhagavad Gita', navServices: 'Aur Explore Karo ✨', navContact: 'Contact',
+      kicker: '🙏 Jai Siya Ram',
+      h1a: 'Sita Ram ji ke', h1b: 'kaarya mein sahyog karein',
+      hiLine: 'Unke dikhaye path pe chalein.',
+      sub: 'Man mein jo bhi hai, uske liye ek chaupai ya shloka se shuru kariye – phir games, health care aur bahut kuch, sab Mitrojan pe.',
+      live: 'Live', soon: 'Jaldi aa raha hai',
+      manasTitle: 'Ramcharitmanas',
+      manasDesc: 'Aaiye, yahan thodi der baithiye. Man mein jo bhi hai – koi chinta, koi khushi ya koi sawaal – likhiye, aur uske hisaab se aapko Manas ki chaupai milegi.',
+      manasPh: 'Man ki baat likhiye… jaise: akela feel hota hai', manasLabel: 'Manas ki chaupai ke liye apne man ki baat likhiye',
+      manasBtn: 'Chaupai paayein 🙏', manasOpen: 'Ya Ramcharitmanas shuru se padhiye →',
+      gitaTitle: 'Shrimad Bhagavad Gita',
+      gitaDesc: 'Aaiye, Krishna ji se poochhiye. Man mein jo bhi hai likhiye, aur uske hisaab se aapko Gita ka verified shloka milega – jaise Kurukshetra mein Shri Krishna ne Arjun ko raah dikhayi.',
+      gitaPh: 'Man ki baat likhiye… jaise: decide nahi kar pa raha', gitaLabel: 'Gita ke shloka ke liye apne man ki baat likhiye',
+      gitaBtn: 'Shloka paayein 🙏', gitaOpen: 'Ya Shrimad Bhagavad Gita shuru se padhiye →',
+      secTitle: 'Aur Explore Karo ✨', secSub: 'AYUSH care, Bittu Mobile aur Master G Games – sab ek saath, saath mein videos aur apps 👀',
+      ytDesc: 'Hamara YouTube channel. Videos achhe lagein to Subscribe 🔔, Like 👍 aur Comment 💬 zaroor kariye – isse channel ko aage badhne mein bahut madad milti hai.',
+      ytSub2: 'Subscribe', ytLike: 'Like', ytComment: 'Comment', ytSubscribe: 'Subscribe kariye 🔔', ytWatch: 'Videos dekhiye ▶',
+      yt1: 'YouTube pe Short dekhiye ↗', yt2: 'YouTube pe EP 2 dekhiye ↗', yt3: 'Game ka trailer dekhiye ↗',
+      auraDesc: 'Traditional books pe based mazedaar readings – face, palm, numerology, zodiac, Lo Shu grid aur live aura scan – saath mein poori Bhagavad Gita library. Entertainment ke liye.', auraBtn: 'Google Play pe lijiye',
+      ayushTitle: 'AYUSH Vaidya', ayushDesc: '15 minute ka online Ayurveda consultation aur personal diet guidance – ghar baithe, Hindi ya English mein.', learnMore: 'Consultation book kariye',
+      gamesDesc: 'Dosto ke saath online Ludo aur Saanp-Seedhi, Chess, Brain Age test, Sudoku aur 9 languages mein 20 games. Web aur Android pe free.',
+      playNow: 'Abhi khelo', getPlay: 'Google Play',
+      shopTitle: 'Bittu Mobile', shopDesc: 'Naye phone, mobile repair, recharge, nayi SIM, aur TV, fridge, washing machine jaise electronics – saath mein offers.', notify: 'Shop ka page dekhiye',
+      moreTitle: 'Naye pages aa rahe hain', moreDesc: 'Families ke liye naye tools aur services ban rahe hain. Batao aapko aage kya chahiye.', suggest: 'Idea bhejo',
+      aboutTitle: 'Mitrojan ke baare mein',
+      aboutText: '"Mitro" matlab dost aur "jan" matlab log. Mitrojan ko Adarsh Kumar (Ideal World) ne sabke liye ek apne-se online ghar ki tarah banaya hai – roz Ramcharitmanas aur Gita, dimaag tez rakhne wale games, aur jaldi hi AYUSH ke traditional tareeke se health care.',
+      privacy: 'Privacy Policy', rights: '© 2026 Mitrojan · Ideal World. All rights reserved.'
+    }
+  };
+
+  // English lives in the HTML itself, so the page works without JS.
+  var nodes = document.querySelectorAll('[data-i18n]');
+  var phs = document.querySelectorAll('[data-i18n-ph]');
+  I18N.en = {};
+  nodes.forEach(function (el) { I18N.en[el.dataset.i18n] = el.textContent; });
+  phs.forEach(function (el) { I18N.en[el.dataset.i18nPh] = el.placeholder; I18N.en[el.dataset.i18nLabel] = el.getAttribute('aria-label'); });
+  var buttons = document.querySelectorAll('.lang button');
+
+  function setLang(lang) {
+    if (!I18N[lang]) lang = 'en';
+    var dict = I18N[lang];
+    nodes.forEach(function (el) { var t = dict[el.dataset.i18n]; if (t != null) el.textContent = t; });
+    phs.forEach(function (el) {
+      if (dict[el.dataset.i18nPh] != null) el.placeholder = dict[el.dataset.i18nPh];
+      if (dict[el.dataset.i18nLabel] != null) el.setAttribute('aria-label', dict[el.dataset.i18nLabel]);
+    });
+    document.documentElement.lang = lang === 'hi' ? 'hi' : lang === 'hinglish' ? 'hi-Latn' : 'en';
+    buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.lang === lang)); });
+    // Links to the other Mitrojan pages carry ?lang=, so the choice follows the visitor across sites.
+    document.querySelectorAll('a[href^="http"]').forEach(function (a) {
+      var u = new URL(a.href);
+      if (!/^(mitrojan\.in|ayush\.mitrojan\.in|bittumobile\.mitrojan\.in)$/.test(u.hostname)) return;
+      if (lang === 'en') u.searchParams.delete('lang'); else u.searchParams.set('lang', lang);
+      a.href = u.toString();
+    });
+    try { localStorage.setItem('mitrojan.lang', lang); } catch (e) {}
+  }
+  buttons.forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.lang); }); });
+  var saved = new URLSearchParams(location.search).get('lang');
+  if (!I18N[saved]) {
+    try { saved = localStorage.getItem('mitrojan.lang'); } catch (e) { saved = null; }
+  }
+  setLang(saved || 'en');
+
+  document.querySelectorAll('.vid').forEach(function (v) {
+    v.addEventListener('click', function () {
+      if (v.classList.contains('playing')) return;
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + v.dataset.id + '?autoplay=1&rel=0';
+      f.title = v.getAttribute('aria-label');
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      f.allowFullscreen = true;
+      v.replaceChildren(f);
+      v.classList.add('playing');
+    });
+  });
+
+  // "Write what is on your mind" boxes open the app's own search (the query stays in the URL hash, never sent to a server).
+  document.querySelectorAll('form.ask').forEach(function (form) {
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var q = form.elements.q.value.trim();
+      location.href = form.dataset.base + (q ? form.dataset.search + encodeURIComponent(q) : '');
+    });
+  });
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,105 @@
+<!--title: Ayurvedic products – coming soon · AYUSH Vaidya-->
+<!--description: A small shop of everyday Ayurvedic products picked by our Vaidyas – herbal teas, churna, ghee and honey, massage oils, skin and hair care. Coming soon.-->
+<!--nav: products-->
+<!--style-->
+  .hero { padding: 44px 0 0; }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px; align-items: center; }
+  .hero h1 { font-size: clamp(40px, 6.2vw, 76px); margin: 14px 0; }
+  .hero .lead { font-size: 20px; color: var(--ink-2); margin: 0 0 22px; max-width: 560px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .bag { position: relative; aspect-ratio: 1; max-width: 380px; margin: 0 auto; width: 100%; display: grid; place-items: center; }
+  .bag .ring { position: absolute; inset: 6%; border-radius: 40% 60% 55% 45%; background: linear-gradient(140deg, #ffe5d6, #e9e1ff 50%, #d9f6e5); animation: morph 12s ease-in-out infinite alternate; }
+  @keyframes morph { to { border-radius: 60% 40% 45% 55%; transform: rotate(20deg); } }
+  .bag .big { position: relative; font-size: clamp(110px, 16vw, 160px); animation: bob 5s ease-in-out infinite; }
+  .bag .tagx { position: absolute; background: #fff; border-radius: 999px; padding: 6px 14px; font-weight: 800; box-shadow: var(--shadow); animation: bob 6s ease-in-out infinite; }
+  .bag .t1 { left: 0; top: 18%; } .bag .t2 { right: 0; bottom: 22%; animation-delay: -3s; }
+  .cats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .cat { position: relative; overflow: hidden; transition: transform .2s; }
+  .cat:hover { transform: translateY(-4px); }
+  .cat .e { font-size: 52px; display: block; margin-bottom: 6px; filter: saturate(1.1); }
+  .cat h3 { font-size: 23px; margin-bottom: 4px; }
+  .cat p { margin: 0; color: var(--ink-2); }
+  .cat .pill { position: absolute; right: 16px; top: 16px; }
+  .cats .cat:nth-child(odd) { background: linear-gradient(140deg, #fff, #d9f6e5); }
+  .cats .cat:nth-child(even) { background: linear-gradient(140deg, #fff, #ffe5d6); }
+  .promise { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .promise .card { text-align: center; }
+  .promise .e { font-size: 34px; }
+  .promise h3 { font-size: 19px; margin: 6px 0 4px; }
+  .promise p { margin: 0; font-size: 15px; color: var(--ink-2); }
+  .notify { text-align: center; background: linear-gradient(140deg, #fff3c4, #ffe1d9, #e9e1ff); }
+  .notify h2 { font-size: clamp(28px, 4vw, 42px); margin-bottom: 8px; }
+  .notify p { color: var(--ink-2); margin: 0 0 16px; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } .cats { grid-template-columns: 1fr 1fr; } .promise { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .cats, .promise { grid-template-columns: 1fr; } }
+<!--body-->
+<main>
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="sticker" data-i18n="sticker">🛍️ Coming soon</span>
+    <h1><span data-i18n="h1a">Ayurvedic products,</span> <span class="grad-text" data-i18n="h1b">picked by our Vaidyas.</span></h1>
+    <p class="lead" data-i18n="lead">A small, careful shop for everyday Ayurveda – quality basics with clear labels, no miracle claims.</p>
+    <div class="actions"><a class="btn primary" href="mailto:aiforsmart@gmail.com?subject=AYUSH%20Vaidya%20products%20-%20notify%20me" data-i18n="notifyBtn">Notify me at launch 🔔</a><a class="btn" href="index.html#book" data-i18n="askBtn">Ask a Vaidya first</a></div>
+  </div>
+  <div class="bag" aria-hidden="true"><span class="ring"></span><span class="big">🛍️</span><span class="tagx t1">🌿 100% <span data-i18n="tag1">natural basics</span></span><span class="tagx t2">✨ <span data-i18n="tag2">Launching soon</span></span></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="catSticker">🧺 What's coming</span><h2 data-i18n="catH">Shop by need</h2><p data-i18n="catSub">These categories are coming soon. Products and prices will be added at launch.</p></div>
+  <div class="cats">
+    <article class="card cat"><span class="pill soon" data-i18n="soon">Coming soon</span><span class="e">🍵</span><h3 data-i18n="c1h">Herbal teas &amp; kadha mixes</h3><p data-i18n="c1p">Tulsi, ginger and other everyday blends.</p></article>
+    <article class="card cat"><span class="pill soon" data-i18n="soon">Coming soon</span><span class="e">🌶️</span><h3 data-i18n="c2h">Churna &amp; spice blends</h3><p data-i18n="c2p">Kitchen-friendly blends for daily cooking.</p></article>
+    <article class="card cat"><span class="pill soon" data-i18n="soon">Coming soon</span><span class="e">🍯</span><h3 data-i18n="c3h">Ghee &amp; honey</h3><p data-i18n="c3p">Pure desi ghee and raw honey for the home.</p></article>
+    <article class="card cat"><span class="pill soon" data-i18n="soon">Coming soon</span><span class="e">💆</span><h3 data-i18n="c4h">Massage oils</h3><p data-i18n="c4p">Oils for abhyanga, the Ayurvedic self-massage.</p></article>
+    <article class="card cat"><span class="pill soon" data-i18n="soon">Coming soon</span><span class="e">🧴</span><h3 data-i18n="c5h">Skin &amp; hair care</h3><p data-i18n="c5p">Gentle, herbal everyday care.</p></article>
+    <article class="card cat"><span class="pill soon" data-i18n="soon">Coming soon</span><span class="e">🎁</span><h3 data-i18n="c6h">Wellness kits &amp; gifts</h3><p data-i18n="c6p">Thoughtful boxes for festivals and family.</p></article>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="head"><span class="sticker" data-i18n="proSticker">🤝 Our promise</span><h2 data-i18n="proH">Quality you can trust</h2></div>
+  <div class="promise">
+    <div class="card"><span class="e">🏭</span><h3 data-i18n="r1h">Licensed makers only</h3><p data-i18n="r1p">From AYUSH-licensed manufacturers.</p></div>
+    <div class="card"><span class="e">🏷️</span><h3 data-i18n="r2h">Clear labels</h3><p data-i18n="r2p">Full ingredient list on every product.</p></div>
+    <div class="card"><span class="e">🚫</span><h3 data-i18n="r3h">No miracle claims</h3><p data-i18n="r3p">No "cures everything" promises.</p></div>
+    <div class="card"><span class="e">🩺</span><h3 data-i18n="r4h">Vaidya first</h3><p data-i18n="r4p">For medicines, ask a Vaidya before you buy.</p></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="card notify">
+    <h2 data-i18n="nH">Be the first to know 🔔</h2>
+    <p data-i18n="nP">Send us a short email and we will tell you when the shop opens.</p>
+    <a class="btn primary" href="mailto:aiforsmart@gmail.com?subject=AYUSH%20Vaidya%20products%20-%20notify%20me" data-i18n="notifyBtn">Notify me at launch 🔔</a>
+  </div>
+</div></section>
+</main>
+<!--i18n-->
+<script>
+window.AYUSH_PAGE = {
+  hi: {
+    sticker: '🛍️ जल्द आ रहा है', h1a: 'आयुर्वेदिक प्रोडक्ट,', h1b: 'हमारे वैद्यों की पसंद।',
+    lead: 'रोज़ के आयुर्वेद के लिए एक छोटी, सोच-समझकर बनी दुकान – साफ़ लेबल वाली अच्छी चीज़ें, कोई चमत्कारी दावा नहीं।',
+    notifyBtn: 'शुरू होने पर बताएँ 🔔', askBtn: 'पहले वैद्य से पूछें', tag1: 'प्राकृतिक चीज़ें', tag2: 'जल्द शुरू',
+    catSticker: '🧺 क्या आ रहा है', catH: 'ज़रूरत के हिसाब से', catSub: 'ये श्रेणियाँ जल्द आ रही हैं। प्रोडक्ट और दाम शुरुआत पर जोड़े जाएँगे।', soon: 'जल्द आ रहा है',
+    c1h: 'हर्बल चाय और काढ़ा मिक्स', c1p: 'तुलसी, अदरक और रोज़ के दूसरे मिश्रण।', c2h: 'चूर्ण और मसाला मिश्रण', c2p: 'रोज़ के खाना बनाने के लिए मिश्रण।',
+    c3h: 'घी और शहद', c3p: 'घर के लिए शुद्ध देसी घी और कच्चा शहद।', c4h: 'मालिश के तेल', c4p: 'अभ्यंग – आयुर्वेदिक मालिश – के लिए तेल।',
+    c5h: 'त्वचा और बालों की देखभाल', c5p: 'हल्की, हर्बल रोज़ की देखभाल।', c6h: 'वेलनेस किट और उपहार', c6p: 'त्योहारों और परिवार के लिए सुंदर डिब्बे।',
+    proSticker: '🤝 हमारा वादा', proH: 'भरोसेमंद गुणवत्ता', r1h: 'सिर्फ़ लाइसेंसधारी निर्माता', r1p: 'आयुष लाइसेंस वाले निर्माताओं से।', r2h: 'साफ़ लेबल', r2p: 'हर प्रोडक्ट पर पूरी सामग्री सूची।',
+    r3h: 'कोई चमत्कारी दावा नहीं', r3p: '"सब ठीक कर देगा" जैसे वादे नहीं।', r4h: 'पहले वैद्य', r4p: 'दवा के लिए खरीदने से पहले वैद्य से पूछें।',
+    nH: 'सबसे पहले जानें 🔔', nP: 'हमें एक छोटा ईमेल भेजें, दुकान खुलते ही हम आपको बताएँगे।'
+  },
+  hinglish: {
+    sticker: '🛍️ Jaldi aa raha hai', h1a: 'Ayurvedic products,', h1b: 'hamare Vaidyas ki pasand.',
+    lead: 'Roz ke Ayurveda ke liye ek chhoti, soch-samajh ke bani dukaan – saaf label wali achhi cheezein, koi chamatkari daava nahi.',
+    notifyBtn: 'Launch par batao 🔔', askBtn: 'Pehle Vaidya se poochho', tag1: 'natural basics', tag2: 'Jaldi launch',
+    catSticker: '🧺 Kya aa raha hai', catH: 'Zaroorat ke hisaab se', catSub: 'Yeh categories jaldi aa rahi hain. Products aur daam launch par jode jayenge.', soon: 'Jaldi aa raha hai',
+    c1h: 'Herbal chai aur kadha mix', c1p: 'Tulsi, adrak aur roz ke dusre blends.', c2h: 'Churna aur masala blends', c2p: 'Roz ke khaana banane ke liye blends.',
+    c3h: 'Ghee aur shahad', c3p: 'Ghar ke liye shuddh desi ghee aur kachcha shahad.', c4h: 'Maalish ke tel', c4p: 'Abhyanga – Ayurvedic maalish – ke liye tel.',
+    c5h: 'Skin aur hair care', c5p: 'Halki, herbal roz ki care.', c6h: 'Wellness kits aur gifts', c6p: 'Tyohaaron aur family ke liye sundar box.',
+    proSticker: '🤝 Hamara vaada', proH: 'Bharosemand quality', r1h: 'Sirf licensed makers', r1p: 'AYUSH license wale manufacturers se.', r2h: 'Saaf label', r2p: 'Har product par poori ingredient list.',
+    r3h: 'Koi chamatkari daava nahi', r3p: '"Sab theek kar dega" jaise vaade nahi.', r4h: 'Pehle Vaidya', r4p: 'Dawai ke liye khareedne se pehle Vaidya se poochho.',
+    nH: 'Sabse pehle jaano 🔔', nP: 'Humein ek chhota email bhejo, dukaan khulte hi hum aapko batayenge.'
+  }
+};
+</script>
