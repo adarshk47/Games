@@ -33,10 +33,11 @@ const bool kShowAllGames = bool.fromEnvironment('SHOW_ALL_GAMES');
 
 final List<GameInfo> games = [
   // Games opened in this release come first, then the usual order.
+  // (Firestore config/app.games can hide a game with 'off'.)
   for (final g in allGames)
-    if ((g.enabled || kShowAllGames) && kStageNewGames.contains(g.id)) g,
+    if ((g.enabled || kShowAllGames) && !gameHidden(g.id) && kStageNewGames.contains(g.id)) g,
   for (final g in allGames)
-    if ((g.enabled || kShowAllGames) && !kStageNewGames.contains(g.id)) g,
+    if ((g.enabled || kShowAllGames) && !gameHidden(g.id) && !kStageNewGames.contains(g.id)) g,
 ];
 
 /// Every game that exists in the codebase. To release a hidden game, flip its
@@ -61,7 +62,7 @@ final List<GameInfo> allGames = [
     emoji: '🐍',
     color: const Color(0xFF43A047),
     featured: kStageNewGames.contains('snakes'),
-    comingSoon: kStage < kGameStage['snakes']!,
+    comingSoon: gameComingSoon('snakes'),
     builder: (_) => const SnakesScreen(),
   ),
   GameInfo(
@@ -72,7 +73,7 @@ final List<GameInfo> allGames = [
     emoji: '🧠',
     color: const Color(0xFFB794FF),
     featured: kStageNewGames.contains('brain_age'),
-    comingSoon: kStage < kGameStage['brain_age']!,
+    comingSoon: gameComingSoon('brain_age'),
     builder: (_) => const BrainAgeScreen(),
   ),
   GameInfo(
@@ -137,7 +138,7 @@ final List<GameInfo> allGames = [
     emoji: '💼',
     color: const Color(0xFF2E7D32),
     featured: kStageNewGames.contains('business'),
-    comingSoon: kStage < kGameStage['business']!,
+    comingSoon: gameComingSoon('business'),
     builder: (_) => const BusinessScreen(),
   ),
   GameInfo(
@@ -249,7 +250,7 @@ final List<GameInfo> allGames = [
     emoji: '🤰',
     color: const Color(0xFFFF8FB8),
     featured: kStageNewGames.contains('mom_memory'),
-    comingSoon: kStage < kGameStage['mom_memory']!,
+    comingSoon: gameComingSoon('mom_memory'),
     builder: (_) => const MomMemoryScreen(),
   ),
   // Stage 3: two placeholder cards for games announced later.

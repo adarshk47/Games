@@ -1,0 +1,451 @@
+rules_version = '2';
+
+// Master G - Firestore security rules. Paste into Firebase console ->
+// Firestore Database -> Rules (see FIREBASE_SETUP.md).
+//
+// Collections:
+//   users/{uid}                          cloud save (owner only) + country + referral counters
+//   referrals/{inviteeUid}               one document per invited player (one credit per invitee)
+//   leaderboards/{board}/entries/{uid}   {name, score, country, updatedAt}
+//   players, handles, challenges, queue, games   online 2-player chess
+//   ludo_games, ludo_rooms, ludo_queue           online Ludo + Saanp-Seedhi (2-4 players)
+//
+// Country = 2-letter ISO code ('IN', 'US', ...). Country boards query
+// where('country', ==) + orderBy('score'): deploy firestore.indexes.json.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Must match lib/core/cloud/leaderboard_service.dart (maxScore).
+    function maxScores() {
+      return {
+        'game_2048': 10000000,
+        'focus_color': 1000000,
+        'memory_boost': 1000000,
+        'block_puzzle': 10000000,
+        'chess': 1000000,
+        'ludo': 1000000,
+        'snakes': 1000000,
+        'dominoes': 1000000,
+        'business': 1000000,
+        'brain_age': 1000,
+        'sudoku': 100000,
+        'arrow_maze': 100000,
+        'maze_escape': 100000,
+        'ball_sort': 100000,
+        'flow_pairs': 100000,
+        'sliding_puzzle': 100000,
+        'minesweeper': 100000,
+        'screw_jam': 100000,
+        'bus_jam': 100000,
+        'tile_match': 100000,
+        'hexa_sort': 100000,
+        'total_stars': 100000
+      };
+    }
+
+    // Optional 'country' field: if present, exactly two capital letters.
+    // Category boards are '<board>__<tier>' (e.g. 'game_2048__hard').
+    function baseBoard(b) {
+      return b.split('__')[0];
+    }
+
+    function validBoard(b) {
+      return baseBoard(b) in maxScores()
+        && (b.split('__').size() == 1
+          || (b.split('__').size() == 2 && b.split('__')[1] in ['easy', 'medium', 'hard', 'extreme', 'classic']));
+    }
+
+    function validCountry(d) {
+      return !('country' in d) || (d.country is string && d.country.matches('^[A-Z]{2}$'));
+    }
+
+    function maxInvites() {
+      return 20;
+    }
+
+    function inviterBonus() {
+      return 100;
+    }
+
+    // ---------------------------------------------------------------- users
+    function validUserDoc(d) {
+      return d.keys().hasOnly(['name', 'country', 'data', 'meta', 'schema', 'updatedAt', 'pendingCredits', 'inviteCount'])
+        && (!('name' in d) || (d.name is string && d.name.size() <= 40))
+        && validCountry(d)
+        && (!('data' in d) || (d.data is map && d.data.size() <= 5000))
+        && (!('meta' in d) || d.meta is map)
+        && (!('updatedAt' in d) || d.updatedAt is timestamp);
+    }
+
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && validUserDoc(request.resource.data)
+        && request.resource.data.get('pendingCredits', 0) == 0
+        && request.resource.data.get('inviteCount', 0) == 0;
+
+      // Owner sync: may only consume (lower) pendingCredits, never raise it,
+      // and may not change inviteCount.
+      allow update: if isOwner(uid)
+        && validUserDoc(request.resource.data)
+        && request.resource.data.get('inviteCount', 0) == resource.data.get('inviteCount', 0)
+        && request.resource.data.get('pendingCredits', 0) >= 0
+        && request.resource.data.get('pendingCredits', 0) <= resource.data.get('pendingCredits', 0);
+
+      // An invited player credits their inviter: +100 pendingCredits and +1
+      // inviteCount (max 20), only in the same transaction that creates
+      // referrals/{invitee} for the first time (one credit per invitee uid).
+      allow update: if signedIn() && request.auth.uid != uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['pendingCredits', 'inviteCount'])
+        && request.resource.data.inviteCount == resource.data.get('inviteCount', 0) + 1
+        && request.resource.data.inviteCount <= maxInvites()
+        && request.resource.data.pendingCredits == resource.data.get('pendingCredits', 0) + inviterBonus()
+        && !exists(/databases/$(database)/documents/referrals/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/referrals/$(request.auth.uid)).data.inviter == uid;
+    }
+
+    // ------------------------------------------------------------ referrals
+    match /referrals/{invitee} {
+      allow read, delete: if isOwner(invitee);
+      allow update: if false;
+      allow create: if isOwner(invitee)
+        && request.resource.data.keys().hasOnly(['inviter', 'inviterCredited', 'createdAt'])
+        && request.resource.data.inviter is string
+        && request.resource.data.inviter.size() > 0
+        && request.resource.data.inviter.size() <= 128
+        && request.resource.data.inviter != invitee
+        && request.resource.data.inviterCredited is bool
+        && request.resource.data.createdAt == request.time
+        && (request.resource.data.inviterCredited == false
+          || getAfter(/databases/$(database)/documents/users/$(request.resource.data.inviter)).data.get('inviteCount', 0)
+             == get(/databases/$(database)/documents/users/$(request.resource.data.inviter)).data.get('inviteCount', 0) + 1);
+    }
+
+    // --------------------------------------------------------- leaderboards
+    match /leaderboards/{board}/entries/{uid} {
+      allow read: if true; // public: name + score only
+      allow delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && validBoard(board)
+        && request.resource.data.keys().hasOnly(['name', 'score', 'country', 'updatedAt'])
+        && validCountry(request.resource.data)
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 24
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= maxScores()[baseBoard(board)]
+        && request.resource.data.updatedAt == request.time
+        && (resource == null || request.resource.data.score >= resource.data.score);
+    }
+
+    // Everything else is closed.
+    // --------------------------------------------------------- ad-free grants
+    // Created by the developer: adfree_grants/{uid} = {until: timestamp, plan}.
+    match /adfree_grants/{uid} {
+      allow get: if isOwner(uid);
+      allow list, write: if false;
+    }
+
+    // --------------------------------------------------------------- coupons
+    // Created by the developer in the console: coupons/{CODE} = {active: true}.
+    // Players can read a code only if they know it; no listing, no writes.
+    match /coupons/{code} {
+      allow get: if true;
+      allow list, write: if false;
+
+      // One log entry per player who used the code. The player may create
+      // and read their own; only the developer (console) can revoke/delete.
+      match /redemptions/{uid} {
+        allow get: if isOwner(uid);
+        allow create: if isOwner(uid)
+          && request.resource.data.uid == uid
+          && !('revoked' in request.resource.data);
+        allow list, update, delete: if false;
+      }
+    }
+
+    // ------------------------------------------------------------ game stats
+    // game_stats/{gameId}: plays, ratings, stars, r1..r5 (counters only).
+    match /game_stats/{gameId} {
+      function cnt(f) {
+        return resource == null ? 0 : resource.data.get(f, 0);
+      }
+      function step(f, lo, hi) {
+        return request.resource.data.get(f, 0) - cnt(f) >= lo
+          && request.resource.data.get(f, 0) - cnt(f) <= hi;
+      }
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['plays', 'ratings', 'stars', 'r1', 'r2', 'r3', 'r4', 'r5'])
+        && step('plays', 0, 1)
+        && (signedIn() || !(request.resource.data.diff(resource == null ? {} : resource.data).affectedKeys().hasAny(['ratings', 'stars', 'r1', 'r2', 'r3', 'r4', 'r5'])))
+        && step('ratings', 0, 1) && step('stars', -4, 5)
+        && step('r1', -1, 1) && step('r2', -1, 1) && step('r3', -1, 1) && step('r4', -1, 1) && step('r5', -1, 1);
+      allow delete: if false;
+
+      match /ratings/{uid} {
+        allow get: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['stars', 'at'])
+          && request.resource.data.stars is int
+          && request.resource.data.stars >= 1 && request.resource.data.stars <= 5;
+        allow list, delete: if false;
+      }
+    }
+
+    // ---------------------------------------------------------- online games
+    // players/{uid}: public profile {handle, handleLower, name, available,
+    // lastSeen, wins, losses}. handles/{handle} = {uid} keeps names unique.
+    match /players/{uid} {
+      allow read: if signedIn();
+      allow delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['handle', 'handleLower', 'name', 'available', 'lastSeen', 'wins', 'losses'])
+        && request.resource.data.handle is string
+        && request.resource.data.handle.matches('^[a-z0-9_]{3,16}$')
+        && request.resource.data.handleLower == request.resource.data.handle
+        && existsAfter(/databases/$(database)/documents/handles/$(request.resource.data.handle))
+        && getAfter(/databases/$(database)/documents/handles/$(request.resource.data.handle)).data.uid == uid
+        && (!('name' in request.resource.data) || (request.resource.data.name is string && request.resource.data.name.size() <= 24))
+        && request.resource.data.get('wins', 0) >= (resource == null ? 0 : resource.data.get('wins', 0))
+        && request.resource.data.get('wins', 0) <= (resource == null ? 0 : resource.data.get('wins', 0)) + 1
+        && request.resource.data.get('losses', 0) >= (resource == null ? 0 : resource.data.get('losses', 0))
+        && request.resource.data.get('losses', 0) <= (resource == null ? 0 : resource.data.get('losses', 0)) + 1;
+    }
+
+    match /handles/{handle} {
+      allow get: if signedIn();
+      allow list, update: if false;
+      allow create: if signedIn()
+        && handle.matches('^[a-z0-9_]{3,16}$')
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // challenges/{id}: {game, from, fromName, to, toName, status, gameId, createdAt}
+    match /challenges/{id} {
+      allow read: if signedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string
+        && request.resource.data.to != request.auth.uid
+        && request.resource.data.status == 'pending'
+        && !('gameId' in request.resource.data);
+      // The invited player accepts (with the new game) or declines; the
+      // sender can cancel.
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'gameId'])
+        && resource.data.status == 'pending'
+        && ((request.auth.uid == resource.data.to && request.resource.data.status in ['accepted', 'declined'])
+          || (request.auth.uid == resource.data.from && request.resource.data.status == 'cancelled'));
+      allow delete: if signedIn() && (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+    }
+
+    // queue/{uid}: quick-match waiting list. Another player may only fill in
+    // the gameId of a waiting entry (when they start a game with them).
+    match /queue/{uid} {
+      allow read: if signedIn();
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isOwner(uid);
+      allow update: if signedIn() && request.auth.uid != uid
+        && !('gameId' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['gameId'])
+        && !exists(/databases/$(database)/documents/games/$(request.resource.data.gameId))
+        && getAfter(/databases/$(database)/documents/games/$(request.resource.data.gameId)).data.players.hasAll([uid, request.auth.uid]);
+    }
+
+    // games/{id}: {game, white, black, whiteName, blackName, players, moves
+    // (UCI list), status 'active'|'over', result, reason, createdAt, updatedAt}.
+    match /games/{id} {
+      function isPlayer() {
+        return signedIn() && request.auth.uid in resource.data.players;
+      }
+      allow read: if isPlayer();
+      allow create: if signedIn()
+        && request.resource.data.players is list
+        && request.resource.data.players.size() == 2
+        && request.auth.uid in request.resource.data.players
+        && request.resource.data.players[0] == request.resource.data.white
+        && request.resource.data.players[1] == request.resource.data.black
+        && request.resource.data.moves.size() == 0
+        && request.resource.data.status == 'active';
+      // Only a player; a new move must come from the side to move and add
+      // exactly one move; a finished game cannot change.
+      allow update: if isPlayer()
+        && resource.data.status == 'active'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['moves', 'status', 'result', 'reason', 'updatedAt'])
+        && request.resource.data.players == resource.data.players
+        && (request.resource.data.moves == resource.data.moves
+          || (request.resource.data.moves.size() == resource.data.moves.size() + 1
+            && request.auth.uid == (resource.data.moves.size() % 2 == 0 ? resource.data.white : resource.data.black)))
+        && (request.resource.data.status == 'active'
+          || (request.resource.data.status == 'over' && request.resource.data.result in ['white', 'black', 'draw']));
+      allow delete: if false;
+    }
+
+    // ------------------------------------------------------------ online ludo
+    // ludo_games/{id}: {game, players (uids by seat), names, seed, quick,
+    // log (ints: roll = 100 + seat, move = seat * 10 + token), status,
+    // winner, createdAt, updatedAt}. The dice come from seed + roll number,
+    // so nobody can choose a roll. A seat may only add its own action, or
+    // any player may act for a seat that has been silent for 30 s.
+    match /ludo_games/{id} {
+      function isPlayer() {
+        return signedIn() && request.auth.uid in resource.data.players;
+      }
+      // Ludo / Saanp-Seedhi: roll = 100 + seat, move = seat * 10 + token.
+      // Business: seat * 1000 + code.
+      function seatOf(v) {
+        return resource.data.get('game', 'ludo') == 'business'
+          ? int(v / 1000)
+          : (v >= 100 ? v - 100 : int(v / 10));
+      }
+      allow read: if isPlayer();
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.players
+        && request.resource.data.players.size() >= 2
+        && request.resource.data.players.size() <= 4
+        && request.resource.data.names.size() == request.resource.data.players.size()
+        && request.resource.data.log.size() == 0
+        && request.resource.data.status == 'active';
+      allow update: if isPlayer()
+        && resource.data.status == 'active'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['log', 'status', 'winner', 'updatedAt'])
+        && request.resource.data.log.size() == resource.data.log.size() + 1
+        && request.resource.data.log[resource.data.log.size()] is int
+        && seatOf(request.resource.data.log[resource.data.log.size()]) < resource.data.players.size()
+        && (resource.data.players[seatOf(request.resource.data.log[resource.data.log.size()])] == request.auth.uid
+          || request.time > resource.data.updatedAt + duration.value(30, 's'))
+        && (request.resource.data.status == 'active' || request.resource.data.status == 'over');
+      allow delete: if false;
+    }
+
+    // ludo_rooms/{CODE}: {host, players, names, max, quick, status, gameId}
+    match /ludo_rooms/{code} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.host == request.auth.uid
+        && request.resource.data.players == [request.auth.uid]
+        && request.resource.data.max >= 2 && request.resource.data.max <= 4
+        && request.resource.data.status == 'open';
+      allow delete: if signedIn() && resource.data.host == request.auth.uid;
+      // Join / leave (players + names only) while open; the host starts it.
+      allow update: if signedIn()
+        && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['players', 'names'])
+            && resource.data.status == 'open'
+            && request.resource.data.players.size() <= resource.data.max
+            && request.resource.data.players.size() >= 1
+            && request.resource.data.players[0] == resource.data.host)
+          || (request.auth.uid == resource.data.host
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'gameId'])
+            && request.resource.data.status == 'started'));
+    }
+
+    match /ludo_queue/{uid} {
+      allow read: if signedIn();
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['name', 'game', 'createdAt'])
+        && request.resource.data.createdAt == request.time;
+      allow delete: if isOwner(uid);
+      allow update: if signedIn() && request.auth.uid != uid
+        && !('gameId' in resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['gameId'])
+        && !exists(/databases/$(database)/documents/ludo_games/$(request.resource.data.gameId))
+        && getAfter(/databases/$(database)/documents/ludo_games/$(request.resource.data.gameId)).data.players.hasAll([uid, request.auth.uid]);
+    }
+
+    // ------------------------------------------------------------- purchases
+    // purchases/{orderId}: one entry per Google Play purchase (who bought
+    // what, when, for how much). Players may only add their own; only the
+    // developer (Firebase console) can read them.
+    match /purchases/{order} {
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'name', 'country', 'product', 'price', 'amount', 'currency', 'orderId', 'token', 'sale', 'appVersion', 'at'])
+        && request.resource.data.product in ['adfree_1m', 'adfree_1y', 'adfree_lifetime']
+        && request.resource.data.at == request.time;
+      allow read, update, delete: if false;
+    }
+
+    // iap_revoked/{uid} = {at: timestamp}: created by the developer after a
+    // refund; the player's app reads it and switches ads back on.
+    match /iap_revoked/{uid} {
+      allow get: if isOwner(uid);
+      allow list, write: if false;
+    }
+
+    // ---------------------------------------------------------------- config
+    // config/app = {ads: 'unity' | 'off'} – set by the developer in the console.
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // --------------------------------------------------- AYUSH Vaidya bookings
+    // ayush_bookings/{YYYY-MM-DD_HHMM_doctor} from ayush.mitrojan.in. One document
+    // per doctor + slot: anyone may request a free slot (create only, so a taken
+    // slot cannot be overwritten). In ayush.mitrojan.in/admin.html the owner sees
+    // every booking; each doctor's account sees and manages only her own.
+    function ayushVerified() {
+      return signedIn() && request.auth.token.email_verified == true;
+    }
+
+    function ayushAdmin() {
+      return ayushVerified() && request.auth.token.email in ['aiforsmart@gmail.com'];
+    }
+
+    // Google account -> the doctor whose bookings it may see.
+    function ayushDoctorLogins() {
+      return {
+        'tripti15d@gmail.com': 'dolly',
+        'pujagupta9813@gmail.com': 'pooja'
+      };
+    }
+
+    function ayushStaffFor(doctor) {
+      return ayushAdmin()
+        || (ayushVerified() && request.auth.token.email in ayushDoctorLogins()
+            && ayushDoctorLogins()[request.auth.token.email] == doctor);
+    }
+
+    function validAyushBooking(id, d) {
+      return d.keys().hasOnly(['name', 'phone', 'doctor', 'date', 'time', 'lang', 'reason', 'status', 'consent', 'createdAt'])
+        && d.name is string && d.name.size() >= 2 && d.name.size() <= 60
+        && d.phone is string && d.phone.matches('^[6-9][0-9]{9}$')
+        && d.doctor in ['dolly', 'pooja']
+        && d.date is string && d.date.matches('^20[0-9]{2}-[01][0-9]-[0-3][0-9]$')
+        && d.time is string && d.time.matches('^[0-2][0-9]:[0-5][0-9]$')
+        && id == d.date + '_' + d.time.replace(':', '') + '_' + d.doctor
+        && d.lang in ['hi', 'en']
+        && (!('reason' in d) || (d.reason is string && d.reason.size() <= 300))
+        && d.status == 'requested'
+        && d.consent == true
+        && d.createdAt == request.time;
+    }
+
+    match /ayush_bookings/{id} {
+      allow create: if validAyushBooking(id, request.resource.data);
+      // Doctors' lists must filter on doctor == their own, or the query is refused.
+      allow read, delete: if ayushStaffFor(resource.data.doctor);
+      allow update: if ayushStaffFor(resource.data.doctor)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['requested', 'confirmed', 'done', 'cancelled'];
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

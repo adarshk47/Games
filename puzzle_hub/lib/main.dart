@@ -8,6 +8,7 @@ import 'core/account/auth_screens.dart';
 import 'core/ads/ads_service.dart';
 import 'core/audio.dart';
 import 'core/cloud/cloud_service.dart';
+import 'core/release_stage.dart';
 import 'core/daily/reminder_service.dart';
 import 'core/i18n/i18n.dart';
 import 'core/rewards.dart';
@@ -29,11 +30,18 @@ Future<void> main() async {
   await Storage.init();
   await I18n.init();
   Cheer.init();
+  // Firebase first, so the Firestore release switch (config/app: stage,
+  // dates, per-game on/soon/off) is known before the theme and games load.
+  try {
+    await CloudService.init();
+  } catch (e) {
+    debugPrint('cloud init failed: $e');
+  }
+  await ReleaseStage.load();
   await AppThemeController.init();
   await AppAudio.init();
   // Optional services: a failure here must never block the app from starting.
   for (final init in [
-    CloudService.init,
     CouponService.refresh,
     AdFreeGrant.refresh,
     AdsService.init,
